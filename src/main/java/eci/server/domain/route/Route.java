@@ -12,7 +12,8 @@ import javax.persistence.*;
 @Table(name = "route")
 public class Route {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator="id_Sequence")
+    @SequenceGenerator(name="id_Sequence", sequenceName = "ID_SEQ")
     @Column(name = "route_id", unique = true, nullable = false)
     private Long id;
 
@@ -24,6 +25,10 @@ public class Route {
 
     @Column(length = 50, nullable = false)
     private String lifecycle_status ;
+
+    @ManyToOne
+    @JoinColumn(name = "item_id")
+    private Item item;
 
     @Builder
     public Route(String type, String workflow, String lifecycle_status) {

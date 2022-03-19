@@ -12,7 +12,8 @@ import javax.persistence.*;
 @NoArgsConstructor
 public class Approval {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator="id_Sequence")
+    @SequenceGenerator(name="id_Sequence", sequenceName = "ID_SEQ")
     @Column(name = "applicant_id", unique = true, nullable = false)
     private Long id;
 

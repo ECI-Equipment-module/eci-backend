@@ -1,5 +1,7 @@
 package eci.server.domain.item;
 
+import eci.server.domain.color.Color;
+import eci.server.domain.manufacture.Manufacture;
 import eci.server.domain.memeber.Member;
 import eci.server.domain.route.Route;
 import lombok.Builder;
@@ -14,21 +16,21 @@ import java.util.List;
 @Entity
 @Table(name = "item")
 public class Item {
-    String [] revision_txt = {"A", "B", "C"};
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator="id_Sequence")
+    @SequenceGenerator(name="id_Sequence", sequenceName = "ID_SEQ")
     @Column(name = "item_id")
     private Long id;
 
     @ManyToOne(cascade = CascadeType.MERGE, targetEntity = Member.class)
-    @JoinColumn(name = "member_id", updatable = false)
+    @JoinColumn(name = "member_id")
     private Member member;
 
-            @OneToMany(
+    @OneToMany(
             targetEntity = Route.class,
             fetch = FetchType.LAZY,
-            mappedBy = "item" //아이템이란 아이가 route에서 정의된 변수명
+            mappedBy = "item"
     )
     private List<Route> UsedItemRoute;
 
@@ -43,51 +45,44 @@ public class Item {
      */
     private Integer revised_cnt = 0;
 
-    @Column(length = 50, name="revision")
+    @Column(name="revision")
     /**
      * revised_cnt에 기반해 적절한 알파벳을 가집니다
      */
     private Character revision = (char)(65+revised_cnt);
 
-        @OneToMany(
-            targetEntity = Route.class,
-            fetch = FetchType.LAZY,
-            mappedBy = "item" //아이템이란 아이가 route에서 정의된 변수명
-    )
-    private List<Route> writtenRoutes;
-
     @Column(name="width")
-    private Long width;
+    private Double width;
 
     @Column(name="height")
-    private Long height;
+    private Double height;
 
     @Column(name="weight")
-    private Long weight;
+    private Double weight;
 
-    //        @OneToMany(
-//            targetEntity = Color.class,
-//            fetch = FetchType.LAZY,
-//            mappedBy = "item" //아이템이란 아이가 color에서 정의된 변수명
-//    )
-//    private List<Color> UsedItemColor;
+    @OneToMany(
+            targetEntity = Color.class,
+            fetch = FetchType.LAZY,
+            mappedBy = "item"
+    )
+    private List<Color> UsedItemColor;
 
-    //        @OneToMany(
-//            targetEntity = Manufacture.class,
-//            fetch = FetchType.LAZY,
-//            mappedBy = "item" //아이템이란 아이가 manufacture에서 정의된 변수명
-//    )
-//    private List<Manufacture> UsedItemManufacture;
+    @OneToMany(
+            targetEntity = Manufacture.class,
+            fetch = FetchType.LAZY,
+            mappedBy = "item"
+    )
+    private List<Manufacture> UsedItemManufacture;
 
-// 이 UsedItemManufacture 배열의 각각의 manufacture로부터 pair인
-// partNumber 리스트도 api에서 추가로 반환
-
-
-//    @Builder
-//    public Item(String name, String password, String email, String contact) {
-//        this.name = name;
-//        this.password = password;
-//        this.email = email;
-//        this.contact = contact;
-//    }
+    @Builder
+    public Item(String name, String type, Integer revised_cnt,
+                Character revision, Double weight, Double height, Double width) {
+        this.name = name;
+        this.type = type;
+        this.revised_cnt = revised_cnt;
+        this.revision = revision;
+        this.weight = weight;
+        this.height = height;
+        this.width = width;
+    }
 }

@@ -15,17 +15,18 @@ import java.util.List;
 @Table(name = "member")
 public class Member {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator="id_Sequence")
+    @SequenceGenerator(name="id_Sequence", sequenceName = "ID_SEQ")
     @Column(name = "member_id", unique = true, nullable = false)
     private Long id;
 
     @Column(name = "name", unique = true, nullable = false)
     private String name;
 
-    @Column(length = 100, nullable = false)
+    @Column(name = "password", nullable = false)
     private String password;
 
-    @Column(name = "password", length = 50, nullable = false)
+    @Column(name = "email", length = 50, nullable = false)
     private String email;
 
     @Column(name = "phone_num",length = 20, nullable = false)
