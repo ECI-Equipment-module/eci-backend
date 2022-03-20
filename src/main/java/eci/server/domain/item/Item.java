@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -16,6 +17,8 @@ import java.util.List;
 @Entity
 @Table(name = "item")
 public class Item {
+
+    public static final int DEFAULT_ITEM_PAGE_SIZE = 20;
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator="id_Sequence")
@@ -29,10 +32,10 @@ public class Item {
 
     @OneToMany(
             targetEntity = Route.class,
-            fetch = FetchType.LAZY,
+            fetch = FetchType.EAGER,
             mappedBy = "item"
     )
-    private List<Route> UsedItemRoute;
+    private List<Route> routeList;
 
     @Column(length = 100, name="name", nullable = false)
     private String name;
@@ -74,6 +77,13 @@ public class Item {
     )
     private List<Manufacture> UsedItemManufacture;
 
+    public void addRoute(Route route){
+        if (routeList == null){
+            routeList = new ArrayList<Route>();
+        }
+        routeList.add(route);
+    }
+
     @Builder
     public Item(String name, String type, Integer revised_cnt,
                 Character revision, Double weight, Double height, Double width) {
@@ -85,4 +95,17 @@ public class Item {
         this.height = height;
         this.width = width;
     }
+
+    public void update(String name, String type, Integer revised_cnt,
+                       Character revision, Double weight, Double height, Double width){
+        this.name = name;
+        this.type = type;
+        this.revised_cnt = revised_cnt;
+        this.revision = revision;
+        this.weight = weight;
+        this.height = height;
+        this.width = width;
+    }
+
+
 }
