@@ -1,0 +1,34 @@
+
+server:
+  port: 8181
+
+spring:
+
+  profiles:
+    active: local
+    include: secret
+
+  datasource:
+    url: jdbc:oracle:thin:@localhost:1521:xe
+    driverClassName: oracle.jdbc.driver.OracleDriver
+    username: eci2
+    password: Ecieci0321
+
+  jpa:
+    database: oracle
+    generate-ddl: false
+    hibernate.ddl-auto: create
+    open-in-view: false
+    show-sql: true
+
+  h2 :
+    console :
+      enabled : true
+
+    properties:
+      hibernate:
+        format_sql: true
+        use_sql_comments: true
+
+
+

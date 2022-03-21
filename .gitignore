@@ -35,3 +35,6 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### jwt 암호
+application-secret.yml
