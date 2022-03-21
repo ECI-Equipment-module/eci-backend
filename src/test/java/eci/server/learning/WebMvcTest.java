@@ -1,6 +1,6 @@
 package eci.server.learning;
 
-import eci.server.controller.response.Response;
+import eci.server.dto.response.Response;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

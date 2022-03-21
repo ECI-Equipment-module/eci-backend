@@ -1,6 +1,6 @@
 package eci.server.controller.sign;
 
-import eci.server.controller.response.Response;
+import eci.server.dto.response.Response;
 import eci.server.dto.sign.SignInRequest;
 import eci.server.dto.sign.SignUpRequest;
 import eci.server.service.sign.SignService;
@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 
-import static eci.server.controller.response.Response.success;
+import static eci.server.dto.response.Response.success;
 
 @RestController // 1
 @RequiredArgsConstructor

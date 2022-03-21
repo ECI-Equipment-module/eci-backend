@@ -5,6 +5,7 @@ import eci.server.entity.member.Member;
 import eci.server.entity.member.Role;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.NumberFormat;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -16,6 +17,7 @@ import java.util.List;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor //테스트 에러 원인
 public class SignUpRequest {
 
     @Email(message = "이메일 형식을 맞춰주세요.")

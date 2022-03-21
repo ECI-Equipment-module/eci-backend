@@ -1,4 +1,4 @@
-package eci.server.controller.response;
+package eci.server.dto.response;
 
 
 import com.fasterxml.jackson.annotation.JsonInclude;
