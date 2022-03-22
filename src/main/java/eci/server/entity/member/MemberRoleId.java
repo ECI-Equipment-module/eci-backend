@@ -1,7 +1,5 @@
 package eci.server.entity.member;
 
-import eci.server.entity.member.Member;
-import eci.server.entity.member.Role;
 import lombok.*;
 
 import javax.persistence.Embeddable;

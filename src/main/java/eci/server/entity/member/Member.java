@@ -13,6 +13,7 @@ import static java.util.stream.Collectors.toSet;
 
 @Entity
 @Getter
+@Table(name="member")
 @NoArgsConstructor(access = AccessLevel.PROTECTED) // 3
 public class Member extends EntityDate { // 5
 

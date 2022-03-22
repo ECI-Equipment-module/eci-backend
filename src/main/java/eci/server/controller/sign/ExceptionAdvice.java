@@ -45,17 +45,17 @@ public class ExceptionAdvice {
         return Response.failure(404, "요청한 회원을 찾을 수 없습니다.");
     }
 
-    @ExceptionHandler(RoleNotFoundException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public Response roleNotFoundException() { // 7
-        return Response.failure(404, "요청한 권한 등급을 찾을 수 없습니다.");
+//    @ExceptionHandler(RoleNotFoundException.class)
+//    @ResponseStatus(HttpStatus.NOT_FOUND)
+//    public Response roleNotFoundException() { // 7
+//        return Response.failure(404, "요청한 권한 등급을 찾을 수 없습니다.");
+//    }
+//
+//    @ExceptionHandler(Exception.class)
+//    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+//    public Response exception(Exception e) { // 1
+//        log.info("e = {}", e.getMessage());
+//        return Response.failure(500, "오류가 발생하였습니다.");
     }
 
-    @ExceptionHandler(Exception.class)
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public Response exception(Exception e) { // 1
-        log.info("e = {}", e.getMessage());
-        return Response.failure(500, "오류가 발생하였습니다.");
-    }
-
-}
+//}

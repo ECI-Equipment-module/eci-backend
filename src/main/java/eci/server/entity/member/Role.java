@@ -8,6 +8,7 @@ import javax.persistence.*;
 
 @Entity
 @Getter
+@Table(name="role")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Role {
 

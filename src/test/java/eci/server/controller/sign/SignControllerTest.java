@@ -43,7 +43,7 @@ class SignControllerTest {
 
         // when, then
         mockMvc.perform(
-                        post("/api/sign-up")
+                        post("/sign-up")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(req))) // 2
                 .andExpect(status().isCreated());
@@ -59,7 +59,7 @@ class SignControllerTest {
 
         // when, then
         mockMvc.perform(
-                        post("/api/sign-in")
+                        post("/sign-in")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(req)))
                 .andExpect(status().isOk())
@@ -76,7 +76,7 @@ class SignControllerTest {
 
         // when, then
         mockMvc.perform(
-                        post("/api/sign-up")
+                        post("/sign-up")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(req)))
                 .andExpect(status().isCreated())
