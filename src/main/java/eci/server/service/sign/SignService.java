@@ -1,11 +1,13 @@
 package eci.server.service.sign;
 
 
+import eci.server.dto.sign.RefreshTokenResponse;
 import eci.server.dto.sign.SignInRequest;
 import eci.server.dto.sign.SignInResponse;
 import eci.server.dto.sign.SignUpRequest;
 import eci.server.entity.member.Member;
 import eci.server.entity.member.RoleType;
+import eci.server.exception.member.auth.AuthenticationEntryPointException;
 import eci.server.exception.member.sign.MemberEmailAlreadyExistsException;
 import eci.server.exception.member.sign.MemberNotFoundException;
 import eci.server.exception.member.sign.PasswordNotValidateException;
@@ -23,7 +25,6 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 public class SignService {
     Logger logger = LoggerFactory.getLogger(SignService.class);
 
@@ -32,7 +33,7 @@ public class SignService {
     private final PasswordEncoder passwordEncoder;
     private final TokenService tokenService;
 
-    @Transactional
+    @Transactional(readOnly = true)
     public void signUp(SignUpRequest req) {
         logger.info("i am in signupservicenow~~~~~~~~~~~~");
         validateSignUpInfo(req);
@@ -46,7 +47,7 @@ public class SignService {
         System.out.println(madey.get().getEmail());
         logger.info("pss3");
     }
-
+    @Transactional(readOnly = true)
     public SignInResponse signIn(SignInRequest req) {
         Member member = memberRepository.findByEmail(req.getEmail()).orElseThrow(MemberNotFoundException::new);
         validatePassword(req, member);
@@ -69,5 +70,24 @@ public class SignService {
 
     private String createSubject(Member member) {
         return String.valueOf(member.getId());
+    }
+
+    public RefreshTokenResponse refreshToken(String rToken) {
+        /**
+         * 검증된 리프레시 토큰에서 subject추출
+         */
+        validateRefreshToken(rToken);
+        String subject = tokenService.extractRefreshTokenSubject(rToken);
+        String accessToken = tokenService.createAccessToken(subject);
+        return new RefreshTokenResponse(accessToken);
+    }
+
+    private void validateRefreshToken(String rToken) {
+        /**
+         * 리프레시 토큰이 유효하지 않다면 401 에러
+         */
+        if(!tokenService.validateRefreshToken(rToken)) {
+            throw new AuthenticationEntryPointException();
+        }
     }
 }
