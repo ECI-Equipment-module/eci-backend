@@ -17,6 +17,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import static eci.server.dto.sign.RefreshTokenResponseFactory.createRefreshTokenResponse;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -84,5 +85,18 @@ class SignControllerTest {
 
     }
 
+
+    @Test
+    void refreshTokenTest() throws Exception {
+        // given
+        given(signService.refreshToken("refreshToken")).willReturn(createRefreshTokenResponse("accessToken"));
+
+        // when, then
+        mockMvc.perform(
+                        post("/refresh-token")
+                                .header("Authorization", "refreshToken"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.result.data.accessToken").value("accessToken"));
+    }
 
 }

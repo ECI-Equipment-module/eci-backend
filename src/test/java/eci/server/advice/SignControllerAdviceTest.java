@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import eci.server.controller.sign.SignController;
 import eci.server.dto.sign.SignInRequest;
 import eci.server.dto.sign.SignUpRequest;
+import eci.server.exception.member.auth.AuthenticationEntryPointException;
 import eci.server.exception.member.sign.MemberEmailAlreadyExistsException;
 import eci.server.exception.member.sign.MemberNotFoundException;
 import eci.server.exception.member.sign.RoleNotFoundException;
@@ -19,9 +20,11 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doThrow;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(MockitoExtension.class)
@@ -104,5 +107,33 @@ class SignControllerAdviceTest {
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(req)))
                 .andExpect(status().isBadRequest());
+    }
+
+    /**
+     * 유효하지 않은 토큰 - AuthenticationEntryPointException 예외 발생
+     */
+    @Test
+    void refreshTokenAuthenticationEntryPointException() throws Exception { // 1
+        // given
+        given(signService.refreshToken(anyString())).willThrow(AuthenticationEntryPointException.class);
+
+        // when, then
+        mockMvc.perform(
+                        post("/api/refresh-token")
+                                .header("Authorization", "refreshToken"))
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.code").value(-1001));
+    }
+
+    /**
+     * 누락된 HTTP 요청 헤더로 인해 MissingRequestHeaderException 예외 발생
+     */
+    @Test
+    void refreshTokenMissingRequestHeaderException() throws Exception { // 2
+        // given, when, then
+        mockMvc.perform(
+                        post("/api/refresh-token"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value(-1009));
     }
 }

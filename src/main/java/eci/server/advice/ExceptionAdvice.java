@@ -83,6 +83,6 @@ public class ExceptionAdvice {
     @ExceptionHandler(MissingRequestHeaderException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Response missingRequestHeaderException(MissingRequestHeaderException e) {
-        return Response.failure(-1009, e.getHeaderName() + " 요청 헤더가 누락되었습니다.");
+        return Response.failure(400, e.getHeaderName() + " 요청 헤더가 누락되었습니다.");
     }
 }
