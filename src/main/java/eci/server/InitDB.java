@@ -3,7 +3,7 @@
 //import eci.server.entity.member.Member;
 //import eci.server.entity.member.Role;
 //import eci.server.entity.member.RoleType;
-//import eci.server.exception.member.RoleNotFoundException;
+//import eci.server.exception.member.sign.RoleNotFoundException;
 //import eci.server.repository.member.MemberRepository;
 //import eci.server.repository.member.RoleRepository;
 //import lombok.RequiredArgsConstructor;

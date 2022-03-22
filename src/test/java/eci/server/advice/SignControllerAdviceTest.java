@@ -1,13 +1,12 @@
 package eci.server.advice;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import eci.server.controller.sign.ExceptionAdvice;
 import eci.server.controller.sign.SignController;
 import eci.server.dto.sign.SignInRequest;
 import eci.server.dto.sign.SignUpRequest;
-import eci.server.exception.member.MemberEmailAlreadyExistsException;
-import eci.server.exception.member.MemberNotFoundException;
-import eci.server.exception.member.RoleNotFoundException;
+import eci.server.exception.member.sign.MemberEmailAlreadyExistsException;
+import eci.server.exception.member.sign.MemberNotFoundException;
+import eci.server.exception.member.sign.RoleNotFoundException;
 import eci.server.service.sign.SignService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

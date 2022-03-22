@@ -1,8 +1,9 @@
 package eci.server.controller.member;
 
 import eci.server.service.member.MemberService;
-import org.junit.Test;
+
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -16,7 +17,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(MockitoExtension.class)
-class MemberControllerTest {
+public class MemberControllerTest {
     @InjectMocks
     MemberController memberController;
     @Mock
@@ -29,7 +30,7 @@ class MemberControllerTest {
     }
 
     @Test
-    void readTest() throws Exception {
+    public void readTest() throws Exception {
         // given
         Long id = 1L;
 
@@ -41,7 +42,7 @@ class MemberControllerTest {
     }
 
     @Test
-    void deleteTest() throws Exception {
+    public void deleteTest() throws Exception {
         // given
         Long id = 1L;
 

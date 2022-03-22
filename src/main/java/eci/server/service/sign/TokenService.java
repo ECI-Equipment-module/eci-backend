@@ -9,6 +9,11 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class TokenService {
+    /**
+     * JwtHandler를 이용하여
+     * 각각 토큰 종류마다,
+     * 검증 & subject 추출
+     */
     private final JwtHandler jwtHandler;
 
     @Value("${jwt.max-age.access}") // 1
@@ -29,5 +34,22 @@ public class TokenService {
 
     public String createRefreshToken(String subject) {
         return jwtHandler.createToken(refreshKey, subject, refreshTokenMaxAgeSeconds);
+    }
+
+
+    public boolean validateAccessToken(String token) {
+        return jwtHandler.validate(accessKey, token);
+    }
+
+    public boolean validateRefreshToken(String token) {
+        return jwtHandler.validate(refreshKey, token);
+    }
+
+    public String extractAccessTokenSubject(String token) {
+        return jwtHandler.extractSubject(accessKey, token);
+    }
+
+    public String extractRefreshTokenSubject(String token) {
+        return jwtHandler.extractSubject(refreshKey, token);
     }
 }
