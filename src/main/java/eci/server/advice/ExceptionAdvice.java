@@ -7,6 +7,7 @@ import eci.server.exception.member.sign.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -64,10 +65,24 @@ public class ExceptionAdvice {
         return Response.failure(401, "인증되지 않은 사용자입니다.");
     }
 
+    /**
+     * 접근 권한 없음
+     * @return 403
+     */
     @ExceptionHandler(AccessDeniedException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public Response accessDeniedException() {
         return Response.failure(403, "접근이 거부되었습니다.");
     }
 
+    /**
+     * 헤더 누락 시 에러
+     * @param e
+     * @return 400
+     */
+    @ExceptionHandler(MissingRequestHeaderException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Response missingRequestHeaderException(MissingRequestHeaderException e) {
+        return Response.failure(-1009, e.getHeaderName() + " 요청 헤더가 누락되었습니다.");
+    }
 }

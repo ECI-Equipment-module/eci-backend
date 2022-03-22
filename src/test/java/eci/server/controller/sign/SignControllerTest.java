@@ -83,4 +83,6 @@ class SignControllerTest {
                 .andExpect(jsonPath("$.result").doesNotExist());
 
     }
+
+
 }

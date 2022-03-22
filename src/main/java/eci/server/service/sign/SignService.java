@@ -35,17 +35,10 @@ public class SignService {
 
     @Transactional(readOnly = true)
     public void signUp(SignUpRequest req) {
-        logger.info("i am in signupservicenow~~~~~~~~~~~~");
         validateSignUpInfo(req);
-        logger.info("pss1");
         memberRepository.save(SignUpRequest.toEntity(req,
                 roleRepository.findByRoleType(RoleType.ROLE_NORMAL).orElseThrow(RoleNotFoundException::new),
                 passwordEncoder));
-
-        logger.info("pss2");
-        Optional<Member> madey = memberRepository.findByEmail(req.getEmail());
-        System.out.println(madey.get().getEmail());
-        logger.info("pss3");
     }
     @Transactional(readOnly = true)
     public SignInResponse signIn(SignInRequest req) {
