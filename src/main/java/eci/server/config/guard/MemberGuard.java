@@ -17,7 +17,7 @@ public class MemberGuard {
      *  요청한 사용자 인증 여부 & 액세스 토큰을 통한 요청 여부 인증
      */
     public boolean check(Long id) {
-        return authHelper.isAuthenticated() && authHelper.isAccessTokenType() && hasAuthority(id);
+        return authHelper.isAuthenticated() && hasAuthority(id);
     }
 
     private boolean hasAuthority(Long id) {

@@ -15,6 +15,8 @@ import java.util.stream.Collectors;
 @Slf4j
 public class AuthHelper {
 
+    //액세스 토큰을 이용한 요청자의 정보만 컨텍스트에 저장, 토큰 타입 판별 이유 없음
+
     public boolean isAuthenticated() {
         /**
          * 요청자 인증 여부 (로그인 여부)
@@ -39,27 +41,6 @@ public class AuthHelper {
                 .map(authority -> authority.getAuthority())
                 .map(strAuth -> RoleType.valueOf(strAuth))
                 .collect(Collectors.toSet());
-    }
-
-    public boolean isAccessTokenType() {
-        /**
-         * 사용자의 token이 적절한 access 토큰 여부 검증 (로그인 여부 검증)
-         */
-        /*
-         * 인증되지 않은 사용자여도 Spring Security에서 등록해준 필터에 의해
-         * AnonymousAuthenticationToken 발급
-         * 따라서 이에 속지 말고 getAuthentication()의 반환 값
-         * == 우리가 직접 정의한 CustomAuthenticationToken
-         * 의 경우일 때만 인증하도록
-         */
-        return "access".equals(((CustomAuthenticationToken) getAuthentication()).getType());
-    }
-
-    public boolean isRefreshTokenType() {
-        /**
-         * 사용자의 token이 적절한 refreseh 토큰 여부 검증 (access 토큰 재발급 여부 검증)
-         */
-        return "refresh".equals(((CustomAuthenticationToken) getAuthentication()).getType());
     }
 
     private CustomUserDetails getUserDetails() {

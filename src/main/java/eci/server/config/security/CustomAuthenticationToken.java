@@ -13,7 +13,7 @@ public class CustomAuthenticationToken extends AbstractAuthenticationToken {
     private String type;
     private CustomUserDetails principal;
 
-    public CustomAuthenticationToken(String type, CustomUserDetails principal, Collection<? extends GrantedAuthority> authorities) {
+    public CustomAuthenticationToken(CustomUserDetails principal, Collection<? extends GrantedAuthority> authorities)  {
         /**
          * custom token
          */
@@ -36,7 +36,5 @@ public class CustomAuthenticationToken extends AbstractAuthenticationToken {
         throw new UnsupportedOperationException();
     }
 
-    public String getType() {
-        return type;
-    }
+
 }
