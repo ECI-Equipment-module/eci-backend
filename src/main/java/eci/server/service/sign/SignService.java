@@ -25,6 +25,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class SignService {
     Logger logger = LoggerFactory.getLogger(SignService.class);
 
@@ -33,12 +34,15 @@ public class SignService {
     private final PasswordEncoder passwordEncoder;
     private final TokenService tokenService;
 
-    @Transactional(readOnly = true)
+    @Transactional
     public void signUp(SignUpRequest req) {
         validateSignUpInfo(req);
         memberRepository.save(SignUpRequest.toEntity(req,
                 roleRepository.findByRoleType(RoleType.ROLE_NORMAL).orElseThrow(RoleNotFoundException::new),
                 passwordEncoder));
+//    logger.info(passwordEncoder.encode(req.getPassword()));
+//    logger.info(memberRepository.findByEmail(req.getEmail()).toString());
+
     }
     @Transactional(readOnly = true)
     public SignInResponse signIn(SignInRequest req) {

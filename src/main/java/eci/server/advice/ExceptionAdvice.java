@@ -19,50 +19,68 @@ public class ExceptionAdvice {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public Response methodArgumentNotValidException(MethodArgumentNotValidException e) { // 2
+    public Response methodArgumentNotValidException(MethodArgumentNotValidException e) {
         return Response.failure(400, e.getBindingResult().getFieldError().getDefaultMessage());
     }
 
     @ExceptionHandler(LoginFailureException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    public Response loginFailureException() { // 3
+    public Response loginFailureException() {
         return Response.failure(401, "로그인에 실패하였습니다.");
     }
     @ExceptionHandler(PasswordNotValidateException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    public Response passwordNotValidateException() { // 3
-        return Response.failure(401, "로그인에 실패하였습니다.");
+    public Response passwordNotValidateException() {
+        return Response.failure(401, "비밀번호가 틀렸습니다.");
     }
 
     @ExceptionHandler(MemberEmailAlreadyExistsException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
-    public Response memberEmailAlreadyExistsException(MemberEmailAlreadyExistsException e) { // 4
+    public Response memberEmailAlreadyExistsException(MemberEmailAlreadyExistsException e) {
         return Response.failure(409, e.getMessage() + "은 중복된 이메일 입니다.");
     }
 
+    /**
+     * 회원 존재 x
+     * @return 404
+     */
     @ExceptionHandler(MemberNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public Response memberNotFoundException() { // 6
+    public Response memberNotFoundException() {
         return Response.failure(404, "요청한 회원을 찾을 수 없습니다.");
     }
 
+    /**
+     * 가입 시 옳지 않은 등급으로 가입
+     * @return 404
+     */
     @ExceptionHandler(RoleNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public Response roleNotFoundException() { // 7
+    public Response roleNotFoundException() {
         return Response.failure(404, "요청한 권한 등급을 찾을 수 없습니다.");
     }
 
+    /**
+     * 서버 오류
+     * @param e
+     * @return 500
+     */
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public Response exception(Exception e) { // 1
+    public Response exception(Exception e) {
         log.info("e = {}", e.getMessage());
         return Response.failure(500, "오류가 발생하였습니다.");
     }
 
+    /**
+     * 액세스 토큰이 유효하지 않을 때 에러
+     * @return
+     */
     @ExceptionHandler(AuthenticationEntryPointException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
+
     public Response authenticationEntryPoint() {
-        return Response.failure(401, "인증되지 않은 사용자입니다.");
+        return Response.failure(401, "리프레시가 필요합니다.");
     }
 
     /**
@@ -85,4 +103,6 @@ public class ExceptionAdvice {
     public Response missingRequestHeaderException(MissingRequestHeaderException e) {
         return Response.failure(400, e.getHeaderName() + " 요청 헤더가 누락되었습니다.");
     }
+
+
 }

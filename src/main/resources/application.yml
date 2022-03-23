@@ -24,8 +24,3 @@ spring:
         dialect : org.hibernate.dialect.Oracle10gDialect
 
     database-platform : org.hibernate.dialect.Oracle10gDialect
-
-#  spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.Oracle10gDialect
-#  spring.jpa.database-platform=org.hibernate.dialect.Oracle10gDialect
-
-

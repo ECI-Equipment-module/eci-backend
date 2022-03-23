@@ -24,14 +24,14 @@ public class SignController {
     @PostMapping("sign-up")
     @ResponseStatus(HttpStatus.CREATED)
 
-    public Response signUp(@Valid @RequestBody SignUpRequest req) { // 2
+    public Response signUp(@Valid @RequestBody SignUpRequest req) {
         signService.signUp(req);
         return success();
     }
 
     @PostMapping("/sign-in")
     @ResponseStatus(HttpStatus.OK)
-    public Response signIn(@Valid @RequestBody SignInRequest req) { // 3
+    public Response signIn(@Valid @RequestBody SignInRequest req) {
         return success(signService.signIn(req));
     }
 
