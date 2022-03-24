@@ -67,4 +67,5 @@ public class AuthHelper {
          */
         return SecurityContextHolder.getContext().getAuthentication();
     }
+
 }

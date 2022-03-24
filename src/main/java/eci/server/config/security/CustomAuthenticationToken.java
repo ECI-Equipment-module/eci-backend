@@ -5,29 +5,29 @@ import org.springframework.security.core.GrantedAuthority;
 
 import java.util.Collection;
 
+/**
+ *  CustomUserDetailsService 이용해
+ *  CustomUserDetails (사용자정보) & 요청 토큰 타입 저장
+ */
 public class CustomAuthenticationToken extends AbstractAuthenticationToken {
-    /**
-     *  CustomUserDetailsService 이용해
-     *  CustomUserDetails (사용자정보) & 요청 토큰 타입 저장
-     */
+
     private String type;
     private CustomUserDetails principal;
 
-    public CustomAuthenticationToken(CustomUserDetails principal, Collection<? extends GrantedAuthority> authorities)  {
-        /**
-         * custom token
-         */
+    /**
+     * custom token
+     */
+    public CustomAuthenticationToken(CustomUserDetails principal, Collection<? extends GrantedAuthority> authorities) {
         super(authorities);
-        this.type = type;
         this.principal = principal;
         setAuthenticated(true);
     }
 
     @Override
+    /**
+     * 인증하는 사람의 정보
+     */
     public CustomUserDetails getPrincipal() {
-        /**
-         * 인증하는 사람의 정보
-         */
         return principal;
     }
 
@@ -35,6 +35,4 @@ public class CustomAuthenticationToken extends AbstractAuthenticationToken {
     public Object getCredentials() {
         throw new UnsupportedOperationException();
     }
-
-
 }

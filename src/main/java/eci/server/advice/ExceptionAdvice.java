@@ -2,8 +2,10 @@ package eci.server.advice;
 
 import eci.server.dto.response.Response;
 import eci.server.exception.member.auth.AccessDeniedException;
+import eci.server.exception.member.auth.AccessExpiredException;
 import eci.server.exception.member.auth.AuthenticationEntryPointException;
 import eci.server.exception.member.sign.*;
+import io.jsonwebtoken.ExpiredJwtException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -73,14 +75,23 @@ public class ExceptionAdvice {
     }
 
     /**
-     * 액세스 토큰이 유효하지 않을 때 에러
+     * 액세스 유효하지 않을 때 에러
+     * @return
+     */
+    @ExceptionHandler(AccessExpiredException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public Response accessExpiredException() {
+        return Response.failure(401, "리프레시가 필요합니다.");
+    }
+
+    /**
+     * 리프레시 토큰이 유효하지 않을 때 에러
      * @return
      */
     @ExceptionHandler(AuthenticationEntryPointException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
-
     public Response authenticationEntryPoint() {
-        return Response.failure(401, "리프레시가 필요합니다.");
+        return Response.failure(401, "리프레쉬 재발급이 필요합니다.");
     }
 
     /**

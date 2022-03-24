@@ -14,13 +14,13 @@ public class MemberController {
 
     private final MemberService memberService;
 
-    @GetMapping("/api/members/{id}")
+    @GetMapping("/members/{id}")
     @ResponseStatus(HttpStatus.OK)
     public Response read(@PathVariable Long id) {
         return Response.success(memberService.read(id));
     }
 
-    @DeleteMapping("/api/members/{id}")
+    @DeleteMapping("/members/{id}")
     @ResponseStatus(HttpStatus.OK)
     public Response delete(@PathVariable Long id) {
         memberService.delete(id);

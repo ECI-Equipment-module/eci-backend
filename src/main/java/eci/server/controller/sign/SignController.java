@@ -14,7 +14,7 @@ import javax.validation.Valid;
 
 import static eci.server.dto.response.Response.success;
 
-@RestController // 1
+@RestController
 @RequiredArgsConstructor
 public class SignController {
     private final SignService signService;
@@ -45,6 +45,7 @@ public class SignController {
      * @return success
      *
      */
+
     @PostMapping("/refresh-token")
     @ResponseStatus(HttpStatus.OK)
     //@RequestHeader required 옵션 기본값 true

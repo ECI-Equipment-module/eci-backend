@@ -1,6 +1,8 @@
 package eci.server.service.sign;
 
 
+import eci.server.exception.member.auth.AccessExpiredException;
+import eci.server.exception.member.sign.MemberNotFoundException;
 import eci.server.handler.JwtHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,26 +18,33 @@ public class TokenService {
      */
     private final JwtHandler jwtHandler;
 
-    @Value("${jwt.max-age.access}") // 1
+    @Value("${jwt.max-age.access}")
     private long accessTokenMaxAgeSeconds;
 
-    @Value("${jwt.max-age.refresh}") // 2
+    @Value("${jwt.max-age.refresh}")
     private long refreshTokenMaxAgeSeconds;
 
-    @Value("${jwt.key.access}") // 3
+    @Value("${jwt.key.access}")
     private String accessKey;
 
-    @Value("${jwt.key.refresh}") // 4
+    @Value("${jwt.key.refresh}")
     private String refreshKey;
 
     public String createAccessToken(String subject) {
-        return jwtHandler.createToken(accessKey, subject, accessTokenMaxAgeSeconds);
+        return jwtHandler.createToken(
+                accessKey,
+                subject,
+                accessTokenMaxAgeSeconds
+        );
     }
 
     public String createRefreshToken(String subject) {
-        return jwtHandler.createToken(refreshKey, subject, refreshTokenMaxAgeSeconds);
+        return jwtHandler.createToken(
+                refreshKey,
+                subject,
+                refreshTokenMaxAgeSeconds
+        );
     }
-
 
     public boolean validateAccessToken(String token) {
         return jwtHandler.validate(accessKey, token);
@@ -51,5 +60,9 @@ public class TokenService {
 
     public String extractRefreshTokenSubject(String token) {
         return jwtHandler.extractSubject(refreshKey, token);
+    }
+
+    public void accessTokenExpired(){
+        throw new AccessExpiredException();
     }
 }

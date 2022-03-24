@@ -38,3 +38,6 @@ out/
 
 ### jwt 암호
 application-secret.yml
+
+### img 파일
+/src/test/resources/static/*

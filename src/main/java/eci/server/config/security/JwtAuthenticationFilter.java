@@ -1,8 +1,11 @@
 package eci.server.config.security;
 
+import eci.server.exception.member.auth.AccessExpiredException;
 import eci.server.service.sign.TokenService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.GenericFilterBean;
 
@@ -13,6 +16,7 @@ import java.io.IOException;
 @RequiredArgsConstructor
 @Slf4j
 public class JwtAuthenticationFilter extends GenericFilterBean {
+
     /**
      * 1) Authorization 헤더에서 토큰 값을 꺼냄
      *
@@ -24,15 +28,17 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
      *
      */
 
-
     private final TokenService tokenService;
     private final CustomUserDetailsService userDetailsService;
+    public static boolean accessTF;
 
-
+    private final Logger logger = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+        accessTF = false;
         String token = extractToken(request);
         if(validateToken(token)) {
+            // SecurityContext에 Authentication 객체 저장
             setAuthentication(token);
         }
         chain.doFilter(request, response);
@@ -43,13 +49,22 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
     }
 
     private boolean validateToken(String token) {
-        return token != null && tokenService.validateAccessToken(token);
+        return(token != null && tokenService.validateAccessToken(token));
+
     }
 
     private void setAuthentication(String token) {
         String userId = tokenService.extractAccessTokenSubject(token);
+        if(userId == null){
+            throw new AccessExpiredException();
+        }
+
         CustomUserDetails userDetails = userDetailsService.loadUserByUsername(userId);
-        SecurityContextHolder.getContext().setAuthentication(new CustomAuthenticationToken(userDetails, userDetails.getAuthorities()));
+        SecurityContextHolder.getContext().setAuthentication(
+                new CustomAuthenticationToken(
+                        userDetails, userDetails.getAuthorities()
+                )
+        );
     }
 
 }

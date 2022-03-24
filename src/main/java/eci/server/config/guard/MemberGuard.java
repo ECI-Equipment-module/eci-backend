@@ -23,6 +23,7 @@ public class MemberGuard {
     private boolean hasAuthority(Long id) {
         /**
          *  자원 접근 권한(관리자 또는 자원의 소유주)을 가지고 있는지를 검사
+         *  멤버 삭제는 본인 or ADMIN인 경우만 가능
          */
         Long memberId = authHelper.extractMemberId();
         Set<RoleType> memberRoles = authHelper.extractMemberRoles();

@@ -2,6 +2,7 @@ package eci.server.handler;
 
 
 import io.jsonwebtoken.*;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
@@ -46,6 +47,15 @@ public class JwtHandler {
 
     private String untype(String token) {
         return token.substring(type.length());
+    }
+
+    public boolean validateTokenExceptExpiration(String token, String key) {
+        try {
+            Jws<Claims> claims = Jwts.parser().setSigningKey(key).parseClaimsJws(token);
+            return !claims.getBody().getExpiration().before(new Date());
+        } catch(Exception e) {
+            return false;
+        }
     }
 
 }

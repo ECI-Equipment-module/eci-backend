@@ -24,3 +24,7 @@ spring:
         dialect : org.hibernate.dialect.Oracle10gDialect
 
     database-platform : org.hibernate.dialect.Oracle10gDialect
+
+upload:
+  image:
+    location: ./media
