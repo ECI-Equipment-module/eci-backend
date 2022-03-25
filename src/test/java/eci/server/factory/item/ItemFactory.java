@@ -1,4 +1,4 @@
-package eci.server.factory.entity;
+package eci.server.factory.item;
 
 import eci.server.entity.item.Image;
 import eci.server.entity.item.Item;
@@ -8,7 +8,7 @@ import eci.server.entity.member.Member;
 import java.util.ArrayList;
 import java.util.List;
 
-import static eci.server.factory.entity.MemberFactory.createMember;
+import static eci.server.factory.member.MemberFactory.createMember;
 
 public class ItemFactory {
     public static Item createItem() {

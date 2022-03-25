@@ -16,10 +16,10 @@ import javax.persistence.PersistenceContext;
 
 import java.util.List;
 
-import static eci.server.factory.entity.ImageFactory.createImage;
-import static eci.server.factory.entity.ItemFactory.createItem;
-import static eci.server.factory.entity.ItemFactory.createItemWithImages;
-import static eci.server.factory.entity.MemberFactory.createMember;
+import static eci.server.factory.item.ImageFactory.createImage;
+import static eci.server.factory.item.ItemFactory.createItem;
+import static eci.server.factory.item.ItemFactory.createItemWithImages;
+import static eci.server.factory.member.MemberFactory.createMember;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 

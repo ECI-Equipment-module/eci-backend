@@ -26,6 +26,7 @@ public class CustomUserDetailsService implements UserDetailsService {
      * 유저의 Role, RoleType 확인
      */
     public CustomUserDetails loadUserByUsername(String userId) throws UsernameNotFoundException {
+
         /**
          * 사용자의 id 값으로 사용자 정보 조회
          */

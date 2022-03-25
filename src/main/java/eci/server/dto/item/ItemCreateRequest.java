@@ -8,6 +8,8 @@ import eci.server.repository.member.MemberRepository;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.GeneratedValue;
@@ -19,7 +21,6 @@ import javax.validation.constraints.Null;
 import javax.validation.constraints.PositiveOrZero;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import static java.util.stream.Collectors.toList;
 
@@ -28,8 +29,7 @@ import static java.util.stream.Collectors.toList;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ItemCreateRequest {
-
-    private ItemType itemType;
+    private final Logger logger = LoggerFactory.getLogger(ItemCreateRequest.class);
 
     @NotBlank(message = "아이템 이름을 입력해주세요.")
     private String name;
@@ -53,16 +53,33 @@ public class ItemCreateRequest {
     @PositiveOrZero(message = "0 이상을 입력해주세요")
     private Long weight;
 
+    // hidden = true
     @Null
     private Long memberId;
 
-    private List<MultipartFile> images = new ArrayList<>();
+    private List<MultipartFile> thumbnail = new ArrayList<>();
+
+
+
+    public ItemCreateRequest(String name, String type,Long width, Long height, Long weight, Long memberId, List<MultipartFile> thumbnail) {
+        this.name = name;
+        this.type = type;
+        this.width = width;
+        this.height = height;
+        this.weight = weight;
+        this.memberId = memberId;
+        this.thumbnail = thumbnail;
+    }
 
     public static Item toEntity(ItemCreateRequest req, MemberRepository memberRepository) {
+
+//        System.out.println(ItemType.valueOf(req.type).label());
+//        System.out.println(req.itemNumber);
+
         return new Item(
                 req.name,
                 req.type,
-                ItemType.valueOf(req.type).label()+req.itemNumber,
+                ItemType.valueOf(req.type).label()+(int)(Math.random()*1000),
                 req.width,
                 req.height,
                 req.weight,
@@ -71,7 +88,7 @@ public class ItemCreateRequest {
                         req.getMemberId()
                 ).orElseThrow(MemberNotFoundException::new),
 
-                req.images.stream().map(
+                req.thumbnail.stream().map(
                         i -> new Image(
                                 i.getOriginalFilename())
                         ).collect(

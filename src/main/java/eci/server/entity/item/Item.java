@@ -18,8 +18,8 @@ import java.util.List;
 public class Item extends EntityDate {
 
     @Id
-    @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="SEQUENCE1")
-    @SequenceGenerator(name="SEQUENCE1", sequenceName="SEQUENCE1", allocationSize=1)
+    @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="SEQUENCE2")
+    @SequenceGenerator(name="SEQUENCE2", sequenceName="SEQUENCE2", allocationSize=1)
     private Long id;
 
     @Column(nullable = false)

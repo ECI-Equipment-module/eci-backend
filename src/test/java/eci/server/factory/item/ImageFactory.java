@@ -1,4 +1,4 @@
-package eci.server.factory.entity;
+package eci.server.factory.item;
 
 import eci.server.entity.item.Image;
 

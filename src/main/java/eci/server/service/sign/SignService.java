@@ -22,8 +22,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
-
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -41,7 +39,8 @@ public class SignService {
     @Transactional
     public void signUp(SignUpRequest req) {
         validateSignUpInfo(req);
-        memberRepository.save(SignUpRequest.toEntity(req,
+        memberRepository.save(SignUpRequest.toEntity(
+                req,
                 roleRepository.findByRoleType(RoleType.ROLE_NORMAL).orElseThrow(RoleNotFoundException::new),
                 passwordEncoder));
     }
