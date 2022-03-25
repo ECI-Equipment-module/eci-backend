@@ -3,28 +3,5 @@ server:
 
 spring:
   profiles:
-    active: prod
+    active: test
     include: secret
-
-  datasource:
-    url: jdbc:oracle:thin:@localhost:1521:xe
-    driverClassName: oracle.jdbc.driver.OracleDriver
-    username: eci2
-    password: Ecieci0321
-
-  jpa:
-    database: oracle
-    generate-ddl: false
-    hibernate.ddl-auto: update
-    open-in-view: false
-    show-sql: true
-
-    properties:
-      hibernate:
-        dialect : org.hibernate.dialect.Oracle10gDialect
-
-    database-platform : org.hibernate.dialect.Oracle10gDialect
-
-upload:
-  image:
-    location: ./media

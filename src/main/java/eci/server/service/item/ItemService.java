@@ -33,7 +33,7 @@ public class ItemService {
                         memberRepository
                 )
         );
-        uploadImages(item.getImages(), req.getImages());
+        uploadImages(item.getThumbnail(), req.getImages());
         return new ItemCreateResponse(item.getId());
     }
 

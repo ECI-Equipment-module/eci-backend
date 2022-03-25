@@ -23,35 +23,53 @@ public class Item extends EntityDate {
     private Long id;
 
     @Column(nullable = false)
-    private String title;
+    private String name;
 
     @Column(nullable = false)
-    @Lob
-    private String content;
+    private String type;
 
     @Column(nullable = false)
-    private Long price;
+    private Integer itemNumber;
+    //save 할 시에 type + id 값으로 지정
+
+    @Column(nullable = false)
+    private Long width;
+
+    @Column(nullable = false)
+    private Long height;
+
+    @Column(nullable = false)
+    private Long weight;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id", nullable = false)
+    @JoinColumn(
+            name = "member_id",
+            nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    private Member member; // 1
+    private Member member;
 
-    @OneToMany(mappedBy = "item", cascade = CascadeType.PERSIST, orphanRemoval = true)
-    private List<Image> images; // 3
+    @OneToMany(
+            mappedBy = "item",
+            cascade = CascadeType.PERSIST,
+            orphanRemoval = true
+    )
+    private List<Image> thumbnail;
 
-    public Item(String title, String content, Long price, Member member, List<Image> images) {
-        this.title = title;
-        this.content = content;
-        this.price = price;
+    public Item(String name, String type, Integer itemNumber, Long width, Long height, Long weight, Member member, List<Image> thumbnail) {
+        this.name = name;
+        this.type = type;
+        this.itemNumber = itemNumber;
+        this.width = width;
+        this.height = height;
         this.member = member;
-        this.images = new ArrayList<>();
-        addImages(images); // 4
+        this.weight = weight;
+        this.thumbnail = new ArrayList<>();
+        addImages(thumbnail);
     }
 
-    private void addImages(List<Image> added) { // 5
+    private void addImages(List<Image> added) {
         added.stream().forEach(i -> {
-            images.add(i);
+            thumbnail.add(i);
             i.initItem(this);
         });
     }
