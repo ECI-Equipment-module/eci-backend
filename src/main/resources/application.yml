@@ -3,7 +3,7 @@ server:
 
 spring:
   profiles:
-    active:
+    active: prod
     include: secret
 
   datasource:

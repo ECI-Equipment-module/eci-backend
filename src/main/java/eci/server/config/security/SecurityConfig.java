@@ -44,19 +44,18 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET, "**").permitAll()
                 .antMatchers(HttpMethod.GET, "/test").permitAll()
                 .antMatchers(HttpMethod.DELETE, "/members/{id}/**").access("@memberGuard.check(#id)")
-                .antMatchers(HttpMethod.POST, "/items").authenticated()
-                //게시글 생성은 인증된 사용자만 가능
-                .antMatchers(HttpMethod.DELETE, "/items/{id}").authenticated()
-                //게시글 생성은 인증된 사용자만 가능
                 .antMatchers(HttpMethod.GET, "/image/**").permitAll()
+                .antMatchers(HttpMethod.POST, "/items").authenticated()
+                .antMatchers(HttpMethod.PUT, "/items/{id}").authenticated()
+                .antMatchers(HttpMethod.PUT, "/items/{id}").access("@itemGuard.check(#id)")
+                .antMatchers(HttpMethod.DELETE, "/items/{id}").access("@itemGuard.check(#id)")
                 .anyRequest().hasAnyRole("ADMIN")
                 .and()
+                .exceptionHandling().authenticationEntryPoint(new CustomAuthenticationEntryPoint())
+                .and()//인증되지 않은 사용자의 접근이 거부
                 .exceptionHandling().accessDeniedHandler(new CustomAccessDeniedHandler())
-                .and()
-                .exceptionHandling().authenticationEntryPoint(new CustomAuthenticationEntryPoint())
-                .and()
-                .exceptionHandling().authenticationEntryPoint(new CustomAuthenticationEntryPoint())
-                .and()
+                .and()//인증된 사용자가 권한 부족 등의 사유로 인해 접근이 거부
+
                 .addFilterBefore(new JwtAuthenticationFilter(tokenService, userDetailsService), UsernamePasswordAuthenticationFilter.class);
     }
 

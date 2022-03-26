@@ -20,7 +20,11 @@ public class ItemGuard {
     private final ItemRepository ItemRepository;
 
     public boolean check(Long id) {
+        System.out.println("itemguarddddddddddddddddddd");
+        System.out.println(authHelper.isAuthenticated());
+
         return authHelper.isAuthenticated() && hasAuthority(id);
+
     }
 
     private boolean hasAuthority(Long id) {
@@ -30,6 +34,7 @@ public class ItemGuard {
     }
 
     private boolean isResourceOwner(Long id) {
+        System.out.println("isresouuuuuuuuuurceeeeeeeeowner");
         Item Item = ItemRepository.findById(id).orElseThrow(
                 () -> { throw new AccessDeniedException(""); }
         );
@@ -37,14 +42,11 @@ public class ItemGuard {
         Long memberId = authHelper.extractMemberId();
         //요청자의 아이디 확인
 
-        System.out.println("itemguarddddddddddddddddddd");
-        System.out.println(Item);
-        System.out.println(memberId);
-
         return Item.getMember().getId().equals(memberId);
     }
 
     private boolean hasAdminRole() {
+        System.out.println("lassssssssadminrole");
         return authHelper.extractMemberRoles().contains(RoleType.ROLE_ADMIN);
     }
 }

@@ -12,8 +12,8 @@ import static eci.server.factory.item.ItemCreateRequestFactory.*;
 import static java.util.stream.Collectors.toSet;
 import static org.assertj.core.api.Assertions.assertThat;
 
-
-class ItemCreateRequestValidationTest {
+//테스트 클래스 찾을 수 없다고 뜨면 public 붙여주기
+public class ItemCreateRequestValidationTest {
     Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
 
     @Test

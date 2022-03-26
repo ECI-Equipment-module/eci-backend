@@ -30,7 +30,7 @@ public class AuthHelper {
         /**
          * 요청자 ID 추출
          */
-
+//
 //        System.out.println("AuthHelper");
 //        System.out.println(getAuthentication().getPrincipal());
 //        System.out.println(getAuthentication().getPrincipal().getClass().getName());

@@ -2,8 +2,11 @@ package eci.server.controller.item;
 
 import eci.server.aop.AssignMemberId;
 import eci.server.dto.item.ItemCreateRequest;
+import eci.server.dto.item.ItemUpdateRequest;
 import eci.server.dto.response.Response;
+import eci.server.exception.member.auth.AccessExpiredException;
 import eci.server.service.item.ItemService;
+import eci.server.service.sign.TokenService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
@@ -17,8 +20,8 @@ import javax.validation.Valid;
 @RequiredArgsConstructor
 @Slf4j
 public class ItemController {
-    private final ItemService ItemService;
-    private final Logger logger = LoggerFactory.getLogger(ItemController.class);
+
+    private final ItemService itemService;
 
     /**
      * 아이템 생성
@@ -33,8 +36,10 @@ public class ItemController {
                     //Content-Type = multipart/form-data
                     ItemCreateRequest req
     ) {
+
+
         return Response.success(
-                ItemService.create(req));
+                itemService.create(req));
     }
 
 
@@ -45,10 +50,12 @@ public class ItemController {
      */
     @GetMapping("/items/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public Response read(@PathVariable Long id) {
+    public Response read(
+            @PathVariable Long id) {
+
 
         return Response.success(
-                ItemService.read(id)
+                itemService.read(id)
         );
     }
 
@@ -59,9 +66,20 @@ public class ItemController {
      */
     @DeleteMapping("/items/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public Response delete(@PathVariable Long id) {
-        ItemService.delete(id);
+    public Response delete(
+            @PathVariable Long id) {
+
+        itemService.delete(id);
         return Response.success();
+    }
+
+    @PutMapping("/items/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public Response update(
+            @PathVariable Long id,
+            @Valid @ModelAttribute ItemUpdateRequest req) {
+
+        return Response.success(itemService.update(id, req));
     }
 
 }

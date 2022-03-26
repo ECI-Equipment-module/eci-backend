@@ -1,9 +1,7 @@
 package eci.server.service.item;
 
 
-import eci.server.dto.item.ItemCreateRequest;
-import eci.server.dto.item.ItemCreateResponse;
-import eci.server.dto.item.ItemDto;
+import eci.server.dto.item.*;
 import eci.server.entity.item.Image;
 import eci.server.entity.item.Item;
 import eci.server.exception.item.ItemNotFoundException;
@@ -82,7 +80,21 @@ public class ItemService {
         itemRepository.delete(item);
     }
 
+
     private void deleteImages(List<Image> images) {
         images.stream().forEach(i -> fileService.delete(i.getUniqueName()));
     }
+
+    @Transactional
+    public ItemUpdateResponse update(Long id, ItemUpdateRequest req) {
+        System.out.println("itemsercccccccviceeeeeeeeeeeeeeeeeeeeeeeee");
+        Item item = itemRepository.findById(id).orElseThrow(ItemNotFoundException::new);
+        System.out.println(item.getId());
+        Item.ImageUpdatedResult result = item.update(req);
+        uploadImages(result.getAddedImages(), result.getAddedImageFiles());
+        deleteImages(result.getDeletedImages());
+        return new ItemUpdateResponse(id);
+    }
+
+
 }

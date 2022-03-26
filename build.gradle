@@ -2,6 +2,7 @@ plugins {
 	id 'org.springframework.boot' version '2.6.4'
 	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
 	id 'java'
+	id "com.ewerk.gradle.plugins.querydsl" version "1.0.10" //
 }
 
 group = 'eci'
@@ -25,6 +26,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'io.jsonwebtoken:jjwt:0.9.1' //JWT
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	implementation 'com.querydsl:querydsl-jpa'//
 
 	compileOnly 'org.projectlombok:lombok'
 
@@ -39,15 +41,48 @@ dependencies {
 	testImplementation 'org.mockito:mockito-core:3.11.2'
 	testImplementation 'org.mockito:mockito-junit-jupiter:3.11.2'
 	testImplementation 'org.springframework.security:spring-security-test'
+//	testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
 
-	testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
+//	testImplementation ('org.junit.vintage:junit-vintage-engine'){
+//
+//	}
+	testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.5.1")
+	testRuntimeOnly("org.junit.platform:junit-platform-engine:1.5.1")
+	testRuntimeOnly("org.junit.platform:junit-platform-commons:1.5.1")
 
-	testImplementation ('org.junit.vintage:junit-vintage-engine'){
+	testImplementation("org.junit.jupiter:junit-jupiter-api:5.5.1") {
 		exclude group : 'org.hamcrest',
 				module: 'hamcrest-core'
+		exclude module:'junit-platform-commons'
 	}
+
+
 }
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+//test {
+//	useJUnitPlatform()
+//}
+
+def querydslDir = "$buildDir/generated/querydsl" // (3)
+
+
+querydsl { // (4)
+	jpa = true
+	querydslSourcesDir = querydslDir
+}
+
+sourceSets { // (5)
+	main.java.srcDir querydslDir
+}
+
+configurations { // (6)
+	querydsl.extendsFrom compileClasspath
+}
+
+compileQuerydsl { // (7)
+	options.annotationProcessorPath = configurations.querydsl
 }

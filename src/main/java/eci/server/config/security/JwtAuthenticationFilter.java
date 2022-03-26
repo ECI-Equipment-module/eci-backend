@@ -1,5 +1,6 @@
 package eci.server.config.security;
 
+import eci.server.config.guard.AuthHelper;
 import eci.server.exception.member.auth.AccessExpiredException;
 import eci.server.service.sign.TokenService;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +31,6 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
 
     private final TokenService tokenService;
     private final CustomUserDetailsService userDetailsService;
-    public static boolean accessTF;
 
     private final Logger logger = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
     @Override
@@ -38,10 +38,10 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
 
         String token = extractToken(request);
         if(validateToken(token)) {
-
             // SecurityContext에 Authentication 객체 저장
             setAuthentication(token);
         }
+
         chain.doFilter(request, response);
     }
 
