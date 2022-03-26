@@ -20,6 +20,7 @@ import java.util.List;
 import static eci.server.factory.item.ItemCreateRequestFactory.createItemCreateRequestWithImages;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -68,5 +69,17 @@ class ItemControllerTest {
 
         ItemCreateRequest capturedRequest = ItemCreateRequestArgumentCaptor.getValue();
         assertThat(capturedRequest.getThumbnail().size()).isEqualTo(2);
+    }
+
+    @Test
+    void readTest() throws Exception {
+        // given
+        Long id = 1L;
+
+        // when, then
+        mockMvc.perform(
+                        get("/items/{id}", id))
+                .andExpect(status().isOk());
+        verify(ItemService).read(id);
     }
 }

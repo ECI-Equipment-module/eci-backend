@@ -27,17 +27,13 @@ public class LocalFileService implements FileService {
 
 
 
-
     /**
      * 파일 업로드 디렉토리 생성
      */
     @PostConstruct
     void postConstruct() {
-        String targetDir = Path.of(
-                location,
-                LocalDateTime.now().format(DateTimeFormatter.ISO_DATE)
-        ).toString();
-        File dir = new File(targetDir);
+
+        File dir = new File(location);
         if (!dir.exists()) {
             dir.mkdir();
         }
@@ -50,12 +46,8 @@ public class LocalFileService implements FileService {
      */
     @Override
     public void upload(MultipartFile file, String filename) {
-        String targetDir = Path.of(
-                location,
-                LocalDateTime.now().format(DateTimeFormatter.ISO_DATE)
-        ).toString();
         try {
-            file.transferTo(new File(targetDir+ " : " + filename));
+            file.transferTo(new File(location + filename));
         } catch(IOException e) {
             throw new FileUploadFailureException(e);
         }
@@ -63,6 +55,6 @@ public class LocalFileService implements FileService {
 
     @Override
     public void delete(String filename) {
-
+        new File(location+ filename).delete();
     }
 }

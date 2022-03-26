@@ -3,8 +3,10 @@ package eci.server.service.item;
 
 import eci.server.dto.item.ItemCreateRequest;
 import eci.server.dto.item.ItemCreateResponse;
+import eci.server.dto.item.ItemDto;
 import eci.server.entity.item.Image;
 import eci.server.entity.item.Item;
+import eci.server.exception.item.ItemNotFoundException;
 import eci.server.repository.item.ItemRepository;
 import eci.server.repository.member.MemberRepository;
 import eci.server.service.file.FileService;
@@ -65,5 +67,22 @@ public class ItemService {
                                 images.get(i).getUniqueName()
                         )
                 );
+    }
+
+    public ItemDto read(Long id) {
+        return ItemDto.toDto(itemRepository.findById(id).orElseThrow(ItemNotFoundException::new));
+    }
+
+    @Transactional
+    public void delete(Long id) {
+
+        Item item = itemRepository.findById(id).orElseThrow(ItemNotFoundException::new);
+        deleteImages(item.getThumbnail());
+
+        itemRepository.delete(item);
+    }
+
+    private void deleteImages(List<Image> images) {
+        images.stream().forEach(i -> fileService.delete(i.getUniqueName()));
     }
 }

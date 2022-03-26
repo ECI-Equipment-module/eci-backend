@@ -2,7 +2,10 @@ package eci.server.service.item;
 
 
 import eci.server.dto.item.ItemCreateRequest;
+import eci.server.dto.item.ItemDto;
+import eci.server.entity.item.Item;
 import eci.server.exception.image.UnsupportedImageFormatException;
+import eci.server.exception.item.ItemNotFoundException;
 import eci.server.exception.member.sign.MemberNotFoundException;
 import eci.server.repository.item.ItemRepository;
 import eci.server.repository.member.MemberRepository;
@@ -26,6 +29,7 @@ import static eci.server.factory.item.ItemFactory.createItemWithImages;
 import static eci.server.factory.member.MemberFactory.createMember;
 import static java.util.stream.Collectors.toList;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
@@ -80,5 +84,28 @@ class ItemServiceTest {
 
         // when, then
         assertThatThrownBy(() -> ItemService.create(req)).isInstanceOf(UnsupportedImageFormatException.class);
+    }
+
+    @Test
+    void readTest() {
+        // given
+        Item item = createItemWithImages(List.of(createImage(), createImage()));
+        given(ItemRepository.findById(anyLong())).willReturn(Optional.of(item));
+
+        // when
+        ItemDto itemDto = ItemService.read(1L);
+
+        // then
+        assertThat(itemDto.getName()).isEqualTo(item.getName());
+        assertThat(item.getThumbnail().size()).isEqualTo(item.getThumbnail().size());
+    }
+
+    @Test
+    void readExceptionByPostNotFoundTest() {
+        // given
+        given(ItemRepository.findById(anyLong())).willReturn(Optional.ofNullable(null));
+
+        // when, then
+        assertThatThrownBy(() -> ItemService.read(1L)).isInstanceOf(ItemNotFoundException.class);
     }
 }

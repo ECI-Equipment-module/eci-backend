@@ -135,4 +135,17 @@ public class ItemRepositoryTest {
         em.flush();
         em.clear();
     }
+
+    @Test
+    void findByIdWithMemberTest() {
+        // given
+        Item Item = ItemRepository.save(createItem(member));
+
+        // when
+        Item foundItem = ItemRepository.findByIdWithMember(Item.getId()).orElseThrow(ItemNotFoundException::new);
+
+        // then
+        Member foundMember = foundItem.getMember();
+        assertThat(foundMember.getEmail()).isEqualTo(member.getEmail());
+    }
 }

@@ -35,9 +35,10 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
     private final Logger logger = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-        accessTF = false;
+
         String token = extractToken(request);
         if(validateToken(token)) {
+
             // SecurityContext에 Authentication 객체 저장
             setAuthentication(token);
         }

@@ -46,6 +46,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.DELETE, "/members/{id}/**").access("@memberGuard.check(#id)")
                 .antMatchers(HttpMethod.POST, "/items").authenticated()
                 //게시글 생성은 인증된 사용자만 가능
+                .antMatchers(HttpMethod.DELETE, "/items/{id}").authenticated()
+                //게시글 생성은 인증된 사용자만 가능
                 .antMatchers(HttpMethod.GET, "/image/**").permitAll()
                 .anyRequest().hasAnyRole("ADMIN")
                 .and()

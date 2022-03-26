@@ -3,7 +3,7 @@ server:
 
 spring:
   profiles:
-#    active: prod
+    active:
     include: secret
 
   datasource:
@@ -17,7 +17,7 @@ spring:
     generate-ddl: false
     hibernate.ddl-auto: update
     open-in-view: false
-    show-sql: true
+    show-sql: false
     database-platform: org.hibernate.dialect.Oracle10gDialect
 
 
@@ -39,4 +39,6 @@ upload:
      location: C:/Users/DONGYUN/Desktop/spring/server3/prodmedia/image/
 #  upload:
 #    image:
-#      location: local-location
+#      location: prod-location
+      # test : local-location
+      # prod : prod-location
