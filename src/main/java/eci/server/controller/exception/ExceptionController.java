@@ -37,6 +37,7 @@ public class ExceptionController {
 
     @GetMapping("/exception/access-denied")
     public void accessDenied() {
+
         throw new AccessDeniedException();
     }
 }

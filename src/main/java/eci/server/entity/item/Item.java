@@ -84,7 +84,8 @@ public class Item extends EntityDate {
         this.width = req.getWidth();
         this.height = req.getHeight();
         this.weight = req.getWeight();
-        ImageUpdatedResult result = findImageUpdatedResult(req.getAddedImages(), req.getDeletedImages());
+        ImageUpdatedResult result =
+                findImageUpdatedResult(req.getAddedImages(), req.getDeletedImages());
         addImages(result.getAddedImages());
         deleteImages(result.getDeletedImages());
         return result;

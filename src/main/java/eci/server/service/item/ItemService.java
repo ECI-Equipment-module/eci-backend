@@ -87,7 +87,7 @@ public class ItemService {
 
     @Transactional
     public ItemUpdateResponse update(Long id, ItemUpdateRequest req) {
-        System.out.println("itemsercccccccviceeeeeeeeeeeeeeeeeeeeeeeee");
+
         Item item = itemRepository.findById(id).orElseThrow(ItemNotFoundException::new);
         System.out.println(item.getId());
         Item.ImageUpdatedResult result = item.update(req);
@@ -96,5 +96,10 @@ public class ItemService {
         return new ItemUpdateResponse(id);
     }
 
+    public ItemListDto readAll(ItemReadCondition cond) {
+        return ItemListDto.toDto(
+                itemRepository.findAllByCondition(cond)
+        );
+    }
 
 }

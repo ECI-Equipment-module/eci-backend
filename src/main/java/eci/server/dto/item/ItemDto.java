@@ -34,4 +34,7 @@ public class ItemDto {
                 Item.getThumbnail().stream().map(i -> ImageDto.toDto(i)).collect(toList())
         );
     }
+
+
+
 }

@@ -2,6 +2,7 @@ package eci.server.advice;
 
 import eci.server.dto.response.Response;
 import eci.server.exception.file.FileUploadFailureException;
+import eci.server.exception.item.ItemNotFoundException;
 import eci.server.exception.member.auth.AccessDeniedException;
 import eci.server.exception.member.auth.AccessExpiredException;
 import eci.server.exception.member.auth.AuthenticationEntryPointException;
@@ -101,11 +102,11 @@ public class ExceptionAdvice {
      * 접근 권한 없음
      * @return 403
      */
-    @ExceptionHandler(AccessDeniedException.class)
-    @ResponseStatus(HttpStatus.FORBIDDEN)
-    public Response accessDeniedException() {
-        return Response.failure(403, "접근이 거부되었습니다.");
-    }
+//    @ExceptionHandler(AccessDeniedException.class)
+//    @ResponseStatus(HttpStatus.FORBIDDEN)
+//    public Response accessDeniedException() {
+//        return Response.failure(403, "접근이 거부되었습니다.");
+//    }
 
     /**
      * 헤더 누락 시 에러
@@ -130,6 +131,11 @@ public class ExceptionAdvice {
         log.info("e = {}", e.getMessage());
         return Response.failure(404, "파일 업로드에 실패하였습니다.");
     }
-
+    @ExceptionHandler(ItemNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Response itemNotFoundException(ItemNotFoundException e) {
+        log.info("e = {}", e.getMessage());
+        return Response.failure(404, "존재하지 않는 아이템입니다.");
+    }
 
 }

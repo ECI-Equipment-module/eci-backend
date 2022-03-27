@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Data
-@Getter
 @NoArgsConstructor
 @AllArgsConstructor
 public class ItemUpdateRequest {
@@ -36,8 +35,15 @@ public class ItemUpdateRequest {
     @PositiveOrZero(message = "0 이상을 입력해주세요")
     private Long weight;
 
+    /**
+     * 추가된 이미지를 첨부
+     */
     private List<MultipartFile> addedImages = new ArrayList<>();
 
+
+    /**
+     * 제거된 이미지 아이디 입력
+     */
     private List<Long> deletedImages = new ArrayList<>();
 }
 

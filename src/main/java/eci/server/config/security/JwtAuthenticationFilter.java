@@ -1,6 +1,5 @@
 package eci.server.config.security;
 
-import eci.server.config.guard.AuthHelper;
 import eci.server.exception.member.auth.AccessExpiredException;
 import eci.server.service.sign.TokenService;
 import lombok.RequiredArgsConstructor;

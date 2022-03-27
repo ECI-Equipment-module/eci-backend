@@ -20,8 +20,6 @@ public class ItemGuard {
     private final ItemRepository ItemRepository;
 
     public boolean check(Long id) {
-        System.out.println("itemguarddddddddddddddddddd");
-        System.out.println(authHelper.isAuthenticated());
 
         return authHelper.isAuthenticated() && hasAuthority(id);
 
@@ -34,7 +32,7 @@ public class ItemGuard {
     }
 
     private boolean isResourceOwner(Long id) {
-        System.out.println("isresouuuuuuuuuurceeeeeeeeowner");
+
         Item Item = ItemRepository.findById(id).orElseThrow(
                 () -> { throw new AccessDeniedException(""); }
         );

@@ -3,8 +3,10 @@ server:
 
 spring:
   profiles:
-    active: prod
+    active:
     include: secret
+
+  security.headers.frame: false
 
   datasource:
     url: jdbc:oracle:thin:@localhost:1521:xe
@@ -42,3 +44,4 @@ upload:
 #      location: prod-location
       # test : local-location
       # prod : prod-location
+

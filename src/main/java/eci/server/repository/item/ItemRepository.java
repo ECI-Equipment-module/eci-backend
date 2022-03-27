@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.util.Optional;
 
-public interface ItemRepository extends JpaRepository<Item, Long> {
+public interface ItemRepository extends JpaRepository<Item, Long>,  CustomItemRepository {
     @Query("select p from Item p join fetch p.member where p.id = :id")
     Optional<Item> findByIdWithMember(Long id);
 }
