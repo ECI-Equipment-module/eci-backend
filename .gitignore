@@ -43,5 +43,7 @@ application-secret.yml
 /src/test/resources/static/*
 
 ## qclass
+build/generated
 
-generated
+### my ignore ###
+src/main/resources/application.yml
