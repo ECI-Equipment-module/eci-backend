@@ -47,3 +47,4 @@ build/generated
 
 ### my ignore ###
 src/main/resources/application.yml
+src/test
