@@ -13,6 +13,10 @@ import javax.persistence.EntityManager;
 public class QuerydslConfig {
     private final EntityManager entityManager;
 
+    /**
+     * 쿼리를 등록해줄 수 있게 하는 메소드
+     * @return
+     */
     @Bean
     public JPAQueryFactory jpaQueryFactory() {
         return new JPAQueryFactory(entityManager);

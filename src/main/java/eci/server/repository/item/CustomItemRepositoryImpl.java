@@ -20,6 +20,9 @@ import java.util.function.Function;
 import static com.querydsl.core.types.Projections.constructor;
 import static eci.server.entity.item.QItem.item;
 
+/**
+ * CustomItemRepository의 구현체
+ */
 @Transactional(readOnly = true) // 1
 public class CustomItemRepositoryImpl extends QuerydslRepositorySupport implements CustomItemRepository { // 2
 
@@ -30,23 +33,52 @@ public class CustomItemRepositoryImpl extends QuerydslRepositorySupport implemen
         this.jpaQueryFactory = jpaQueryFactory;
     }
 
+    /**
+     *  전달받은 ItemReadCondition(검색)으로
+     *  Predicate와 PageRequest를 생성 &
+     *  조회 쿼리와 카운트 쿼리를 수행한 결과를 Page의 구현체로 반환
+     * @param cond
+     * @return Page
+     */
     @Override
     public Page<ItemSimpleDto> findAllByCondition(ItemReadCondition cond) { // 5
         Pageable pageable = PageRequest.of(cond.getPage(), cond.getSize());
         Predicate predicate = createPredicate(cond);
+        System.out.println("customitemrepository impleeeeeeeeeeeeeeeeeeeeee");
+        System.out.println(fetchAll(predicate, pageable).toString());
         return new PageImpl<>(fetchAll(predicate, pageable), pageable, fetchCount(predicate));
     }
 
+    /**
+     * 아이템 목록을 ItemSimpleDto로 조회한 결과 반환환
+     * @param predicate
+     * @param pageable
+     * @return getQuerydsl().applyPagination (페이징 적용 쿼리)
+     */
     private List<ItemSimpleDto> fetchAll(Predicate predicate, Pageable pageable) { // 6
-        return getQuerydsl().applyPagination(
+        List<ItemSimpleDto> itemSimpleDtos = getQuerydsl().applyPagination(
                 pageable,
                 jpaQueryFactory
-                        .select(constructor(ItemSimpleDto.class,item.id, item.name, item.type, item.width, item.height, item.weight, item.member.username,item.thumbnail, item.createdAt))
+                        .select(constructor
+                                (ItemSimpleDto.class,
+                                        item.id,
+                                        item.name,
+                                        item.type,
+                                        item.width,
+                                        item.height,
+                                        item.weight,
+                                        item.member.username,
+                                        item.createdAt
+//                                        item.thumbnail
+                                        )
+                        )
                         .from(item)
                         .join(item.member)
                         .where(predicate)
                         .orderBy(item.id.desc())
         ).fetch();
+
+        return itemSimpleDtos;
     }
 
     private Long fetchCount(Predicate predicate) { // 7
