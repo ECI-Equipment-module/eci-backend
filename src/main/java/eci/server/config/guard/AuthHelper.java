@@ -2,6 +2,7 @@ package eci.server.config.guard;
 
 import eci.server.config.security.CustomAuthenticationToken;
 import eci.server.config.security.CustomUserDetails;
+import eci.server.entity.member.Member;
 import eci.server.entity.member.RoleType;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -29,6 +30,13 @@ public class AuthHelper {
         /**
          * 요청자 ID 추출
          */
+//
+//        System.out.println("AuthHelper");
+//        System.out.println(getAuthentication().getPrincipal());
+//        System.out.println(getAuthentication().getPrincipal().getClass().getName());
+//        System.out.println(getUserDetails().getAuthorities());
+//        System.out.println(getUserDetails().getUsername());
+//        System.out.println("AuthHelper end");
         return Long.valueOf(getUserDetails().getUserId());
     }
 

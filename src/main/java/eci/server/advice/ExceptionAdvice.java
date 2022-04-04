@@ -1,6 +1,8 @@
 package eci.server.advice;
 
 import eci.server.dto.response.Response;
+import eci.server.exception.file.FileUploadFailureException;
+import eci.server.exception.item.ItemNotFoundException;
 import eci.server.exception.member.auth.AccessDeniedException;
 import eci.server.exception.member.auth.AccessExpiredException;
 import eci.server.exception.member.auth.AuthenticationEntryPointException;
@@ -13,6 +15,8 @@ import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import java.net.BindException;
 
 @RestControllerAdvice
 @Slf4j
@@ -67,12 +71,12 @@ public class ExceptionAdvice {
      * @param e
      * @return 500
      */
-    @ExceptionHandler(Exception.class)
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public Response exception(Exception e) {
-        log.info("e = {}", e.getMessage());
-        return Response.failure(500, "오류가 발생하였습니다.");
-    }
+//    @ExceptionHandler(Exception.class)
+//    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+//    public Response exception(Exception e) {
+//        log.info("e = {}", e.getMessage());
+//        return Response.failure(500, "오류가 발생하였습니다.");
+//    }
 
     /**
      * 액세스 유효하지 않을 때 에러
@@ -98,11 +102,11 @@ public class ExceptionAdvice {
      * 접근 권한 없음
      * @return 403
      */
-    @ExceptionHandler(AccessDeniedException.class)
-    @ResponseStatus(HttpStatus.FORBIDDEN)
-    public Response accessDeniedException() {
-        return Response.failure(403, "접근이 거부되었습니다.");
-    }
+//    @ExceptionHandler(AccessDeniedException.class)
+//    @ResponseStatus(HttpStatus.FORBIDDEN)
+//    public Response accessDeniedException() {
+//        return Response.failure(403, "접근이 거부되었습니다.");
+//    }
 
     /**
      * 헤더 누락 시 에러
@@ -115,5 +119,23 @@ public class ExceptionAdvice {
         return Response.failure(400, e.getHeaderName() + " 요청 헤더가 누락되었습니다.");
     }
 
+    @ExceptionHandler(BindException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Response bindException(BindException e) {
+        return Response.failure(400, e.getMessage());//.getFieldError().getDefaultMessage());
+    }
+
+    @ExceptionHandler(FileUploadFailureException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Response fileUploadFailureException(FileUploadFailureException e) {
+        log.info("e = {}", e.getMessage());
+        return Response.failure(404, "파일 업로드에 실패하였습니다.");
+    }
+    @ExceptionHandler(ItemNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Response itemNotFoundException(ItemNotFoundException e) {
+        log.info("e = {}", e.getMessage());
+        return Response.failure(404, "존재하지 않는 아이템입니다.");
+    }
 
 }

@@ -15,22 +15,26 @@ public class Response {
      * 일관화된 응답 방식을 위한 클래스
      * 성공여부 - 반환코드 - 결과메시지
      */
+<<<<<<< HEAD
 
 =======
 >>>>>>> e143a8c189dadeaf9a9cad53c67ea454e93f5b71
+=======
+>>>>>>> 4fa2ae301e286bfda138ea9ca90e3153f31bbe32
     private boolean success;
     private int code;
     private Result result;
 
-    public static Response success() { // 4
+    public static Response success() {
         return new Response(true, 0, null);
     }
 
-    public static <T> Response success(T data) { // 5
+    public static <T> Response success(T data) {
         return new Response(true, 0, new Success<>(data));
     }
 
-    public static Response failure(int code, String msg) { // 6
+    public static Response failure(int code, String msg) {
         return new Response(false, code, new Failure(msg));
     }
+
 }

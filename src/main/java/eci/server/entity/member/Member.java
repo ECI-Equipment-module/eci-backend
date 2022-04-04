@@ -24,6 +24,7 @@ public class Member extends EntityDate { // 5
     private Long id;
 
 <<<<<<< HEAD
+<<<<<<< HEAD
     @Column(nullable = false, length = 30, unique = true)
     private String email;
 
@@ -34,10 +35,17 @@ public class Member extends EntityDate { // 5
 
     private String password; // 2
 >>>>>>> e143a8c189dadeaf9a9cad53c67ea454e93f5b71
+=======
+    @Column(nullable = false, length = 30, unique = true)
+    private String email;
+
+    private String password;
+>>>>>>> 4fa2ae301e286bfda138ea9ca90e3153f31bbe32
 
     @Column(nullable = false, length = 20)
     private String username;
 
+<<<<<<< HEAD
 <<<<<<< HEAD
     @Column(nullable = false, unique = true, length = 20)
     private String department;
@@ -51,13 +59,23 @@ public class Member extends EntityDate { // 5
             orphanRemoval = true)
 =======
     @Column(nullable = false, unique = true, length = 20) // 1
+=======
+    @Column(nullable = false, unique = true, length = 20)
+>>>>>>> 4fa2ae301e286bfda138ea9ca90e3153f31bbe32
     private String department;
 
-    @Column(nullable = false, unique = true, length = 20) // 1
+    @Column(nullable = false, unique = true, length = 20)
     private String contact;
 
+<<<<<<< HEAD
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true) // 4
 >>>>>>> e143a8c189dadeaf9a9cad53c67ea454e93f5b71
+=======
+    @OneToMany(
+            mappedBy = "member",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true)
+>>>>>>> 4fa2ae301e286bfda138ea9ca90e3153f31bbe32
     private Set<MemberRole> roles;
 
     public Member(String email, String password, String username, String department, String contact, List<Role> roles) {
@@ -70,6 +88,9 @@ public class Member extends EntityDate { // 5
     }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 4fa2ae301e286bfda138ea9ca90e3153f31bbe32
     public void updateDepartment(String department) {
         this.department = department;
     }

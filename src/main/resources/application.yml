@@ -1,19 +1,16 @@
 server:
   port: 8181
-
 spring:
   profiles:
-<<<<<<< HEAD
-    active: test
+    active:
     include: secret
-=======
-    active: prod
-    include: secret
+
+  security.headers.frame: false
 
   datasource:
     url: jdbc:oracle:thin:@localhost:1521:xe
     driverClassName: oracle.jdbc.driver.OracleDriver
-    username: eci2
+    username: eci3
     password: Ecieci0321
 
   jpa:
@@ -22,15 +19,30 @@ spring:
     hibernate.ddl-auto: update
     open-in-view: false
     show-sql: true
+    database-platform: org.hibernate.dialect.Oracle10gDialect
+
 
     properties:
       hibernate:
         dialect : org.hibernate.dialect.Oracle10gDialect
 
-    database-platform : org.hibernate.dialect.Oracle10gDialect
+    # prod : postman
+    # local : test
 
-#  spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.Oracle10gDialect
-#  spring.jpa.database-platform=org.hibernate.dialect.Oracle10gDialect
+  # 파일 업로드 크기 설정
+
+  servlet.multipart.max-file-size: 5MB
+  servlet.multipart.max-request-size: 5MB
 
 
->>>>>>> e143a8c189dadeaf9a9cad53c67ea454e93f5b71
+
+upload:
+   image:
+     location: C:/Users/DONGYUN/Desktop/spring/server3/prodmedia/image/
+#  upload:
+#    image:
+#      location: prod-location
+      # test : local-location
+      # prod : prod-location
+
+
