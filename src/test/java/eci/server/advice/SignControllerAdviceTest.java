@@ -1,6 +1,7 @@
 package eci.server.advice;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+<<<<<<< HEAD
 import eci.server.controller.sign.SignController;
 import eci.server.dto.sign.SignInRequest;
 import eci.server.dto.sign.SignUpRequest;
@@ -8,6 +9,15 @@ import eci.server.exception.member.auth.AuthenticationEntryPointException;
 import eci.server.exception.member.sign.MemberEmailAlreadyExistsException;
 import eci.server.exception.member.sign.MemberNotFoundException;
 import eci.server.exception.member.sign.RoleNotFoundException;
+=======
+import eci.server.controller.sign.ExceptionAdvice;
+import eci.server.controller.sign.SignController;
+import eci.server.dto.sign.SignInRequest;
+import eci.server.dto.sign.SignUpRequest;
+import eci.server.exception.member.MemberEmailAlreadyExistsException;
+import eci.server.exception.member.MemberNotFoundException;
+import eci.server.exception.member.RoleNotFoundException;
+>>>>>>> e143a8c189dadeaf9a9cad53c67ea454e93f5b71
 import eci.server.service.sign.SignService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,11 +30,17 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import static org.mockito.ArgumentMatchers.any;
+<<<<<<< HEAD
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doThrow;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+=======
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doThrow;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+>>>>>>> e143a8c189dadeaf9a9cad53c67ea454e93f5b71
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(MockitoExtension.class)
@@ -108,6 +124,7 @@ class SignControllerAdviceTest {
                                 .content(objectMapper.writeValueAsString(req)))
                 .andExpect(status().isBadRequest());
     }
+<<<<<<< HEAD
 
     /**
      * 유효하지 않은 토큰 - AuthenticationEntryPointException 예외 발생
@@ -136,4 +153,6 @@ class SignControllerAdviceTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.code").value(-1009));
     }
+=======
+>>>>>>> e143a8c189dadeaf9a9cad53c67ea454e93f5b71
 }

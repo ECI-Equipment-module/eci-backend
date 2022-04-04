@@ -17,7 +17,10 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+<<<<<<< HEAD
 import static eci.server.dto.sign.RefreshTokenResponseFactory.createRefreshTokenResponse;
+=======
+>>>>>>> e143a8c189dadeaf9a9cad53c67ea454e93f5b71
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -84,6 +87,7 @@ class SignControllerTest {
                 .andExpect(jsonPath("$.result").doesNotExist());
 
     }
+<<<<<<< HEAD
 
 
     @Test
@@ -99,4 +103,6 @@ class SignControllerTest {
                 .andExpect(jsonPath("$.result.data.accessToken").value("accessToken"));
     }
 
+=======
+>>>>>>> e143a8c189dadeaf9a9cad53c67ea454e93f5b71
 }

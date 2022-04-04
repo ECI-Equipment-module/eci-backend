@@ -10,11 +10,14 @@ import lombok.Getter;
 @AllArgsConstructor(access = AccessLevel.PRIVATE) // 2
 @Getter // 3
 public class Response {
+<<<<<<< HEAD
     /**
      * 일관화된 응답 방식을 위한 클래스
      * 성공여부 - 반환코드 - 결과메시지
      */
 
+=======
+>>>>>>> e143a8c189dadeaf9a9cad53c67ea454e93f5b71
     private boolean success;
     private int code;
     private Result result;

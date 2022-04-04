@@ -7,11 +7,13 @@ import eci.server.dto.sign.SignUpRequest;
 import eci.server.entity.member.Member;
 import eci.server.entity.member.Role;
 import eci.server.entity.member.RoleType;
+
 import eci.server.exception.member.auth.AuthenticationEntryPointException;
 import eci.server.exception.member.sign.MemberEmailAlreadyExistsException;
 import eci.server.exception.member.sign.MemberNotFoundException;
 import eci.server.exception.member.sign.PasswordNotValidateException;
 import eci.server.exception.member.sign.RoleNotFoundException;
+
 import eci.server.repository.member.MemberRepository;
 import eci.server.repository.member.RoleRepository;
 import org.junit.jupiter.api.Test;
