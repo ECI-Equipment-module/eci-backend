@@ -2,9 +2,14 @@ package eci.server.repository.member;
 
 
 import eci.server.entity.member.Role;
+<<<<<<< HEAD
+import eci.server.entity.member.RoleType;
+import eci.server.exception.member.sign.RoleNotFoundException;
+=======
 import eci.server.repository.member.RoleRepository;
 import eci.server.entity.member.RoleType;
 import eci.server.exception.member.RoleNotFoundException;
+>>>>>>> e143a8c189dadeaf9a9cad53c67ea454e93f5b71
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;

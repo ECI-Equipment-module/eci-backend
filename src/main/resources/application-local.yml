@@ -1,11 +1,3 @@
-server:
-  port: 8181
-
-spring:
-  profiles:
-    active: prod
-    include: secret
-
   datasource:
     url: jdbc:oracle:thin:@localhost:1521:xe
     driverClassName: oracle.jdbc.driver.OracleDriver
@@ -18,7 +10,7 @@ spring:
     hibernate.ddl-auto: create
     open-in-view: false
     show-sql: true
-
-
-
+  upload:
+    image:
+      location: C:\Users\DONGYUN\Desktop\spring\server3\localmedia
 

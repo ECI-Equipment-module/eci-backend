@@ -1,12 +1,19 @@
 package eci.server.service.sign;
 
+import eci.server.dto.sign.RefreshTokenResponse;
 import eci.server.dto.sign.SignInRequest;
 import eci.server.dto.sign.SignInResponse;
 import eci.server.dto.sign.SignUpRequest;
 import eci.server.entity.member.Member;
 import eci.server.entity.member.Role;
 import eci.server.entity.member.RoleType;
-import eci.server.exception.member.*;
+
+import eci.server.exception.member.auth.AuthenticationEntryPointException;
+import eci.server.exception.member.sign.MemberEmailAlreadyExistsException;
+import eci.server.exception.member.sign.MemberNotFoundException;
+import eci.server.exception.member.sign.PasswordNotValidateException;
+import eci.server.exception.member.sign.RoleNotFoundException;
+
 import eci.server.repository.member.MemberRepository;
 import eci.server.repository.member.RoleRepository;
 import org.junit.jupiter.api.Test;
@@ -118,6 +125,40 @@ public class SignServiceTest {
 
     private Member createMember() {
         return new Member("email", "password", "username", "department","contact", emptyList());
+    }
+
+    /**
+     * 리프레쉬 토큰 정상적인 케이스
+     */
+    @Test
+    void refreshTokenTest() {
+        // given
+        String refreshToken = "refreshToken";
+        String subject = "subject";
+        String accessToken = "accessToken";
+        given(tokenService.validateRefreshToken(refreshToken)).willReturn(true);
+        given(tokenService.extractRefreshTokenSubject(refreshToken)).willReturn(subject);
+        given(tokenService.createAccessToken(subject)).willReturn(accessToken);
+
+        // when
+        RefreshTokenResponse res = signService.refreshToken(refreshToken);
+
+        // then
+        assertThat(res.getAccessToken()).isEqualTo(accessToken);
+    }
+
+    /**
+     * 유효하지 않은 토큰으로 인한 예외 케이스
+     */
+    @Test
+    void refreshTokenExceptionByInvalidTokenTest() {
+        // given
+        String refreshToken = "refreshToken";
+        given(tokenService.validateRefreshToken(refreshToken)).willReturn(false);
+
+        // when, then
+        assertThatThrownBy(() -> signService.refreshToken(refreshToken))
+                .isInstanceOf(AuthenticationEntryPointException.class);
     }
 
 }

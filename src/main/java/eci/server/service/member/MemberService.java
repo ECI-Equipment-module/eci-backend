@@ -1,7 +1,11 @@
 package eci.server.service.member;
 
 import eci.server.dto.member.MemberDto;
+<<<<<<< HEAD
+import eci.server.exception.member.sign.MemberNotFoundException;
+=======
 import eci.server.exception.member.MemberNotFoundException;
+>>>>>>> e143a8c189dadeaf9a9cad53c67ea454e93f5b71
 import eci.server.repository.member.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
