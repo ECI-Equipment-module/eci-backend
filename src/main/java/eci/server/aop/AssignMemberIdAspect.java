@@ -31,6 +31,10 @@ public class AssignMemberIdAspect {
         //메소드 호출 전 메소드 수행
         //파라미터로 전달받은 JoinPoint를
         // 이용하여 호출되어야할 본래의 메소드에 대한 정보를 가져올
+<<<<<<< HEAD
+=======
+        System.out.println("helllllllllllllllllllllllllllllllllllllllllllllllll");
+>>>>>>> 2478d557f1572cc48483d4cd4ece8afe736c7b7f
 
         Arrays.stream(joinPoint.getArgs())
                 // JoinPoint.getArgs()를 이용하여 전달되는 인자들을 확인하고,

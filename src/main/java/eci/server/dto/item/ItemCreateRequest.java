@@ -31,6 +31,8 @@ import static java.util.stream.Collectors.toList;
 public class ItemCreateRequest {
     private final Logger logger = LoggerFactory.getLogger(ItemCreateRequest.class);
 
+    private ItemType itemType;
+
     @NotBlank(message = "아이템 이름을 입력해주세요.")
     private String name;
 
@@ -42,26 +44,24 @@ public class ItemCreateRequest {
     private Integer itemNumber;
 
     @NotNull(message = "너비를 입력해주세요.")
-    @PositiveOrZero(message = "0 이상을 입력해주세요")
     private String width;
 
     @NotNull(message = "높이를 입력해주세요.")
-    @PositiveOrZero(message = "0 이상을 입력해주세요")
     private String height;
 
     @NotNull(message = "무게를 입력해주세요.")
-    @PositiveOrZero(message = "0 이상을 입력해주세요")
     private String weight;
 
     // hidden = true
     @Null
     private Long memberId;
 
+    private List<MultipartFile> images = new ArrayList<>();
+
     private List<MultipartFile> thumbnail = new ArrayList<>();
 
-
-
     public ItemCreateRequest(String name, String type,String width, String height, String weight, Long memberId, List<MultipartFile> thumbnail) {
+
         this.name = name;
         this.type = type;
         this.width = width;
@@ -87,7 +87,6 @@ public class ItemCreateRequest {
                 memberRepository.findById(
                         req.getMemberId()
                 ).orElseThrow(MemberNotFoundException::new),
-
                 req.thumbnail.stream().map(
                         i -> new Image(
                                 i.getOriginalFilename())

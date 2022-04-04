@@ -1,6 +1,7 @@
 server:
   port: 8181
 spring:
+<<<<<<< HEAD
   main:
     allow-bean-definition-overriding: true
 
@@ -37,7 +38,6 @@ spring:
   servlet.multipart.max-file-size: 5MB
   servlet.multipart.max-request-size: 5MB
 
-
 upload:
    image:
      location: C:/Users/DONGYUN/Desktop/spring/server3/prodmedia/image/
@@ -46,4 +46,3 @@ upload:
 #      location: prod-location
       # test : local-location
       # prod : prod-location
-

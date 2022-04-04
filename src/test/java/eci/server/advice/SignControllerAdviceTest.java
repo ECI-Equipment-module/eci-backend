@@ -1,6 +1,13 @@
 package eci.server.advice;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> c70f16eab3f2a48a8503ae9c3994e85054cfafb6
+>>>>>>> 2478d557f1572cc48483d4cd4ece8afe736c7b7f
 import eci.server.controller.sign.SignController;
 import eci.server.dto.sign.SignInRequest;
 import eci.server.dto.sign.SignUpRequest;
@@ -8,6 +15,21 @@ import eci.server.exception.member.auth.AuthenticationEntryPointException;
 import eci.server.exception.member.sign.MemberEmailAlreadyExistsException;
 import eci.server.exception.member.sign.MemberNotFoundException;
 import eci.server.exception.member.sign.RoleNotFoundException;
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+=======
+import eci.server.controller.sign.ExceptionAdvice;
+import eci.server.controller.sign.SignController;
+import eci.server.dto.sign.SignInRequest;
+import eci.server.dto.sign.SignUpRequest;
+import eci.server.exception.member.MemberEmailAlreadyExistsException;
+import eci.server.exception.member.MemberNotFoundException;
+import eci.server.exception.member.RoleNotFoundException;
+>>>>>>> e143a8c189dadeaf9a9cad53c67ea454e93f5b71
+>>>>>>> c70f16eab3f2a48a8503ae9c3994e85054cfafb6
+>>>>>>> 2478d557f1572cc48483d4cd4ece8afe736c7b7f
 import eci.server.service.sign.SignService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,11 +42,29 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import static org.mockito.ArgumentMatchers.any;
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> c70f16eab3f2a48a8503ae9c3994e85054cfafb6
+>>>>>>> 2478d557f1572cc48483d4cd4ece8afe736c7b7f
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doThrow;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+=======
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doThrow;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+>>>>>>> e143a8c189dadeaf9a9cad53c67ea454e93f5b71
+>>>>>>> c70f16eab3f2a48a8503ae9c3994e85054cfafb6
+>>>>>>> 2478d557f1572cc48483d4cd4ece8afe736c7b7f
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(MockitoExtension.class)
@@ -108,6 +148,13 @@ class SignControllerAdviceTest {
                                 .content(objectMapper.writeValueAsString(req)))
                 .andExpect(status().isBadRequest());
     }
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> c70f16eab3f2a48a8503ae9c3994e85054cfafb6
+>>>>>>> 2478d557f1572cc48483d4cd4ece8afe736c7b7f
 
     /**
      * 유효하지 않은 토큰 - AuthenticationEntryPointException 예외 발생
@@ -136,4 +183,12 @@ class SignControllerAdviceTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.code").value(-1009));
     }
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+=======
+>>>>>>> e143a8c189dadeaf9a9cad53c67ea454e93f5b71
+>>>>>>> c70f16eab3f2a48a8503ae9c3994e85054cfafb6
+>>>>>>> 2478d557f1572cc48483d4cd4ece8afe736c7b7f
 }

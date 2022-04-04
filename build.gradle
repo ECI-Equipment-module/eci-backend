@@ -107,32 +107,3 @@ configurations {
 clean {
 	delete file('src/main/generated') // 인텔리제이 Annotation processor 생성물 생성위치
 }
-
-//
-//querydsl {
-//	jpa = true
-//	querydslSourcesDir = "$buildDir/generated-source"
-//}
-//
-//compileQuerydsl {
-//	options.annotationProcessorPath = configurations.querydsl
-//}
-//
-//def querydslDir = "$buildDir/generated/querydsl"
-//
-//querydsl {
-//	jpa = true
-//	querydslSourcesDir = querydslDir
-//}
-//sourceSets {
-//	main.java.srcDir querydslDir
-//}
-//compileQuerydsl{
-//	options.annotationProcessorPath = configurations.querydsl
-//}
-//configurations {
-//	compileOnly {
-//		extendsFrom annotationProcessor
-//	}
-//	querydsl.extendsFrom compileClasspath
-//}

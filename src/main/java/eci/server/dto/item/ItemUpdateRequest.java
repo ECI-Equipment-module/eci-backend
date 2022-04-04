@@ -24,7 +24,6 @@ public class ItemUpdateRequest {
     private String type;
 
     @NotNull(message = "너비를 입력해주세요.")
-    @PositiveOrZero(message = "0 이상을 입력해주세요")
     private String width;
 
     @NotNull(message = "높이를 입력해주세요.")

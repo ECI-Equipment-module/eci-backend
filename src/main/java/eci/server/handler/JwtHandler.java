@@ -2,17 +2,43 @@ package eci.server.handler;
 
 
 import io.jsonwebtoken.*;
+<<<<<<< HEAD
 import org.springframework.beans.factory.annotation.Value;
+=======
+<<<<<<< HEAD
+import org.springframework.beans.factory.annotation.Value;
+=======
+<<<<<<< HEAD
+import org.springframework.beans.factory.annotation.Value;
+=======
+>>>>>>> e143a8c189dadeaf9a9cad53c67ea454e93f5b71
+>>>>>>> c70f16eab3f2a48a8503ae9c3994e85054cfafb6
+>>>>>>> 2478d557f1572cc48483d4cd4ece8afe736c7b7f
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
 
 @Component
 public class JwtHandler {
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> c70f16eab3f2a48a8503ae9c3994e85054cfafb6
+>>>>>>> 2478d557f1572cc48483d4cd4ece8afe736c7b7f
     /**
      * 토큰 생성, 유효성 검증,
      * 파싱, 타입 알아오기
      */
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+=======
+>>>>>>> e143a8c189dadeaf9a9cad53c67ea454e93f5b71
+>>>>>>> c70f16eab3f2a48a8503ae9c3994e85054cfafb6
+>>>>>>> 2478d557f1572cc48483d4cd4ece8afe736c7b7f
 
     private String type = "Bearer ";
 
@@ -49,6 +75,13 @@ public class JwtHandler {
         return token.substring(type.length());
     }
 
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> c70f16eab3f2a48a8503ae9c3994e85054cfafb6
+>>>>>>> 2478d557f1572cc48483d4cd4ece8afe736c7b7f
     public boolean validateTokenExceptExpiration(String token, String key) {
         try {
             Jws<Claims> claims = Jwts.parser().setSigningKey(key).parseClaimsJws(token);
@@ -58,4 +91,12 @@ public class JwtHandler {
         }
     }
 
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+=======
+>>>>>>> e143a8c189dadeaf9a9cad53c67ea454e93f5b71
+>>>>>>> c70f16eab3f2a48a8503ae9c3994e85054cfafb6
+>>>>>>> 2478d557f1572cc48483d4cd4ece8afe736c7b7f
 }

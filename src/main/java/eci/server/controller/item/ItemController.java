@@ -16,7 +16,10 @@ import javax.validation.Valid;
 @RestController
 @RequiredArgsConstructor
 @Slf4j
+<<<<<<< HEAD
 @CrossOrigin(origins = "http://localhost:3000")
+=======
+>>>>>>> 2478d557f1572cc48483d4cd4ece8afe736c7b7f
 public class ItemController {
 
     private final ItemService itemService;
@@ -26,7 +29,10 @@ public class ItemController {
      * @param req
      * @return 200 (success)
      */
+<<<<<<< HEAD
 
+=======
+>>>>>>> 2478d557f1572cc48483d4cd4ece8afe736c7b7f
     @PostMapping("/items")
     @ResponseStatus(HttpStatus.CREATED)
     @AssignMemberId // Aspect : 인증된 사용자 정보로 아이템 작성자 지정 가능
@@ -36,24 +42,43 @@ public class ItemController {
                     ItemCreateRequest req
     ) {
 
+<<<<<<< HEAD
         return Response.success(
 
                 itemService.create(req));
     }
 
+=======
+
+        return Response.success(
+                itemService.create(req));
+    }
+
+
+>>>>>>> 2478d557f1572cc48483d4cd4ece8afe736c7b7f
     /**
      * 특정 아이템 조회
      * @param id
      * @return 200 (success)
      */
+<<<<<<< HEAD
 
+=======
+>>>>>>> 2478d557f1572cc48483d4cd4ece8afe736c7b7f
     @GetMapping("/items/{id}")
     @ResponseStatus(HttpStatus.OK)
     public Response read(
             @PathVariable Long id) {
+<<<<<<< HEAD
         return Response.success(
                 itemService.read(id)
 
+=======
+
+
+        return Response.success(
+                itemService.read(id)
+>>>>>>> 2478d557f1572cc48483d4cd4ece8afe736c7b7f
         );
     }
 
@@ -62,7 +87,10 @@ public class ItemController {
      * @param id
      * @return 200 (success)
      */
+<<<<<<< HEAD
 
+=======
+>>>>>>> 2478d557f1572cc48483d4cd4ece8afe736c7b7f
     @DeleteMapping("/items/{id}")
     @ResponseStatus(HttpStatus.OK)
     public Response delete(
@@ -78,7 +106,10 @@ public class ItemController {
      * @param req
      * @return
      */
+<<<<<<< HEAD
 
+=======
+>>>>>>> 2478d557f1572cc48483d4cd4ece8afe736c7b7f
     @PutMapping("/items/{id}")
     @ResponseStatus(HttpStatus.OK)
     public Response update(

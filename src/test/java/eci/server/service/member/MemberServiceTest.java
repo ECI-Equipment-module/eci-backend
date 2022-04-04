@@ -2,7 +2,13 @@ package eci.server.service.member;
 
 import eci.server.dto.member.MemberDto;
 import eci.server.entity.member.Member;
+<<<<<<< HEAD
 import eci.server.exception.member.sign.MemberNotFoundException;
+=======
+
+import eci.server.exception.member.sign.MemberNotFoundException;
+
+>>>>>>> 2478d557f1572cc48483d4cd4ece8afe736c7b7f
 import eci.server.repository.member.MemberRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

@@ -34,7 +34,6 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
 
     private final Logger logger = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
 
-
     /*
     CORS 처리를 위한 Filter는
     반드시 인증 처리하는
@@ -58,6 +57,7 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
         }
 
         chain.doFilter(request, response1);
+
     }
 
     private String extractToken(ServletRequest request) {

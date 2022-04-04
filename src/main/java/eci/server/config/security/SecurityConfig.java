@@ -1,6 +1,5 @@
 package eci.server.config.security;
 
-
 import eci.server.service.sign.TokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -56,25 +55,25 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 //.requestMatchers(CorsUtils::isPreFlightRequest).permitAll()//added
                 .and()
-                    .authorizeRequests()
-                    .antMatchers(HttpMethod.POST, "/sign-in", "/sign-up","/refresh-token").permitAll()
-                    .antMatchers(HttpMethod.GET, "**").permitAll()
-                    .antMatchers(HttpMethod.GET, "/test").permitAll()
+                .authorizeRequests()
+                .antMatchers(HttpMethod.POST, "/sign-in", "/sign-up","/refresh-token").permitAll()
+                .antMatchers(HttpMethod.GET, "**").permitAll()
+                .antMatchers(HttpMethod.GET, "/test").permitAll()
                 .antMatchers(HttpMethod.GET, "/route/**").permitAll()
-                    .antMatchers(HttpMethod.DELETE, "/members/{id}/**").access("@memberGuard.check(#id)")
-                    .antMatchers(HttpMethod.GET, "/image/**").permitAll()
-                    .antMatchers(HttpMethod.POST, "/items").authenticated()
-                    .antMatchers(HttpMethod.PUT, "/items/{id}").access("@itemGuard.check(#id)")
-                    .antMatchers(HttpMethod.DELETE, "/items/{id}").access("@itemGuard.check(#id)")
+                .antMatchers(HttpMethod.DELETE, "/members/{id}/**").access("@memberGuard.check(#id)")
+                .antMatchers(HttpMethod.GET, "/image/**").permitAll()
+                .antMatchers(HttpMethod.POST, "/items").authenticated()
+                .antMatchers(HttpMethod.PUT, "/items/{id}").access("@itemGuard.check(#id)")
+                .antMatchers(HttpMethod.DELETE, "/items/{id}").access("@itemGuard.check(#id)")
                 .antMatchers(HttpMethod.POST, "/routes").authenticated()
                 .antMatchers(HttpMethod.DELETE, "/routes/{id}").access("@routeGuard.check(#id)")
-                    .anyRequest().hasAnyRole("ADMIN")
+                .anyRequest().hasAnyRole("ADMIN")
                 .and()
-                    .exceptionHandling().authenticationEntryPoint(new CustomAuthenticationEntryPoint())
+                .exceptionHandling().authenticationEntryPoint(new CustomAuthenticationEntryPoint())
                 .and()//인증되지 않은 사용자의 접근이 거부
-                    .exceptionHandling().accessDeniedHandler(new CustomAccessDeniedHandler())
+                .exceptionHandling().accessDeniedHandler(new CustomAccessDeniedHandler())
                 .and()//인증된 사용자가 권한 부족 등의 사유로 인해 접근이 거부
-                    .addFilterBefore(new JwtAuthenticationFilter(tokenService, userDetailsService), UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(new JwtAuthenticationFilter(tokenService, userDetailsService), UsernamePasswordAuthenticationFilter.class);
 
         http.headers().frameOptions().sameOrigin();
     }
@@ -100,6 +99,4 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 
 }
-
-
 

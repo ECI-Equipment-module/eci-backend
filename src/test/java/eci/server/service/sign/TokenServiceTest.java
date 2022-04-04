@@ -7,6 +7,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
 import org.springframework.test.util.ReflectionTestUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -14,7 +15,8 @@ import static org.mockito.BDDMockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class TokenServiceTest {
-    @InjectMocks TokenService tokenService;
+    @InjectMocks
+    TokenService tokenService;
     @Mock
     JwtHandler jwtHandler;
 
@@ -113,4 +115,5 @@ class TokenServiceTest {
         // then
         assertThat(subject).isEqualTo(result);
     }
+
 }

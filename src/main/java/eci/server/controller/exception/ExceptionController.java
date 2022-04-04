@@ -10,10 +10,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
+@CrossOrigin(origins = "http://localhost:3000")
+
 /**
  * 예외 사항 발생 시 "/exception/{예외}"로 리다이렉트
  */
-@CrossOrigin(origins = "http://localhost:3000")
+
 @RequiredArgsConstructor
 @RestController
 public class ExceptionController {
