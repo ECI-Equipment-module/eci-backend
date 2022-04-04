@@ -14,11 +14,13 @@ public class MemberController {
 
     private final MemberService memberService;
 
+
     @GetMapping("/members/{id}")
     @ResponseStatus(HttpStatus.OK)
     public Response read(@PathVariable Long id) {
         return Response.success(memberService.read(id));
     }
+
 
     @DeleteMapping("/members/{id}")
     @ResponseStatus(HttpStatus.OK)

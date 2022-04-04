@@ -1,11 +1,12 @@
 package eci.server.config.security;
 
-
 import eci.server.service.sign.TokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+
+import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -13,6 +14,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -32,18 +34,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final TokenService tokenService;
     private final CustomUserDetailsService userDetailsService;
+
     @Override
     public void configure(WebSecurity web) throws Exception {
         web.ignoring().antMatchers(HttpMethod.OPTIONS, "/**");
         super.configure(web);
     }
-//    @Override
-//    public void configure(WebSecurity web) throws Exception {
-//        super.configure(web);
-//    }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+
         /**
          * 로그인, 회원가입은 누구나
          * 회원정보 가져오는 것은 누구나
@@ -76,7 +76,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()//인증된 사용자가 권한 부족 등의 사유로 인해 접근이 거부
                 .addFilterBefore(new JwtAuthenticationFilter(tokenService, userDetailsService), UsernamePasswordAuthenticationFilter.class);
 
-        http.headers().frameOptions().sameOrigin();
+        http
+                .httpBasic().disable() // 1
+                .formLogin().disable() // 2
+                .csrf().disable() // 3
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) // 4
+                .and()
+                .authorizeRequests()
+                .antMatchers("/**").permitAll(); // 5
+
     }
     @Bean
     public PasswordEncoder passwordEncoder() {

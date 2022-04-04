@@ -4,7 +4,17 @@ import eci.server.entity.member.Member;
 import eci.server.entity.member.MemberRole;
 import eci.server.entity.member.Role;
 import eci.server.entity.member.RoleType;
+<<<<<<< HEAD
 import eci.server.exception.member.sign.MemberNotFoundException;
+=======
+<<<<<<< HEAD
+import eci.server.exception.member.sign.MemberNotFoundException;
+=======
+import eci.server.exception.member.MemberNotFoundException;
+import eci.server.repository.member.MemberRepository;
+import eci.server.repository.member.RoleRepository;
+>>>>>>> e143a8c189dadeaf9a9cad53c67ea454e93f5b71
+>>>>>>> c70f16eab3f2a48a8503ae9c3994e85054cfafb6
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;

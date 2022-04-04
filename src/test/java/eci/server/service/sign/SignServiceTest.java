@@ -12,6 +12,7 @@ import eci.server.exception.member.sign.MemberEmailAlreadyExistsException;
 import eci.server.exception.member.sign.MemberNotFoundException;
 import eci.server.exception.member.sign.PasswordNotValidateException;
 import eci.server.exception.member.sign.RoleNotFoundException;
+
 import eci.server.repository.member.MemberRepository;
 import eci.server.repository.member.RoleRepository;
 import org.junit.jupiter.api.Test;

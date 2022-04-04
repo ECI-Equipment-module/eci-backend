@@ -1,5 +1,3 @@
-package eci.server.service.sign;
-
 
 import eci.server.exception.member.auth.AccessExpiredException;
 import eci.server.exception.member.sign.MemberNotFoundException;

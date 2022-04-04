@@ -45,6 +45,7 @@ public class ItemService {
         );
 
         uploadImages(item.getThumbnail(), req.getThumbnail());
+
         return new ItemCreateResponse(item.getId());
     }
 

@@ -37,6 +37,7 @@ public class Member extends EntityDate { // 5
     @Column(nullable = false, unique = true, length = 20)
     private String contact;
 
+
     @OneToMany(
             mappedBy = "member",
             cascade = CascadeType.ALL,
@@ -52,9 +53,8 @@ public class Member extends EntityDate { // 5
         this.roles = roles.stream().map(r -> new MemberRole(this, r)).collect(toSet());
     }
 
-    public void updateDepartment(String department) {
+    public void updateDepartment(String department) { // 6
         this.department = department;
     }
-
 
 }

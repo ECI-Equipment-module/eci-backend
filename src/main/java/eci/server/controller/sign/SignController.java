@@ -16,6 +16,8 @@ import static eci.server.dto.response.Response.success;
 
 @RestController
 @RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:3000")
+
 public class SignController {
     private final SignService signService;
 
@@ -24,14 +26,14 @@ public class SignController {
     @PostMapping("sign-up")
     @ResponseStatus(HttpStatus.CREATED)
 
-    public Response signUp(@Valid @RequestBody SignUpRequest req) {
+    public Response signUp(@Valid SignUpRequest req) {
         signService.signUp(req);
         return success();
     }
 
     @PostMapping("/sign-in")
     @ResponseStatus(HttpStatus.OK)
-    public Response signIn(@Valid @RequestBody SignInRequest req) {
+    public Response signIn(@Valid SignInRequest req) {
         return success(signService.signIn(req));
     }
 

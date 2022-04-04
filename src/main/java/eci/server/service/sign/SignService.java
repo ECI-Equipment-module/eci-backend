@@ -1,12 +1,13 @@
 package eci.server.service.sign;
 
-
+import eci.server.dto.member.MemberDto;
 import eci.server.dto.sign.RefreshTokenResponse;
 import eci.server.dto.sign.SignInRequest;
 import eci.server.dto.sign.SignInResponse;
 import eci.server.dto.sign.SignUpRequest;
 import eci.server.entity.member.Member;
 import eci.server.entity.member.RoleType;
+
 import eci.server.exception.member.auth.AccessExpiredException;
 import eci.server.exception.member.auth.AuthenticationEntryPointException;
 import eci.server.exception.member.sign.MemberEmailAlreadyExistsException;
@@ -51,7 +52,9 @@ public class SignService {
         String subject = createSubject(member);
         String accessToken = tokenService.createAccessToken(subject);
         String refreshToken = tokenService.createRefreshToken(subject);
-        return new SignInResponse(accessToken, refreshToken);
+        MemberDto member1 =  MemberDto.toDto(memberRepository.findById(member.getId()).orElseThrow(MemberNotFoundException::new));
+        return new SignInResponse(accessToken, refreshToken, member1);
+
     }
 
     private void validateSignUpInfo(SignUpRequest req) {

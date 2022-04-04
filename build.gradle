@@ -38,6 +38,15 @@ dependencies {
 	implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
 	implementation "com.querydsl:querydsl-apt:${queryDslVersion}"
 
+	implementation 'junit:junit:4.13.1'
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'io.jsonwebtoken:jjwt:0.9.1' //JWT
+
+	implementation 'org.springframework.boot:spring-boot-starter-validation' //로그인, 회원가입
+
+	implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
+	implementation "com.querydsl:querydsl-apt:${queryDslVersion}"
+
 	compileOnly 'org.projectlombok:lombok'
 
 	annotationProcessor "com.querydsl:querydsl-apt:${dependencyManagement.importedProperties['querydsl.version']}:jpa" // querydsl JPAAnnotationProcessor 사용 지정
@@ -57,9 +66,6 @@ dependencies {
 	testImplementation 'org.springframework.security:spring-security-test'
 	testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
 
-//	testImplementation ('org.junit.vintage:junit-vintage-engine'){
-//
-//	}
 	testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.5.1")
 	testRuntimeOnly("org.junit.platform:junit-platform-engine:1.5.1")
 	testRuntimeOnly("org.junit.platform:junit-platform-commons:1.5.1")

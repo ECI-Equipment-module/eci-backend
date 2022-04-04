@@ -73,6 +73,8 @@ public class Item extends EntityDate {
         addImages(thumbnail);
     }
 
+
+
     /**
      * postupdaterequest 받아서 update 수행
      * @param req
@@ -95,6 +97,7 @@ public class Item extends EntityDate {
      * 추가할 이미지
      * @param added
      */
+
     private void addImages(List<Image> added) {
         added.stream().forEach(i -> {
             thumbnail.add(i);
