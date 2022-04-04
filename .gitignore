@@ -41,3 +41,11 @@ application-secret.yml
 
 ### img 파일
 /src/test/resources/static/*
+
+## qclass
+build/generated
+src/main/generated
+
+
+src/test
+src/test
