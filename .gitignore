@@ -37,13 +37,15 @@ out/
 .vscode/
 
 ### jwt 암호
+<<<<<<< HEAD
+=======
 
+>>>>>>> c70f16eab3f2a48a8503ae9c3994e85054cfafb6
 application-secret.yml
 
 ### img 파일
 /src/test/resources/static/*
 
-<<<<<<< HEAD
 application-secret.yml
 
 ###프론트엔드 모의 서버
@@ -54,4 +56,3 @@ build/generated
 src/main/generated
 
 src/test
-

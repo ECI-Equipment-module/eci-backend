@@ -1,4 +1,5 @@
 package eci.server.controller.sign;
+
 import eci.server.dto.response.Response;
 import eci.server.dto.sign.SignInRequest;
 import eci.server.dto.sign.SignUpRequest;
@@ -16,6 +17,7 @@ import static eci.server.dto.response.Response.success;
 @RestController
 @RequiredArgsConstructor
 @CrossOrigin(origins = "http://localhost:3000")
+
 public class SignController {
     private final SignService signService;
 

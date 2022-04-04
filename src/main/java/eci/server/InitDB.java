@@ -4,6 +4,7 @@
 //import eci.server.entity.member.Role;
 //import eci.server.entity.member.RoleType;
 //import eci.server.exception.member.sign.RoleNotFoundException;
+
 //import eci.server.exception.member.RoleNotFoundException;
 
 //import eci.server.repository.member.MemberRepository;
@@ -31,6 +32,9 @@
 //
 //    @EventListener(ApplicationReadyEvent.class)
 //    @Transactional
+
+//    public void initDB() {
+//        initRole();
 
 //    private void initTestAdmin() {
 //        memberRepository.save(
@@ -112,6 +116,7 @@
 ////
 ////    }
 
+
 ////}
 
 //
@@ -139,3 +144,4 @@
 //}
 
 //}
+

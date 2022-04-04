@@ -43,12 +43,9 @@ public class ItemService {
                 )
 
         );
-<<<<<<< HEAD
-        uploadImages(item.getThumbnail(), req.getImages());
-=======
 
         uploadImages(item.getThumbnail(), req.getThumbnail());
->>>>>>> 4fa2ae301e286bfda138ea9ca90e3153f31bbe32
+
         return new ItemCreateResponse(item.getId());
     }
 

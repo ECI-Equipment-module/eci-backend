@@ -21,7 +21,6 @@ import javax.validation.constraints.Null;
 import javax.validation.constraints.PositiveOrZero;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import static java.util.stream.Collectors.toList;
 
@@ -32,7 +31,6 @@ import static java.util.stream.Collectors.toList;
 public class ItemCreateRequest {
     private final Logger logger = LoggerFactory.getLogger(ItemCreateRequest.class);
 
-<<<<<<< HEAD
     private ItemType itemType;
 
     @NotBlank(message = "아이템 이름을 입력해주세요.")
@@ -56,37 +54,11 @@ public class ItemCreateRequest {
     @NotNull(message = "무게를 입력해주세요.")
     @PositiveOrZero(message = "0 이상을 입력해주세요")
     private Long weight;
-=======
-    @NotBlank(message = "아이템 이름을 입력해주세요.")
-    private String name;
-
-    @NotBlank(message = "아이템 타입을 입력해주세요.")
-    private String type;
-
-    @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="SEQUENCE1")
-    @SequenceGenerator(name="SEQUENCE1", sequenceName="SEQUENCE1", allocationSize=1)
-    private Integer itemNumber;
->>>>>>> 4fa2ae301e286bfda138ea9ca90e3153f31bbe32
-
-    @NotNull(message = "너비를 입력해주세요.")
-    @PositiveOrZero(message = "0 이상을 입력해주세요")
-    private Long width;
-
-    @NotNull(message = "높이를 입력해주세요.")
-    @PositiveOrZero(message = "0 이상을 입력해주세요")
-    private Long height;
-
-    @NotNull(message = "무게를 입력해주세요.")
-    @PositiveOrZero(message = "0 이상을 입력해주세요")
-    private Long weight;
 
     // hidden = true
     @Null
     private Long memberId;
-
-<<<<<<< HEAD
     private List<MultipartFile> images = new ArrayList<>();
-=======
     private List<MultipartFile> thumbnail = new ArrayList<>();
 
 
@@ -100,7 +72,6 @@ public class ItemCreateRequest {
         this.memberId = memberId;
         this.thumbnail = thumbnail;
     }
->>>>>>> 4fa2ae301e286bfda138ea9ca90e3153f31bbe32
 
     public static Item toEntity(ItemCreateRequest req, MemberRepository memberRepository) {
 
@@ -110,11 +81,7 @@ public class ItemCreateRequest {
         return new Item(
                 req.name,
                 req.type,
-<<<<<<< HEAD
-                ItemType.valueOf(req.type).label()+req.itemNumber,
-=======
                 ItemType.valueOf(req.type).label()+(int)(Math.random()*1000),
->>>>>>> 4fa2ae301e286bfda138ea9ca90e3153f31bbe32
                 req.width,
                 req.height,
                 req.weight,
@@ -122,12 +89,7 @@ public class ItemCreateRequest {
                 memberRepository.findById(
                         req.getMemberId()
                 ).orElseThrow(MemberNotFoundException::new),
-
-<<<<<<< HEAD
-                req.images.stream().map(
-=======
                 req.thumbnail.stream().map(
->>>>>>> 4fa2ae301e286bfda138ea9ca90e3153f31bbe32
                         i -> new Image(
                                 i.getOriginalFilename())
                         ).collect(

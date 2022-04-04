@@ -20,7 +20,11 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 <<<<<<< HEAD
 import static eci.server.dto.sign.RefreshTokenResponseFactory.createRefreshTokenResponse;
 =======
+<<<<<<< HEAD
+import static eci.server.dto.sign.RefreshTokenResponseFactory.createRefreshTokenResponse;
+=======
 >>>>>>> e143a8c189dadeaf9a9cad53c67ea454e93f5b71
+>>>>>>> c70f16eab3f2a48a8503ae9c3994e85054cfafb6
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -88,6 +92,9 @@ class SignControllerTest {
 
     }
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> c70f16eab3f2a48a8503ae9c3994e85054cfafb6
 
 
     @Test
@@ -103,6 +110,9 @@ class SignControllerTest {
                 .andExpect(jsonPath("$.result.data.accessToken").value("accessToken"));
     }
 
+<<<<<<< HEAD
+=======
 =======
 >>>>>>> e143a8c189dadeaf9a9cad53c67ea454e93f5b71
+>>>>>>> c70f16eab3f2a48a8503ae9c3994e85054cfafb6
 }

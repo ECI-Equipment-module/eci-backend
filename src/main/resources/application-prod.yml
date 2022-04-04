@@ -1,3 +1,4 @@
+
     datasource:
         url: jdbc:oracle:thin:@localhost:1521:xe
         driverClassName: oracle.jdbc.driver.OracleDriver

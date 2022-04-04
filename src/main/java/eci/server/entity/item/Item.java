@@ -71,11 +71,9 @@ public class Item extends EntityDate {
         this.weight = weight;
         this.thumbnail = new ArrayList<>();
         addImages(thumbnail);
-<<<<<<< HEAD
     }
 
-=======
-    }
+
 
     /**
      * postupdaterequest 받아서 update 수행
@@ -99,7 +97,7 @@ public class Item extends EntityDate {
      * 추가할 이미지
      * @param added
      */
->>>>>>> 4fa2ae301e286bfda138ea9ca90e3153f31bbe32
+
     private void addImages(List<Image> added) {
         added.stream().forEach(i -> {
             thumbnail.add(i);
