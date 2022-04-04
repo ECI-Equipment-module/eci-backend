@@ -1,7 +1,6 @@
 server:
   port: 8181
 spring:
-<<<<<<< HEAD
   main:
     allow-bean-definition-overriding: true
 
