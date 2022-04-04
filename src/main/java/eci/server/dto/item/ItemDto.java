@@ -16,9 +16,9 @@ public class ItemDto {
     private Long id;
     private String name;
     private String type;
-    private Long width;
-    private Long height;
-    private Long weight;
+    private String width;
+    private String height;
+    private String weight;
     private MemberDto member;
     private List<ImageDto> thumbnail;
 

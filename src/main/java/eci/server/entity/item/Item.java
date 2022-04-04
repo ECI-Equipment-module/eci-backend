@@ -2,7 +2,7 @@ package eci.server.entity.item;
 
 import eci.server.dto.item.ItemUpdateRequest;
 import eci.server.entity.member.Member;
-import eci.server.entitycommon.EntityDate;
+import eci.server.entity.entitycommon.EntityDate;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -24,7 +24,7 @@ import static java.util.stream.Collectors.toList;
 public class Item extends EntityDate {
 
     @Id
-    @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="SEQUENCE2")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @SequenceGenerator(name="SEQUENCE2", sequenceName="SEQUENCE2", allocationSize=1)
     private Long id;
 
@@ -39,13 +39,13 @@ public class Item extends EntityDate {
     //save 할 시에 type + id 값으로 지정
 
     @Column(nullable = false)
-    private Long width;
+    private String width;
 
     @Column(nullable = false)
-    private Long height;
+    private String height;
 
     @Column(nullable = false)
-    private Long weight;
+    private String weight;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(
@@ -61,7 +61,9 @@ public class Item extends EntityDate {
     )
     private List<Image> thumbnail;
 
-    public Item(String name, String type, Integer itemNumber, Long width, Long height, Long weight, Member member, List<Image> thumbnail) {
+
+
+    public Item(String name, String type, Integer itemNumber, String width, String height, String weight, Member member, List<Image> thumbnail) {
         this.name = name;
         this.type = type;
         this.itemNumber = itemNumber;

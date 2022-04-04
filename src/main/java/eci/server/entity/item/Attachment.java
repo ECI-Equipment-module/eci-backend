@@ -6,22 +6,24 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
-import java.util.Arrays;
-import java.util.UUID;
+import java.util.*;
+
+import static java.util.stream.Collectors.toList;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Image {
+public class Attachment {
 
     @Id
-    @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="SEQUENCE1")
-    @SequenceGenerator(name="SEQUENCE1", sequenceName="SEQUENCE1", allocationSize=1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQUENCE1")
+    @SequenceGenerator(name = "SEQUENCE1", sequenceName = "SEQUENCE1", allocationSize = 1)
     private Long id;
 
     /**
-     *  파일 구분용 이름
+     * 파일 구분용 이름
      */
     @Column(nullable = false)
     private String uniqueName;
@@ -49,25 +51,28 @@ public class Image {
 
     /**
      * 각 이미지의 고유명 생성
+     *
      * @param originName
      */
-    public Image(String originName) {
+    public Attachment(String originName) {
         this.uniqueName = generateUniqueName(extractExtension(originName));
         this.originName = originName;
     }
 
     /**
      * 아이템과 연관관계가 없다면 등록
+     *
      * @param item
      */
     public void initItem(Item item) {
-        if(this.item == null) {
+        if (this.item == null) {
             this.item = item;
         }
     }
 
     /**
      * 이미지 저장될 공간
+     *
      * @param extension
      * @return
      */
@@ -77,19 +82,22 @@ public class Image {
 
     /**
      * 확장자 확인
+     *
      * @param originName
      * @return
      */
     private String extractExtension(String originName) {
         try {
             String ext = originName.substring(originName.lastIndexOf(".") + 1);
-            if(isSupportedFormat(ext)) return ext;
-        } catch (StringIndexOutOfBoundsException e) { }
+            if (isSupportedFormat(ext)) return ext;
+        } catch (StringIndexOutOfBoundsException e) {
+        }
         throw new UnsupportedImageFormatException();
     }
 
     /**
      * 지원하는 형식인지 확인(이미지 파일)
+     *
      * @param ext
      * @return
      */

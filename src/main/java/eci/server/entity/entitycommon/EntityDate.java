@@ -1,4 +1,4 @@
-package eci.server.entitycommon;
+package eci.server.entity.entitycommon;
 
 import lombok.Getter;
 import org.springframework.data.annotation.CreatedDate;

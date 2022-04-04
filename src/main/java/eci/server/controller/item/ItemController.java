@@ -16,6 +16,7 @@ import javax.validation.Valid;
 @RestController
 @RequiredArgsConstructor
 @Slf4j
+@CrossOrigin(origins = "http://localhost:3000")
 public class ItemController {
 
     private final ItemService itemService;
@@ -25,6 +26,7 @@ public class ItemController {
      * @param req
      * @return 200 (success)
      */
+
     @PostMapping("/items")
     @ResponseStatus(HttpStatus.CREATED)
     @AssignMemberId // Aspect : 인증된 사용자 정보로 아이템 작성자 지정 가능
@@ -34,25 +36,24 @@ public class ItemController {
                     ItemCreateRequest req
     ) {
 
-
         return Response.success(
+
                 itemService.create(req));
     }
-
 
     /**
      * 특정 아이템 조회
      * @param id
      * @return 200 (success)
      */
+
     @GetMapping("/items/{id}")
     @ResponseStatus(HttpStatus.OK)
     public Response read(
             @PathVariable Long id) {
-
-
         return Response.success(
                 itemService.read(id)
+
         );
     }
 
@@ -61,6 +62,7 @@ public class ItemController {
      * @param id
      * @return 200 (success)
      */
+
     @DeleteMapping("/items/{id}")
     @ResponseStatus(HttpStatus.OK)
     public Response delete(
@@ -76,6 +78,7 @@ public class ItemController {
      * @param req
      * @return
      */
+
     @PutMapping("/items/{id}")
     @ResponseStatus(HttpStatus.OK)
     public Response update(

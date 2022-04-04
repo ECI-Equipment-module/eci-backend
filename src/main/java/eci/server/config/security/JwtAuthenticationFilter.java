@@ -11,6 +11,7 @@ import org.springframework.web.filter.GenericFilterBean;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @RequiredArgsConstructor
@@ -32,8 +33,23 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
     private final CustomUserDetailsService userDetailsService;
 
     private final Logger logger = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
+
+
+    /*
+    CORS 처리를 위한 Filter는
+    반드시 인증 처리하는
+    Filter 이전에 있어야 한다.
+     */
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+
+        HttpServletRequest request1 = (HttpServletRequest) request;
+        HttpServletResponse response1 = (HttpServletResponse) response;
+        response1.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
+        response1.setHeader("Access-Control-Allow-Credentials", "true");
+        response1.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE");
+        response1.setHeader("Access-Control-Max-Age", "3600");
+        response1.setHeader("Access-Control-Allow-Headers", "Content-Type, Accept, X-Requested-With, remember-me");
 
         String token = extractToken(request);
         if(validateToken(token)) {
@@ -41,7 +57,7 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
             setAuthentication(token);
         }
 
-        chain.doFilter(request, response);
+        chain.doFilter(request, response1);
     }
 
     private String extractToken(ServletRequest request) {

@@ -102,11 +102,11 @@ public class ExceptionAdvice {
      * 접근 권한 없음
      * @return 403
      */
-//    @ExceptionHandler(AccessDeniedException.class)
-//    @ResponseStatus(HttpStatus.FORBIDDEN)
-//    public Response accessDeniedException() {
-//        return Response.failure(403, "접근이 거부되었습니다.");
-//    }
+    @ExceptionHandler(AccessDeniedException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public Response accessDeniedException() {
+        return Response.failure(403, "접근이 거부되었습니다.");
+    }
 
     /**
      * 헤더 누락 시 에러
@@ -119,11 +119,11 @@ public class ExceptionAdvice {
         return Response.failure(400, e.getHeaderName() + " 요청 헤더가 누락되었습니다.");
     }
 
-    @ExceptionHandler(BindException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public Response bindException(BindException e) {
-        return Response.failure(400, e.getMessage());//.getFieldError().getDefaultMessage());
-    }
+//    @ExceptionHandler(BindException.class)
+//    @ResponseStatus(HttpStatus.BAD_REQUEST)
+//    public Response bindException(BindException e) {
+//        return Response.failure(400, e.getMessage());//.getFieldError().getDefaultMessage());
+//    }
 
     @ExceptionHandler(FileUploadFailureException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)

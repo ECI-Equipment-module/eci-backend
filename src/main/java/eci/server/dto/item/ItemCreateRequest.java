@@ -43,15 +43,15 @@ public class ItemCreateRequest {
 
     @NotNull(message = "너비를 입력해주세요.")
     @PositiveOrZero(message = "0 이상을 입력해주세요")
-    private Long width;
+    private String width;
 
     @NotNull(message = "높이를 입력해주세요.")
     @PositiveOrZero(message = "0 이상을 입력해주세요")
-    private Long height;
+    private String height;
 
     @NotNull(message = "무게를 입력해주세요.")
     @PositiveOrZero(message = "0 이상을 입력해주세요")
-    private Long weight;
+    private String weight;
 
     // hidden = true
     @Null
@@ -61,7 +61,7 @@ public class ItemCreateRequest {
 
 
 
-    public ItemCreateRequest(String name, String type,Long width, Long height, Long weight, Long memberId, List<MultipartFile> thumbnail) {
+    public ItemCreateRequest(String name, String type,String width, String height, String weight, Long memberId, List<MultipartFile> thumbnail) {
         this.name = name;
         this.type = type;
         this.width = width;

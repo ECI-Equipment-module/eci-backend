@@ -1,6 +1,6 @@
 package eci.server.entity.member;
 
-import eci.server.entitycommon.EntityDate;
+import eci.server.entity.entitycommon.EntityDate;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,10 +18,11 @@ import static java.util.stream.Collectors.toSet;
 public class Member extends EntityDate { // 5
 
     @Id
-    @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="SEQUENCE1")
-    @SequenceGenerator(name="SEQUENCE1", sequenceName="SEQUENCE1", allocationSize=1)
+    @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="SEQUENCE3")
+    @SequenceGenerator(name="SEQUENCE3", sequenceName="SEQUENCE3", allocationSize=1)
     @Column(name = "member_id")
     private Long id;
+
 
     @Column(nullable = false, length = 30, unique = true)
     private String email;
@@ -44,6 +45,7 @@ public class Member extends EntityDate { // 5
     private Set<MemberRole> roles;
 
     public Member(String email, String password, String username, String department, String contact, List<Role> roles) {
+        System.out.println("");
         this.email = email;
         this.password = password;
         this.username = username;

@@ -30,13 +30,13 @@ public class AuthHelper {
         /**
          * 요청자 ID 추출
          */
-//
-//        System.out.println("AuthHelper");
-//        System.out.println(getAuthentication().getPrincipal());
-//        System.out.println(getAuthentication().getPrincipal().getClass().getName());
-//        System.out.println(getUserDetails().getAuthorities());
-//        System.out.println(getUserDetails().getUsername());
-//        System.out.println("AuthHelper end");
+
+        System.out.println("AuthHelper");
+        System.out.println(getAuthentication().getPrincipal());
+        System.out.println(getAuthentication().getPrincipal().getClass().getName());
+        System.out.println(getUserDetails().getAuthorities());
+        System.out.println(getUserDetails().getUsername());
+        System.out.println("AuthHelper end");
         return Long.valueOf(getUserDetails().getUserId());
     }
 

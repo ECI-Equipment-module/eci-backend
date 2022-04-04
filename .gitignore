@@ -46,6 +46,8 @@ application-secret.yml
 build/generated
 src/main/generated
 
-
-src/test
-src/test
+#아래는 배포시
+src/main/resources
+src/test/*
+#프론트엔드 폴더
+frontend/*
