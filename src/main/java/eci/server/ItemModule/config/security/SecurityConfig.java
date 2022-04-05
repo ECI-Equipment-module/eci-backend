@@ -11,9 +11,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
 
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -21,6 +19,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final TokenService tokenService;
     private final CustomUserDetailsService userDetailsService;
+
     @Override
     public void configure(WebSecurity web) throws Exception {
         web.ignoring().antMatchers(HttpMethod.OPTIONS, "/**");
@@ -46,10 +45,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 //.requestMatchers(CorsUtils::isPreFlightRequest).permitAll()//added
                 .and()
                 .authorizeRequests()
-                .antMatchers(HttpMethod.POST, "/sign-in", "/sign-up","/refresh-token").permitAll()
-                .antMatchers(HttpMethod.GET, "**").permitAll()
+                .antMatchers(HttpMethod.POST, "/sign-in", "/sign-up", "/refresh-token").permitAll()
+                .antMatchers(HttpMethod.GET, "**").authenticated()
                 .antMatchers(HttpMethod.GET, "/test").permitAll()
-                .antMatchers(HttpMethod.GET, "/route/**").permitAll()
                 .antMatchers(HttpMethod.DELETE, "/members/{id}/**").access("@memberGuard.check(#id)")
                 .antMatchers(HttpMethod.GET, "/image/**").permitAll()
                 .antMatchers(HttpMethod.POST, "/items").authenticated()
@@ -67,26 +65,28 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.headers().frameOptions().sameOrigin();
     }
+
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return PasswordEncoderFactories.createDelegatingPasswordEncoder(); // 6
+        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-        configuration.addAllowedOrigin("*");
-        configuration.addAllowedHeader("*");
-        configuration.addAllowedMethod("POST");
-        configuration.addAllowedMethod("PUT");
-        configuration.addAllowedMethod("GET");
-        configuration.addAllowedMethod("DELETE");
+//    @Bean
+//    public CorsConfigurationSource corsConfigurationSource() {
+//        CorsConfiguration configuration = new CorsConfiguration();
+//        configuration.addAllowedOrigin("*");
+//        configuration.addAllowedHeader("*");
+//        configuration.addAllowedMethod("POST");
+//        configuration.addAllowedMethod("PUT");
+//        configuration.addAllowedMethod("GET");
+//        configuration.addAllowedMethod("DELETE");
+//
+//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+//        source.registerCorsConfiguration("/**", configuration);
+//
+//        return source;
+//    }
 
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
 
-        return source;
     }
 
-
-}
 

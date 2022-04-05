@@ -1,5 +1,6 @@
 package eci.server.ItemModule.controller.route;
 
+import eci.server.ItemModule.dto.route.RouteUpdateRequest;
 import eci.server.aop.AssignMemberId;
 import eci.server.ItemModule.dto.response.Response;
 import eci.server.ItemModule.dto.route.RouteCreateRequest;
@@ -18,7 +19,6 @@ public class RouteController {
 
     @GetMapping("/routes")
     @ResponseStatus(HttpStatus.OK)
-
     public Response readAll(@Valid RouteReadCondition cond) {
         return Response.success(RouteService.readAll(cond));
     }
@@ -31,11 +31,29 @@ public class RouteController {
         return Response.success();
     }
 
+    @GetMapping("/routes/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public Response read(@PathVariable Long id) {
+        return Response.success(
+                RouteService.read(id)
+        );
+    }
+
     @DeleteMapping("/routes/{id}")
     @ResponseStatus(HttpStatus.OK)
     public Response delete(@PathVariable Long id) {
         RouteService.delete(id);
         return Response.success();
     }
+
+    @PutMapping("/routes/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public Response update(
+            @PathVariable Long id,
+            @Valid @ModelAttribute RouteUpdateRequest req) {
+        return Response.success(RouteService.update(id, req));
+    }
+
+
 }
 

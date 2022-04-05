@@ -62,16 +62,20 @@ public class Item extends EntityDate {
     )
     private List<Image> thumbnail;
 
+    private Boolean inProgress;
 
+    public Item(
+            String name,
+            String type,
+            Integer itemNumber,
+            String width,
+            String height,
+            String weight,
+            Member member,
+            Boolean inProgress,
+            List<Image> thumbnail
 
-    @OneToMany(
-            mappedBy = "item_id",
-            cascade = CascadeType.PERSIST,
-            orphanRemoval = true
-    )
-    private List<Route> routeList;
-
-    public Item(String name, String type, Integer itemNumber, String width, String height, String weight, Member member, List<Image> thumbnail) {
+    ) {
         this.name = name;
         this.type = type;
         this.itemNumber = itemNumber;
@@ -79,6 +83,7 @@ public class Item extends EntityDate {
         this.height = height;
         this.member = member;
         this.weight = weight;
+        this.inProgress = inProgress;
         this.thumbnail = new ArrayList<>();
         addImages(thumbnail);
     }
@@ -95,7 +100,9 @@ public class Item extends EntityDate {
         this.height = req.getHeight();
         this.weight = req.getWeight();
         ImageUpdatedResult result =
-                findImageUpdatedResult(req.getAddedImages(), req.getDeletedImages());
+                findImageUpdatedResult(
+                        req.getAddedImages(),
+                        req.getDeletedImages());
         addImages(result.getAddedImages());
         deleteImages(result.getDeletedImages());
         return result;

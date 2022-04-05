@@ -2,7 +2,9 @@ package eci.server.ItemModule.dto.item;
 
 
 import eci.server.ItemModule.dto.member.MemberDto;
+import eci.server.ItemModule.dto.route.RouteDto;
 import eci.server.ItemModule.entity.item.Item;
+import eci.server.ItemModule.repository.route.RouteRepository;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -13,6 +15,7 @@ import static java.util.stream.Collectors.toList;
 @Data
 @AllArgsConstructor
 public class ItemDto {
+
     private Long id;
     private String name;
     private String type;
@@ -23,6 +26,7 @@ public class ItemDto {
     private List<ImageDto> thumbnail;
 
     public static ItemDto toDto(Item Item) {
+
         return new ItemDto(
                 Item.getId(),
                 Item.getName(),

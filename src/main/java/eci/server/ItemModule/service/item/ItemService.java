@@ -2,6 +2,8 @@ package eci.server.ItemModule.service.item;
 
 
 import eci.server.ItemModule.dto.item.*;
+import eci.server.ItemModule.dto.route.RouteDto;
+import eci.server.ItemModule.repository.route.RouteRepository;
 import eci.server.ItemModule.service.file.FileService;
 import eci.server.ItemModule.entity.item.Image;
 import eci.server.ItemModule.entity.item.Item;
@@ -24,6 +26,7 @@ import java.util.stream.IntStream;
 public class ItemService {
     public Logger logger = LoggerFactory.getLogger(ItemService.class);
 
+    private final RouteRepository routeRepository;
     private final ItemRepository itemRepository;
     private final MemberRepository memberRepository;
     private final FileService fileService;
@@ -67,8 +70,21 @@ public class ItemService {
                 );
     }
 
-    public ItemDto read(Long id) {
-        return ItemDto.toDto(itemRepository.findById(id).orElseThrow(ItemNotFoundException::new));
+    public ReadItemDto read(Long id) {
+
+        List <RouteDto> routeDtoList = RouteDto.toDtoList(
+                routeRepository.findAllWithMemberAndParentByItemIdOrderByParentIdAscNullsFirstRouteIdAsc(id)
+        );
+
+        ReadItemDto readItemDto = ReadItemDto.toDto(
+                ItemDto.toDto(
+                        itemRepository.findById(id).orElseThrow(ItemNotFoundException::new)
+                        ),
+                routeDtoList,
+                routeDtoList.get(routeDtoList.size() - 1) //최신 라우트
+        );
+                return readItemDto;
+
     }
 
     @Transactional
@@ -89,7 +105,6 @@ public class ItemService {
     public ItemUpdateResponse update(Long id, ItemUpdateRequest req) {
 
         Item item = itemRepository.findById(id).orElseThrow(ItemNotFoundException::new);
-        System.out.println(item.getId());
         Item.ImageUpdatedResult result = item.update(req);
         uploadImages(result.getAddedImages(), result.getAddedImageFiles());
         deleteImages(result.getDeletedImages());

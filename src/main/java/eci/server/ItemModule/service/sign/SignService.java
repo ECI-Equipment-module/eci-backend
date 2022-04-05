@@ -18,9 +18,17 @@ import eci.server.ItemModule.repository.member.RoleRepository;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.servlet.ServletResponse;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.net.URLEncoder;
 
 @Service
 @RequiredArgsConstructor
@@ -44,17 +52,31 @@ public class SignService {
                 roleRepository.findByRoleType(RoleType.ROLE_NORMAL).orElseThrow(RoleNotFoundException::new),
                 passwordEncoder));
     }
+
     @Transactional(readOnly = true)
-    public SignInResponse signIn(SignInRequest req) {
+        public SignInResponse signIn(SignInRequest req) {
         Member member = memberRepository.findByEmail(req.getEmail()).orElseThrow(MemberNotFoundException::new);
         validatePassword(req, member);
         String subject = createSubject(member);
         String accessToken = tokenService.createAccessToken(subject);
         String refreshToken = tokenService.createRefreshToken(subject);
         MemberDto member1 =  MemberDto.toDto(memberRepository.findById(member.getId()).orElseThrow(MemberNotFoundException::new));
-        return new SignInResponse(accessToken, refreshToken, member1);
 
+        return new SignInResponse(accessToken, refreshToken, member1);
     }
+
+//    public SignInResponse signIn(SignInRequest req) {
+//        Member member = memberRepository.findByEmail(req.getEmail()).orElseThrow(MemberNotFoundException::new);
+//        validatePassword(req, member);
+//        String subject = createSubject(member);
+//        String accessToken = tokenService.createAccessToken(subject);
+//        String refreshToken = tokenService.createRefreshToken(subject);
+//        MemberDto member1 =  MemberDto.toDto(memberRepository.findById(member.getId()).orElseThrow(MemberNotFoundException::new));
+//
+//        return new SignInResponse(accessToken, refreshToken, member1);
+//
+//    }
+
 
     private void validateSignUpInfo(SignUpRequest req) {
         if(memberRepository.existsByEmail(req.getEmail()))

@@ -5,6 +5,7 @@ import eci.server.ItemModule.entity.item.Item;
 import eci.server.ItemModule.entity.item.ItemType;
 import eci.server.ItemModule.exception.member.sign.MemberNotFoundException;
 import eci.server.ItemModule.repository.member.MemberRepository;
+import eci.server.ItemModule.repository.route.RouteRepository;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -55,11 +56,13 @@ public class ItemCreateRequest {
     @Null
     private Long memberId;
 
+    private Boolean inProgress;
+
     private List<MultipartFile> images = new ArrayList<>();
 
     private List<MultipartFile> thumbnail = new ArrayList<>();
 
-    public ItemCreateRequest(String name, String type,String width, String height, String weight, Long memberId, List<MultipartFile> thumbnail) {
+    public ItemCreateRequest(String name, String type,String width, String height, String weight, Long memberId, Boolean inProgress, List<MultipartFile> thumbnail) {
 
         this.name = name;
         this.type = type;
@@ -67,25 +70,23 @@ public class ItemCreateRequest {
         this.height = height;
         this.weight = weight;
         this.memberId = memberId;
+        this.inProgress = inProgress;
         this.thumbnail = thumbnail;
     }
 
     public static Item toEntity(ItemCreateRequest req, MemberRepository memberRepository) {
 
-//        System.out.println(ItemType.valueOf(req.type).label());
-//        System.out.println(req.itemNumber);
-
         return new Item(
                 req.name,
                 req.type,
-                ItemType.valueOf(req.type).label()+(int)(Math.random()*1000),
+                ItemType.valueOf(req.type).label()*1000000+(int)(Math.random()*1000),
                 req.width,
                 req.height,
                 req.weight,
-
                 memberRepository.findById(
                         req.getMemberId()
                 ).orElseThrow(MemberNotFoundException::new),
+                req.inProgress,
                 req.thumbnail.stream().map(
                         i -> new Image(
                                 i.getOriginalFilename())

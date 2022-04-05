@@ -23,8 +23,8 @@ public class RouteDto {
     private String type;
     private String workflow;
     private String workflowPhase;
-    private Character lifecycleStatus;
-    private Integer revisedCnt;
+    private String lifecycleStatus;
+    private int revisedCnt;
     private MemberDto member;
     private String applicant_comment;
     private MemberDto reviewer;
@@ -58,5 +58,25 @@ public class RouteDto {
                 c -> c.getId(),
                 d -> d.getChildren());
         return helper.convert();
+    }
+
+    public static RouteDto toDto(Route Route) {
+
+        return new RouteDto(
+                Route.getId(),
+                Route.getType(),
+                Route.getWorkflow(),
+                Route.getWorkflowPhase(),
+                Route.getLifecycleStatus(),
+                Route.getRevisedCnt(),
+                MemberDto.toDto(Route.getMember()),
+                Route.getApplicant_comment(),
+                MemberDto.toDto(Route.getReviewer()),
+                Route.getReviewier_comment(),
+                MemberDto.toDto(Route.getApprover()),
+                Route.getApprover_comment(),
+                Route.getCreatedAt(),
+                new ArrayList<>()
+        );
     }
 }

@@ -1,7 +1,10 @@
 package eci.server.ItemModule.controller.sign;
 
+import eci.server.ItemModule.dto.member.MemberDto;
 import eci.server.ItemModule.dto.response.Response;
 import eci.server.ItemModule.dto.sign.SignInRequest;
+
+import eci.server.ItemModule.dto.sign.SignInResponse;
 import eci.server.ItemModule.dto.sign.SignUpRequest;
 import eci.server.ItemModule.service.sign.SignService;
 import lombok.RequiredArgsConstructor;
@@ -10,7 +13,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+
+import java.io.IOException;
+import java.net.URLEncoder;
 
 import static eci.server.ItemModule.dto.response.Response.success;
 
@@ -31,11 +39,33 @@ public class SignController {
         return success();
     }
 
+
+
     @PostMapping("/sign-in")
-    @ResponseStatus(HttpStatus.OK)
-    public Response signIn(@Valid SignInRequest req) {
-        return success(signService.signIn(req));
+    @ResponseBody
+    public Response signIn(@Valid SignInRequest req, HttpServletResponse response) throws IOException {
+        SignInResponse signInResponse = signService.signIn(req);
+        String refreshToken = signInResponse.getRefreshToken();
+        String accessToken = signInResponse.getAccessToken();
+        MemberDto memberDto = signInResponse.getMember();
+        refreshToken = URLEncoder.encode(refreshToken, "utf-8");
+
+        Cookie refreshCookie = new Cookie("refreshToken", refreshToken);
+        refreshCookie.setMaxAge(7 * 24 * 60 * 60);
+        refreshCookie.setSecure(true);
+        refreshCookie.setHttpOnly(true);
+        refreshCookie.setPath("/");
+        response.addCookie(refreshCookie);
+
+        return success(new SignInResponse(accessToken,"httponly",memberDto));
     }
+//    @ResponseStatus(HttpStatus.OK)
+//    public Response signIn(@Valid SignInRequest req) {
+//        return success(signService.signIn(req));
+//    }
+
+
+
 
     /**
      * 토큰 리프레쉬 api

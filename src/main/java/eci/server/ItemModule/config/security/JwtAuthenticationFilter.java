@@ -10,9 +10,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.GenericFilterBean;
 
 import javax.servlet.*;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.net.URLEncoder;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -44,6 +46,7 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
 
         HttpServletRequest request1 = (HttpServletRequest) request;
         HttpServletResponse response1 = (HttpServletResponse) response;
+
         response1.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
         response1.setHeader("Access-Control-Allow-Credentials", "true");
         response1.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE");
@@ -56,9 +59,19 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
             setAuthentication(token);
         }
 
+        token = URLEncoder.encode(String.valueOf(token), "utf-8");
+        Cookie cookie = new Cookie("accessToken", token);
+        cookie.setMaxAge(7 * 24 * 60 * 60);
+        cookie.setSecure(true);
+        cookie.setHttpOnly(true);
+        cookie.setPath("/");
+
+        response1.addCookie(cookie);
+
         chain.doFilter(request, response1);
 
     }
+
 
     private String extractToken(ServletRequest request) {
         return ((HttpServletRequest)request).getHeader("Authorization");

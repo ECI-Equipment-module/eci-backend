@@ -1,5 +1,7 @@
 package eci.server.ItemModule.dto.route;
 
+import eci.server.ItemModule.dto.item.ItemDto;
+import eci.server.ItemModule.entity.item.Item;
 import eci.server.ItemModule.entity.route.Route;
 import eci.server.ItemModule.exception.item.ItemNotFoundException;
 import eci.server.ItemModule.exception.member.sign.MemberNotFoundException;
@@ -15,13 +17,13 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
 import javax.validation.constraints.Positive;
+import java.util.ArrayList;
 import java.util.Optional;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-public class RouteCreateRequest {
-
+@AllArgsConstructor
+public class RouteUpdateRequest {
     @NotBlank(message = "라우트의 타입을 입력해주세요")
     private String type;
 
@@ -45,22 +47,19 @@ public class RouteCreateRequest {
     @Null
     private Long memberId;
 
-//    @NotBlank(message = "요청 코멘트를 입력해주세요")
     private String applicant_comment;
 
     private Long reviewerId;
 
-//    @NotBlank(message = "리뷰 코멘트를 입력해주세요")
     private String reviewer_comment;
 
     private Long approverId;
 
-//    @NotBlank(message = "승인 여부 코멘트를 입력해주세요")
     private String approver_comment;
 
-    private Long parentId;
+    private Item item;
 
-    public static Route toEntity(RouteCreateRequest req, MemberRepository memberRepository, ItemRepository itemRepository, RouteRepository routeRepository) {
+    public static Route toEntity(RouteUpdateRequest req, MemberRepository memberRepository, ItemRepository itemRepository, RouteRepository routeRepository) {
         return new Route(
                 req.type,
                 req.workflow,
@@ -74,9 +73,7 @@ public class RouteCreateRequest {
                 memberRepository.findById(req.approverId).orElseThrow(MemberNotFoundException::new),
                 req.approver_comment,
                 itemRepository.findById(req.itemId).orElseThrow(ItemNotFoundException::new),
-                Optional.ofNullable(req.parentId)
-                        .map(id -> routeRepository.findById(id).orElseThrow(RouteNotFoundException::new))
-                        .orElse(null)
+                null
         );
     }
 }

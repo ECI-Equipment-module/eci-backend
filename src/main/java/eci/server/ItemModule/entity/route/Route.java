@@ -1,8 +1,14 @@
 package eci.server.ItemModule.entity.route;
 
+import eci.server.ItemModule.dto.item.ItemDto;
+import eci.server.ItemModule.dto.item.ItemUpdateRequest;
+import eci.server.ItemModule.dto.member.MemberDto;
+import eci.server.ItemModule.dto.route.RouteUpdateRequest;
+import eci.server.ItemModule.dto.route.RouteUpdateResponse;
 import eci.server.ItemModule.entity.entitycommon.EntityDate;
 import eci.server.ItemModule.entity.item.Item;
 import eci.server.ItemModule.entity.member.Member;
+import eci.server.ItemModule.repository.member.MemberRepository;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -36,16 +42,10 @@ public class Route extends EntityDate {
     private String workflowPhase;
 
     @Column(nullable = false)
-    private Character lifecycleStatus;
+    private String lifecycleStatus;
 
     @Column(nullable = false)
-    private Integer revisedCnt;
-
-    /**
-     * 최신 라우트만 true
-     */
-    @Column(nullable = false)
-    private boolean is_power;
+    private int revisedCnt;
 
     /**
      * 삭제 여부 표시
@@ -106,7 +106,7 @@ public class Route extends EntityDate {
             String type,
             String workflow,
             String workflowPhase,
-            Character lifecycleStatus,
+            String lifecycleStatus,
             Integer revisedCnt,
             Member member,
             String applicant_comment,
@@ -133,7 +133,6 @@ public class Route extends EntityDate {
         this.deleted = false;
     }
 
-    // Comment.java
     public Optional<Route> findDeletableRoute() {
         return hasChildren() ? Optional.empty() : Optional.of(findDeletableRouteByParent());
     }
@@ -157,4 +156,6 @@ public class Route extends EntityDate {
     private boolean isDeletedParent() { // 2
         return getParent() != null && getParent().isDeleted();
     }
+
+
 }
