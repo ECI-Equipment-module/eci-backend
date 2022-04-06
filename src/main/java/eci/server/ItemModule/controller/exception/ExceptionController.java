@@ -1,15 +1,15 @@
 package eci.server.ItemModule.controller.exception;
 
-import eci.server.ItemModule.exception.member.auth.AccessDeniedException;
-import eci.server.ItemModule.exception.member.auth.AccessExpiredException;
-import eci.server.ItemModule.exception.member.auth.AuthenticationEntryPointException;
-import eci.server.ItemModule.exception.member.auth.JwtNullException;
+import eci.server.ItemModule.exception.member.auth.*;
 import eci.server.ItemModule.service.sign.TokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 
 @CrossOrigin(origins = "http://localhost:3000")
 
@@ -25,10 +25,13 @@ public class ExceptionController {
 
     @GetMapping("/exception/entry-point")
     public void entryPoint(@RequestHeader(value = "Authorization") String accessToken) {
-
-        if(!tokenService.validateAccessToken(accessToken)){
+        /**
+         * 액세스 만료
+         */
+        if (!tokenService.validateAccessToken(accessToken)) {
             throw new AccessExpiredException();
         }
+
         throw new AuthenticationEntryPointException();
     }
 
@@ -42,9 +45,9 @@ public class ExceptionController {
         throw new AccessDeniedException();
     }
 
-    @GetMapping("/exception/null-jwt")
-    public void jwtNullException() {
-        throw new JwtNullException();
-    }
+//    @GetMapping("/exception/refresh-expired")
+//    public void refreshExpired(HttpServletRequest req) {
+//        throw new RefreshExpiredException();
+//        }
 
-}
+    }

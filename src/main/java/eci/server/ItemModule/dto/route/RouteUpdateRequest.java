@@ -17,8 +17,6 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
 import javax.validation.constraints.Positive;
-import java.util.ArrayList;
-import java.util.Optional;
 
 @Data
 @NoArgsConstructor
@@ -59,21 +57,7 @@ public class RouteUpdateRequest {
 
     private Item item;
 
-    public static Route toEntity(RouteUpdateRequest req, MemberRepository memberRepository, ItemRepository itemRepository, RouteRepository routeRepository) {
-        return new Route(
-                req.type,
-                req.workflow,
-                req.workflow, //workflow 설정하면 그것에 맞는 이미지 파일 돌려주기
-                req.lifecycleStatus,
-                req.revisedCnt+64, //revistion  A B C D
-                memberRepository.findById(req.memberId).orElseThrow(MemberNotFoundException::new),
-                req.applicant_comment,
-                memberRepository.findById(req.reviewerId).orElseThrow(MemberNotFoundException::new),
-                req.reviewer_comment,
-                memberRepository.findById(req.approverId).orElseThrow(MemberNotFoundException::new),
-                req.approver_comment,
-                itemRepository.findById(req.itemId).orElseThrow(ItemNotFoundException::new),
-                null
-        );
-    }
+    private Boolean inProgress;
+
+
 }

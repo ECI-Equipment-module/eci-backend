@@ -94,6 +94,7 @@ public class Item extends EntityDate {
      * @return 새로 수정된 이미지
      */
     public ImageUpdatedResult update(ItemUpdateRequest req) {
+
         this.name = req.getName();
         this.type = req.getType();
         this.width = req.getWidth();

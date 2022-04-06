@@ -3,12 +3,18 @@ package eci.server.ItemModule.entity.route;
 import eci.server.ItemModule.dto.item.ItemDto;
 import eci.server.ItemModule.dto.item.ItemUpdateRequest;
 import eci.server.ItemModule.dto.member.MemberDto;
+import eci.server.ItemModule.dto.response.Response;
+import eci.server.ItemModule.dto.route.RouteDto;
 import eci.server.ItemModule.dto.route.RouteUpdateRequest;
 import eci.server.ItemModule.dto.route.RouteUpdateResponse;
 import eci.server.ItemModule.entity.entitycommon.EntityDate;
 import eci.server.ItemModule.entity.item.Item;
 import eci.server.ItemModule.entity.member.Member;
+import eci.server.ItemModule.exception.item.ItemNotFoundException;
+import eci.server.ItemModule.exception.member.sign.MemberNotFoundException;
+import eci.server.ItemModule.repository.item.ItemRepository;
 import eci.server.ItemModule.repository.member.MemberRepository;
+import eci.server.ItemModule.repository.route.RouteRepository;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -102,7 +108,12 @@ public class Route extends EntityDate {
     @OneToMany(mappedBy = "parent")
     private List<Route> children = new ArrayList<>();
 
-
+    /**
+     * default : true
+     * 값이 true라면 임시저장 가능, false라면 수정 불가능
+     */
+    @Column
+    private Boolean inProgress;
 
     public Route(
             String type,
@@ -117,7 +128,8 @@ public class Route extends EntityDate {
             Member approver,
             String approver_comment,
             Item item,
-            Route parent
+            Route parent,
+            Boolean inProgress
     ) {
         this.type = type;
         this.workflow = workflow;
@@ -133,6 +145,7 @@ public class Route extends EntityDate {
         this.item = item;
         this.parent = parent;
         this.deleted = false;
+        this.inProgress = true;
     }
 
     public Optional<Route> findDeletableRoute() {
@@ -159,5 +172,20 @@ public class Route extends EntityDate {
         return getParent() != null && getParent().isDeleted();
     }
 
+    public RouteUpdateRequest update(RouteUpdateRequest req, MemberRepository memberRepository, ItemRepository itemRepository, RouteRepository routeRepository) {
+        this.type = req.getType();
+        this.workflow = req.getWorkflow();
+        this.workflowPhase = req.getWorkflow(); //workflow 설정하면 그것에 맞는 이미지 파일 돌려주기
+        this.lifecycleStatus = req.getLifecycleStatus();
+        this.revisedCnt = req.getRevisedCnt()+64;
+        this.applicant_comment =req.getApplicant_comment();
+        this.reviewer = memberRepository.findById(req.getReviewerId()).orElseThrow(MemberNotFoundException::new);
+        this.reviewer_comment = req.getReviewer_comment();
+        this.approver = memberRepository.findById(req.getApproverId()).orElseThrow(MemberNotFoundException::new);
+        this.approver_comment = req.getApprover_comment();
+        this.parent = null;
+        this.inProgress = req.getInProgress();
 
+        return req;
+    }
 }

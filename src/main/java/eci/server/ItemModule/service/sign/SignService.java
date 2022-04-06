@@ -9,6 +9,7 @@ import eci.server.ItemModule.entity.member.Member;
 import eci.server.ItemModule.entity.member.RoleType;
 
 import eci.server.ItemModule.exception.member.auth.AuthenticationEntryPointException;
+import eci.server.ItemModule.exception.member.auth.RefreshExpiredException;
 import eci.server.ItemModule.exception.member.sign.MemberEmailAlreadyExistsException;
 import eci.server.ItemModule.exception.member.sign.MemberNotFoundException;
 import eci.server.ItemModule.exception.member.sign.PasswordNotValidateException;
@@ -114,7 +115,7 @@ public class SignService {
     private void validateRefreshToken(String rToken) {
 
         if(!tokenService.validateRefreshToken(rToken)) {
-            throw new AuthenticationEntryPointException();
+            throw new RefreshExpiredException();
         }
     }
 

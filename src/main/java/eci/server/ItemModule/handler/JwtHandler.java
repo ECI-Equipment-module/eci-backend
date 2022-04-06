@@ -1,6 +1,6 @@
 package eci.server.ItemModule.handler;
 
-import eci.server.ItemModule.exception.member.auth.JwtNullException;
+import eci.server.ItemModule.exception.member.auth.AuthenticationEntryPointException;
 import io.jsonwebtoken.*;
 import org.springframework.stereotype.Component;
 
@@ -33,7 +33,7 @@ public class JwtHandler {
     public boolean validate(String encodedKey, String token) {
 
         if (token==null){
-            throw new JwtNullException();
+            throw new AuthenticationEntryPointException();
         }
 
         try {

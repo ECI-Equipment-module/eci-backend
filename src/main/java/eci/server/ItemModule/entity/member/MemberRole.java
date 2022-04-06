@@ -8,8 +8,8 @@ import javax.persistence.*;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@EqualsAndHashCode // 1
-@IdClass(MemberRoleId.class) // 2
+@EqualsAndHashCode
+@IdClass(MemberRoleId.class)
 public class MemberRole {
 
     @Id

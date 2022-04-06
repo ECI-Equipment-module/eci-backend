@@ -60,6 +60,8 @@ public class RouteCreateRequest {
 
     private Long parentId;
 
+    private Boolean inProgress;
+
     public static Route toEntity(RouteCreateRequest req, MemberRepository memberRepository, ItemRepository itemRepository, RouteRepository routeRepository) {
         return new Route(
                 req.type,
@@ -76,7 +78,8 @@ public class RouteCreateRequest {
                 itemRepository.findById(req.itemId).orElseThrow(ItemNotFoundException::new),
                 Optional.ofNullable(req.parentId)
                         .map(id -> routeRepository.findById(id).orElseThrow(RouteNotFoundException::new))
-                        .orElse(null)
+                        .orElse(null),
+                req.inProgress
         );
     }
 }

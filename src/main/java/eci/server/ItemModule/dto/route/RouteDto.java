@@ -34,6 +34,7 @@ public class RouteDto {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime createdAt;
     private List<RouteDto> children;
+    private Boolean inProgress;
 
     public static List<RouteDto> toDtoList(List<Route> Routes) {
         NestedConvertHelper helper = NestedConvertHelper.newInstance(
@@ -52,7 +53,8 @@ public class RouteDto {
                         c.isDeleted() ? null : MemberDto.toDto(c.getApprover()),
                         c.isDeleted() ? null : c.getApprover_comment(),
                         c.getCreatedAt(),
-                        new ArrayList<>()
+                        new ArrayList<>(),
+                        c.isDeleted() ? null : c.getInProgress()
                         ),
                 c -> c.getParent(),
                 c -> c.getId(),
@@ -76,7 +78,8 @@ public class RouteDto {
                 MemberDto.toDto(Route.getApprover()),
                 Route.getApprover_comment(),
                 Route.getCreatedAt(),
-                new ArrayList<>()
+                new ArrayList<>(),
+                Route.getInProgress()
         );
     }
 }
