@@ -6,6 +6,7 @@ import eci.server.ItemModule.exception.item.ItemNotFoundException;
 import eci.server.ItemModule.exception.member.auth.AccessDeniedException;
 import eci.server.ItemModule.exception.member.auth.AccessExpiredException;
 import eci.server.ItemModule.exception.member.auth.AuthenticationEntryPointException;
+import eci.server.ItemModule.exception.member.auth.JwtNullException;
 import eci.server.ItemModule.exception.member.sign.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -120,11 +121,18 @@ public class ExceptionAdvice {
         return Response.failure(400, e.getHeaderName() + " 요청 헤더가 누락되었습니다.");
     }
 
-    @ExceptionHandler(BindException.class)
+    /**
+     * 토큰 null 일 시 에러 - 쿠키에서 추출 실패
+     * @param e
+     * @return
+     */
+    @ExceptionHandler(JwtNullException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public Response bindException(BindException e) {
-        return Response.failure(400, e.getMessage());//.getFieldError().getDefaultMessage());
+    public Response jwtNullException(JwtNullException e) {
+        log.info("e = {}", e.getMessage());
+        return Response.failure(400, "토큰값이 null 입니다.");
     }
+
 
     @ExceptionHandler(FileUploadFailureException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)

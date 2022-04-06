@@ -75,7 +75,7 @@ public class Route extends EntityDate {
 
     @Column(nullable = false)
     @Lob
-    private String reviewier_comment;
+    private String reviewer_comment;
 
     /**
      * 승인자의 아이디
@@ -100,7 +100,9 @@ public class Route extends EntityDate {
     private Route parent;
 
     @OneToMany(mappedBy = "parent")
-    private List<Route> children = new ArrayList<>(); // 5
+    private List<Route> children = new ArrayList<>();
+
+
 
     public Route(
             String type,
@@ -125,7 +127,7 @@ public class Route extends EntityDate {
         this.member = member;
         this.applicant_comment = applicant_comment;
         this.reviewer = reviewer;
-        this.reviewier_comment = reviewer_comment;
+        this.reviewer_comment = reviewer_comment;
         this.approver = approver;
         this.approver_comment = approver_comment;
         this.item = item;

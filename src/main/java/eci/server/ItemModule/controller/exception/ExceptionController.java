@@ -3,6 +3,7 @@ package eci.server.ItemModule.controller.exception;
 import eci.server.ItemModule.exception.member.auth.AccessDeniedException;
 import eci.server.ItemModule.exception.member.auth.AccessExpiredException;
 import eci.server.ItemModule.exception.member.auth.AuthenticationEntryPointException;
+import eci.server.ItemModule.exception.member.auth.JwtNullException;
 import eci.server.ItemModule.service.sign.TokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -28,7 +29,6 @@ public class ExceptionController {
         if(!tokenService.validateAccessToken(accessToken)){
             throw new AccessExpiredException();
         }
-
         throw new AuthenticationEntryPointException();
     }
 
@@ -39,7 +39,12 @@ public class ExceptionController {
 
     @GetMapping("/exception/access-denied")
     public void accessDenied() {
-
         throw new AccessDeniedException();
     }
+
+    @GetMapping("/exception/null-jwt")
+    public void jwtNullException() {
+        throw new JwtNullException();
+    }
+
 }

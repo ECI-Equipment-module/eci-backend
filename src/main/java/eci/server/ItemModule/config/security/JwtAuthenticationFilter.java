@@ -59,15 +59,6 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
             setAuthentication(token);
         }
 
-        token = URLEncoder.encode(String.valueOf(token), "utf-8");
-        Cookie cookie = new Cookie("accessToken", token);
-        cookie.setMaxAge(7 * 24 * 60 * 60);
-        cookie.setSecure(true);
-        cookie.setHttpOnly(true);
-        cookie.setPath("/");
-
-        response1.addCookie(cookie);
-
         chain.doFilter(request, response1);
 
     }
@@ -79,7 +70,6 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
 
     private boolean validateToken(String token) {
         return(token != null && tokenService.validateAccessToken(token));
-
     }
 
     private void setAuthentication(String token) {
