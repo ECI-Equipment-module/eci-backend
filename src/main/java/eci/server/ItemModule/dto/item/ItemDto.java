@@ -1,10 +1,9 @@
 package eci.server.ItemModule.dto.item;
 
 
+import eci.server.ItemModule.dto.color.ColorDto;
 import eci.server.ItemModule.dto.member.MemberDto;
-import eci.server.ItemModule.dto.route.RouteDto;
 import eci.server.ItemModule.entity.item.Item;
-import eci.server.ItemModule.repository.route.RouteRepository;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -24,6 +23,7 @@ public class ItemDto {
     private String weight;
     private MemberDto member;
     private List<ImageDto> thumbnail;
+    private ColorDto color;
 
     public static ItemDto toDto(Item Item) {
 
@@ -35,10 +35,9 @@ public class ItemDto {
                 Item.getHeight(),
                 Item.getWeight(),
                 MemberDto.toDto(Item.getMember()),
-                Item.getThumbnail().stream().map(i -> ImageDto.toDto(i)).collect(toList())
+                Item.getThumbnail().stream().map(i -> ImageDto.toDto(i)).collect(toList()),
+                ColorDto.toDto(Item.getColor())
         );
     }
-
-
 
 }

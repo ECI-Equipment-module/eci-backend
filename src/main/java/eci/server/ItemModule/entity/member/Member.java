@@ -41,7 +41,8 @@ public class Member extends EntityDate { // 5
     @OneToMany(
             mappedBy = "member",
             cascade = CascadeType.ALL,
-            orphanRemoval = true)
+            orphanRemoval = true,
+            fetch = FetchType.LAZY)
     private Set<MemberRole> roles;
 
     public Member(String email, String password, String username, String department, String contact, List<Role> roles) {

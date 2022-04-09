@@ -44,7 +44,6 @@ public class CustomItemRepositoryImpl extends QuerydslRepositorySupport implemen
     public Page<ItemSimpleDto> findAllByCondition(ItemReadCondition cond) { // 5
         Pageable pageable = PageRequest.of(cond.getPage(), cond.getSize());
         Predicate predicate = createPredicate(cond);
-        System.out.println("customitemrepository impleeeeeeeeeeeeeeeeeeeeee");
         System.out.println(fetchAll(predicate, pageable).toString());
         return new PageImpl<>(fetchAll(predicate, pageable), pageable, fetchCount(predicate));
     }

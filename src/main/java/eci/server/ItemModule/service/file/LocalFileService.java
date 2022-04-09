@@ -21,8 +21,6 @@ public class LocalFileService implements FileService {
     @Value("${upload.image.location}")
     private String location;
 
-
-
     /**
      * 파일 업로드 디렉토리 생성
      */

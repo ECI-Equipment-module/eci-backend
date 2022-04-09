@@ -3,9 +3,10 @@ package eci.server.ItemModule.dto.item;
 import eci.server.ItemModule.entity.item.Image;
 import eci.server.ItemModule.entity.item.Item;
 import eci.server.ItemModule.entity.item.ItemType;
+import eci.server.ItemModule.exception.item.ColorNotFoundException;
 import eci.server.ItemModule.exception.member.sign.MemberNotFoundException;
+import eci.server.ItemModule.repository.color.ColorRepository;
 import eci.server.ItemModule.repository.member.MemberRepository;
-import eci.server.ItemModule.repository.route.RouteRepository;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -58,23 +59,15 @@ public class ItemCreateRequest {
 
     private Boolean inProgress;
 
-    private List<MultipartFile> images = new ArrayList<>();
-
     private List<MultipartFile> thumbnail = new ArrayList<>();
 
-    public ItemCreateRequest(String name, String type,String width, String height, String weight, Long memberId, Boolean inProgress, List<MultipartFile> thumbnail) {
+    private List<MultipartFile> attachments = new ArrayList<>();
 
-        this.name = name;
-        this.type = type;
-        this.width = width;
-        this.height = height;
-        this.weight = weight;
-        this.memberId = memberId;
-        this.inProgress = inProgress;
-        this.thumbnail = thumbnail;
-    }
+    @NotNull(message = "색깔을 입력해주세요.")
+    private Long colorId;
 
-    public static Item toEntity(ItemCreateRequest req, MemberRepository memberRepository) {
+
+    public static Item toEntity(ItemCreateRequest req, MemberRepository memberRepository, ColorRepository colorRepository) {
 
         return new Item(
                 req.name,
@@ -83,10 +76,18 @@ public class ItemCreateRequest {
                 req.width,
                 req.height,
                 req.weight,
+
                 memberRepository.findById(
                         req.getMemberId()
                 ).orElseThrow(MemberNotFoundException::new),
+
                 req.inProgress,
+
+                colorRepository.findById(
+                        req.getColorId()
+                ).orElseThrow(),
+
+
                 req.thumbnail.stream().map(
                         i -> new Image(
                                 i.getOriginalFilename())

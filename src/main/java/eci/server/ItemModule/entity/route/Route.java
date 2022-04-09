@@ -105,7 +105,7 @@ public class Route extends EntityDate {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Route parent;
 
-    @OneToMany(mappedBy = "parent")
+    @OneToMany(mappedBy = "parent", fetch = FetchType.LAZY)
     private List<Route> children = new ArrayList<>();
 
     /**

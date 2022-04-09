@@ -61,7 +61,7 @@ public class RouteService {
     @Transactional
     public RouteUpdateResponse update(Long id, RouteUpdateRequest req) {
         Route route = RouteRepository.findById(id).orElseThrow(RouteNotFoundException::new);
-        System.out.println("routeeeeeeeeeeee" + route.getId());
+
         RouteUpdateRequest updateResponse = route.update(
                 req,
                 memberRepository,

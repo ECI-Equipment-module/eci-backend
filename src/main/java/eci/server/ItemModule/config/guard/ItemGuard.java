@@ -44,7 +44,6 @@ public class ItemGuard {
     }
 
     private boolean hasAdminRole() {
-        System.out.println("lassssssssadminrole");
         return authHelper.extractMemberRoles().contains(RoleType.ROLE_ADMIN);
     }
 }

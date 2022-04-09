@@ -37,7 +37,6 @@ public class ItemController {
     ) {
 
         return Response.success(
-
                 itemService.create(req));
     }
 
@@ -54,6 +53,19 @@ public class ItemController {
         return Response.success(
                 itemService.read(id)
 
+        );
+    }
+
+    /**
+     * 특정 아이템 조회
+     * @return 200 (success)
+     */
+
+    @GetMapping("/todos")
+    @ResponseStatus(HttpStatus.OK)
+    public Response todos() {
+        return Response.success(
+                itemService.readTodo()
         );
     }
 

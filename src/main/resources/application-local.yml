@@ -10,7 +10,10 @@
     hibernate.ddl-auto: create
     open-in-view: false
     show-sql: true
+
   upload:
     image:
       location: C:\Users\DONGYUN\Desktop\spring\server3\localmedia
+    file:
+      location: C:\Users\DONGYUN\Desktop\spring\server3\filemedia
 

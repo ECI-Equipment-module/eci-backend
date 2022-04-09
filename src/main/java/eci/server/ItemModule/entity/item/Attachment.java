@@ -33,19 +33,23 @@ public class Attachment {
     private String originName;
 
     /**
-     * 속하는 아이템이 있을 시에만 이미지 저장
-     * 아이템 사라지면 삭제됨
+     * 속하는 아이템이 있을 시에만 파일 저장
+     * 파일 사라지면 삭제됨
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "item_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Item item;
 
+    @Column(nullable = false)
+    @Lob
+    private String attach_comment;
+
     /**
-     * 지원하는 이미지 확장자
+     * 지원하는 파일 확장자
      */
     private final static String supportedExtension[] =
-            {"jpg", "jpeg", "gif", "bmp", "png"};
+            {"pdf", "hwp", "word", "docx", "ppt"};
 
     /**
      * 각 이미지의 고유명 생성
@@ -86,7 +90,10 @@ public class Attachment {
      */
     private String extractExtension(String originName) {
         try {
-            String ext = originName.substring(originName.lastIndexOf(".") + 1);
+            String ext =
+                    originName.substring(
+                            originName.lastIndexOf(".") + 1
+                    );
             if (isSupportedFormat(ext)) return ext;
         } catch (StringIndexOutOfBoundsException e) {
         }
@@ -100,7 +107,8 @@ public class Attachment {
      * @return
      */
     private boolean isSupportedFormat(String ext) {
-        return Arrays.stream(supportedExtension).anyMatch(e -> e.equalsIgnoreCase(ext));
+        return Arrays.stream(supportedExtension)
+                .anyMatch(e -> e.equalsIgnoreCase(ext));
     }
 
 }

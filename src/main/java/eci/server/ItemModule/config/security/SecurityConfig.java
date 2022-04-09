@@ -46,7 +46,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 .antMatchers(HttpMethod.POST, "/sign-in", "/sign-up", "/refresh-token").permitAll()
-                .antMatchers(HttpMethod.GET, "/**").authenticated()
+                .antMatchers(HttpMethod.GET, "/**").permitAll()
 //                .antMatchers(HttpMethod.GET, "/items/**").permitAll()
 //                .antMatchers(HttpMethod.GET, "/members/**").permitAll()
 //                .antMatchers(HttpMethod.GET, "/routes/**").permitAll()

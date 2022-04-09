@@ -1,15 +1,18 @@
 package eci.server.ItemModule.entity.item;
 
+import eci.server.ItemModule.dto.color.ColorDto;
 import eci.server.ItemModule.dto.item.ItemUpdateRequest;
+import eci.server.ItemModule.dto.item.UpdateColor;
 import eci.server.ItemModule.entity.entitycommon.EntityDate;
 import eci.server.ItemModule.entity.member.Member;
-import eci.server.ItemModule.entity.route.Route;
+import eci.server.ItemModule.repository.color.ColorRepository;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+import org.hibernate.sql.Update;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
@@ -23,9 +26,8 @@ import static java.util.stream.Collectors.toList;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Item extends EntityDate {
-
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQUENCE2")
     @SequenceGenerator(name="SEQUENCE2", sequenceName="SEQUENCE2", allocationSize=1)
     private Long id;
 
@@ -62,7 +64,14 @@ public class Item extends EntityDate {
     )
     private List<Image> thumbnail;
 
+//    private List<Attachment> attachments;
+
     private Boolean inProgress;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "Color_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private Color color;
 
     public Item(
             String name,
@@ -73,8 +82,10 @@ public class Item extends EntityDate {
             String weight,
             Member member,
             Boolean inProgress,
+            Color color,
             List<Image> thumbnail
 
+//            List<Attachment> attachments
     ) {
         this.name = name;
         this.type = type;
@@ -84,8 +95,13 @@ public class Item extends EntityDate {
         this.member = member;
         this.weight = weight;
         this.inProgress = inProgress;
+        this.color = color;
         this.thumbnail = new ArrayList<>();
         addImages(thumbnail);
+
+//        this.attachments = new ArrayList<>();
+//        addImages(attachments);
+
     }
 
     /**
@@ -100,12 +116,16 @@ public class Item extends EntityDate {
         this.width = req.getWidth();
         this.height = req.getHeight();
         this.weight = req.getWeight();
+
+        this.color = UpdateColor.updateColor(req);
+
         ImageUpdatedResult result =
                 findImageUpdatedResult(
                         req.getAddedImages(),
                         req.getDeletedImages());
         addImages(result.getAddedImages());
         deleteImages(result.getDeletedImages());
+
         return result;
     }
 
@@ -121,12 +141,32 @@ public class Item extends EntityDate {
     }
 
     /**
+     * 추가할 attachments
+     * @param added
+     */
+//    private void addAttachments(List<Attachment> added) {
+//        added.stream().forEach(i -> {
+//            attachments.add(i);
+//            i.initItem(this);
+//        });
+//    }
+
+    /**
      * 삭제될 이미지 제거 (고아 객체 이미지 제거)
      * @param deleted
      */
     private void deleteImages(List<Image> deleted) {
         deleted.stream().forEach(di -> this.thumbnail.remove(di));
     }
+
+    /**
+     * 삭제될 이미지 제거 (고아 객체 이미지 제거)
+     * @param deleted
+     */
+//    private void deleteAttachments(List<Attachment> deleted) {
+//        deleted.stream().forEach(di -> this.attachments.remove(di));
+//    }
+
 
     /**
      * 압데이트 돼야 할 이미지 정보 만들어줌

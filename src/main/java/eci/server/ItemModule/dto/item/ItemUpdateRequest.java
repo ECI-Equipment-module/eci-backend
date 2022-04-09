@@ -1,5 +1,13 @@
 package eci.server.ItemModule.dto.item;
 
+import eci.server.ItemModule.dto.color.ColorDto;
+import eci.server.ItemModule.entity.item.Color;
+import eci.server.ItemModule.entity.item.Image;
+import eci.server.ItemModule.entity.item.Item;
+import eci.server.ItemModule.entity.item.ItemType;
+import eci.server.ItemModule.exception.member.sign.MemberNotFoundException;
+import eci.server.ItemModule.repository.color.ColorRepository;
+import eci.server.ItemModule.repository.member.MemberRepository;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -11,6 +19,8 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PositiveOrZero;
 import java.util.ArrayList;
 import java.util.List;
+
+import static java.util.stream.Collectors.toList;
 
 @Data
 @NoArgsConstructor
@@ -41,8 +51,15 @@ public class ItemUpdateRequest {
 
 
     /**
-     * 제거된 이미지 아이디 입력
+     * 색깔 입력
      */
+    @NotNull(message = "색깔을 입력해주세요.")
+    @PositiveOrZero(message = "유효한 색깔 아이디를 입력해주세요")
+    private Long colorId;
+
     private List<Long> deletedImages = new ArrayList<>();
-}
+
+
+    }
+
 

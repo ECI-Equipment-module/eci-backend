@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Data
@@ -36,7 +37,7 @@ public class RouteDto {
     private List<RouteDto> children;
     private Boolean inProgress;
 
-    public static List<RouteDto> toDtoList(List<Route> Routes) {
+    public static List <RouteDto> toDtoList(List <Route> Routes) {
         NestedConvertHelper helper = NestedConvertHelper.newInstance(
                 Routes,
                 c -> new RouteDto(
@@ -82,4 +83,5 @@ public class RouteDto {
                 Route.getInProgress()
         );
     }
+
 }
