@@ -16,4 +16,5 @@ public interface ItemRepository extends JpaRepository<Item, Long>,  CustomItemRe
 //    @Query(value = "SELECT u FROM Item u JOIN FETCH u.reservations")
     List<Item> findByMember(Optional<Member> memberDto);
 
+
 }

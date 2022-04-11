@@ -11,14 +11,13 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
-@CrossOrigin(origins = "http://localhost:3000")
-
 /**
  * 예외 사항 발생 시 "/exception/{예외}"로 리다이렉트
  */
 
 @RequiredArgsConstructor
 @RestController
+@CrossOrigin(origins = "http://localhost:3000")
 public class ExceptionController {
 
     private final TokenService tokenService;

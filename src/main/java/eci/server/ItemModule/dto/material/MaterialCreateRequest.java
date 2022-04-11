@@ -1,6 +1,6 @@
 package eci.server.ItemModule.dto.material;
 
-import eci.server.ItemModule.entity.item.Material;
+import eci.server.ItemModule.entity.material.Material;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

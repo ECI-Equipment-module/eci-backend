@@ -6,7 +6,7 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import eci.server.ItemModule.dto.material.MaterialReadCondition;
 import eci.server.ItemModule.dto.material.MaterialSimpleDto;
-import eci.server.ItemModule.entity.item.Material;
+import eci.server.ItemModule.entity.material.Material;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.function.Function;
 
 import static com.querydsl.core.types.Projections.constructor;
-import static eci.server.ItemModule.entity.item.QMaterial.material;
+import static eci.server.ItemModule.entity.material.QMaterial.material;
 
 
 @Transactional(readOnly = true)

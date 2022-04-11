@@ -1,11 +1,13 @@
 package eci.server.ItemModule.dto.item;
 
-import eci.server.ItemModule.entity.item.Image;
-import eci.server.ItemModule.entity.item.Item;
-import eci.server.ItemModule.entity.item.ItemType;
+import eci.server.ItemModule.entity.item.*;
 import eci.server.ItemModule.exception.item.ColorNotFoundException;
+import eci.server.ItemModule.exception.item.ManufactureNotFoundException;
+import eci.server.ItemModule.exception.item.MaterialNotFoundException;
 import eci.server.ItemModule.exception.member.sign.MemberNotFoundException;
 import eci.server.ItemModule.repository.color.ColorRepository;
+import eci.server.ItemModule.repository.manufacture.ManufactureRepository;
+import eci.server.ItemModule.repository.material.MaterialRepository;
 import eci.server.ItemModule.repository.member.MemberRepository;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -22,7 +24,9 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.partitioningBy;
 import static java.util.stream.Collectors.toList;
 
 
@@ -62,12 +66,26 @@ public class ItemCreateRequest {
     private List<MultipartFile> thumbnail = new ArrayList<>();
 
     private List<MultipartFile> attachments = new ArrayList<>();
+    private List<String> tag = new ArrayList<>();
+    private List<String> attachmentComment = new ArrayList<>();
 
     @NotNull(message = "색깔을 입력해주세요.")
     private Long colorId;
 
+    @NotNull(message = "재료를 입력해주세요.")
+    private List<Long> materials = new ArrayList<>();
 
-    public static Item toEntity(ItemCreateRequest req, MemberRepository memberRepository, ColorRepository colorRepository) {
+    private List<Long> manufactures = new ArrayList<>();
+
+    private List<String> partnumbers = new ArrayList<>();
+
+
+    public static Item toEntity(
+            ItemCreateRequest req,
+            MemberRepository memberRepository,
+            ColorRepository colorRepository,
+            MaterialRepository materialRepository,
+            ManufactureRepository manufactureRepository) {
 
         return new Item(
                 req.name,
@@ -85,15 +103,43 @@ public class ItemCreateRequest {
 
                 colorRepository.findById(
                         req.getColorId()
-                ).orElseThrow(),
-
+                ).orElseThrow(ColorNotFoundException::new),
 
                 req.thumbnail.stream().map(
                         i -> new Image(
-                                i.getOriginalFilename())
-                        ).collect(
-                                toList()
-                                )
+                                i.getOriginalFilename()
+                        )
+                ).collect(
+                        toList()
+                ),
+
+                req.attachments.stream().map(
+                        i -> new Attachment(
+                                i.getOriginalFilename(),
+                                req.getTag().get(req.attachments.indexOf(i)),
+                                req.getAttachmentComment().get(req.attachments.indexOf(i))
+                        )
+                ).collect(
+                        toList()
+                ),
+
+                req.materials.stream().map(
+                        i ->
+                                materialRepository.
+                                        findById(i).orElseThrow(MaterialNotFoundException::new)
+                ).collect(
+                        toList()
+                ),
+
+                req.manufactures.stream().map(
+                        i ->
+                                manufactureRepository.
+                                        findById(i).orElseThrow(ManufactureNotFoundException::new)
+                ).collect(
+                        toList()
+                ),
+
+                req.partnumbers
         );
     }
 }

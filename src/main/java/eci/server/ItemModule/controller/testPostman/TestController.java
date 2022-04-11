@@ -11,6 +11,7 @@ import static eci.server.ItemModule.dto.response.Response.success;
 
 @RestController
 @RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:3000")
 public class TestController {
 
     private final TokenService tokenService;

@@ -1,16 +1,7 @@
 package eci.server.ItemModule.dto.item;
 
-import eci.server.ItemModule.dto.color.ColorDto;
-import eci.server.ItemModule.entity.item.Color;
-import eci.server.ItemModule.entity.item.Image;
-import eci.server.ItemModule.entity.item.Item;
-import eci.server.ItemModule.entity.item.ItemType;
-import eci.server.ItemModule.exception.member.sign.MemberNotFoundException;
-import eci.server.ItemModule.repository.color.ColorRepository;
-import eci.server.ItemModule.repository.member.MemberRepository;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -20,7 +11,6 @@ import javax.validation.constraints.PositiveOrZero;
 import java.util.ArrayList;
 import java.util.List;
 
-import static java.util.stream.Collectors.toList;
 
 @Data
 @NoArgsConstructor
@@ -49,6 +39,12 @@ public class ItemUpdateRequest {
      */
     private List<MultipartFile> addedImages = new ArrayList<>();
 
+    /**
+     * 추가된 파일을 첨부
+     */
+    private List<MultipartFile> addedAttachments = new ArrayList<>();
+    private List<String> addedTag = new ArrayList<>();
+    private List<String> addedAttachmentComment = new ArrayList<>();
 
     /**
      * 색깔 입력
@@ -56,10 +52,15 @@ public class ItemUpdateRequest {
     @NotNull(message = "색깔을 입력해주세요.")
     @PositiveOrZero(message = "유효한 색깔 아이디를 입력해주세요")
     private Long colorId;
-
+    /**
+     * 삭제될 사진 아이디 입력 - 실제 삭제 예정
+     */
     private List<Long> deletedImages = new ArrayList<>();
+    /**
+     * 삭제될 파일 아이디 입력 - is deleted 만 true
+     */
+    private List<Long> deletedAttachments = new ArrayList<>();
 
-
-    }
+}
 
 

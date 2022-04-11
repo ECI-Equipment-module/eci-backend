@@ -11,10 +11,13 @@ import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.time.Duration;
+import java.util.concurrent.TimeUnit;
 
 @EnableWebMvc
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
+
+
 
     @Value("${upload.image.location}")
     private String location;
@@ -28,6 +31,15 @@ public class WebConfig implements WebMvcConfigurer {
                 .setCacheControl(CacheControl.maxAge(Duration.ofHours(1L)).cachePublic());
                 // 업로드된 각 이미지는 고유 이름 & 수정 X => 캐시 설정
                 // 자원 접근 시 새로 접근 x , 캐시 자원 이용
+
+        CacheControl cacheControl = CacheControl
+                .maxAge(60, TimeUnit.SECONDS)
+                .cachePublic()
+                .mustRevalidate();
+
+        registry.addResourceHandler("**/*.js")
+                .setCacheControl(cacheControl)
+        ;
 
     }
 

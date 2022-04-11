@@ -1,17 +1,16 @@
 package eci.server.ItemModule.entity.item;
 
-import eci.server.ItemModule.entity.member.Member;
-import eci.server.ItemModule.entity.member.Role;
 import lombok.*;
 
 import javax.persistence.Embeddable;
+import java.io.Serializable;
 
 @Embeddable
 @EqualsAndHashCode
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class ItemMaterialId {
+public class ItemManufactureId implements Serializable {
     private Item item;
-    private Material material;
+    private Manufacture manufacture;
 }

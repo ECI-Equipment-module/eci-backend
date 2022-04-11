@@ -3,10 +3,17 @@ package eci.server.ItemModule.service.item;
 
 import eci.server.ItemModule.config.guard.AuthHelper;
 import eci.server.ItemModule.dto.item.*;
+import eci.server.ItemModule.dto.manufacture.ReadPartNumberService;
 import eci.server.ItemModule.dto.route.RouteDto;
+import eci.server.ItemModule.entity.item.Attachment;
 import eci.server.ItemModule.entity.member.Member;
+import eci.server.ItemModule.exception.item.AttachmentNotFoundException;
 import eci.server.ItemModule.exception.route.RouteNotFoundException;
 import eci.server.ItemModule.repository.color.ColorRepository;
+import eci.server.ItemModule.repository.item.AttachmentRepository;
+import eci.server.ItemModule.repository.item.ItemManufactureRepository;
+import eci.server.ItemModule.repository.manufacture.ManufactureRepository;
+import eci.server.ItemModule.repository.material.MaterialRepository;
 import eci.server.ItemModule.repository.route.RouteRepository;
 import eci.server.ItemModule.service.file.FileService;
 import eci.server.ItemModule.entity.item.Image;
@@ -14,6 +21,7 @@ import eci.server.ItemModule.entity.item.Item;
 import eci.server.ItemModule.exception.item.ItemNotFoundException;
 import eci.server.ItemModule.repository.item.ItemRepository;
 import eci.server.ItemModule.repository.member.MemberRepository;
+import eci.server.ItemModule.service.file.LocalFileService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,7 +45,15 @@ public class ItemService {
     private final ItemRepository itemRepository;
     private final MemberRepository memberRepository;
     private final ColorRepository colorRepository;
+    private final MaterialRepository materialRepository;
+    private final ManufactureRepository manufactureRepository;
+    private final AttachmentRepository attachmentRepository;
+
+    private final ReadPartNumberService readPartNumber;
+
     private final FileService fileService;
+    private final LocalFileService localFileService;
+
     private final AuthHelper authHelper;
 
     /**
@@ -53,12 +69,17 @@ public class ItemService {
                 ItemCreateRequest.toEntity(
                         req,
                         memberRepository,
-                        colorRepository
+                        colorRepository,
+                        materialRepository,
+                        manufactureRepository
                 )
 
         );
 
         uploadImages(item.getThumbnail(), req.getThumbnail());
+
+        uploadAttachments(item.getAttachments(), req.getAttachments());
+
         return new ItemCreateResponse(item.getId());
     }
 
@@ -75,37 +96,80 @@ public class ItemService {
                 .forEach(
                         i -> fileService.upload
                                 (
-                                fileImages.get(i),
-                                images.get(i).getUniqueName()
-                        )
+                                        fileImages.get(i),
+                                        images.get(i).getUniqueName()
+                                )
                 );
     }
 
+    private void uploadAttachments(List<Attachment> attachments, List<MultipartFile> filedAttachments) {
+        // 실제 이미지 파일을 가지고 있는 Multipart 파일을
+        // 파일이 가지는 uniquename을 파일명으로 해서 파일저장소 업로드
+        IntStream.range(0, attachments.size())
+                .forEach(
+                        i -> fileService.upload
+                                (
+                                        filedAttachments.get(i),
+                                        attachments.get(i).getUniqueName()
+                                )
+                );
+    }
+
+
+    public byte[] readImg(Long id){
+        Item targetItem = itemRepository.findById(id).orElseThrow(ItemNotFoundException::new);
+        byte[] image = localFileService.getImage(
+                targetItem.getCreatedAt().toString(),
+                targetItem.getThumbnail().get(0).
+                        getUniqueName()
+        );
+        return image;
+    }
+
     public ReadItemDto read(Long id) {
+        Item targetItem = itemRepository.findById(id).orElseThrow(ItemNotFoundException::new);
+
+        List <AttachmentDto> attachmentDtoList = Optional.ofNullable(AttachmentDto.toDtoList(
+                attachmentRepository.findByItem(targetItem)
+        )
+                )
+                .orElseThrow(AttachmentNotFoundException::new);
 
         //라우트가 없다면 라우트 없음 에러 던지기, 라우트 없으면 읽기도 사실상 불가능
         List <RouteDto> routeDtoList = Optional.ofNullable(RouteDto.toDtoList(
                 routeRepository.findAllWithMemberAndParentByItemIdOrderByParentIdAscNullsFirstRouteIdAsc(id)
         )).orElseThrow(RouteNotFoundException::new);
 
+
+
         if (routeDtoList.size()>0) {
             //routeDto가 존재할 때
             ReadItemDto readItemDto = ReadItemDto.toDto(
-                    ItemDto.toDto(
-                            itemRepository.findById(id).orElseThrow(ItemNotFoundException::new)
-                    ),
+                    ItemDto.toDto(targetItem),
                     routeDtoList,
-                    routeDtoList.get(routeDtoList.size() - 1)//최신 라우트
+                    routeDtoList.
+                            get(routeDtoList.size() - 1),//최신 라우트,
+
+                    readPartNumber.readPartnumbers(targetItem),
+                    attachmentDtoList
+
+
             );
             return readItemDto;
         } else{
             //route 가 존재하지 않을 시
-            ReadItemDto readItemDto = ReadItemDto.toDto(
+            ReadItemDto readItemDto = ReadItemDto.noRoutetoDto(
                     ItemDto.toDto(
                             itemRepository.findById(id).orElseThrow(ItemNotFoundException::new)
                     ),
-                    routeDtoList
+                    routeDtoList,
+                    readPartNumber.readPartnumbers(targetItem),
+                    attachmentDtoList
+
             );
+
+            System.out.println(readItemDto.getThumbnail().toString());
+
             return readItemDto;
         }
     }
@@ -115,9 +179,9 @@ public class ItemService {
         List<ItemTodoResponse> NEED_REVISE = new ArrayList<>();
         List<ItemTodoResponse> REJECTED = new ArrayList<>();
         List<ItemTodoResponse> WAITING_APPROVAL = new ArrayList<>();
+
         //1) 내가 작성자인 모든 아이템들을 데려오기
         Optional<Member> member1 = memberRepository.findById(authHelper.extractMemberId());
-
         List<Item> itemList = itemRepository.findByMember(memberRepository.findById(authHelper.extractMemberId()));
 
         System.out.println(itemList.size());
@@ -170,16 +234,46 @@ public class ItemService {
 
 
     private void deleteImages(List<Image> images) {
-        images.stream().forEach(i -> fileService.delete(i.getUniqueName()));
+        images.
+                stream()
+                .forEach(
+                        i -> fileService.delete(
+                                i.getUniqueName()
+                        )
+                );
+    }
+
+    private void deleteAttachments(List<Attachment> attachments) {
+//        attachments.stream().forEach(i -> fileService.delete(i.getUniqueName()));
+        attachments.
+                stream().
+                forEach(
+                        i -> i.setDeleted(true)
+                );
     }
 
     @Transactional
     public ItemUpdateResponse update(Long id, ItemUpdateRequest req) {
 
         Item item = itemRepository.findById(id).orElseThrow(ItemNotFoundException::new);
-        Item.ImageUpdatedResult result = item.update(req);
-        uploadImages(result.getAddedImages(), result.getAddedImageFiles());
-        deleteImages(result.getDeletedImages());
+        Item.FileUpdatedResult result = item.update(req, colorRepository);
+
+        uploadImages(
+                result.getImageUpdatedResult().getAddedImages(),
+                result.getImageUpdatedResult().getAddedImageFiles()
+        );
+        deleteImages(
+                result.getImageUpdatedResult().getDeletedImages()
+        );
+
+        uploadAttachments(
+                result.getAttachmentUpdatedResult().getAddedAttachments(),
+                result.getAttachmentUpdatedResult().getAddedAttachmentFiles()
+        );
+        deleteAttachments(
+                result.getAttachmentUpdatedResult().getDeletedAttachments()
+        );
+
         return new ItemUpdateResponse(id);
     }
 
@@ -195,7 +289,11 @@ public class ItemService {
      * @param fileImages
      */
     private void uploadFiles(List<Image> images, List<MultipartFile> fileImages) {
-        IntStream.range(0, images.size()).forEach(i -> fileService.upload(fileImages.get(i), images.get(i).getUniqueName()));
+        IntStream.range(0, images.size()).forEach(
+                i -> fileService.upload(
+                        fileImages.get(i), images.get(i).getUniqueName()
+                )
+        );
     }
 
 }

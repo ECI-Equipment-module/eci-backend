@@ -45,6 +45,7 @@ public class SignController {
     @PostMapping("/sign-in")
     @ResponseBody
     public Response signIn(@Valid SignInRequest req, HttpServletResponse response) throws IOException {
+
         SignInResponse signInResponse = signService.signIn(req);
         String refreshToken = signInResponse.getRefreshToken();
         String accessToken = signInResponse.getAccessToken();
@@ -71,10 +72,6 @@ public class SignController {
 
         return success(new SignInResponse(accessToken, "httponly", memberDto));
     }
-//    @ResponseStatus(HttpStatus.OK)
-//    public Response signIn(@Valid SignInRequest req) {
-//        return success(signService.signIn(req));
-//    }
 
 
     /**
@@ -98,25 +95,20 @@ public class SignController {
      * 리프레시 만료 아니라면 : 리턴 값 액세스토큰
      * 리프레시 만료라면 : 다시 로그인 요청
      */
-    public Response refreshToken(HttpServletRequest req, HttpServletResponse response) {
-        Cookie[] cookies = req.getCookies();
-        String refreshToken = null;
-        for (Cookie c : req.getCookies()) {
-            if ((c.getName()) == "refreshToken") {
-                refreshToken = c.getValue();
-            }
-            else{
-                System.out.println(c.getName() + c.getValue());
-            }
-        }
+    /**
+     *@RequestHeader required 옵션 기본값 true
+     *헤더 값이 전달 X -> 예외
+     * 쿠키값에 있는 토큰을 갖고와야 함
+     *
+     * 리프레시 만료 아니라면 : 리턴 값 액세스토큰
+     * 리프레시 만료라면 : 다시 로그인 요청
+     */
+    public Response refreshToken(@RequestHeader(value = "cookie") String refreshToken) {
 
-        return success(signService.refreshToken(refreshToken));
+        Integer index = refreshToken.indexOf(";");
+        String rToken = (refreshToken.toString().substring(20,index));
+        System.out.println(rToken);
+        return success(signService.refreshToken("Bearer "+rToken));
     }
-
-
-//    public Response refreshToken(@RequestHeader(value = "Authorization") String refreshToken) {
-//        return success(signService.refreshToken(refreshToken));
-//    }
-
 
 }

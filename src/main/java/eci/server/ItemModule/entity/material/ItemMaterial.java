@@ -1,8 +1,6 @@
-package eci.server.ItemModule.entity.item;
+package eci.server.ItemModule.entity.material;
 
-import eci.server.ItemModule.entity.member.Member;
-import eci.server.ItemModule.entity.member.MemberRoleId;
-import eci.server.ItemModule.entity.member.Role;
+import eci.server.ItemModule.entity.item.Item;
 import eci.server.ItemModule.entitycommon.EntityDate;
 import lombok.*;
 

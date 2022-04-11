@@ -1,23 +1,26 @@
 package eci.server.ItemModule.entity.item;
 
+import eci.server.ItemModule.entitycommon.EntityDate;
 import eci.server.ItemModule.exception.image.UnsupportedImageFormatException;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
+import java.text.SimpleDateFormat;
 import java.util.*;
-
+@Setter
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Attachment {
+public class Attachment extends EntityDate {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQUENCE1")
-    @SequenceGenerator(name = "SEQUENCE1", sequenceName = "SEQUENCE1", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQUENCE2")
+    @SequenceGenerator(name="SEQUENCE2", sequenceName="SEQUENCE2", allocationSize=1)
     private Long id;
 
     /**
@@ -46,10 +49,43 @@ public class Attachment {
     private String attach_comment;
 
     /**
+     * 지워졌는지 여부를 나타내는 것
+     */
+    @Column(nullable = false)
+    private boolean deleted;
+
+    @Column(nullable = false)
+    private String tag;
+
+    @Column
+    private String attachmentaddress;
+
+    /**
      * 지원하는 파일 확장자
      */
     private final static String supportedExtension[] =
-            {"pdf", "hwp", "word", "docx", "ppt"};
+            {"pdf", "hwp", "word", "docx", "ppt", "pptx"
+                    ,"cmd:", "csv" , "doc", "dsc", "exe" ,
+                    "xls", "xml", "xlc", "xlm", "txt", "zip"};
+
+    /**
+     * 각 파일의 고유명 생성 + 초기값 설정
+     *
+     * @param originName
+     */
+    public Attachment(String originName, String tag, String attach_comment) {
+        SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date now = new Date();
+
+        this.uniqueName = generateUniqueName(extractExtension(originName));
+        this.originName = originName;
+        this.tag = tag;
+        this.attach_comment = attach_comment;
+        this.attachmentaddress =
+                sdf1.format(now).substring(0,10)
+                        + "\\"
+                        + this.uniqueName; //이미지 저장 폴더 + 이미지 저장명
+    }
 
     /**
      * 각 이미지의 고유명 생성
@@ -94,11 +130,12 @@ public class Attachment {
                     originName.substring(
                             originName.lastIndexOf(".") + 1
                     );
-            if (isSupportedFormat(ext)) return ext;
+//            if (isSupportedFormat(ext)) return ext;
+            return ext;
         } catch (StringIndexOutOfBoundsException e) {
         }
-        throw new UnsupportedImageFormatException();
-    }
+       throw new UnsupportedImageFormatException();
+   }
 
     /**
      * 지원하는 형식인지 확인(이미지 파일)

@@ -1,12 +1,14 @@
 package eci.server.ItemModule.repository.item;
 
 import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import eci.server.ItemModule.dto.item.ItemReadCondition;
 import eci.server.ItemModule.dto.item.ItemSimpleDto;
 import eci.server.ItemModule.entity.item.Item;
+import eci.server.ItemModule.repository.material.MaterialRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -19,6 +21,9 @@ import java.util.function.Function;
 
 import static com.querydsl.core.types.Projections.constructor;
 import static eci.server.ItemModule.entity.item.QItem.item;
+import static eci.server.ItemModule.entity.material.QItemMaterial.itemMaterial;
+import static eci.server.ItemModule.entity.item.QImage.image;
+import static eci.server.ItemModule.entity.item.QAttachment.attachment;
 
 /**
  * CustomItemRepository의 구현체
@@ -30,6 +35,7 @@ public class CustomItemRepositoryImpl extends QuerydslRepositorySupport implemen
 
     public CustomItemRepositoryImpl(JPAQueryFactory jpaQueryFactory) { // 4
         super(Item.class);
+
         this.jpaQueryFactory = jpaQueryFactory;
     }
 
@@ -54,25 +60,55 @@ public class CustomItemRepositoryImpl extends QuerydslRepositorySupport implemen
      * @param pageable
      * @return getQuerydsl().applyPagination (페이징 적용 쿼리)
      */
-    private List<ItemSimpleDto> fetchAll(Predicate predicate, Pageable pageable) { // 6
+    private List<ItemSimpleDto> fetchAll(Predicate predicate, Pageable pageable) {
+
+
         List<ItemSimpleDto> itemSimpleDtos = getQuerydsl().applyPagination(
                 pageable,
                 jpaQueryFactory
                         .select(constructor
                                 (ItemSimpleDto.class,
-                                        item.id,
+                                        (Expression<?>) item.id,
                                         item.name,
                                         item.type,
+                                        item.itemNumber,
+
                                         item.width,
                                         item.height,
+
+                                        itemMaterial.material.name,
+
                                         item.weight,
+                                        item.color.color,
+
+                                        image.imageaddress,
+
+                                        attachment.attachmentaddress,//이건 리스트로 와야하는디..
+
                                         item.member.username,
                                         item.createdAt
-//                                        item.thumbnail
+
                                         )
                         )
                         .from(item)
-                        .join(item.member)
+
+                        //.join(itemMaterial).on(item.id.eq(itemMaterial.item.id))
+
+                        .join(itemMaterial).on(item.id.eq(itemMaterial.item.id))
+                        //jqpl은 연관관계 없으면 직접 못하고 join on으로 해줘야 함
+
+                        .join(image).on(item.id.eq(image.item.id))
+
+                        .join(attachment).on(
+                                item.id.
+                                        eq(attachment.item.id).
+                                        and(attachment.deleted. //삭제 안된 파일만 보여주기
+                                                eq(false))
+                        )
+
+                        .join(item.color) //아이템 색깔 조회 위해 Color와 조인
+                        .join(item.member) //아이템 작성자 닉네임 조회 위해 Member와 조인
+
                         .where(predicate)
                         .orderBy(item.id.desc())
         ).fetch();
