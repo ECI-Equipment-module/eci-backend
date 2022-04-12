@@ -46,6 +46,8 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
 
         HttpServletResponse response1 = (HttpServletResponse) response;
 
+
+
         response1.setHeader("Access-Control-Allow-Origin", "https://naughty-raman-7e7eb1.netlify.app");
         response1.setHeader("Access-Control-Allow-Credentials", "true");
         response1.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE");
@@ -59,6 +61,7 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
         }
         chain.doFilter(request, response1);
     }
+
 
 
     private String extractToken(ServletRequest request) {

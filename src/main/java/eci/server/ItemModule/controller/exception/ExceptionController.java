@@ -28,9 +28,10 @@ public class ExceptionController {
          * 액세스 만료
          */
         if (!tokenService.validateAccessToken(accessToken)) {
+            System.out.println("액세스가 만료였던 것이지지ㅣㅣㅣㅣㅣㅣㅣ");
             throw new AccessExpiredException();
         }
-
+        System.out.println("액세스 만료가 아니당ㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇ 리프레시 에러야 이거는  ");
         throw new AuthenticationEntryPointException();
     }
 

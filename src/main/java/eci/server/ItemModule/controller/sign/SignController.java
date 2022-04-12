@@ -104,7 +104,11 @@ public class SignController {
      * 리프레시 만료라면 : 다시 로그인 요청
      */
     public Response refreshToken(@RequestHeader(value = "cookie") String refreshToken) {
-
+        System.out.println("refreeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeshhhhhhhhh");
+        System.out.println(refreshToken);
+        if (refreshToken.length()==0){
+            System.out.println("refresh is 0000");
+        }
         Integer index = refreshToken.length()-1;
         String rToken = (refreshToken.toString().substring(20,index));
         return success(signService.refreshToken("Bearer "+rToken));
