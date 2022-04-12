@@ -8,7 +8,6 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import eci.server.ItemModule.dto.item.ItemReadCondition;
 import eci.server.ItemModule.dto.item.ItemSimpleDto;
 import eci.server.ItemModule.entity.item.Item;
-import eci.server.ItemModule.repository.material.MaterialRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;

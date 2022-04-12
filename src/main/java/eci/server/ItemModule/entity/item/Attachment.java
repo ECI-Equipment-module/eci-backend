@@ -83,8 +83,9 @@ public class Attachment extends EntityDate {
         this.tag = tag;
         this.attach_comment = attach_comment;
         this.attachmentaddress =
+                "src/main/prodmedia/image/" +
                 sdf1.format(now).substring(0,10)
-                        + "\\"
+                        + "/"
                         + this.uniqueName; //이미지 저장 폴더 + 이미지 저장명
     }
 

@@ -69,8 +69,9 @@ public class Image extends EntityDate {
         this.uniqueName = generateUniqueName(extractExtension(originName));
         this.originName = originName;
         this.imageaddress =
+                "src/main/prodmedia/image/" +
                     sdf1.format(now).substring(0,10)
-                        + "\\"
+                        + "/"
                 + this.uniqueName; //이미지 저장 폴더 + 이미지 저장명
     }
 
