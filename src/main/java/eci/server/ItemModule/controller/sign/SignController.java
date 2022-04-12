@@ -26,7 +26,7 @@ import static eci.server.ItemModule.dto.response.Response.success;
 
 @RestController
 @RequiredArgsConstructor
-@CrossOrigin(origins = "https://6a3e-118-36-38-193.ngrok.io")
+@CrossOrigin(origins = "${whitelist.main}")
 
 public class SignController {
     private final SignService signService;
@@ -105,9 +105,8 @@ public class SignController {
      */
     public Response refreshToken(@RequestHeader(value = "cookie") String refreshToken) {
 
-        Integer index = refreshToken.indexOf(";");
+        Integer index = refreshToken.length()-1;
         String rToken = (refreshToken.toString().substring(20,index));
-        System.out.println(rToken);
         return success(signService.refreshToken("Bearer "+rToken));
     }
 

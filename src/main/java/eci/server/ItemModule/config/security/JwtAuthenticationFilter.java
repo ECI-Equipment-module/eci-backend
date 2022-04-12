@@ -44,10 +44,9 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 
-        HttpServletRequest request1 = (HttpServletRequest) request;
         HttpServletResponse response1 = (HttpServletResponse) response;
 
-        response1.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
+        response1.setHeader("Access-Control-Allow-Origin", "${whitelist.main}");
         response1.setHeader("Access-Control-Allow-Credentials", "true");
         response1.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE");
         response1.setHeader("Access-Control-Max-Age", "3600");
@@ -58,9 +57,7 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
             // SecurityContext에 Authentication 객체 저장
             setAuthentication(token);
         }
-
         chain.doFilter(request, response1);
-
     }
 
 

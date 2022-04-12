@@ -14,7 +14,7 @@ import javax.validation.Valid;
 
 @RestController
 @RequiredArgsConstructor
-@CrossOrigin(origins = "https://6a3e-118-36-38-193.ngrok.io")
+@CrossOrigin(origins = "${whitelist.main}")
 public class RouteController {
     private final RouteService RouteService;
 

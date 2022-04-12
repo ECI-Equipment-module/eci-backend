@@ -1,3 +1,8 @@
+whitelist:
+  main: http://localhost:300
+#  local: http://localhost:300
+#  chans: https://6a3e-118-36-38-193.ngrok.io
+
 server:
   port: 8181
 #  ssl:
