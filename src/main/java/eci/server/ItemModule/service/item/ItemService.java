@@ -7,6 +7,7 @@ import eci.server.ItemModule.dto.manufacture.ReadPartNumberService;
 import eci.server.ItemModule.dto.route.RouteDto;
 import eci.server.ItemModule.entity.item.Attachment;
 import eci.server.ItemModule.entity.member.Member;
+import eci.server.ItemModule.exception.image.NoThumbnailException;
 import eci.server.ItemModule.exception.item.AttachmentNotFoundException;
 import eci.server.ItemModule.exception.route.RouteNotFoundException;
 import eci.server.ItemModule.repository.color.ColorRepository;
@@ -119,6 +120,11 @@ public class ItemService {
 
     public byte[] readImg(Long id){
         Item targetItem = itemRepository.findById(id).orElseThrow(ItemNotFoundException::new);
+
+        if(targetItem.getThumbnail().size()==0){
+            throw (new NoThumbnailException());
+        }
+
         byte[] image = localFileService.getImage(
                 targetItem.getCreatedAt().toString(),
                 targetItem.getThumbnail().get(0).
