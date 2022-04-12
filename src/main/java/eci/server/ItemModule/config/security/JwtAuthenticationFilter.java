@@ -46,7 +46,7 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
 
         HttpServletResponse response1 = (HttpServletResponse) response;
 
-        response1.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
+        response1.setHeader("Access-Control-Allow-Origin", "https://naughty-raman-7e7eb1.netlify.app");
         response1.setHeader("Access-Control-Allow-Credentials", "true");
         response1.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE");
         response1.setHeader("Access-Control-Max-Age", "3600");
