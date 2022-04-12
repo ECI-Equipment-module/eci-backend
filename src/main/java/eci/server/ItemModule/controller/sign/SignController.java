@@ -26,7 +26,7 @@ import static eci.server.ItemModule.dto.response.Response.success;
 
 @RestController
 @RequiredArgsConstructor
-@CrossOrigin(origins = "${whitelist.main}")
+@CrossOrigin(origins = "http://localhost:3000")
 
 public class SignController {
     private final SignService signService;

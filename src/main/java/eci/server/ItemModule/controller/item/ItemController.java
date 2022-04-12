@@ -17,7 +17,7 @@ import javax.validation.Valid;
 @RestController
 @RequiredArgsConstructor
 @Slf4j
-@CrossOrigin(origins = "${whitelist.main}")
+@CrossOrigin(origins = "http://localhost:3000")
 public class ItemController {
 
     private final ItemService itemService;

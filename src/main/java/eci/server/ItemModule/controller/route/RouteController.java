@@ -14,7 +14,7 @@ import javax.validation.Valid;
 
 @RestController
 @RequiredArgsConstructor
-@CrossOrigin(origins = "${whitelist.main}")
+@CrossOrigin(origins = "http://localhost:3000")
 public class RouteController {
     private final RouteService RouteService;
 

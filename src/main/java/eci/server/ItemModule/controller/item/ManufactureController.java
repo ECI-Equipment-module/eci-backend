@@ -14,7 +14,7 @@ import javax.validation.Valid;
 
 @RequiredArgsConstructor
 @RestController
-@CrossOrigin(origins = "${whitelist.main}")
+@CrossOrigin(origins = "http://localhost:3000")
 public class ManufactureController {
 
     private final ManufactureService manufactureService;

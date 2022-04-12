@@ -51,6 +51,7 @@ src/main/generated
 
 src/main/resources/*
 src/test/*
+src/main/promedia/*
 
 #프론트엔드 폴더
 frontend/*
