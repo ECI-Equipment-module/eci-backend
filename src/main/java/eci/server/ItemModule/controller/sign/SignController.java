@@ -113,6 +113,8 @@ public class SignController {
         String rToken = (refreshToken.toString().substring(20,index));
 
         Response response = success(signService.refreshToken("Bearer "+rToken));
+        System.out.println("code:"+response.getCode());
+        System.out.println("result"+response.getResult());
         System.out.println(response.toString());
         return response;
     }
