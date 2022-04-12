@@ -17,8 +17,6 @@ import java.util.concurrent.TimeUnit;
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
-
-
     @Value("${upload.image.location}")
     private String location;
 

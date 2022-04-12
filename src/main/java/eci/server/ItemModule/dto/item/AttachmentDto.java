@@ -39,22 +39,20 @@ public class AttachmentDto {
                 attachment.isDeleted(),
                 attachment.getTag(),
 
-                "C:/Users/DONGYUN/Desktop/spring/server3/prodmedia/image/"
+                "src/main/prodmedia/image/"
                         +
                         attachment.
                                 getCreatedAt().
                                 toString().
                                 split("_")[0].
                                 substring(0,10)
-                        + "\\"  +
+                        + "/"  +
                         attachment.getUniqueName(),
 
                 attachment.getModifiedAt().toString().split("_")[0].substring(0, 10),
 
                 attachment.getItem().getMember().getUsername()
 
-//                attachment.getCreatedAt(),
-//                attachment.getModifiedAt()
         );
     }
 
@@ -71,7 +69,7 @@ public class AttachmentDto {
                                 i.isDeleted(),
                                 i.getTag(),
 
-                                "C:/Users/DONGYUN/Desktop/spring/server3/prodmedia/image/"
+                                "src/main/prodmedia/image/"
                                         +
                                         i.
                                                 getCreatedAt().

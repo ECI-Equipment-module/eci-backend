@@ -20,13 +20,13 @@ public class ImageDto {
                 image.getOriginName(),
                 image.getUniqueName(),
 
-                "C:/Users/DONGYUN/Desktop/spring/server3/prodmedia/image/"
+                "src/main/prodmedia/image/"
                         +
                         image.getModifiedAt().
                                 toString().
                                 split("_")[0].
                                 substring(0,10)
-                        + "\\"  +
+                        + "/"  +
                         image.getUniqueName()
         );
 

@@ -11,7 +11,6 @@ import eci.server.ItemModule.exception.item.AttachmentNotFoundException;
 import eci.server.ItemModule.exception.route.RouteNotFoundException;
 import eci.server.ItemModule.repository.color.ColorRepository;
 import eci.server.ItemModule.repository.item.AttachmentRepository;
-import eci.server.ItemModule.repository.item.ItemManufactureRepository;
 import eci.server.ItemModule.repository.manufacture.ManufactureRepository;
 import eci.server.ItemModule.repository.material.MaterialRepository;
 import eci.server.ItemModule.repository.route.RouteRepository;
@@ -38,8 +37,6 @@ import java.util.stream.IntStream;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class ItemService {
-
-    public Logger logger = LoggerFactory.getLogger(ItemService.class);
 
     private final RouteRepository routeRepository;
     private final ItemRepository itemRepository;
@@ -102,14 +99,18 @@ public class ItemService {
                 );
     }
 
-    private void uploadAttachments(List<Attachment> attachments, List<MultipartFile> filedAttachments) {
+    private void uploadAttachments(
+            List<Attachment> attachments,
+            List<MultipartFile> fileAttachments
+            ) {
         // 실제 이미지 파일을 가지고 있는 Multipart 파일을
         // 파일이 가지는 uniquename을 파일명으로 해서 파일저장소 업로드
+
         IntStream.range(0, attachments.size())
                 .forEach(
                         i -> fileService.upload
                                 (
-                                        filedAttachments.get(i),
+                                        fileAttachments.get(i),
                                         attachments.get(i).getUniqueName()
                                 )
                 );

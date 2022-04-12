@@ -119,7 +119,7 @@ public class ItemController {
      * @return 200 (success)
      */
 
-    @GetMapping(value=  "/image/{id}", produces= MediaType.IMAGE_PNG_VALUE)
+    @GetMapping(value=  "/images/{id}", produces= MediaType.IMAGE_PNG_VALUE)
     @ResponseStatus(HttpStatus.OK)
     public byte[] img(
             @PathVariable Long id) {
