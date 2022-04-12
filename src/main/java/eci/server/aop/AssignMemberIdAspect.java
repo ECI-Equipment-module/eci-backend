@@ -1,6 +1,6 @@
 package eci.server.aop;
 
-import eci.server.config.guard.AuthHelper;
+import eci.server.ItemModule.config.guard.AuthHelper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
@@ -31,7 +31,6 @@ public class AssignMemberIdAspect {
         //메소드 호출 전 메소드 수행
         //파라미터로 전달받은 JoinPoint를
         // 이용하여 호출되어야할 본래의 메소드에 대한 정보를 가져올
-        System.out.println("helllllllllllllllllllllllllllllllllllllllllllllllll");
 
         Arrays.stream(joinPoint.getArgs())
                 // JoinPoint.getArgs()를 이용하여 전달되는 인자들을 확인하고,

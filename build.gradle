@@ -38,15 +38,6 @@ dependencies {
 	implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
 	implementation "com.querydsl:querydsl-apt:${queryDslVersion}"
 
-	implementation 'junit:junit:4.13.1'
-	implementation 'org.springframework.boot:spring-boot-starter-security'
-	implementation 'io.jsonwebtoken:jjwt:0.9.1' //JWT
-
-	implementation 'org.springframework.boot:spring-boot-starter-validation' //로그인, 회원가입
-
-	implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
-	implementation "com.querydsl:querydsl-apt:${queryDslVersion}"
-
 	compileOnly 'org.projectlombok:lombok'
 
 	annotationProcessor "com.querydsl:querydsl-apt:${dependencyManagement.importedProperties['querydsl.version']}:jpa" // querydsl JPAAnnotationProcessor 사용 지정
@@ -66,6 +57,9 @@ dependencies {
 	testImplementation 'org.springframework.security:spring-security-test'
 	testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
 
+//	testImplementation ('org.junit.vintage:junit-vintage-engine'){
+//
+//	}
 	testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.5.1")
 	testRuntimeOnly("org.junit.platform:junit-platform-engine:1.5.1")
 	testRuntimeOnly("org.junit.platform:junit-platform-commons:1.5.1")
@@ -75,10 +69,6 @@ dependencies {
 				module: 'hamcrest-core'
 		exclude module:'junit-platform-commons'
 	}
-
-//	compile group: 'com.querydsl', name: 'querydsl-jpa', version: '4.3.1'
-//
-//	annotationProcessor group: 'com.querydsl', name: 'querydsl-apt', version: '4.3.1'
 
 	testCompileOnly 'org.projectlombok:lombok:1.18.12'
 	testAnnotationProcessor 'org.projectlombok:lombok:1.18.12'
@@ -117,32 +107,3 @@ configurations {
 clean {
 	delete file('src/main/generated') // 인텔리제이 Annotation processor 생성물 생성위치
 }
-
-//
-//querydsl {
-//	jpa = true
-//	querydslSourcesDir = "$buildDir/generated-source"
-//}
-//
-//compileQuerydsl {
-//	options.annotationProcessorPath = configurations.querydsl
-//}
-//
-//def querydslDir = "$buildDir/generated/querydsl"
-//
-//querydsl {
-//	jpa = true
-//	querydslSourcesDir = querydslDir
-//}
-//sourceSets {
-//	main.java.srcDir querydslDir
-//}
-//compileQuerydsl{
-//	options.annotationProcessorPath = configurations.querydsl
-//}
-//configurations {
-//	compileOnly {
-//		extendsFrom annotationProcessor
-//	}
-//	querydsl.extendsFrom compileClasspath
-//}
