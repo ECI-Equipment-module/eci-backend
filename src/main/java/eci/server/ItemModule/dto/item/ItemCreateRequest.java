@@ -1,13 +1,9 @@
 package eci.server.ItemModule.dto.item;
 
-import eci.server.ItemModule.entity.item.*;
-import eci.server.ItemModule.exception.item.ColorNotFoundException;
-import eci.server.ItemModule.exception.item.ManufactureNotFoundException;
-import eci.server.ItemModule.exception.item.MaterialNotFoundException;
+import eci.server.ItemModule.entity.item.Image;
+import eci.server.ItemModule.entity.item.Item;
+import eci.server.ItemModule.entity.item.ItemType;
 import eci.server.ItemModule.exception.member.sign.MemberNotFoundException;
-import eci.server.ItemModule.repository.color.ColorRepository;
-import eci.server.ItemModule.repository.manufacture.ManufactureRepository;
-import eci.server.ItemModule.repository.material.MaterialRepository;
 import eci.server.ItemModule.repository.member.MemberRepository;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -24,9 +20,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
-import static java.util.stream.Collectors.partitioningBy;
 import static java.util.stream.Collectors.toList;
 
 
@@ -45,7 +39,7 @@ public class ItemCreateRequest {
     private String type;
 
     @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="SEQUENCE1")
-   // @SequenceGenerator(name="SEQUENCE1", sequenceName="SEQUENCE1", allocationSize=1)
+    @SequenceGenerator(name="SEQUENCE1", sequenceName="SEQUENCE1", allocationSize=1)
     private Integer itemNumber;
 
     @NotNull(message = "너비를 입력해주세요.")
@@ -61,36 +55,30 @@ public class ItemCreateRequest {
     @Null
     private Long memberId;
 
-    private Boolean inProgress;
+    private List<MultipartFile> images = new ArrayList<>();
 
     private List<MultipartFile> thumbnail = new ArrayList<>();
 
-    private List<MultipartFile> attachments = new ArrayList<>();
-    private List<String> tag = new ArrayList<>();
-    private List<String> attachmentComment = new ArrayList<>();
+    public ItemCreateRequest(String name, String type,String width, String height, String weight, Long memberId, List<MultipartFile> thumbnail) {
 
-    @NotNull(message = "색깔을 입력해주세요.")
-    private Long colorId;
+        this.name = name;
+        this.type = type;
+        this.width = width;
+        this.height = height;
+        this.weight = weight;
+        this.memberId = memberId;
+        this.thumbnail = thumbnail;
+    }
 
-    @NotNull(message = "재료를 입력해주세요.")
-    private List<Long> materials = new ArrayList<>();
+    public static Item toEntity(ItemCreateRequest req, MemberRepository memberRepository) {
 
-    private List<Long> manufactures = new ArrayList<>();
-
-    private List<String> partnumbers = new ArrayList<>();
-
-
-    public static Item toEntity(
-            ItemCreateRequest req,
-            MemberRepository memberRepository,
-            ColorRepository colorRepository,
-            MaterialRepository materialRepository,
-            ManufactureRepository manufactureRepository) {
+//        System.out.println(ItemType.valueOf(req.type).label());
+//        System.out.println(req.itemNumber);
 
         return new Item(
                 req.name,
                 req.type,
-                ItemType.valueOf(req.type).label()*1000000+(int)(Math.random()*1000),
+                ItemType.valueOf(req.type).label()+(int)(Math.random()*1000),
                 req.width,
                 req.height,
                 req.weight,
@@ -98,48 +86,12 @@ public class ItemCreateRequest {
                 memberRepository.findById(
                         req.getMemberId()
                 ).orElseThrow(MemberNotFoundException::new),
-
-                req.inProgress,
-
-                colorRepository.findById(
-                        req.getColorId()
-                ).orElseThrow(ColorNotFoundException::new),
-
                 req.thumbnail.stream().map(
                         i -> new Image(
-                                i.getOriginalFilename()
-                        )
-                ).collect(
-                        toList()
-                ),
-
-                req.attachments.stream().map(
-                        i -> new Attachment(
-                                i.getOriginalFilename(),
-                                req.getTag().get(req.attachments.indexOf(i)),
-                                req.getAttachmentComment().get(req.attachments.indexOf(i))
-                        )
-                ).collect(
-                        toList()
-                ),
-
-                req.materials.stream().map(
-                        i ->
-                                materialRepository.
-                                        findById(i).orElseThrow(MaterialNotFoundException::new)
-                ).collect(
-                        toList()
-                ),
-
-                req.manufactures.stream().map(
-                        i ->
-                                manufactureRepository.
-                                        findById(i).orElseThrow(ManufactureNotFoundException::new)
-                ).collect(
-                        toList()
-                ),
-
-                req.partnumbers
+                                i.getOriginalFilename())
+                        ).collect(
+                                toList()
+                                )
         );
     }
 }

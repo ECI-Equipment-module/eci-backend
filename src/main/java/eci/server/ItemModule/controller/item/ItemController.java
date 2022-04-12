@@ -18,6 +18,7 @@ import javax.validation.Valid;
 @RequiredArgsConstructor
 @Slf4j
 @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
+
 public class ItemController {
 
     private final ItemService itemService;
@@ -39,6 +40,7 @@ public class ItemController {
     ) {
 
         return Response.success(
+
                 itemService.create(req));
     }
 
@@ -72,6 +74,8 @@ public class ItemController {
                 itemService.readTodo()
         );
     }
+
+    @GetMapping("/items/{id}")
 
 
     /**

@@ -31,7 +31,11 @@ public class RouteCreateRequest {
     @Null
     private String workflowPhase;
 
+<<<<<<< HEAD
     private String lifecycleStatus;
+=======
+    private Character lifecycleStatus;
+>>>>>>> 90002839b992be427ae0f3cbad4476b4f45af2b7
 
     private Integer revisedCnt;
 
@@ -60,8 +64,11 @@ public class RouteCreateRequest {
 
     private Long parentId;
 
+<<<<<<< HEAD
     private Boolean inProgress;
 
+=======
+>>>>>>> 90002839b992be427ae0f3cbad4476b4f45af2b7
     public static Route toEntity(RouteCreateRequest req, MemberRepository memberRepository, ItemRepository itemRepository, RouteRepository routeRepository) {
         return new Route(
                 req.type,
@@ -78,8 +85,12 @@ public class RouteCreateRequest {
                 itemRepository.findById(req.itemId).orElseThrow(ItemNotFoundException::new),
                 Optional.ofNullable(req.parentId)
                         .map(id -> routeRepository.findById(id).orElseThrow(RouteNotFoundException::new))
+<<<<<<< HEAD
                         .orElse(null),
                 req.inProgress
+=======
+                        .orElse(null)
+>>>>>>> 90002839b992be427ae0f3cbad4476b4f45af2b7
         );
     }
 }

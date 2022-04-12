@@ -3,7 +3,13 @@ package eci.server.ItemModule.advice;
 import eci.server.ItemModule.dto.response.Response;
 import eci.server.ItemModule.exception.file.FileUploadFailureException;
 import eci.server.ItemModule.exception.item.ItemNotFoundException;
+<<<<<<< HEAD:src/main/java/eci/server/ItemModule/advice/ExceptionAdvice.java
 import eci.server.ItemModule.exception.member.auth.*;
+=======
+import eci.server.ItemModule.exception.member.auth.AccessDeniedException;
+import eci.server.ItemModule.exception.member.auth.AccessExpiredException;
+import eci.server.ItemModule.exception.member.auth.AuthenticationEntryPointException;
+>>>>>>> 90002839b992be427ae0f3cbad4476b4f45af2b7:src/main/java/eci/server/advice/ExceptionAdvice.java
 import eci.server.ItemModule.exception.member.sign.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

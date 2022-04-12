@@ -47,6 +47,9 @@ public class WebConfig implements WebMvcConfigurer {
                 .allowedOrigins("https://naughty-raman-7e7eb1.netlify.app")
                 .allowedMethods("GET", "POST")
                 .allowCredentials(true);
+                    registry.addMapping("/**")
+                    .allowedOrigins("http://localhost:3000");
+
     }
 
 }

@@ -1,6 +1,8 @@
 package eci.server.ItemModule.controller.exception;
 
-import eci.server.ItemModule.exception.member.auth.*;
+import eci.server.ItemModule.exception.member.auth.AccessDeniedException;
+import eci.server.ItemModule.exception.member.auth.AccessExpiredException;
+import eci.server.ItemModule.exception.member.auth.AuthenticationEntryPointException;
 import eci.server.ItemModule.service.sign.TokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -8,8 +10,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * 예외 사항 발생 시 "/exception/{예외}"로 리다이렉트

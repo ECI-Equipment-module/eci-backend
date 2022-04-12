@@ -1,5 +1,6 @@
 package eci.server.ItemModule.entity.route;
 
+<<<<<<< HEAD
 import eci.server.ItemModule.dto.item.ItemDto;
 import eci.server.ItemModule.dto.item.ItemUpdateRequest;
 import eci.server.ItemModule.dto.member.MemberDto;
@@ -15,6 +16,11 @@ import eci.server.ItemModule.exception.member.sign.MemberNotFoundException;
 import eci.server.ItemModule.repository.item.ItemRepository;
 import eci.server.ItemModule.repository.member.MemberRepository;
 import eci.server.ItemModule.repository.route.RouteRepository;
+=======
+import eci.server.ItemModule.entity.entitycommon.EntityDate;
+import eci.server.ItemModule.entity.item.Item;
+import eci.server.ItemModule.entity.member.Member;
+>>>>>>> 90002839b992be427ae0f3cbad4476b4f45af2b7
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -34,9 +40,14 @@ import java.util.Optional;
 public class Route extends EntityDate {
 
     @Id
+<<<<<<< HEAD
     @GeneratedValue(strategy = GenerationType.IDENTITY)
 //    @GeneratedValue(strategy= GenerationType.SEQUENCE, generator="SEQUENCE1")
 //    @SequenceGenerator(name="SEQUENCE1", sequenceName="SEQUENCE1", allocationSize=1)
+=======
+    @GeneratedValue(strategy= GenerationType.SEQUENCE, generator="SEQUENCE1")
+    @SequenceGenerator(name="SEQUENCE1", sequenceName="SEQUENCE1", allocationSize=1)
+>>>>>>> 90002839b992be427ae0f3cbad4476b4f45af2b7
     private Long id;
 
     @Column(nullable = false)
@@ -49,10 +60,23 @@ public class Route extends EntityDate {
     private String workflowPhase;
 
     @Column(nullable = false)
+<<<<<<< HEAD
     private String lifecycleStatus;
 
     @Column(nullable = false)
     private int revisedCnt;
+=======
+    private Character lifecycleStatus;
+
+    @Column(nullable = false)
+    private Integer revisedCnt;
+
+    /**
+     * 최신 라우트만 true
+     */
+    @Column(nullable = false)
+    private boolean is_power;
+>>>>>>> 90002839b992be427ae0f3cbad4476b4f45af2b7
 
     /**
      * 삭제 여부 표시
@@ -82,7 +106,11 @@ public class Route extends EntityDate {
 
     @Column(nullable = false)
     @Lob
+<<<<<<< HEAD
     private String reviewer_comment;
+=======
+    private String reviewier_comment;
+>>>>>>> 90002839b992be427ae0f3cbad4476b4f45af2b7
 
     /**
      * 승인자의 아이디
@@ -106,6 +134,7 @@ public class Route extends EntityDate {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Route parent;
 
+<<<<<<< HEAD
     @OneToMany(mappedBy = "parent", fetch = FetchType.LAZY)
     private List<Route> children = new ArrayList<>();
 
@@ -115,12 +144,20 @@ public class Route extends EntityDate {
      */
     @Column
     private Boolean inProgress;
+=======
+    @OneToMany(mappedBy = "parent")
+    private List<Route> children = new ArrayList<>(); // 5
+>>>>>>> 90002839b992be427ae0f3cbad4476b4f45af2b7
 
     public Route(
             String type,
             String workflow,
             String workflowPhase,
+<<<<<<< HEAD
             String lifecycleStatus,
+=======
+            Character lifecycleStatus,
+>>>>>>> 90002839b992be427ae0f3cbad4476b4f45af2b7
             Integer revisedCnt,
             Member member,
             String applicant_comment,
@@ -129,8 +166,12 @@ public class Route extends EntityDate {
             Member approver,
             String approver_comment,
             Item item,
+<<<<<<< HEAD
             Route parent,
             Boolean inProgress
+=======
+            Route parent
+>>>>>>> 90002839b992be427ae0f3cbad4476b4f45af2b7
     ) {
         this.type = type;
         this.workflow = workflow;
@@ -140,15 +181,25 @@ public class Route extends EntityDate {
         this.member = member;
         this.applicant_comment = applicant_comment;
         this.reviewer = reviewer;
+<<<<<<< HEAD
         this.reviewer_comment = reviewer_comment;
+=======
+        this.reviewier_comment = reviewer_comment;
+>>>>>>> 90002839b992be427ae0f3cbad4476b4f45af2b7
         this.approver = approver;
         this.approver_comment = approver_comment;
         this.item = item;
         this.parent = parent;
         this.deleted = false;
+<<<<<<< HEAD
         this.inProgress = true;
     }
 
+=======
+    }
+
+    // Comment.java
+>>>>>>> 90002839b992be427ae0f3cbad4476b4f45af2b7
     public Optional<Route> findDeletableRoute() {
         return hasChildren() ? Optional.empty() : Optional.of(findDeletableRouteByParent());
     }
@@ -172,6 +223,7 @@ public class Route extends EntityDate {
     private boolean isDeletedParent() { // 2
         return getParent() != null && getParent().isDeleted();
     }
+<<<<<<< HEAD
 
     public RouteUpdateRequest update(RouteUpdateRequest req, MemberRepository memberRepository, ItemRepository itemRepository, RouteRepository routeRepository) {
         this.type = req.getType();
@@ -189,4 +241,6 @@ public class Route extends EntityDate {
 
         return req;
     }
+=======
+>>>>>>> 90002839b992be427ae0f3cbad4476b4f45af2b7
 }

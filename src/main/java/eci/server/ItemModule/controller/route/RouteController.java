@@ -20,6 +20,7 @@ public class RouteController {
 
     @GetMapping("/routes")
     @ResponseStatus(HttpStatus.OK)
+
     public Response readAll(@Valid RouteReadCondition cond) {
         return Response.success(RouteService.readAll(cond));
     }
@@ -54,7 +55,6 @@ public class RouteController {
             @Valid @ModelAttribute RouteUpdateRequest req) {
         return Response.success(RouteService.update(id, req));
     }
-
 
 }
 

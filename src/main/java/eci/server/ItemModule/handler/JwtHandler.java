@@ -13,6 +13,10 @@ public class JwtHandler {
      * 토큰 생성, 유효성 검증,
      * 파싱, 타입 알아오기
      */
+<<<<<<< HEAD:src/main/java/eci/server/ItemModule/handler/JwtHandler.java
+=======
+
+>>>>>>> 90002839b992be427ae0f3cbad4476b4f45af2b7:src/main/java/eci/server/handler/JwtHandler.java
 
     private String type = "Bearer ";
 

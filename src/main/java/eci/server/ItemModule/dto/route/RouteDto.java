@@ -12,7 +12,10 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+<<<<<<< HEAD
 import java.util.Optional;
+=======
+>>>>>>> 90002839b992be427ae0f3cbad4476b4f45af2b7
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Data
@@ -24,8 +27,13 @@ public class RouteDto {
     private String type;
     private String workflow;
     private String workflowPhase;
+<<<<<<< HEAD
     private String lifecycleStatus;
     private int revisedCnt;
+=======
+    private Character lifecycleStatus;
+    private Integer revisedCnt;
+>>>>>>> 90002839b992be427ae0f3cbad4476b4f45af2b7
     private MemberDto member;
     private String applicant_comment;
     private MemberDto reviewer;
@@ -35,9 +43,14 @@ public class RouteDto {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime createdAt;
     private List<RouteDto> children;
+<<<<<<< HEAD
     private Boolean inProgress;
 
     public static List <RouteDto> toDtoList(List <Route> Routes) {
+=======
+
+    public static List<RouteDto> toDtoList(List<Route> Routes) {
+>>>>>>> 90002839b992be427ae0f3cbad4476b4f45af2b7
         NestedConvertHelper helper = NestedConvertHelper.newInstance(
                 Routes,
                 c -> new RouteDto(
@@ -50,18 +63,27 @@ public class RouteDto {
                         c.isDeleted() ? null : MemberDto.toDto(c.getMember()),
                         c.isDeleted() ? null : c.getApplicant_comment(),
                         c.isDeleted() ? null : MemberDto.toDto(c.getReviewer()),
+<<<<<<< HEAD
                         c.isDeleted() ? null : c.getReviewer_comment(),
                         c.isDeleted() ? null : MemberDto.toDto(c.getApprover()),
                         c.isDeleted() ? null : c.getApprover_comment(),
                         c.getCreatedAt(),
                         new ArrayList<>(),
                         c.isDeleted() ? null : c.getInProgress()
+=======
+                        c.isDeleted() ? null : c.getReviewier_comment(),
+                        c.isDeleted() ? null : MemberDto.toDto(c.getApprover()),
+                        c.isDeleted() ? null : c.getApprover_comment(),
+                        c.getCreatedAt(),
+                        new ArrayList<>()
+>>>>>>> 90002839b992be427ae0f3cbad4476b4f45af2b7
                         ),
                 c -> c.getParent(),
                 c -> c.getId(),
                 d -> d.getChildren());
         return helper.convert();
     }
+<<<<<<< HEAD
 
     public static RouteDto toDto(Route Route) {
 
@@ -84,4 +106,6 @@ public class RouteDto {
         );
     }
 
+=======
+>>>>>>> 90002839b992be427ae0f3cbad4476b4f45af2b7
 }
