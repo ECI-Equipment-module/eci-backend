@@ -104,18 +104,13 @@ public class SignController {
     @PostMapping("/refresh-token")
     @ResponseStatus(HttpStatus.OK)
     public Response refreshToken(@RequestHeader(value = "cookie") String refreshToken) {
-        System.out.println("refreeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeshhhhhhhhh");
-        System.out.println(refreshToken);
         if (refreshToken.length()==0){
-            System.out.println("refresh is 0000");
         }
         Integer index = refreshToken.length()-1;
         String rToken = (refreshToken.toString().substring(20,index));
 
         Response response = success(signService.refreshToken("Bearer "+rToken));
-        System.out.println("code:"+response.getCode());
-        System.out.println("result"+response.getResult());
-        System.out.println(response.toString());
+
         return response;
     }
 
