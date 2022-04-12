@@ -17,7 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 
 @RequiredArgsConstructor
 @RestController
-@CrossOrigin(origins = "https://6a3e-118-36-38-193.ngrok.io")
+@CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
 public class ExceptionController {
 
     private final TokenService tokenService;

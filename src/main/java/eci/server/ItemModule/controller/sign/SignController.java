@@ -54,12 +54,12 @@ public class SignController {
 
         Cookie refreshCookie = new Cookie("refreshToken", refreshToken);
 
-        refreshCookie.setMaxAge(7 * 24 * 60 * 60);
-        refreshCookie.setSecure(true);
-        refreshCookie.setHttpOnly(true);
-        refreshCookie.setPath("/");
-        response.addCookie(refreshCookie);
-        response.setHeader("Set-Cookieeee", "Test1="+refreshCookie+"; Secure; SameSite=None");
+//        refreshCookie.setMaxAge(7 * 24 * 60 * 60);
+//        refreshCookie.setSecure(true);
+//        refreshCookie.setHttpOnly(true);
+//        refreshCookie.setPath("/");
+//        response.addCookie(refreshCookie);
+//        response.setHeader("Set-Cookieeee", "Test1="+refreshCookie+"; Secure; SameSite=None");
 
         ResponseCookie cookie = ResponseCookie.from("refreshToken", refreshToken)
                 .maxAge(7 * 24 * 60 * 60)
@@ -84,25 +84,25 @@ public class SignController {
      * @param
      * @return success
      */
-
+    /**
+     *@RequestHeader required 옵션 기본값 true
+     *헤더 값이 전달 X -> 예외
+     * 쿠키값에 있는 토큰을 갖고와야 함
+     *
+     * 리프레시 만료 아니라면 : 리턴 값 액세스토큰
+     * 리프레시 만료라면 : 다시 로그인 요청
+     */
+    /**
+     *@RequestHeader required 옵션 기본값 true
+     *헤더 값이 전달 X -> 예외
+     * 쿠키값에 있는 토큰을 갖고와야 함
+     *
+     * 리프레시 만료 아니라면 : 리턴 값 액세스토큰
+     * 리프레시 만료라면 : 다시 로그인 요청
+     */
+    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
     @PostMapping("/refresh-token")
     @ResponseStatus(HttpStatus.OK)
-    /**
-     *@RequestHeader required 옵션 기본값 true
-     *헤더 값이 전달 X -> 예외
-     * 쿠키값에 있는 토큰을 갖고와야 함
-     *
-     * 리프레시 만료 아니라면 : 리턴 값 액세스토큰
-     * 리프레시 만료라면 : 다시 로그인 요청
-     */
-    /**
-     *@RequestHeader required 옵션 기본값 true
-     *헤더 값이 전달 X -> 예외
-     * 쿠키값에 있는 토큰을 갖고와야 함
-     *
-     * 리프레시 만료 아니라면 : 리턴 값 액세스토큰
-     * 리프레시 만료라면 : 다시 로그인 요청
-     */
     public Response refreshToken(@RequestHeader(value = "cookie") String refreshToken) {
         System.out.println("refreeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeshhhhhhhhh");
         System.out.println(refreshToken);
@@ -111,7 +111,10 @@ public class SignController {
         }
         Integer index = refreshToken.length()-1;
         String rToken = (refreshToken.toString().substring(20,index));
-        return success(signService.refreshToken("Bearer "+rToken));
+
+        Response response = success(signService.refreshToken("Bearer "+rToken));
+        System.out.println(response.toString());
+        return response;
     }
 
 }
