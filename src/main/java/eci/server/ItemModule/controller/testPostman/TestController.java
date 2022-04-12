@@ -11,7 +11,7 @@ import static eci.server.ItemModule.dto.response.Response.success;
 
 @RestController
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "https://6a3e-118-36-38-193.ngrok.io")
 public class TestController {
 
     private final TokenService tokenService;

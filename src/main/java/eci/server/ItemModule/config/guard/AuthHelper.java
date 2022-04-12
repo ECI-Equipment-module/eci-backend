@@ -52,6 +52,8 @@ public class AuthHelper {
          * SecurityContextHolder의 Authentication 정보 안의 Principal(인증정보 담는 객체) 가져오기
          */
         return (CustomUserDetails) getAuthentication().getPrincipal();
+
+
     }
 
     private Authentication getAuthentication() {

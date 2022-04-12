@@ -14,7 +14,7 @@ import javax.validation.Valid;
 
 @RequiredArgsConstructor
 @RestController
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "https://6a3e-118-36-38-193.ngrok.io")
 public class ColorController {
     private final ColorService colorService;
 
