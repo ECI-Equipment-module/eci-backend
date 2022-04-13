@@ -1,195 +1,85 @@
-package eci.server.ItemModule.entity.route;
+package eci.server.ItemModule.dto.route;
 
-import eci.server.ItemModule.dto.route.RouteUpdateRequest;
-import eci.server.ItemModule.entity.entitycommon.EntityDate;
-import eci.server.ItemModule.entity.item.Item;
-import eci.server.ItemModule.entity.member.Member;
+import eci.server.ItemModule.entity.route.Route;
+import eci.server.ItemModule.exception.item.ItemNotFoundException;
 import eci.server.ItemModule.exception.member.sign.MemberNotFoundException;
+import eci.server.ItemModule.exception.route.RouteNotFoundException;
 import eci.server.ItemModule.repository.item.ItemRepository;
 import eci.server.ItemModule.repository.member.MemberRepository;
 import eci.server.ItemModule.repository.route.RouteRepository;
-import lombok.AccessLevel;
-import lombok.Getter;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 
-import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Null;
+import javax.validation.constraints.Positive;
 import java.util.Optional;
 
-@Entity
-@Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Slf4j
-public class Route extends EntityDate {
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class RouteCreateRequest {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    @GeneratedValue(strategy= GenerationType.SEQUENCE, generator="SEQUENCE1")
-//    @SequenceGenerator(name="SEQUENCE1", sequenceName="SEQUENCE1", allocationSize=1)
-
-    private Long id;
-
-    @Column(nullable = false)
+    @NotBlank(message = "라우트의 타입을 입력해주세요")
     private String type;
 
-    @Column(nullable = false)
+    @NotBlank(message = "라우트의 workflow를 지정해주세요")
     private String workflow;
 
-    @Column(nullable = false)
+    @Null
     private String workflowPhase;
 
-    @Column(nullable = false)
     private String lifecycleStatus;
 
-    @Column(nullable = false)
-    private int revisedCnt;
+    private Integer revisedCnt;
+
+    @NotNull(message = "아이템 아이디를 입력해주세요")
+    @Positive(message = "올바른 아이템 아이디를 입력해주세요")
+    private Long itemId;
 
     /**
-     * 최신 라우트만 true
+     * 사용자 입력 x
      */
-    @Column(nullable = false)
-    private boolean is_power;
+    @Null
+    private Long memberId;
 
-    /**
-     * 삭제 여부 표시
-     */
-    @Column(nullable = false)
-    private boolean deleted;
-
-    /**
-     * 아이템 작성자의 아이디
-     */
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id", nullable = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private Member member;
-
-    @Column(nullable = false)
-    @Lob
+    //    @NotBlank(message = "요청 코멘트를 입력해주세요")
     private String applicant_comment;
 
-    /**
-     * 리뷰어 지정자의 아이디
-     */
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "reviewer_id", nullable = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private Member reviewer;
+    private Long reviewerId;
 
-    @Column(nullable = false)
-    @Lob
+    //    @NotBlank(message = "리뷰 코멘트를 입력해주세요")
     private String reviewer_comment;
 
-    /**
-     * 승인자의 아이디
-     */
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "approver_id", nullable = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private Member approver;
+    private Long approverId;
 
-    @Column(nullable = false)
-    @Lob
+    //    @NotBlank(message = "승인 여부 코멘트를 입력해주세요")
     private String approver_comment;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "item_id", nullable = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private Item item;
+    private Long parentId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "parent_id")
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private Route parent;
-
-    @OneToMany(mappedBy = "parent", fetch = FetchType.LAZY)
-    private List<Route> children = new ArrayList<>();
-
-    /**
-     * default : true
-     * 값이 true라면 임시저장 가능, false라면 수정 불가능
-     */
-    @Column
     private Boolean inProgress;
 
-
-    public Route(
-            String type,
-            String workflow,
-            String workflowPhase,
-            String lifecycleStatus,
-            Integer revisedCnt,
-            Member member,
-            String applicant_comment,
-            Member reviewer,
-            String reviewer_comment,
-            Member approver,
-            String approver_comment,
-            Item item,
-            Route parent,
-            Boolean inProgress
-    ) {
-        this.type = type;
-        this.workflow = workflow;
-        this.workflowPhase = workflowPhase;
-        this.lifecycleStatus = lifecycleStatus;
-        this.revisedCnt = revisedCnt;
-        this.member = member;
-        this.applicant_comment = applicant_comment;
-        this.reviewer = reviewer;
-        this.reviewer_comment = reviewer_comment;
-        this.approver = approver;
-        this.approver_comment = approver_comment;
-        this.item = item;
-        this.parent = parent;
-        this.deleted = false;
-        this.inProgress = true;
+    public static Route toEntity(RouteCreateRequest req, MemberRepository memberRepository, ItemRepository itemRepository, RouteRepository routeRepository) {
+        return new Route(
+                req.type,
+                req.workflow,
+                req.workflow, //workflow 설정하면 그것에 맞는 이미지 파일 돌려주기
+                req.lifecycleStatus,
+                req.revisedCnt+64, //revistion  A B C D
+                memberRepository.findById(req.memberId).orElseThrow(MemberNotFoundException::new),
+                req.applicant_comment,
+                memberRepository.findById(req.reviewerId).orElseThrow(MemberNotFoundException::new),
+                req.reviewer_comment,
+                memberRepository.findById(req.approverId).orElseThrow(MemberNotFoundException::new),
+                req.approver_comment,
+                itemRepository.findById(req.itemId).orElseThrow(ItemNotFoundException::new),
+                Optional.ofNullable(req.parentId)
+                        .map(id -> routeRepository.findById(id).orElseThrow(RouteNotFoundException::new))
+                        .orElse(null),
+                req.inProgress
+        );
     }
-
-
-    public Optional<Route> findDeletableRoute() {
-        return hasChildren() ? Optional.empty() : Optional.of(findDeletableRouteByParent());
-    }
-
-    public void delete() {
-        this.deleted = true;
-    }
-
-    private Route findDeletableRouteByParent() { // 1
-        if (isDeletedParent()) {
-            Route deletableParent = getParent().findDeletableRouteByParent();
-            if(getParent().getChildren().size() == 1) return deletableParent;
-        }
-        return this;
-    }
-
-    private boolean hasChildren() {
-        return getChildren().size() != 0;
-    }
-
-    private boolean isDeletedParent() { // 2
-        return getParent() != null && getParent().isDeleted();
-    }
-
-    public RouteUpdateRequest update(RouteUpdateRequest req, MemberRepository memberRepository, ItemRepository itemRepository, RouteRepository routeRepository) {
-        this.type = req.getType();
-        this.workflow = req.getWorkflow();
-        this.workflowPhase = req.getWorkflow(); //workflow 설정하면 그것에 맞는 이미지 파일 돌려주기
-        this.lifecycleStatus = req.getLifecycleStatus();
-        this.revisedCnt = req.getRevisedCnt()+64;
-        this.applicant_comment =req.getApplicant_comment();
-        this.reviewer = memberRepository.findById(req.getReviewerId()).orElseThrow(MemberNotFoundException::new);
-        this.reviewer_comment = req.getReviewer_comment();
-        this.approver = memberRepository.findById(req.getApproverId()).orElseThrow(MemberNotFoundException::new);
-        this.approver_comment = req.getApprover_comment();
-        this.parent = null;
-        this.inProgress = req.getInProgress();
-
-        return req;
-    }
-
 }
