@@ -3,13 +3,10 @@ package eci.server.ItemModule.advice;
 import eci.server.ItemModule.dto.response.Response;
 import eci.server.ItemModule.exception.file.FileUploadFailureException;
 import eci.server.ItemModule.exception.item.ItemNotFoundException;
-<<<<<<< HEAD:src/main/java/eci/server/ItemModule/advice/ExceptionAdvice.java
 import eci.server.ItemModule.exception.member.auth.*;
-=======
 import eci.server.ItemModule.exception.member.auth.AccessDeniedException;
 import eci.server.ItemModule.exception.member.auth.AccessExpiredException;
 import eci.server.ItemModule.exception.member.auth.AuthenticationEntryPointException;
->>>>>>> 90002839b992be427ae0f3cbad4476b4f45af2b7:src/main/java/eci/server/advice/ExceptionAdvice.java
 import eci.server.ItemModule.exception.member.sign.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -25,6 +22,13 @@ import java.net.BindException;
 @Slf4j
 public class ExceptionAdvice {
 
+    @ExceptionHandler(PasswordNotSameException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public Response passwordNotSameException() {
+        //회원가입 할 때 비밀번호 체크 부분
+        return Response.failure(401, "비밀번호가 같지 않습니다.");
+    }
+
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -34,9 +38,10 @@ public class ExceptionAdvice {
 
     @ExceptionHandler(LoginFailureException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    public Response loginFailureException() {
+    public Response failureException() {
         return Response.failure(401, "로그인에 실패하였습니다.");
     }
+
     @ExceptionHandler(PasswordNotValidateException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public Response passwordNotValidateException() {
