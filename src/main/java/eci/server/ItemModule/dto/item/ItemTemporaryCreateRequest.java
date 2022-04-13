@@ -82,12 +82,12 @@ public class ItemTemporaryCreateRequest {
             ManufactureRepository manufactureRepository) {
 
         return new Item(
-                req.name.isBlank() ? "" : req.name,
-                req.type.isBlank() ? "" : req.type,
-                req.type.isBlank() ? 0 : ItemType.valueOf(req.type).label()*1000000+(int)(Math.random()*1000),
-                req.width.isBlank() ? "" : req.width,
-                req.height.isBlank() ? "" : req.height,
-                req.weight.isBlank() ? "" : req.weight,
+                req.name.isBlank() ? "이름을 입력해주세요" : req.name,
+                req.type.isBlank() ? String.valueOf(ItemType.NONE) : req.type,
+                ItemType.valueOf(req.type).label()*1000000+(int)(Math.random()*1000),
+                req.width.isBlank() ? "너비를 입력해주세요" : req.width,
+                req.height.isBlank() ? "높이를 입력해주세요" : req.height,
+                req.weight.isBlank() ? "무게를 입력해주세요" : req.weight,
 
                 memberRepository.findById(
                         req.getMemberId()

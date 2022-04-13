@@ -48,11 +48,11 @@ public class Route extends EntityDate {
     @Column(nullable = false)
     private int revisedCnt;
 
-    /**
-     * 최신 라우트만 true
-     */
-    @Column(nullable = false)
-    private boolean is_power;
+//    /**
+//     * 최신 라우트만 true
+//     */
+//    @Column(nullable = false)
+//    private boolean is_power;
 
     /**
      * 삭제 여부 표시

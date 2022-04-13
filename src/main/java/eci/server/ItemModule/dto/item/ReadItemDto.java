@@ -19,6 +19,8 @@ import java.util.Locale;
 @NoArgsConstructor
 public class ReadItemDto {
 
+    private boolean inProgress;
+
     private Long id;
     private String name;
     private String type;
@@ -28,7 +30,6 @@ public class ReadItemDto {
     private MemberDto member;
 
     private List<ImageDto> thumbnail;
-//    private String thumbnailaddres;
 
     private List<AttachmentDto> attachments;
 
@@ -56,6 +57,8 @@ public class ReadItemDto {
     ) {
 
         return new ReadItemDto(
+                itemDto.isInProgress(),//true면 임시저장 상태, false면 찐 저장 상태
+
                 itemDto.getId(),
                 itemDto.getName(),
                 itemDto.getType(),
@@ -94,6 +97,8 @@ public class ReadItemDto {
     ) {
 
         return new ReadItemDto(
+                itemDto.isInProgress(),//true면 임시저장 상태, false면 찐 저장 상태
+
                 itemDto.getId(),
                 itemDto.getName(),
                 itemDto.getType(),

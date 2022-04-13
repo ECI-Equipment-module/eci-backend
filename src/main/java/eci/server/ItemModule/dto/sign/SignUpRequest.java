@@ -30,9 +30,7 @@ public class SignUpRequest {
     private String password; // 2
 
     @NotBlank(message = "비밀번호 확인을 위해 입력해주세요.")
-    @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$",
-            message = "비밀번호는 최소 8자리이면서 1개 이상의 알파벳, 숫자, 특수문자를 포함해야합니다.")
-    private String passwordcheck; // 2
+    private String passwordcheck; // 2-1
 
     @NotBlank(message = "사용자 이름을 입력해주세요.")
     @Size(min=2, message = "사용자 이름이 너무 짧습니다.")

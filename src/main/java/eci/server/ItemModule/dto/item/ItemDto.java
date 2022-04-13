@@ -17,6 +17,7 @@ import static java.util.stream.Collectors.toList;
 @Data
 @AllArgsConstructor
 public class ItemDto {
+    private boolean inProgress;
 
     private Long id;
     private String name;
@@ -35,6 +36,8 @@ public class ItemDto {
     public static ItemDto toDto(Item Item) {
 
         return new ItemDto(
+                Item.getInProgress(),
+
                 Item.getId(),
                 Item.getName(),
                 Item.getType(),
