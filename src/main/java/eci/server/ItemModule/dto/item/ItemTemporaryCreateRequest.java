@@ -33,28 +33,23 @@ import static java.util.stream.Collectors.toList;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ItemCreateRequest {
+public class ItemTemporaryCreateRequest {
     private final Logger logger = LoggerFactory.getLogger(ItemCreateRequest.class);
 
     private ItemType itemType;
 
-    @NotBlank(message = "아이템 이름을 입력해주세요.")
     private String name;
 
-    @NotBlank(message = "아이템 타입을 입력해주세요.")
     private String type;
 
     @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="SEQUENCE1")
     @SequenceGenerator(name="SEQUENCE1", sequenceName="SEQUENCE1", allocationSize=1)
     private Integer itemNumber;
 
-    @NotNull(message = "너비를 입력해주세요.")
     private String width;
 
-    @NotNull(message = "높이를 입력해주세요.")
     private String height;
 
-    @NotNull(message = "무게를 입력해주세요.")
     private String weight;
 
     // hidden = true
@@ -70,10 +65,8 @@ public class ItemCreateRequest {
     private List<String> tag = new ArrayList<>();
     private List<String> attachmentComment = new ArrayList<>();
 
-    @NotNull(message = "색깔을 입력해주세요.")
     private Long colorId;
 
-    @NotNull(message = "재료를 입력해주세요.")
     private List<Long> materials = new ArrayList<>();
 
     private List<Long> manufactures = new ArrayList<>();
@@ -82,25 +75,25 @@ public class ItemCreateRequest {
 
 
     public static Item toEntity(
-            ItemCreateRequest req,
+            ItemTemporaryCreateRequest req,
             MemberRepository memberRepository,
             ColorRepository colorRepository,
             MaterialRepository materialRepository,
             ManufactureRepository manufactureRepository) {
 
         return new Item(
-                req.name,
-                req.type,
-                ItemType.valueOf(req.type).label()*1000000+(int)(Math.random()*1000),
-                req.width,
-                req.height,
-                req.weight,
+                req.name.isBlank() ? "" : req.name,
+                req.type.isBlank() ? "" : req.type,
+                req.type.isBlank() ? 0 : ItemType.valueOf(req.type).label()*1000000+(int)(Math.random()*1000),
+                req.width.isBlank() ? "" : req.width,
+                req.height.isBlank() ? "" : req.height,
+                req.weight.isBlank() ? "" : req.weight,
 
                 memberRepository.findById(
                         req.getMemberId()
                 ).orElseThrow(MemberNotFoundException::new),
 
-                false, //임시저장 끝
+                true, //inProgress = true
 
                 colorRepository.findById(
                         req.getColorId()

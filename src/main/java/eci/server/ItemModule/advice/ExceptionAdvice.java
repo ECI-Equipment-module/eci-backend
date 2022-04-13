@@ -3,6 +3,7 @@ package eci.server.ItemModule.advice;
 import eci.server.ItemModule.dto.response.Response;
 import eci.server.ItemModule.exception.file.FileUploadFailureException;
 import eci.server.ItemModule.exception.item.ItemNotFoundException;
+import eci.server.ItemModule.exception.item.ItemUpdateImpossibleException;
 import eci.server.ItemModule.exception.member.auth.*;
 import eci.server.ItemModule.exception.member.auth.AccessDeniedException;
 import eci.server.ItemModule.exception.member.auth.AccessExpiredException;
@@ -22,13 +23,19 @@ import java.net.BindException;
 @Slf4j
 public class ExceptionAdvice {
 
+    @ExceptionHandler(ItemUpdateImpossibleException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public Response itemUpdateImpossibleException() {
+        //회원가입 할 때 비밀번호 체크 부분
+        return Response.failure(403, "임시저장이 아닌 아이템은 편집할 수 없습니다.");
+    }
+
     @ExceptionHandler(PasswordNotSameException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public Response passwordNotSameException() {
         //회원가입 할 때 비밀번호 체크 부분
         return Response.failure(401, "비밀번호가 같지 않습니다.");
     }
-
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)

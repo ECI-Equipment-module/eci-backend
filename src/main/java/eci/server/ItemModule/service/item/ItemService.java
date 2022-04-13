@@ -8,6 +8,7 @@ import eci.server.ItemModule.dto.route.RouteDto;
 import eci.server.ItemModule.entity.item.Attachment;
 import eci.server.ItemModule.entity.member.Member;
 import eci.server.ItemModule.exception.item.AttachmentNotFoundException;
+import eci.server.ItemModule.exception.item.ItemUpdateImpossibleException;
 import eci.server.ItemModule.exception.route.RouteNotFoundException;
 import eci.server.ItemModule.repository.color.ColorRepository;
 import eci.server.ItemModule.repository.item.AttachmentRepository;
@@ -55,6 +56,33 @@ public class ItemService {
     private final LocalFileService localFileService;
 
     private final AuthHelper authHelper;
+
+    /**
+     * 아이템 임시로 저장 save
+     * @param req
+     * @return 생성된 아이템 번호
+     */
+
+    @Transactional
+    public ItemCreateResponse tempCreate(ItemTemporaryCreateRequest req) {
+
+        Item item = itemRepository.save(
+                ItemTemporaryCreateRequest.toEntity(
+                        req,
+                        memberRepository,
+                        colorRepository,
+                        materialRepository,
+                        manufactureRepository
+                )
+        );
+
+        uploadImages(item.getThumbnail(), req.getThumbnail());
+
+        uploadAttachments(item.getAttachments(), req.getAttachments());
+
+        return new ItemCreateResponse(item.getId());
+    }
+
 
     /**
      * 아이템 create
@@ -256,6 +284,12 @@ public class ItemService {
     public ItemUpdateResponse update(Long id, ItemUpdateRequest req) {
 
         Item item = itemRepository.findById(id).orElseThrow(ItemNotFoundException::new);
+
+        if (item.getInProgress()==false){
+            //찐 저장 상태라면 UPDATE 불가, 임시저장 일때만 가능
+            throw new ItemUpdateImpossibleException();
+        }
+
         Item.FileUpdatedResult result = item.update(req, colorRepository);
 
         uploadImages(
