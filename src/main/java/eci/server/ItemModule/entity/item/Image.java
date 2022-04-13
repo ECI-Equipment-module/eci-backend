@@ -1,9 +1,7 @@
 package eci.server.ItemModule.entity.item;
 
-<<<<<<< HEAD:src/main/java/eci/server/ItemModule/entity/item/Image.java
 import eci.server.ItemModule.entitycommon.EntityDate;
-=======
->>>>>>> 90002839b992be427ae0f3cbad4476b4f45af2b7:src/main/java/eci/server/entity/item/Image.java
+import eci.server.ItemModule.entitycommon.EntityDate;
 import eci.server.ItemModule.exception.image.UnsupportedImageFormatException;
 import lombok.AccessLevel;
 import lombok.Getter;

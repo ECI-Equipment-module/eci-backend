@@ -48,13 +48,17 @@ public class SignController {
      *
      */
 
+    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
     @PostMapping("/refresh-token")
     @ResponseStatus(HttpStatus.OK)
-    //@RequestHeader required 옵션 기본값 true
-    //헤더 값이 전달 X -> 예외
-    public Response refreshToken(@RequestHeader(value = "Authorization") String refreshToken) {
-        return success(signService.refreshToken(refreshToken));
-    }
+    public Response refreshToken(@RequestHeader(value = "cookie") String refreshToken) {
 
+        Integer index = refreshToken.length()-1;
+        String rToken = (refreshToken.toString().substring(20,index));
+
+        Response response = success(signService.refreshToken("Bearer "+rToken));
+
+        return response;
+    }
 
 }
