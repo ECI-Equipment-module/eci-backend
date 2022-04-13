@@ -1,9 +1,7 @@
 package eci.server.ItemModule.dto.item;
 
 import eci.server.ItemModule.entity.item.*;
-import eci.server.ItemModule.exception.item.ColorNotFoundException;
-import eci.server.ItemModule.exception.item.ManufactureNotFoundException;
-import eci.server.ItemModule.exception.item.MaterialNotFoundException;
+import eci.server.ItemModule.exception.item.*;
 import eci.server.ItemModule.exception.member.sign.MemberNotFoundException;
 import eci.server.ItemModule.repository.color.ColorRepository;
 import eci.server.ItemModule.repository.manufacture.ManufactureRepository;
@@ -19,9 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.SequenceGenerator;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Null;
+import javax.validation.constraints.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -35,15 +31,16 @@ import static java.util.stream.Collectors.toList;
 @AllArgsConstructor
 public class ItemCreateRequest {
     private final Logger logger = LoggerFactory.getLogger(ItemCreateRequest.class);
-
+    @NotNull
     private ItemType itemType;
 
-    @NotBlank(message = "아이템 이름을 입력해주세요.")
+    @NotNull@NotBlank(message = "아이템 이름을 입력해주세요.")
     private String name;
 
-    @NotBlank(message = "아이템 타입을 입력해주세요.")
+    @NotNull@NotBlank(message = "아이템 타입을 입력해주세요.")
     private String type;
 
+    @Null
     @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="SEQUENCE1")
     @SequenceGenerator(name="SEQUENCE1", sequenceName="SEQUENCE1", allocationSize=1)
     private Integer itemNumber;
@@ -60,7 +57,7 @@ public class ItemCreateRequest {
     // hidden = true
     @Null
     private Long memberId;
-
+    @Null
     private Boolean inProgress;
 
     private List<MultipartFile> thumbnail = new ArrayList<>();
@@ -87,6 +84,16 @@ public class ItemCreateRequest {
             ColorRepository colorRepository,
             MaterialRepository materialRepository,
             ManufactureRepository manufactureRepository) {
+
+        if (req.itemType==ItemType.NONE){
+            throw new ItemTypeSaveException();
+        }else if(
+                        req.height.toString().isBlank()||
+                        req.weight.toString().isBlank() ||
+                        req.width.toString().isBlank()
+        ){
+            throw new ItemCreateNotEmptyException();
+        }
 
         return new Item(
                 req.name,

@@ -2,7 +2,9 @@ package eci.server.ItemModule.advice;
 
 import eci.server.ItemModule.dto.response.Response;
 import eci.server.ItemModule.exception.file.FileUploadFailureException;
+import eci.server.ItemModule.exception.item.ItemCreateNotEmptyException;
 import eci.server.ItemModule.exception.item.ItemNotFoundException;
+import eci.server.ItemModule.exception.item.ItemTypeSaveException;
 import eci.server.ItemModule.exception.item.ItemUpdateImpossibleException;
 import eci.server.ItemModule.exception.member.auth.*;
 import eci.server.ItemModule.exception.member.auth.AccessDeniedException;
@@ -23,11 +25,25 @@ import java.net.BindException;
 @Slf4j
 public class ExceptionAdvice {
 
+    @ExceptionHandler(ItemCreateNotEmptyException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public Response itemCreateNotEmptyException() {
+        //채워지지 않은 항목 존재 (저장 시에)
+        return Response.failure(400, "채워지지 않은 항목이 있습니다. 유효한 값을 넣어주세요");
+    }
+
     @ExceptionHandler(ItemUpdateImpossibleException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public Response itemUpdateImpossibleException() {
         //회원가입 할 때 비밀번호 체크 부분
         return Response.failure(403, "임시저장이 아닌 아이템은 편집할 수 없습니다.");
+    }
+
+    @ExceptionHandler(ItemTypeSaveException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public Response itemTypeSaveException() {
+        //회원가입 할 때 비밀번호 체크 부분
+        return Response.failure(403, "유효한 아이템 타입을 정해주세요.");
     }
 
     @ExceptionHandler(PasswordNotSameException.class)
@@ -41,6 +57,12 @@ public class ExceptionAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Response methodArgumentNotValidException(MethodArgumentNotValidException e) {
         return Response.failure(400, e.getBindingResult().getFieldError().getDefaultMessage());
+    }
+
+    @ExceptionHandler(BindException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Response bindException(BindException e) {
+        return Response.failure(400, e.getMessage());
     }
 
     @ExceptionHandler(LoginFailureException.class)
