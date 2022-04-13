@@ -1,15 +1,17 @@
 package eci.server.ItemModule.entity.item;
-
+import eci.server.ItemModule.entitycommon.EntityDate;
 import eci.server.ItemModule.entitycommon.EntityDate;
 import eci.server.ItemModule.exception.image.UnsupportedImageFormatException;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.Setter;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
+import java.text.SimpleDateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 @Setter
@@ -19,10 +21,9 @@ import java.util.*;
 public class Attachment extends EntityDate {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQUENCE2")
-//    @SequenceGenerator(name="SEQUENCE2", sequenceName="SEQUENCE2", allocationSize=1)
 
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQUENCE1")
+    @SequenceGenerator(name = "SEQUENCE1", sequenceName = "SEQUENCE1", allocationSize = 1)
     private Long id;
 
     /**
@@ -38,14 +39,15 @@ public class Attachment extends EntityDate {
     private String originName;
 
     /**
-     * 속하는 아이템이 있을 시에만 파일 저장
-     * 파일 사라지면 삭제됨
+     * 속하는 아이템이 있을 시에만 이미지 저장
+     * 아이템 사라지면 삭제됨
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "item_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Item item;
 
+  
     @Column(nullable = false)
     @Lob
     private String attach_comment;
@@ -89,6 +91,16 @@ public class Attachment extends EntityDate {
                         + "/"
                         + this.uniqueName; //이미지 저장 폴더 + 이미지 저장명
     }
+
+    /**
+     * 지원하는 파일 확장자
+     */
+    private final static String supportedExtension[] =
+            {"pdf", "hwp", "word", "docx", "ppt", "pptx"
+                    ,"cmd:", "csv" , "doc", "dsc", "exe" ,
+                    "xls", "xml", "xlc", "xlm", "txt", "zip"};
+
+
 
 
     /**
@@ -141,8 +153,6 @@ public class Attachment extends EntityDate {
         }
        throw new UnsupportedImageFormatException();
    }
-
-
 
 
     /**
