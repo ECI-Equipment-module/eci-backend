@@ -31,11 +31,7 @@ public class RouteCreateRequest {
     @Null
     private String workflowPhase;
 
-<<<<<<< HEAD
     private String lifecycleStatus;
-=======
-    private Character lifecycleStatus;
->>>>>>> 90002839b992be427ae0f3cbad4476b4f45af2b7
 
     private Integer revisedCnt;
 
@@ -49,26 +45,23 @@ public class RouteCreateRequest {
     @Null
     private Long memberId;
 
-//    @NotBlank(message = "요청 코멘트를 입력해주세요")
+    //    @NotBlank(message = "요청 코멘트를 입력해주세요")
     private String applicant_comment;
 
     private Long reviewerId;
 
-//    @NotBlank(message = "리뷰 코멘트를 입력해주세요")
+    //    @NotBlank(message = "리뷰 코멘트를 입력해주세요")
     private String reviewer_comment;
 
     private Long approverId;
 
-//    @NotBlank(message = "승인 여부 코멘트를 입력해주세요")
+    //    @NotBlank(message = "승인 여부 코멘트를 입력해주세요")
     private String approver_comment;
 
     private Long parentId;
 
-<<<<<<< HEAD
     private Boolean inProgress;
 
-=======
->>>>>>> 90002839b992be427ae0f3cbad4476b4f45af2b7
     public static Route toEntity(RouteCreateRequest req, MemberRepository memberRepository, ItemRepository itemRepository, RouteRepository routeRepository) {
         return new Route(
                 req.type,
@@ -85,12 +78,8 @@ public class RouteCreateRequest {
                 itemRepository.findById(req.itemId).orElseThrow(ItemNotFoundException::new),
                 Optional.ofNullable(req.parentId)
                         .map(id -> routeRepository.findById(id).orElseThrow(RouteNotFoundException::new))
-<<<<<<< HEAD
                         .orElse(null),
                 req.inProgress
-=======
-                        .orElse(null)
->>>>>>> 90002839b992be427ae0f3cbad4476b4f45af2b7
         );
     }
 }
