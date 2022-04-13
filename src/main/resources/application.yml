@@ -1,5 +1,16 @@
+whitelist:
+  main: http://localhost:300
+#  local: http://localhost:300
+#  chans: https://6a3e-118-36-38-193.ngrok.io
+
 server:
   port: 8181
+#  ssl:
+#    key-store: classpath:ecikey.p12
+#    key-store-type: PKCS12
+#    key-store-password: eciserver
+#    key-alias: ecikey
+
 spring:
   main:
     allow-bean-definition-overriding: true
@@ -21,7 +32,7 @@ spring:
     generate-ddl: false
     hibernate.ddl-auto: update
     open-in-view: false
-    show-sql: true
+    show-sql: false
     database-platform: org.hibernate.dialect.Oracle10gDialect
 
 
@@ -34,14 +45,16 @@ spring:
 
   # 파일 업로드 크기 설정
 
-  servlet.multipart.max-file-size: 5MB
-  servlet.multipart.max-request-size: 5MB
+  servlet.multipart.max-file-size: 500MB
+  servlet.multipart.max-request-size: 500MB
 
 upload:
    image:
-     location: C:/Users/DONGYUN/Desktop/spring/server3/prodmedia/image/
+     location: src/main/prodmedia/image/
+       #C:/Users/DONGYUN/Desktop/spring/server3/prodmedia/image/
 #  upload:
 #    image:
 #      location: prod-location
       # test : local-location
       # prod : prod-location
+

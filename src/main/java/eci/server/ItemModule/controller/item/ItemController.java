@@ -9,6 +9,7 @@ import eci.server.ItemModule.service.item.ItemService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -16,13 +17,15 @@ import javax.validation.Valid;
 @RestController
 @RequiredArgsConstructor
 @Slf4j
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
+
 public class ItemController {
 
     private final ItemService itemService;
 
     /**
      * 아이템 생성
+     *
      * @param req
      * @return 200 (success)
      */
@@ -43,11 +46,12 @@ public class ItemController {
 
     /**
      * 특정 아이템 조회
+     *
      * @param id
      * @return 200 (success)
      */
 
-    @GetMapping("/items/{id}")
+    @GetMapping(value = "/items/{id}")
     @ResponseStatus(HttpStatus.OK)
     public Response read(
             @PathVariable Long id) {
@@ -58,7 +62,25 @@ public class ItemController {
     }
 
     /**
+     * 특정 아이템 조회
+     *
+     * @return 200 (success)
+     */
+
+    @GetMapping("/todos")
+    @ResponseStatus(HttpStatus.OK)
+    public Response todos() {
+        return Response.success(
+                itemService.readTodo()
+        );
+    }
+
+    @GetMapping("/items/{id}")
+
+
+    /**
      * 특정 아이템+딸린 썸네일 이미지 삭제
+     *
      * @param id
      * @return 200 (success)
      */
@@ -74,6 +96,7 @@ public class ItemController {
 
     /**
      * 특정 아이템 수정
+     *
      * @param id
      * @param req
      * @return
@@ -93,4 +116,22 @@ public class ItemController {
     public Response readAll(@Valid ItemReadCondition cond) {
         return Response.success(itemService.readAll(cond));
     }
+
+    /**
+     * 특정 사진 조회
+     *
+     * @return 200 (success)
+     */
+
+    @GetMapping(value=  "/images/{id}", produces= MediaType.IMAGE_PNG_VALUE)
+    @ResponseStatus(HttpStatus.OK)
+    public byte[] img(
+            @PathVariable Long id) {
+        {
+            byte[] image = itemService.readImg(id);
+            return image;
+
+        }
+    }
+
 }

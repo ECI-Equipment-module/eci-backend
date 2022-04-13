@@ -1,5 +1,8 @@
 package eci.server.ItemModule.dto.response;
+<<<<<<< HEAD:src/main/java/eci/server/ItemModule/dto/response/Response.java
+=======
 
+>>>>>>> 90002839b992be427ae0f3cbad4476b4f45af2b7:src/main/java/eci/server/dto/response/Response.java
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AccessLevel;
@@ -8,7 +11,7 @@ import lombok.Getter;
 
 @JsonInclude(JsonInclude.Include.NON_NULL) // 1
 @AllArgsConstructor(access = AccessLevel.PRIVATE) // 2
-@Getter // 3
+@Getter
 public class Response {
     /**
      * 일관화된 응답 방식을 위한 클래스

@@ -3,9 +3,13 @@ package eci.server.ItemModule.advice;
 import eci.server.ItemModule.dto.response.Response;
 import eci.server.ItemModule.exception.file.FileUploadFailureException;
 import eci.server.ItemModule.exception.item.ItemNotFoundException;
+<<<<<<< HEAD:src/main/java/eci/server/ItemModule/advice/ExceptionAdvice.java
+import eci.server.ItemModule.exception.member.auth.*;
+=======
 import eci.server.ItemModule.exception.member.auth.AccessDeniedException;
 import eci.server.ItemModule.exception.member.auth.AccessExpiredException;
 import eci.server.ItemModule.exception.member.auth.AuthenticationEntryPointException;
+>>>>>>> 90002839b992be427ae0f3cbad4476b4f45af2b7:src/main/java/eci/server/advice/ExceptionAdvice.java
 import eci.server.ItemModule.exception.member.sign.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -91,10 +95,20 @@ public class ExceptionAdvice {
      * 리프레시 토큰이 유효하지 않을 때 에러
      * @return
      */
+    @ExceptionHandler(RefreshExpiredException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public Response refreshExpiredException() {
+        return Response.failure(401, "리프레쉬 재발급이 필요합니다.");
+    }
+
+    /**
+     * 로그인 안됐을 시 에러
+     * @return
+     */
     @ExceptionHandler(AuthenticationEntryPointException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public Response authenticationEntryPoint() {
-        return Response.failure(401, "리프레쉬 재발급이 필요합니다.");
+        return Response.failure(401, "리프레시가 필요합니다.");
     }
 
     /**
@@ -120,11 +134,6 @@ public class ExceptionAdvice {
         return Response.failure(400, e.getHeaderName() + " 요청 헤더가 누락되었습니다.");
     }
 
-    @ExceptionHandler(BindException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public Response bindException(BindException e) {
-        return Response.failure(400, e.getMessage());//.getFieldError().getDefaultMessage());
-    }
 
     @ExceptionHandler(FileUploadFailureException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)

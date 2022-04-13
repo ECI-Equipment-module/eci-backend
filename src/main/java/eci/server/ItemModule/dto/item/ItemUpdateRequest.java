@@ -2,7 +2,6 @@ package eci.server.ItemModule.dto.item;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -11,6 +10,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PositiveOrZero;
 import java.util.ArrayList;
 import java.util.List;
+
 
 @Data
 @NoArgsConstructor
@@ -39,10 +39,28 @@ public class ItemUpdateRequest {
      */
     private List<MultipartFile> addedImages = new ArrayList<>();
 
+    /**
+     * 추가된 파일을 첨부
+     */
+    private List<MultipartFile> addedAttachments = new ArrayList<>();
+    private List<String> addedTag = new ArrayList<>();
+    private List<String> addedAttachmentComment = new ArrayList<>();
 
     /**
-     * 제거된 이미지 아이디 입력
+     * 색깔 입력
+     */
+    @NotNull(message = "색깔을 입력해주세요.")
+    @PositiveOrZero(message = "유효한 색깔 아이디를 입력해주세요")
+    private Long colorId;
+    /**
+     * 삭제될 사진 아이디 입력 - 실제 삭제 예정
      */
     private List<Long> deletedImages = new ArrayList<>();
+    /**
+     * 삭제될 파일 아이디 입력 - is deleted 만 true
+     */
+    private List<Long> deletedAttachments = new ArrayList<>();
+
 }
+
 

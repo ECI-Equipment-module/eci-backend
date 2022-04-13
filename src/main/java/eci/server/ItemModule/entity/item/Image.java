@@ -1,5 +1,9 @@
 package eci.server.ItemModule.entity.item;
 
+<<<<<<< HEAD:src/main/java/eci/server/ItemModule/entity/item/Image.java
+import eci.server.ItemModule.entitycommon.EntityDate;
+=======
+>>>>>>> 90002839b992be427ae0f3cbad4476b4f45af2b7:src/main/java/eci/server/entity/item/Image.java
 import eci.server.ItemModule.exception.image.UnsupportedImageFormatException;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -8,16 +12,22 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.UUID;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Image {
+public class Image extends EntityDate {
 
     @Id
-    @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="SEQUENCE1")
-    @SequenceGenerator(name="SEQUENCE1", sequenceName="SEQUENCE1", allocationSize=1)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    //@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="SEQUENCE1")
+    //@SequenceGenerator(name="SEQUENCE1", sequenceName="SEQUENCE1", allocationSize=1)
+
     private Long id;
 
     /**
@@ -32,10 +42,14 @@ public class Image {
     @Column(nullable = false)
     private String originName;
 
+    @Column
+    private String imageaddress;
+
     /**
      * 속하는 아이템이 있을 시에만 이미지 저장
      * 아이템 사라지면 삭제됨
      */
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "item_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
@@ -48,12 +62,20 @@ public class Image {
             {"jpg", "jpeg", "gif", "bmp", "png"};
 
     /**
-     * 각 이미지의 고유명 생성
+     * 각 이미지의 고유명 생성 + 초기값 설정
      * @param originName
      */
     public Image(String originName) {
+        SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date now = new Date();
+
         this.uniqueName = generateUniqueName(extractExtension(originName));
         this.originName = originName;
+        this.imageaddress =
+                "src/main/prodmedia/image/" +
+                    sdf1.format(now).substring(0,10)
+                        + "/"
+                + this.uniqueName; //이미지 저장 폴더 + 이미지 저장명
     }
 
     /**

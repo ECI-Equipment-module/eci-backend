@@ -10,9 +10,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.GenericFilterBean;
 
 import javax.servlet.*;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.net.URLEncoder;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -41,11 +43,11 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
      */
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-
-        HttpServletRequest request1 = (HttpServletRequest) request;
         HttpServletResponse response1 = (HttpServletResponse) response;
+        HttpServletRequest request1 = (HttpServletRequest) request;
+
+        response1.setHeader("Access-Control-Allow-Origin", "https://naughty-raman-7e7eb1.netlify.app");
         response1.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
-        response1.setHeader("Access-Control-Allow-Credentials", "true");
         response1.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE");
         response1.setHeader("Access-Control-Max-Age", "3600");
         response1.setHeader("Access-Control-Allow-Headers", "Content-Type, Accept, X-Requested-With, remember-me");
@@ -57,8 +59,9 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
         }
 
         chain.doFilter(request, response1);
+ }
 
-    }
+
 
     private String extractToken(ServletRequest request) {
         return ((HttpServletRequest)request).getHeader("Authorization");
@@ -66,7 +69,6 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
 
     private boolean validateToken(String token) {
         return(token != null && tokenService.validateAccessToken(token));
-
     }
 
     private void setAuthentication(String token) {

@@ -1,5 +1,6 @@
 package eci.server.ItemModule.controller.route;
 
+import eci.server.ItemModule.dto.route.RouteUpdateRequest;
 import eci.server.aop.AssignMemberId;
 import eci.server.ItemModule.dto.response.Response;
 import eci.server.ItemModule.dto.route.RouteCreateRequest;
@@ -13,6 +14,7 @@ import javax.validation.Valid;
 
 @RestController
 @RequiredArgsConstructor
+@CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
 public class RouteController {
     private final RouteService RouteService;
 
@@ -31,11 +33,28 @@ public class RouteController {
         return Response.success();
     }
 
+    @GetMapping("/routes/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public Response read(@PathVariable Long id) {
+        return Response.success(
+                RouteService.read(id)
+        );
+    }
+
     @DeleteMapping("/routes/{id}")
     @ResponseStatus(HttpStatus.OK)
     public Response delete(@PathVariable Long id) {
         RouteService.delete(id);
         return Response.success();
     }
+
+    @PutMapping("/routes/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public Response update(
+            @PathVariable Long id,
+            @Valid @ModelAttribute RouteUpdateRequest req) {
+        return Response.success(RouteService.update(id, req));
+    }
+
 }
 

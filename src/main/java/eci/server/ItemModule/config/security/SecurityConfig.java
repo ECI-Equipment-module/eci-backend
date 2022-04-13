@@ -11,9 +11,6 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -46,8 +43,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 //.requestMatchers(CorsUtils::isPreFlightRequest).permitAll()//added
                 .and()
                 .authorizeRequests()
-                .antMatchers(HttpMethod.POST, "/sign-in", "/sign-up","/refresh-token").permitAll()
-                .antMatchers(HttpMethod.GET, "**").permitAll()
+                .antMatchers(HttpMethod.POST, "/sign-in", "/sign-up", "/refresh-token").permitAll()
+                .antMatchers(HttpMethod.GET, "/**").permitAll()
+//                .antMatchers(HttpMethod.GET, "/items/**").permitAll()
+//                .antMatchers(HttpMethod.GET, "/members/**").permitAll()
+//                .antMatchers(HttpMethod.GET, "/routes/**").permitAll()
                 .antMatchers(HttpMethod.GET, "/test").permitAll()
                 .antMatchers(HttpMethod.GET, "/route/**").permitAll()
                 .antMatchers(HttpMethod.DELETE, "/members/{id}/**").access("@memberGuard.check(#id)")
@@ -56,6 +56,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.PUT, "/items/{id}").access("@itemGuard.check(#id)")
                 .antMatchers(HttpMethod.DELETE, "/items/{id}").access("@itemGuard.check(#id)")
                 .antMatchers(HttpMethod.POST, "/routes").authenticated()
+                .antMatchers(HttpMethod.PUT, "/routes/{id}").access("@routeGuard.check(#id)")
                 .antMatchers(HttpMethod.DELETE, "/routes/{id}").access("@routeGuard.check(#id)")
                 .anyRequest().hasAnyRole("ADMIN")
                 .and()
@@ -67,26 +68,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.headers().frameOptions().sameOrigin();
     }
+
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return PasswordEncoderFactories.createDelegatingPasswordEncoder(); // 6
-    }
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-        configuration.addAllowedOrigin("*");
-        configuration.addAllowedHeader("*");
-        configuration.addAllowedMethod("POST");
-        configuration.addAllowedMethod("PUT");
-        configuration.addAllowedMethod("GET");
-        configuration.addAllowedMethod("DELETE");
-
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
-
-        return source;
+        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
 
-
-}
-
+    }
