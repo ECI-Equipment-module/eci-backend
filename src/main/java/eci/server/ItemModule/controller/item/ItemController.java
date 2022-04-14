@@ -58,11 +58,10 @@ public class ItemController {
                     ItemCreateRequest req
     ) {
         System.out.println(
-                req.getAttachments().size()
+                "ㅛㅛㅛㅛㅛㅛㅛㅛㅛㅛㅛㅛㅛㅛㅛㅛㅛㅛㅛ"+
+                req.getAttachments().get(0).getContentType()
         );
-        System.out.println(
-                req.getAttachments().stream()
-        );
+
         return Response.success(
 
                 itemService.create(req));
