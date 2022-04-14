@@ -14,5 +14,5 @@ public class MemberSimpleDto {
     private String username;
     private String department;
     private String contact;
-    private ProfileImage profileImage;
+    private String profileImage;
 }
