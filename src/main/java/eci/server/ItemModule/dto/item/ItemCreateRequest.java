@@ -37,7 +37,7 @@ public class ItemCreateRequest {
     @NotNull@NotBlank(message = "아이템 이름을 입력해주세요.")
     private String name;
 
-    @NotNull@NotBlank(message = "아이템 타입을 입력해주세요.")
+    @NotNull(message = "아이템 타입을 입력해주세요.")
     private String type;
 
     @Null
@@ -85,6 +85,8 @@ public class ItemCreateRequest {
             MaterialRepository materialRepository,
             ManufactureRepository manufactureRepository) {
 
+            System.out.println(req.attachments);
+
         if (req.itemType==ItemType.NONE){
             //아이템 타입이 none이라면 제대로 저장하면 안됨
 
@@ -101,8 +103,8 @@ public class ItemCreateRequest {
 
         return new Item(
                 req.name,
-                req.type,
-                ItemType.valueOf(req.type).label()*1000000+(int)(Math.random()*1000),
+                req.type.isBlank()? "defaultType":req.type,
+                ItemType.valueOf(req.type.isBlank()? "defaultType":req.type).label()*1000000+(int)(Math.random()*1000),
                 req.width,
                 req.height,
                 req.weight,
