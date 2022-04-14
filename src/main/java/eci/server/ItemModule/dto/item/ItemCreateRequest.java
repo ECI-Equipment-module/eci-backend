@@ -85,7 +85,14 @@ public class ItemCreateRequest {
             MaterialRepository materialRepository,
             ManufactureRepository manufactureRepository) {
 
-            System.out.println(req.attachments);
+        System.out.println(
+               req.attachments.size()
+        );
+
+            System.out.println(
+                    req.attachments.stream()
+            );
+
 
         if (req.itemType==ItemType.NONE){
             //아이템 타입이 none이라면 제대로 저장하면 안됨
@@ -103,8 +110,8 @@ public class ItemCreateRequest {
 
         return new Item(
                 req.name,
-                req.type.isBlank()? "defaultType":req.type,
-                ItemType.valueOf(req.type.isBlank()? "defaultType":req.type).label()*1000000+(int)(Math.random()*1000),
+                req.type.isBlank()? "BOLT":req.type,
+                ItemType.valueOf(req.type.isBlank()? "BOLT":req.type).label()*1000000+(int)(Math.random()*1000),
                 req.width,
                 req.height,
                 req.weight,
