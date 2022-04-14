@@ -47,8 +47,8 @@ public class CustomMemberRepositoryImpl extends QuerydslRepositorySupport implem
                         .select(constructor(
                                 MemberSimpleDto.class,
                                 member.id,
-                                member.username,
                                 member.email,
+                                member.username,
                                 member.department,
                                 member.contact,
                                 profileImage.imageaddress
