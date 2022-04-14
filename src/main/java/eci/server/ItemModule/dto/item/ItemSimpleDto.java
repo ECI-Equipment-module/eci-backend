@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -22,6 +23,13 @@ public class ItemSimpleDto {
     private String weight;
 
     private String username;
+    private String materialName;
+
+    private String colorName;
+    private String imageAdress;
+
+    private String attachmentName;
+
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime createdAt;
 //    private List<ImageDto> thumbnail;

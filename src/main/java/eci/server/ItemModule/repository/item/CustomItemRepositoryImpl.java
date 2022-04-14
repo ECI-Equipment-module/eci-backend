@@ -75,18 +75,20 @@ public class CustomItemRepositoryImpl extends QuerydslRepositorySupport implemen
 
                                         item.width,
                                         item.height,
+                                        item.weight,
 
+                                        item.member.username,
                                         itemMaterial.material.name,
 
-                                        item.weight,
                                         item.color.color,
 
                                         image.imageaddress,
 
                                         attachment.attachmentaddress,//이건 리스트로 와야하는디..
 
-                                        item.member.username,
                                         item.createdAt
+
+
 
                                         )
                         )
