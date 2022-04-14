@@ -20,9 +20,9 @@ import static java.util.stream.Collectors.toSet;
 public class Member extends EntityDate { // 5
 
     @Id
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="SEQUENCE3")
-    @SequenceGenerator(name="SEQUENCE3", sequenceName="SEQUENCE3", allocationSize=1)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+//    @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="SEQUENCE3")
+//    @SequenceGenerator(name="SEQUENCE3", sequenceName="SEQUENCE3", allocationSize=1)
     @Column(name = "member_id")
     private Long id;
 
