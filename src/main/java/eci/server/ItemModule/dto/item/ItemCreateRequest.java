@@ -31,13 +31,11 @@ import static java.util.stream.Collectors.toList;
 @AllArgsConstructor
 public class ItemCreateRequest {
     private final Logger logger = LoggerFactory.getLogger(ItemCreateRequest.class);
-    @NotNull
-    private ItemType itemType;
 
     @NotNull@NotBlank(message = "아이템 이름을 입력해주세요.")
     private String name;
 
-    //@NotNull(message = "아이템 타입을 입력해주세요.")
+    @NotNull(message = "아이템 타입을 입력해주세요.")
     private String type;
 
     @Null
@@ -85,7 +83,7 @@ public class ItemCreateRequest {
             MaterialRepository materialRepository,
             ManufactureRepository manufactureRepository) {
 
-        if (req.itemType==ItemType.NONE){
+        if (req.type.equals("NONE")){
             //아이템 타입이 none이라면 제대로 저장하면 안됨
 
             throw new ItemTypeSaveException();
