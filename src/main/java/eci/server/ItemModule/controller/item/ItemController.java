@@ -18,7 +18,7 @@ import javax.validation.Valid;
 @RestController
 @RequiredArgsConstructor
 @Slf4j
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app/")
 
 public class ItemController {
 
@@ -42,7 +42,7 @@ public class ItemController {
 
                 itemService.tempCreate(req));
     }
-    @CrossOrigin(origins = "http://localhost:3000")
+    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app/")
     /**
      * 아이템 생성 (찐 저장)
      *
@@ -69,7 +69,7 @@ public class ItemController {
      * @param id
      * @return 200 (success)
      */
-    @CrossOrigin(origins = "http://localhost:3000")
+    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app/")
     @GetMapping(value = "/items/{id}")
     @ResponseStatus(HttpStatus.OK)
     public Response read(
@@ -85,7 +85,7 @@ public class ItemController {
      *
      * @return 200 (success)
      */
-    @CrossOrigin(origins = "http://localhost:3000")
+    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app/")
     @GetMapping("/todos")
     @ResponseStatus(HttpStatus.OK)
     public Response todos() {
@@ -101,7 +101,7 @@ public class ItemController {
      * @param id
      * @return 200 (success)
      */
-    @CrossOrigin(origins = "http://localhost:3000")
+    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app/")
     @DeleteMapping("/items/{id}")
     @ResponseStatus(HttpStatus.OK)
     public Response delete(
@@ -118,7 +118,7 @@ public class ItemController {
      * @param req
      * @return
      */
-    @CrossOrigin(origins = "http://localhost:3000")
+    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app/")
     @PutMapping("/items/{id}")
     @ResponseStatus(HttpStatus.OK)
     public Response update(
@@ -128,7 +128,8 @@ public class ItemController {
 
         return Response.success(itemService.update(id, req));
     }
-    @CrossOrigin(origins = "http://localhost:3000")
+
+    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app/")
     @GetMapping("/items")
     @ResponseStatus(HttpStatus.OK)
     public Response readAll(@Valid ItemReadCondition cond) {
@@ -140,7 +141,8 @@ public class ItemController {
      *
      * @return 200 (success)
      */
-    @CrossOrigin(origins = "http://localhost:3000")
+
+    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app/")
     @GetMapping(value=  "/images/{id}", produces= MediaType.IMAGE_PNG_VALUE)
     @ResponseStatus(HttpStatus.OK)
     public byte[] img(
