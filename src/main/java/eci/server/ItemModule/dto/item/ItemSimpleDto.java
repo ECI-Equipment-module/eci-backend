@@ -15,6 +15,7 @@ public class ItemSimpleDto {
     private Long id;
     private String name;
     private String type;
+    private Integer itemNumber;
 
     private String width;
     private String height;

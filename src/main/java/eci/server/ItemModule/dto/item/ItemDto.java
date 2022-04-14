@@ -22,6 +22,7 @@ public class ItemDto {
     private Long id;
     private String name;
     private String type;
+    private Integer itemNumber;
     private String width;
     private String height;
     private String weight;
@@ -41,6 +42,7 @@ public class ItemDto {
                 Item.getId(),
                 Item.getName(),
                 Item.getType(),
+                Item.getItemNumber(),
                 Item.getWidth(),
                 Item.getHeight(),
                 Item.getWeight(),
