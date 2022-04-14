@@ -2,6 +2,7 @@ package eci.server.ItemModule.entity.member;
 
 import eci.server.ItemModule.entity.entitycommon.EntityDate;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -14,6 +15,7 @@ import static java.util.stream.Collectors.toSet;
 @Entity
 @Getter
 @Table(name="member")
+@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED) // 3
 public class Member extends EntityDate { // 5
 
@@ -46,13 +48,23 @@ public class Member extends EntityDate { // 5
             fetch = FetchType.LAZY)
     private Set<MemberRole> roles;
 
+    @OneToOne(
+            mappedBy = "member",
+            fetch = FetchType.LAZY,
+            cascade = CascadeType.ALL,
+            optional = false
+    )
+    @JoinColumn(name = "profile_image", nullable = false)
+    private ProfileImage profileImage;
+
     public Member(
             String email,
             String password,
             String username,
             String department,
             String contact,
-            List<Role> roles
+            List<Role> roles,
+            ProfileImage profileImage
     ) {
         System.out.println("");
         this.email = email;
@@ -64,11 +76,25 @@ public class Member extends EntityDate { // 5
                 roles.stream().map(r -> new MemberRole(
                                 this, r))
                         .collect(toSet());
+        this.profileImage = profileImage;
+        addProfileImages(profileImage);
     }
 
     public void updateDepartment(String department) {
         this.department = department;
     }
+
+    /**
+     * 멤버에 새로운 이미지 정보를 등록하는 메소드
+     * 해당 Image에 this(Member)를 등록해줍니다.
+     * cascade 옵션을 PERSIST로 설정해두었기 때문에,
+     * Post가 저장되면서 Image도 함께 저장
+     * @param added
+     */
+    private void addProfileImages(ProfileImage added) {
+        added.initMember(this);
+    }
+
 
 
 }

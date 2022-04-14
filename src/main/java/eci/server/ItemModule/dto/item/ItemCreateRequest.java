@@ -86,11 +86,15 @@ public class ItemCreateRequest {
             ManufactureRepository manufactureRepository) {
 
         if (req.itemType==ItemType.NONE){
+            //아이템 타입이 none이라면 제대로 저장하면 안됨
+
             throw new ItemTypeSaveException();
         }else if(
                         req.height.toString().isBlank()||
                         req.weight.toString().isBlank() ||
                         req.width.toString().isBlank()
+
+            //길이, 높이, 너비가 빈 칸이라면 안됨
         ){
             throw new ItemCreateNotEmptyException();
         }

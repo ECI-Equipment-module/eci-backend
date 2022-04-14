@@ -49,7 +49,8 @@ public class CustomMemberRepositoryImpl extends QuerydslRepositorySupport implem
                                 member.username,
                                 member.email,
                                 member.department,
-                                member.contact
+                                member.contact,
+                                member.profileImage.imageaddress
                         ))
                         .from(member)
                         .where(predicate)

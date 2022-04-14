@@ -31,7 +31,7 @@ public class CustomUserDetailsService implements UserDetailsService {
          * 사용자의 id 값으로 사용자 정보 조회
          */
         Member member = memberRepository.findById(Long.valueOf(userId))
-                .orElseGet(() -> new Member(null, null, null, null, null ,List.of()));
+                .orElseGet(() -> new Member(null, null, null, null, null ,List.of(), null));
         return new CustomUserDetails(
                 String.valueOf(member.getId()),
                 member.getRoles().stream().map(memberRole -> memberRole.getRole())
@@ -39,7 +39,7 @@ public class CustomUserDetailsService implements UserDetailsService {
                         .map(roleType -> roleType.toString())
                         //권한 등급은 String 인식, Enum 타입 RoleType을 String 변환
                         .map(SimpleGrantedAuthority::new).collect(Collectors.toSet())
-                        //권한 등급을 GrantedAuthority 인터페이스로 받음
+                //권한 등급을 GrantedAuthority 인터페이스로 받음
         );
     }
 }

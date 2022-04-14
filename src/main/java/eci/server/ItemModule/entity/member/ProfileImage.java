@@ -1,4 +1,4 @@
-package eci.server.ItemModule.entity.item;
+package eci.server.ItemModule.entity.member;
 
 import eci.server.ItemModule.entity.member.Member;
 import eci.server.ItemModule.entitycommon.EntityDate;
@@ -47,8 +47,16 @@ public class ProfileImage extends EntityDate {
      * 아이템 사라지면 삭제됨
      */
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id", nullable = false)
+    /**
+     * 멤버가 사라진다면
+     * 프로필 이미지도 사라진다
+     */
+    @OneToOne(
+            cascade = CascadeType.ALL,
+            orphanRemoval = true,
+            fetch = FetchType.LAZY
+    )
+    @JoinColumn(name = "member", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Member member;
 
@@ -69,7 +77,7 @@ public class ProfileImage extends EntityDate {
         this.uniqueName = generateUniqueName(extractExtension(originName));
         this.originName = originName;
         this.imageaddress =
-                "src/main/prodmedia/profileimage/" +
+                "src/main/prodmedia/image/" +
                         sdf1.format(now).substring(0,10)
                         + "/"
                         + this.uniqueName; //이미지 저장 폴더 + 이미지 저장명
@@ -79,7 +87,7 @@ public class ProfileImage extends EntityDate {
      * 아이템과 연관관계가 없다면 등록
      * @param member
      */
-    public void initItem(Member member) {
+    public void initMember(Member member) {
         if(this.member == null) {
             this.member = member;
         }
