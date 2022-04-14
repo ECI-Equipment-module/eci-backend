@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.function.Function;
 
 import static eci.server.ItemModule.entity.member.QMember.member;
+import static eci.server.ItemModule.entity.member.QProfileImage.profileImage;
 
 @Transactional(readOnly = true)
 public class CustomMemberRepositoryImpl extends QuerydslRepositorySupport implements CustomMemberRepository {
@@ -50,9 +51,12 @@ public class CustomMemberRepositoryImpl extends QuerydslRepositorySupport implem
                                 member.email,
                                 member.department,
                                 member.contact,
-                                member.profileImage.imageaddress
+                                profileImage.imageaddress
                         ))
                         .from(member)
+
+                        .join(profileImage).on(member.id.eq(profileImage.member.id))
+
                         .where(predicate)
                         .orderBy(member.id.desc())
         ).fetch();
