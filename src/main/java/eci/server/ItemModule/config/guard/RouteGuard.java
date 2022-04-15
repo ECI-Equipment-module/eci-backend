@@ -39,6 +39,7 @@ public class RouteGuard {
     private boolean isResourceApprover(Long id) {
         Route Route = RouteRepository.findById(id).orElseThrow(() -> { throw new AccessDeniedException(""); });
         Long memberId = authHelper.extractMemberId();
+
         return Route.getApprover().getId().equals(memberId);
     }
 

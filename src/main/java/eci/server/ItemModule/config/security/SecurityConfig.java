@@ -54,7 +54,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.PUT, "/items/{id}").access("@itemGuard.check(#id)")
                 .antMatchers(HttpMethod.DELETE, "/items/{id}").access("@itemGuard.check(#id)")
                 .antMatchers(HttpMethod.POST, "/routes").authenticated()
-                .antMatchers(HttpMethod.PUT, "/routes/{id}").access("@routeGuard.check(#id)")
+                .antMatchers(HttpMethod.PUT, "/routes/{id}").permitAll()//.access("@routeGuard.check(#id)")
                 .antMatchers(HttpMethod.DELETE, "/routes/{id}").access("@routeGuard.check(#id)")
                 .anyRequest().hasAnyRole("ADMIN")
                 .and()
