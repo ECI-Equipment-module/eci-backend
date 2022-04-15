@@ -80,9 +80,9 @@ public class RouteCreateRequest {
                 memberRepository.findById(req.memberId).orElseThrow(MemberNotFoundException::new),
                 req.applicant_comment,
                 memberRepository.findById(req.reviewerId).orElseThrow(MemberNotFoundException::new),
-                "needed",//req.reviewer_comment,//빈칸
+                "",//req.reviewer_comment,//빈칸
                 memberRepository.findById(req.approverId).orElseThrow(MemberNotFoundException::new),
-                " ",//req.approver_comment,//빈칸
+                "needed",//req.approver_comment,//빈칸
                 itemRepository.findById(req.itemId).orElseThrow(ItemNotFoundException::new),
                 Optional.ofNullable(req.parentId)
                         .map(id -> routeRepository.findById(id).orElseThrow(RouteNotFoundException::new))
