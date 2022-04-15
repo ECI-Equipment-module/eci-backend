@@ -24,6 +24,9 @@ public class ReadItemDto {
     private Long id;
     private String name;
     private String type;
+
+    private Integer itemNumber;
+
     private String width;
     private String height;
     private String weight;
@@ -62,6 +65,9 @@ public class ReadItemDto {
                 itemDto.getId(),
                 itemDto.getName(),
                 itemDto.getType(),
+
+                itemDto.getItemNumber(),
+
                 itemDto.getWidth(),
                 itemDto.getHeight(),
                 itemDto.getWeight(),
@@ -102,6 +108,9 @@ public class ReadItemDto {
                 itemDto.getId(),
                 itemDto.getName(),
                 itemDto.getType(),
+
+                itemDto.getItemNumber(),
+
                 itemDto.getWidth(),
                 itemDto.getHeight(),
                 itemDto.getWeight(),

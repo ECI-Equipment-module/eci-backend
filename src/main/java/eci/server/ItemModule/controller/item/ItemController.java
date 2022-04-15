@@ -58,7 +58,6 @@ public class ItemController {
                     ItemCreateRequest req
     ) {
         System.out.println(
-                "ㅛㅛㅛㅛㅛㅛㅛㅛㅛㅛㅛㅛㅛㅛㅛㅛㅛㅛㅛ"+
                 req.getAttachments().get(0).getContentType()
         );
 
