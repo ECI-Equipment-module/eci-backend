@@ -21,13 +21,25 @@ public class RouteGuard {
     }
 
     private boolean hasAuthority(Long id) {
-        return hasAdminRole() || isResourceOwner(id);
+        return hasAdminRole() || isResourceOwner(id) || isResourceReviewer(id) || isResourceApprover(id);
     }
 
     private boolean isResourceOwner(Long id) {
         Route Route = RouteRepository.findById(id).orElseThrow(() -> { throw new AccessDeniedException(""); });
         Long memberId = authHelper.extractMemberId();
         return Route.getMember().getId().equals(memberId);
+    }
+
+    private boolean isResourceReviewer(Long id) {
+        Route Route = RouteRepository.findById(id).orElseThrow(() -> { throw new AccessDeniedException(""); });
+        Long memberId = authHelper.extractMemberId();
+        return Route.getReviewer().getId().equals(memberId);
+    }
+
+    private boolean isResourceApprover(Long id) {
+        Route Route = RouteRepository.findById(id).orElseThrow(() -> { throw new AccessDeniedException(""); });
+        Long memberId = authHelper.extractMemberId();
+        return Route.getApprover().getId().equals(memberId);
     }
 
     private boolean hasAdminRole() {

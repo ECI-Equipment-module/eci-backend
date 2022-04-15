@@ -28,11 +28,12 @@ public class RouteCreateRequest {
     @NotBlank(message = "라우트의 workflow를 지정해주세요")
     private String workflow;
 
-    @Null
+    @Null//workflow에 맞는 사진
     private String workflowPhase;
 
+    @Null//in_progress, Reject, waiting approval, Complete
     private String lifecycleStatus;
-
+    @Null
     private Integer revisedCnt;
 
     @NotNull(message = "아이템 아이디를 입력해주세요")
@@ -51,35 +52,41 @@ public class RouteCreateRequest {
     private Long reviewerId;
 
     //    @NotBlank(message = "리뷰 코멘트를 입력해주세요")
+    @Null
     private String reviewer_comment;
 
     private Long approverId;
 
     //    @NotBlank(message = "승인 여부 코멘트를 입력해주세요")
+    @Null
     private String approver_comment;
 
     private Long parentId;
-
+    @Null
     private Boolean inProgress;
 
-    public static Route toEntity(RouteCreateRequest req, MemberRepository memberRepository, ItemRepository itemRepository, RouteRepository routeRepository) {
+    public static Route toEntity(
+            RouteCreateRequest req,
+            MemberRepository memberRepository,
+            ItemRepository itemRepository,
+            RouteRepository routeRepository) {
         return new Route(
                 req.type,
                 req.workflow,
-                req.workflow, //workflow 설정하면 그것에 맞는 이미지 파일 돌려주기
-                req.lifecycleStatus,
-                req.revisedCnt+64, //revistion  A B C D
+                "IN_PROGRESS", //workflow 설정하면 그것에 맞는 이미지 파일 돌려주기
+                "DEVELOP",
+                0+65, //revisedCnt+65  (0)A (1)B C D
                 memberRepository.findById(req.memberId).orElseThrow(MemberNotFoundException::new),
-                req.applicant_comment,
+                req.applicant_comment,//빈칸
                 memberRepository.findById(req.reviewerId).orElseThrow(MemberNotFoundException::new),
-                req.reviewer_comment,
+                " ",//req.reviewer_comment,//빈칸
                 memberRepository.findById(req.approverId).orElseThrow(MemberNotFoundException::new),
-                req.approver_comment,
+                " ",//req.approver_comment,//빈칸
                 itemRepository.findById(req.itemId).orElseThrow(ItemNotFoundException::new),
                 Optional.ofNullable(req.parentId)
                         .map(id -> routeRepository.findById(id).orElseThrow(RouteNotFoundException::new))
                         .orElse(null),
-                req.inProgress
+                true
         );
     }
 }

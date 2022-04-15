@@ -7,12 +7,13 @@ import eci.server.ItemModule.dto.manufacture.ReadPartNumberService;
 import eci.server.ItemModule.dto.route.RouteDto;
 import eci.server.ItemModule.entity.item.Attachment;
 import eci.server.ItemModule.entity.member.Member;
+import eci.server.ItemModule.entity.route.Route;
 import eci.server.ItemModule.exception.item.AttachmentNotFoundException;
 import eci.server.ItemModule.exception.item.ItemUpdateImpossibleException;
+import eci.server.ItemModule.exception.member.MemberNotFoundException;
 import eci.server.ItemModule.exception.route.RouteNotFoundException;
 import eci.server.ItemModule.repository.color.ColorRepository;
 import eci.server.ItemModule.repository.item.AttachmentRepository;
-import eci.server.ItemModule.repository.item.ItemManufactureRepository;
 import eci.server.ItemModule.repository.manufacture.ManufactureRepository;
 import eci.server.ItemModule.repository.material.MaterialRepository;
 import eci.server.ItemModule.repository.route.RouteRepository;
@@ -144,7 +145,6 @@ public class ItemService {
                 );
     }
 
-
     public byte[] readImg(Long id){
         Item targetItem = itemRepository.findById(id).orElseThrow(ItemNotFoundException::new);
         byte[] image = localFileService.getImage(
@@ -208,18 +208,55 @@ public class ItemService {
         List<ItemTodoResponse> NEED_REVISE = new ArrayList<>();
         List<ItemTodoResponse> REJECTED = new ArrayList<>();
         List<ItemTodoResponse> WAITING_APPROVAL = new ArrayList<>();
+        //0) 현재 로그인 된 유저
+        Member member1 = memberRepository.findById(authHelper.extractMemberId()).orElseThrow(MemberNotFoundException::new);
 
-        //1) 내가 작성자인 모든 아이템들을 데려오기
-        Optional<Member> member1 = memberRepository.findById(authHelper.extractMemberId());
-        List<Item> itemList = itemRepository.findByMember(memberRepository.findById(authHelper.extractMemberId()));
+        //1-1) 내가 작성자인 모든 아이템들을 데려오기
+        List<Item> itemList = itemRepository.findByMember(member1);
 
-        System.out.println(itemList.size());
-        //2) 해당 아이템들의 라우트 중 가장 마지막 라우트의 상태 경우 나누고 리스트에 담아주기
+        //1-2) 내가 reviewer_id, approver_id로 지정된 라우트들 찾기
+
+        //1-2-1) 모든 아이템들 리스트
+
+        List<Item> allItemList = itemRepository.findAll();
+
+        //1-2-2) 모든 아이템들의 최종 라우트 추출
+        List<Route> liveRouteList = new ArrayList<>();
+        for(Item i : allItemList) {
+            //아이템의 모든 라우트
+            List<Route> itemsAllRoute = routeRepository.findAllWithMemberAndParentByItemIdOrderByParentIdAscNullsFirstRouteIdAsc(i.getId());
+            //만약 아이템의 모든 라우트 리스트가 하나이상 존재하면 맨 마지막 라우트만이 유효하므로 그 마지막 아이를 데려온다
+            if(itemsAllRoute.size()>0) {
+                liveRouteList.add(
+                        itemsAllRoute.get(itemsAllRoute.size() - 1)
+                );
+            }
+        }
+        //1-2-3) 최종 라우트 리스트들 중에서 리뷰어랑 승인자로 라우트 찾기
+        List<Route> waitingRouteList = new ArrayList<>();
+        for(Route i : liveRouteList) {
+                //승인자나 리뷰어와 일치한다면
+                if(i.getApprover().getId().equals(member1.getId()) || i.getReviewer().getId().equals(member1.getId())){
+                    waitingRouteList.add(i);
+                }
+        }
+        // 1-2-4) 승인자나 리뷰어로 지정된 라우트의 아이템 리스트
+        List<Item> waitingItemList = new ArrayList<>();
+        for(Route i : waitingRouteList) {
+            //승인자나 리뷰어와 일치한다면
+            if(itemRepository.findById(i.getItem().getId()).isPresent()) {
+                waitingItemList.add(itemRepository.findById(i.getItem().getId()).orElseThrow(ItemNotFoundException::new));
+            }
+        }
+
+
+        //2) 내가 작성한 아이템들의 라우트 중 가장 마지막 라우트의 상태
         for(Item i : itemList){
             List <RouteDto> routeDtoList = RouteDto.toDtoList(
                     routeRepository.findAllWithMemberAndParentByItemIdOrderByParentIdAscNullsFirstRouteIdAsc(i.getId())
             );
 
+        //2-1) 라우트 workflow 경우 나누고 리스트에 담아주기
             if(routeDtoList.size()>0) {
                 String itemworkflowPhase = routeDtoList.get(routeDtoList.size() - 1).getWorkflowPhase();
 
@@ -237,15 +274,18 @@ public class ItemService {
                 }else if(itemworkflowPhase.equals("REJECTED")){
 
                     REJECTED.add(itemTodoResponse);
-
-                }else if(itemworkflowPhase.equals("WAITING_APPROVAL")){
-
-                    WAITING_APPROVAL.add(itemTodoResponse);
-
                 }
-
             }
         }
+
+        //2-2) 아이템들 중 최종라우트에서 내가 approver, reviewer로 지정된 상태의 아이템 애들 가져오기
+        for(Item i : waitingItemList){
+            ItemTodoResponse itemTodoResponse =
+                    new ItemTodoResponse(i.getId(), i.getName(), i.getType(), i.getItemNumber());
+            WAITING_APPROVAL.add(itemTodoResponse);
+        }
+
+
         //3) 이쁜 response 형태로 담아주기 - ItemTodoResponse
 
         return new ItemTodoResponseList(IN_PROGRESS, NEED_REVISE, REJECTED, WAITING_APPROVAL);

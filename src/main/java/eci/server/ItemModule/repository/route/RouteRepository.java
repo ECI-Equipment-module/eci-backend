@@ -1,5 +1,6 @@
 package eci.server.ItemModule.repository.route;
 
+import eci.server.ItemModule.entity.member.Member;
 import eci.server.ItemModule.entity.route.Route;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -26,4 +27,6 @@ public interface RouteRepository extends JpaRepository<Route, Long> {
     @Query("select c from Route c join fetch c.member left join fetch c.parent where c.item.id = :itemId order by c.parent.id asc nulls first, c.id asc")
     List<Route> findAllWithMemberAndParentByItemIdOrderByParentIdAscNullsFirstRouteIdAsc(@Param("itemId")Long itemId);
 
+    List<Route> findByReviewer(Member member);
+    List<Route> findByApprover(Member member);
 }

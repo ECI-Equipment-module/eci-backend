@@ -22,21 +22,18 @@ import javax.validation.constraints.Positive;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RouteUpdateRequest {
-    @NotBlank(message = "라우트의 타입을 입력해주세요")
+    @Null
     private String type;
-
-    @NotBlank(message = "라우트의 workflow를 지정해주세요")
+    @Null
     private String workflow;
-
     @Null
     private String workflowPhase;
-
+    @Null//develop 이랑 release 중 하나
     private String lifecycleStatus;
 
     private Integer revisedCnt;
 
-    @NotNull(message = "아이템 아이디를 입력해주세요")
-    @Positive(message = "올바른 아이템 아이디를 입력해주세요")
+    @Null
     private Long itemId;
 
     /**
@@ -44,7 +41,7 @@ public class RouteUpdateRequest {
      */
     @Null
     private Long memberId;
-
+    @Null
     private String applicant_comment;
 
     private Long reviewerId;
@@ -56,7 +53,7 @@ public class RouteUpdateRequest {
     private String approver_comment;
 
     private Item item;
-
+    @Null
     private Boolean inProgress;
 
 
