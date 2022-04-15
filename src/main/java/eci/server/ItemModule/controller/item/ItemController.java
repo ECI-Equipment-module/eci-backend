@@ -57,9 +57,7 @@ public class ItemController {
                     //Content-Type = multipart/form-data
                     ItemCreateRequest req
     ) {
-        System.out.println(
-                req.getAttachments().get(0).getContentType()
-        );
+
 
         return Response.success(
 

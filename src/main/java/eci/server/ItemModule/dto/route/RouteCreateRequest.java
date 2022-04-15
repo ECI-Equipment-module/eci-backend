@@ -70,7 +70,7 @@ public class RouteCreateRequest {
             MemberRepository memberRepository,
             ItemRepository itemRepository,
             RouteRepository routeRepository) {
-        System.out.println("what is null loggggggggggggggggggggg");
+
         return new Route(
                 req.type,
                 req.workflow,
