@@ -70,6 +70,7 @@ public class RouteCreateRequest {
             MemberRepository memberRepository,
             ItemRepository itemRepository,
             RouteRepository routeRepository) {
+        System.out.println("what is null loggggggggggggggggggggg");
         return new Route(
                 req.type,
                 req.workflow,
@@ -77,9 +78,9 @@ public class RouteCreateRequest {
                 "DEVELOP",
                 0+65, //revisedCnt+65  (0)A (1)B C D
                 memberRepository.findById(req.memberId).orElseThrow(MemberNotFoundException::new),
-                req.applicant_comment,//빈칸
+                req.applicant_comment,
                 memberRepository.findById(req.reviewerId).orElseThrow(MemberNotFoundException::new),
-                " ",//req.reviewer_comment,//빈칸
+                "needed",//req.reviewer_comment,//빈칸
                 memberRepository.findById(req.approverId).orElseThrow(MemberNotFoundException::new),
                 " ",//req.approver_comment,//빈칸
                 itemRepository.findById(req.itemId).orElseThrow(ItemNotFoundException::new),
