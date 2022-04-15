@@ -17,7 +17,7 @@ public class RouteApproverUpdateRequest {
     private String type;
     @Null
     private String workflow;
-
+    @Null
     private String workflowPhase;
     @Null//develop 이랑 release 중 하나
     private String lifecycleStatus;
