@@ -97,6 +97,7 @@ public class NewRouteService {
             String rejectComment,
             Integer rejectedSequence
     ) {
+
         NewRoute newRoute = newRouteRepository.findById(id).orElseThrow(RouteNotFoundException::new);
 
         //추가적으로 만들어진 애들 반환
@@ -108,6 +109,8 @@ public class NewRouteService {
                 routeProductRepository
 
         );
+
+
 
         List<RouteProduct> addedProducts = new ArrayList<>();
 

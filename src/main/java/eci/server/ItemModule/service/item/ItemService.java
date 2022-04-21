@@ -9,6 +9,9 @@ import eci.server.ItemModule.dto.newRoute.RouteProductDto;
 import eci.server.ItemModule.dto.route.RouteDto;
 import eci.server.ItemModule.entity.item.Attachment;
 import eci.server.ItemModule.entity.member.Member;
+import eci.server.ItemModule.entity.newRoute.NewRoute;
+import eci.server.ItemModule.entity.newRoute.RouteProduct;
+import eci.server.ItemModule.entity.newRoute.RouteProductMember;
 import eci.server.ItemModule.entity.route.Route;
 import eci.server.ItemModule.exception.item.AttachmentNotFoundException;
 import eci.server.ItemModule.exception.item.ItemUpdateImpossibleException;
@@ -234,8 +237,8 @@ public class ItemService {
         //0) 현재 로그인 된 유저
         Member member1 = memberRepository.findById(authHelper.extractMemberId()).orElseThrow(MemberNotFoundException::new);
 
-        //1-1) 내가 작성자인 모든 아이템들을 데려오기
-        List<Item> itemList = itemRepository.findByMember(member1);
+        //1-1 tempsave용 ) 내가 작성자인 모든 아이템들을 데려오기
+        List<Item> myItemList = itemRepository.findByMember(member1);
 
         //1-2) 내가 reviewer_id, approver_id로 지정된 라우트들 찾기
 
@@ -243,10 +246,11 @@ public class ItemService {
         List<Item> allItemList = itemRepository.findAll();
 
         //1-2-2) 모든 아이템들의 최종 라우트 추출
-        List<Route> liveRouteList = new ArrayList<>();
+        List<NewRoute> liveRouteList = new ArrayList<>();
         for(Item i : allItemList) {
             //아이템의 모든 라우트
-            List<Route> itemsAllRoute = routeRepository.findAllWithMemberAndParentByItemIdOrderByParentIdAscNullsFirstRouteIdAsc(i.getId());
+            List<NewRoute> itemsAllRoute =
+                    newRouteRepository.findByItem(i);
             //만약 아이템의 모든 라우트 리스트가 하나이상 존재하면 맨 마지막 라우트만이 유효하므로 그 마지막 아이를 데려온다
             if(itemsAllRoute.size()>0) {
                 liveRouteList.add(
@@ -254,59 +258,84 @@ public class ItemService {
                 );
             }
         }
-        //1-2-3) 최종 라우트 리스트들 중에서 리뷰어랑 승인자로 라우트 찾기
-        List<Route> waitingRouteList = new ArrayList<>();
-        for(Route i : liveRouteList) {
-                //승인자나 리뷰어와 일치한다면
-                if(i.getApprover().getId().equals(member1.getId()) || i.getReviewer().getId().equals(member1.getId())){
-                    waitingRouteList.add(i);
-                }
-        }
-        // 1-2-4) 승인자나 리뷰어로 지정된 라우트의 아이템 리스트
-        List<Item> waitingItemList = new ArrayList<>();
-        for(Route i : waitingRouteList) {
-            //승인자나 리뷰어와 일치한다면
-            if(itemRepository.findById(i.getItem().getId()).isPresent()) {
-                waitingItemList.add(itemRepository.findById(i.getItem().getId()).orElseThrow(ItemNotFoundException::new));
+
+        //1-1-1 ) 내가 작성한 아이템 중 임시저장된 아이템 담기
+        List<Item> tempsaveList = new ArrayList<>();
+        for(Item item : myItemList){
+            if(item.getTempsave()==true){
+                tempsaveList.add(item);
             }
         }
+        //1-2-3) Rejected 아이템 담기
+        // 살아있는 라우트 중, present인 라우트 프로덕트의
+        // rejcted=true고 member이 member1의 아이디와 같다면
+        List<Item> rejectedList = new ArrayList<>();
+        // 살아있는 라우트 중, present인 라우트 프로덕트의 type
+        // 이 review나 approve이고, 그 멤버가 나라면 나에게 할당된 것
+        List<Item> waitingList = new ArrayList<>();
+        for(NewRoute i : liveRouteList) {
+            List<RouteProduct> routeProductList = routeProductRepository.findAllByNewRoute(i);
+            RouteProduct targetRouteProduct = routeProductList.get(i.getPresent());
+
+            if(targetRouteProduct.isRejected()){//present아이가 reject이고
+                for(RouteProductMember routeProductMember : targetRouteProduct.getMembers()){
+                    //rejected된 product 작성자에 내가 있다면 rejct에 담기
+                    if(routeProductMember.getMember().getId().equals(member1.getId())){
+                        rejectedList.add(
+                                i.getItem()
+                        );
+                    }
+                }
+            }
+
+            if(
+                    targetRouteProduct.getType().equals("approve") ||
+            targetRouteProduct.getType().equals("review")
+            ){
+                for(RouteProductMember routeProductMember : targetRouteProduct.getMembers()){
+                    //rejected된 product 작성자에 내가 있다면 rejct에 담기
+                    if(routeProductMember.getMember().getId().equals(member1.getId())){
+                        waitingList.add(
+                                i.getItem()
+                        );
+                    }
+                }
+            }
 
 
-        //2) 내가 작성한 아이템들의 라우트 중 가장 마지막 라우트의 상태
-        for(Item i : itemList){
-            List <RouteDto> routeDtoList = RouteDto.toDtoList(
-                    routeRepository.findAllWithMemberAndParentByItemIdOrderByParentIdAscNullsFirstRouteIdAsc(i.getId())
-            );
+        }
 
-        //2-1) 라우트 workflow 경우 나누고 리스트에 담아주기
-            if(routeDtoList.size()>0) {
-                String itemworkflowPhase = routeDtoList.get(routeDtoList.size() - 1).getWorkflowPhase();
+        //2-1) tempsave 추가
+            if(tempsaveList.size()>0) {
+                for (Item i : tempsaveList) {
+
+                    ItemTodoResponse itemTodoResponse =
+                            new ItemTodoResponse(i.getId(), i.getName(), i.getType(), i.getItemNumber());
+
+                    IN_PROGRESS.add(itemTodoResponse);
+                }
+        }
+        //2-2) rejected 추가
+        if(rejectedList.size()>0) {
+            for (Item i : rejectedList) {
 
                 ItemTodoResponse itemTodoResponse =
                         new ItemTodoResponse(i.getId(), i.getName(), i.getType(), i.getItemNumber());
 
-                if (itemworkflowPhase.equals("IN_PROGRESS")){
-
-                    IN_PROGRESS.add(itemTodoResponse);
-
-                }else if(itemworkflowPhase.equals("NEED_REVISE")){
-
-                    NEED_REVISE.add(itemTodoResponse);
-
-                }else if(itemworkflowPhase.equals("REJECTED")){
-
-                    REJECTED.add(itemTodoResponse);
-                }
+                REJECTED.add(itemTodoResponse);
             }
         }
 
-        //2-2) 아이템들 중 최종라우트에서 내가 approver, reviewer로 지정된 상태의 아이템 애들 가져오기
-        for(Item i : waitingItemList){
-            ItemTodoResponse itemTodoResponse =
-                    new ItemTodoResponse(i.getId(), i.getName(), i.getType(), i.getItemNumber());
-            WAITING_APPROVAL.add(itemTodoResponse);
-        }
+        //2-3 ) need review 추가
+        if(waitingList.size()>0) {
+            for (Item i : waitingList) {
 
+                ItemTodoResponse itemTodoResponse =
+                        new ItemTodoResponse(i.getId(), i.getName(), i.getType(), i.getItemNumber());
+
+                REJECTED.add(itemTodoResponse);
+            }
+        }
 
         //3) 이쁜 response 형태로 담아주기 - ItemTodoResponse
 

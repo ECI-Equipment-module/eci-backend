@@ -3,6 +3,7 @@ package eci.server.ItemModule.entity.newRoute;
 import eci.server.ItemModule.dto.newRoute.NewRouteUpdateRequest;
 import eci.server.ItemModule.entity.item.Item;
 import eci.server.ItemModule.entitycommon.EntityDate;
+import eci.server.ItemModule.exception.route.RejectImpossibleException;
 import eci.server.ItemModule.exception.route.UpdateImpossibleException;
 import eci.server.ItemModule.repository.newRoute.RouteProductRepository;
 import eci.server.ItemModule.repository.newRoute.NewRouteRepository;
@@ -136,6 +137,7 @@ public class NewRoute extends EntityDate {
     }
 
     public List<RouteProduct> rejectUpdate(
+
             Long id,
             String rejectedComment,
             Integer rejectedIndex,
@@ -144,11 +146,16 @@ public class NewRoute extends EntityDate {
 
     ) {
 
+
         /**
          * 현재 라우트에 딸린 라우트 생산물들
          */
         List<RouteProduct> routeProductList =
                 routeProductRepository.findAllByNewRoute(this);
+
+        if(rejectedIndex > this.present || routeProductList.get(rejectedIndex).isDisabled()){
+            throw new RejectImpossibleException();
+        }
 
         /**
          * 라우트프로덕트 맨 마지막 인덱스 값 찾기 위한 변수
@@ -172,7 +179,7 @@ public class NewRoute extends EntityDate {
                 //아직 지나지 않은 애들은 화면에서 없애주기
             }
             if(routeProductshow.getSequence()>rejectedIndex){
-                //거부당한 인덱스보다 큰 애들은 무효화처리 (reject 대상이 되지 못해)
+                //거부당한 인덱스보다 큰 애들은 쭉~ 무효화처리 (reject 대상이 되지 못해)
                 routeProductshow.setDisabled(true);
             }
         }
