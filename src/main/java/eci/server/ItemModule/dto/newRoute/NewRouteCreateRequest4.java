@@ -37,9 +37,9 @@ public class NewRouteCreateRequest4{
     @Null // 첫번째 멤버 아이디는 무조건 itemId 작성자랑 동일 인물
     private Long memberId;
 
-    private Long memberId2;
+    private List<Long> memberId2;
 
-    private Long memberId3;
+    private List<Long> memberId3;
 
     private String requestComment;
 

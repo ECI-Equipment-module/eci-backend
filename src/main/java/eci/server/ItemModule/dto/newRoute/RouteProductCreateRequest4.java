@@ -1,5 +1,6 @@
 package eci.server.ItemModule.dto.newRoute;
 
+import eci.server.ItemModule.entity.member.Member;
 import eci.server.ItemModule.entity.newRoute.NewRoute;
 import eci.server.ItemModule.entity.newRoute.NewRouteType;
 import eci.server.ItemModule.entity.newRoute.RouteProduct;
@@ -8,6 +9,8 @@ import eci.server.ItemModule.repository.member.MemberRepository;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static java.util.stream.Collectors.toList;
 
 public class RouteProductCreateRequest4 {
 
@@ -23,6 +26,9 @@ public class RouteProductCreateRequest4 {
 
 
         List routeProduct = List.of((newRouteType.routeType[req.getType()]));
+        List<Member> member1 = new ArrayList<>();
+        member1.add(memberRepository.findById(req.getMemberId())
+                .orElseThrow(MemberNotFoundException::new));
 
         RouteProduct routeProduct1 = new RouteProduct(
                 0,
@@ -32,7 +38,7 @@ public class RouteProductCreateRequest4 {
                 false,
                 true,
                 false,
-                memberRepository.findById(req.getMemberId()).orElseThrow(MemberNotFoundException::new),
+                member1,
                 newRoute
 
         );
@@ -45,7 +51,15 @@ public class RouteProductCreateRequest4 {
                 false,
                 true,
                 false,
-                memberRepository.findById(req.getMemberId2()).orElseThrow(MemberNotFoundException::new),
+                req.getMemberId2().stream().map(
+                        i->
+                                memberRepository.findById(i).
+                                        orElseThrow(MemberNotFoundException::new)
+                ).collect(
+                        toList()
+                )
+                ,
+
                 newRoute
 
         );
@@ -58,7 +72,13 @@ public class RouteProductCreateRequest4 {
                 false,
                 true,
                 false,
-                memberRepository.findById(req.getMemberId3()).orElseThrow(MemberNotFoundException::new),
+                req.getMemberId3().stream().map(
+                        i->
+                                memberRepository.findById(i).
+                                        orElseThrow(MemberNotFoundException::new)
+                ).collect(
+                        toList()
+                ),
                 newRoute
 
         );

@@ -1,9 +1,11 @@
 package eci.server.ItemModule.config.guard;
 
 
+import eci.server.ItemModule.entity.member.Member;
 import eci.server.ItemModule.entity.member.RoleType;
 import eci.server.ItemModule.entity.newRoute.NewRoute;
 import eci.server.ItemModule.entity.newRoute.RouteProduct;
+import eci.server.ItemModule.entity.newRoute.RouteProductMember;
 import eci.server.ItemModule.exception.route.RouteNotFoundException;
 import eci.server.ItemModule.repository.newRoute.NewRouteRepository;
 import eci.server.ItemModule.repository.newRoute.RouteProductRepository;
@@ -32,7 +34,6 @@ public class NewRouteGuard {
 
     private boolean isResponsible(Long id) {
 
-
         NewRoute newRoute =
                 newRouteRepository.findById(id).orElseThrow(() -> { throw new RouteNotFoundException(); });
 
@@ -42,16 +43,19 @@ public class NewRouteGuard {
 
         Long memberId = authHelper.extractMemberId();
 
-        boolean result =
-                //라우트에 딸린 routeProduct 애서 현재 진행 중인 애
-                routeProduct.get(newRoute.getPresent())
-                        .getMember().getId().toString().equals(memberId.toString());
+        //라우트에 딸린 routeProduct 애서 현재 진행 중인 애
+        List<RouteProductMember> members = routeProduct.get(newRoute.getPresent()).getMembers();
 
-        System.out.println(result);
+        boolean result = false;
+        for(RouteProductMember member : members){
+            if(member.getMember().getId().toString().equals(memberId.toString())){
+                result = true;
+            };
+        }
+
         return result;
+
     }
-
-
 
     private boolean hasAdminRole() {
         return authHelper.extractMemberRoles().contains(RoleType.ROLE_ADMIN);

@@ -82,7 +82,7 @@ public class NewRouteDto {
                 Route.getId(),
                 Route.getType(),
                 Route.getLifecycleStatus(),
-                Route.getLifecycleStatus().equals("Release")?
+                Route.getLifecycleStatus().equals("Complete")?
                         "COMPLETE":"IN_PROGRESS",
                 Route.getRevisedCnt(),
                 Route.getPresent(),

@@ -24,7 +24,7 @@ public class RouteProductDto {
     private boolean passed;
     private boolean rejected;
     private boolean show;
-    private MemberDto member;
+    private List<MemberDto> member;
 
     public static List<RouteProductDto> toProductDtoList(
             List <RouteProduct> RouteProducts
@@ -38,8 +38,10 @@ public class RouteProductDto {
                         c.isPassed(),
                         c.isRejected(),
                         c.isShow(),
-                        MemberDto.toDto(
-                                c.getMember()
+                        MemberDto.toDtoList(
+                                c.getMembers().stream().map(
+                                        m -> m.getMember()
+                                ).collect(toList())
                         )
                 )
         ).collect(
@@ -58,7 +60,11 @@ public class RouteProductDto {
                 routeProduct.isPassed(),
                 routeProduct.isRejected(),
                 routeProduct.isShow(),
-                MemberDto.toDto(routeProduct.getMember())
+                MemberDto.toDtoList(
+                        routeProduct.getMembers().stream().map(
+                                m -> m.getMember()
+                        ).collect(toList())
+                )
         );
     }
 

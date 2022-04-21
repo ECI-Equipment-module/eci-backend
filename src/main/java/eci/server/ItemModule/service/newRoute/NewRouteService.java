@@ -76,7 +76,8 @@ public class NewRouteService {
                 )
         );
 
-        List<RouteProduct> routeProductList = RouteProductCreateRequest4.toEntityList(
+        List<RouteProduct> routeProductList =
+                RouteProductCreateRequest4.toEntityList(
                 req,
                 newRoute,
                 newRouteType,

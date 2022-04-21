@@ -199,7 +199,11 @@ public class NewRoute extends EntityDate {
                     false,
                     true,
                     false,
-                    routeProductList.get(rejectedIndex).getMember(),
+                    routeProductList.get(rejectedIndex)
+                            .getMembers().stream().map(
+                            m -> m.getMember()
+                    )
+                            .collect(toList()),
                     routeProductList.get(rejectedIndex).getNewRoute()
                 );
 
@@ -235,7 +239,9 @@ public class NewRoute extends EntityDate {
                         false, //rejected
                         true,
                         false,
-                        i.getMember(),
+                        i.getMembers().stream().map(
+                                m -> m.getMember()
+                        ).collect(toList()),
                         i.getNewRoute()
                 )
         ).collect(
@@ -252,8 +258,6 @@ public class NewRoute extends EntityDate {
         addedRouteProductList.add(rejectedRouteProduct);
 
         for(RouteProduct routeProduct : duplicateList){
-            System.out.println("거절된 애 이후 애들 추가 중");
-            System.out.println(routeProduct.getType());
             addedRouteProductList.add(routeProduct);
         }
 

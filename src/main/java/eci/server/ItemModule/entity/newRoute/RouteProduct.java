@@ -1,6 +1,8 @@
 package eci.server.ItemModule.entity.newRoute;
 
 import eci.server.ItemModule.dto.newRoute.RouteProductUpdateRequest;
+import eci.server.ItemModule.entity.item.ItemManufacture;
+import eci.server.ItemModule.entity.material.ItemMaterial;
 import eci.server.ItemModule.entity.member.Member;
 import eci.server.ItemModule.entitycommon.EntityDate;
 import eci.server.ItemModule.exception.RouteProductNotFoundException;
@@ -14,6 +16,9 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
+import java.util.List;
+
+import static java.util.stream.Collectors.toList;
 
 @Entity
 @Getter
@@ -68,10 +73,12 @@ public class RouteProduct extends EntityDate {
     @Column(nullable = false)
     private boolean disabled;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id", nullable = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private Member member;
+    @OneToMany(
+            mappedBy = "routeProduct",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true,
+            fetch = FetchType.LAZY)
+    private List<RouteProductMember> members;
 
     /**
      * routeproduct 가 속하는 route 하나
@@ -91,7 +98,7 @@ public class RouteProduct extends EntityDate {
             boolean rejected,
             boolean show,
             boolean disabled,
-            Member member,
+            List<Member> member,
             NewRoute newRoute
 
     ) {
@@ -103,10 +110,15 @@ public class RouteProduct extends EntityDate {
         this.rejected = rejected;
         this.show = show;
         this.disabled = disabled;
-        this.member = member;
+        this.members = member.stream().map(
+                        r -> new RouteProductMember(
+                                this, r)
+                )
+                .collect(toList());
         this.newRoute = newRoute;
 
     }
+
 
     /**
      * 라우트 프로덕트 승인 시 업데이트
