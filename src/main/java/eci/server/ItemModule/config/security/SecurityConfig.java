@@ -49,13 +49,21 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET, "/route/**").permitAll()
                 .antMatchers(HttpMethod.DELETE, "/members/{id}/**").access("@memberGuard.check(#id)")
                 .antMatchers(HttpMethod.GET, "/image/**").permitAll()
+
                 .antMatchers(HttpMethod.POST, "/items").authenticated()
                 .antMatchers(HttpMethod.POST, "/items/temp").authenticated()
                 .antMatchers(HttpMethod.PUT, "/items/{id}").access("@itemGuard.check(#id)")
                 .antMatchers(HttpMethod.DELETE, "/items/{id}").access("@itemGuard.check(#id)")
+
                 .antMatchers(HttpMethod.POST, "/routes").authenticated()
-                .antMatchers(HttpMethod.PUT, "/routes/{id}").permitAll()//.access("@routeGuard.check(#id)")
+                .antMatchers(HttpMethod.PUT, "/routes/{id}").access("@routeGuard.check(#id)")
                 .antMatchers(HttpMethod.DELETE, "/routes/{id}").access("@routeGuard.check(#id)")
+
+                .antMatchers(HttpMethod.POST, "/newRoutes2").authenticated()
+                .antMatchers(HttpMethod.POST, "/newRoutes4").authenticated()
+                .antMatchers(HttpMethod.PUT, "/approveRoutes/{id}").access("@newRouteGuard.check(#id)")
+                .antMatchers(HttpMethod.PUT, "/rejectRoutes/{id}").access("@newRouteGuard.check(#id)")
+
                 .anyRequest().hasAnyRole("ADMIN")
                 .and()
                 .exceptionHandling().authenticationEntryPoint(new CustomAuthenticationEntryPoint())

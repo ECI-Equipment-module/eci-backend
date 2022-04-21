@@ -5,7 +5,10 @@ import eci.server.ItemModule.dto.color.ColorDto;
 import eci.server.ItemModule.dto.manufacture.ManufactureSimpleDto;
 import eci.server.ItemModule.dto.material.MaterialSimpleDto;
 import eci.server.ItemModule.dto.member.MemberDto;
+import eci.server.ItemModule.dto.newRoute.NewRouteDto;
+import eci.server.ItemModule.dto.newRoute.RouteProductDto;
 import eci.server.ItemModule.dto.route.RouteDto;
+import eci.server.ItemModule.entity.newRoute.NewRoute;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,7 +22,7 @@ import java.util.Locale;
 @NoArgsConstructor
 public class ReadItemDto {
 
-    private boolean inProgress;
+    private boolean tempsave;
 
     private Long id;
     private String name;
@@ -42,7 +45,7 @@ public class ReadItemDto {
     private List<ManufactureSimpleDto> manufactures;
     private List<String> partnumbers;
 
-    private List<RouteDto> routeDtoList;
+    private List<NewRouteDto> routeDtoList;
 
     private char revision;
     private String workflowPhase;
@@ -52,15 +55,17 @@ public class ReadItemDto {
 
     public static ReadItemDto toDto(
             ItemDto itemDto,
-            List<RouteDto> routeDtoList,
-            RouteDto routeDto,
+            List<NewRouteDto> routeDtoList,
+            NewRouteDto newRouteDto,
+            RouteProductDto routeProductDto,
             List<String> partNumbers,
             List<AttachmentDto> attachmentDtoList
 
     ) {
 
+
         return new ReadItemDto(
-                itemDto.isInProgress(),//true면 임시저장 상태, false면 찐 저장 상태
+                itemDto.isTempsave(),//true면 임시저장 상태, false면 찐 저장 상태
 
                 itemDto.getId(),
                 itemDto.getName(),
@@ -86,9 +91,12 @@ public class ReadItemDto {
 
                 routeDtoList,
 
-                ((char)routeDto.getRevisedCnt()),
-                routeDto.getWorkflowPhase(),
-                routeDto.getLifecycleStatus()
+                (char)(newRouteDto.getRevisedCnt().intValue()),
+//                ((Character)newRouteDto.getRevisedCnt()),
+
+                routeProductDto.getType(),//이게 곧 work phase
+
+                newRouteDto.getLifecycleStatus()//develop이나 release 중 하나
 
         );
     }
@@ -96,14 +104,14 @@ public class ReadItemDto {
 
     public static ReadItemDto noRoutetoDto(
             ItemDto itemDto,
-            List<RouteDto> routeDtoList,
+            List<NewRouteDto> routeDtoList,
             List<String> partnumbers,
             List<AttachmentDto> attachmentDtoList
 
     ) {
 
         return new ReadItemDto(
-                itemDto.isInProgress(),//true면 임시저장 상태, false면 찐 저장 상태
+                itemDto.isTempsave(),//true면 임시저장 상태, false면 찐 저장 상태
 
                 itemDto.getId(),
                 itemDto.getName(),

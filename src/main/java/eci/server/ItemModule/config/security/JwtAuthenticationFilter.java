@@ -1,6 +1,9 @@
 package eci.server.ItemModule.config.security;
 
+import eci.server.ItemModule.config.guard.AuthHelper;
 import eci.server.ItemModule.exception.member.auth.AccessExpiredException;
+import eci.server.ItemModule.repository.newRoute.NewRouteRepository;
+import eci.server.ItemModule.repository.newRoute.RouteProductRepository;
 import eci.server.ItemModule.service.sign.TokenService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,6 +36,7 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
 
     private final TokenService tokenService;
     private final CustomUserDetailsService userDetailsService;
+
 
     private final Logger logger = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
 

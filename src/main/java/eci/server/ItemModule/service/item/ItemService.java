@@ -4,6 +4,8 @@ package eci.server.ItemModule.service.item;
 import eci.server.ItemModule.config.guard.AuthHelper;
 import eci.server.ItemModule.dto.item.*;
 import eci.server.ItemModule.dto.manufacture.ReadPartNumberService;
+import eci.server.ItemModule.dto.newRoute.NewRouteDto;
+import eci.server.ItemModule.dto.newRoute.RouteProductDto;
 import eci.server.ItemModule.dto.route.RouteDto;
 import eci.server.ItemModule.entity.item.Attachment;
 import eci.server.ItemModule.entity.member.Member;
@@ -16,6 +18,8 @@ import eci.server.ItemModule.repository.color.ColorRepository;
 import eci.server.ItemModule.repository.item.AttachmentRepository;
 import eci.server.ItemModule.repository.manufacture.ManufactureRepository;
 import eci.server.ItemModule.repository.material.MaterialRepository;
+import eci.server.ItemModule.repository.newRoute.NewRouteRepository;
+import eci.server.ItemModule.repository.newRoute.RouteProductRepository;
 import eci.server.ItemModule.repository.route.RouteRepository;
 import eci.server.ItemModule.service.file.FileService;
 import eci.server.ItemModule.entity.item.Image;
@@ -50,6 +54,8 @@ public class ItemService {
     private final MaterialRepository materialRepository;
     private final ManufactureRepository manufactureRepository;
     private final AttachmentRepository attachmentRepository;
+    private final NewRouteRepository newRouteRepository;
+    private final RouteProductRepository routeProductRepository;
 
     private final ReadPartNumberService readPartNumber;
 
@@ -164,20 +170,37 @@ public class ItemService {
                 )
                 .orElseThrow(AttachmentNotFoundException::new);
 
-        //라우트가 없다면 라우트 없음 에러 던지기, 라우트 없으면 읽기도 사실상 불가능
-        List <RouteDto> routeDtoList = Optional.ofNullable(RouteDto.toDtoList(
-                routeRepository.findAllWithMemberAndParentByItemIdOrderByParentIdAscNullsFirstRouteIdAsc(id)
-        )).orElseThrow(RouteNotFoundException::new);
-
-
+        //아이템에 딸린 라우트가 없다면 라우트 없음 에러 던지기,
+        // 라우트 없으면 읽기도 사실상 불가능
+        List <NewRouteDto> routeDtoList = Optional.ofNullable(
+                NewRouteDto.toDtoList(
+                newRouteRepository.findByItem(targetItem),
+                        routeProductRepository,
+                        newRouteRepository
+        )
+        ).orElseThrow(RouteNotFoundException::new);
 
         if (routeDtoList.size()>0) {
-            //routeDto가 존재할 때
+            //아이템에 딸린 routeDto가 존재할 때
             ReadItemDto readItemDto = ReadItemDto.toDto(
                     ItemDto.toDto(targetItem),
                     routeDtoList,
-                    routeDtoList.
-                            get(routeDtoList.size() - 1),//최신 라우트,
+                    //최신 라우트
+                    routeDtoList.get(routeDtoList.size() - 1),
+                    //최신 라우트에 딸린 라우트프로덕트 리스트 중,
+                    // 라우트의 present 인덱스에 해당하는 타입을 데리고 오기
+                    RouteProductDto.toDto(
+                    routeProductRepository.findAllByNewRoute(
+                            newRouteRepository.findById(
+                                    routeDtoList.get(routeDtoList.size() - 1).getId()
+                            ).orElseThrow(RouteNotFoundException::new)
+                    ).get(
+                            routeDtoList.get(routeDtoList.size() - 1).getPresent()
+                    )
+                    )
+                    ,
+//                    routeDtoList.
+//                            get(routeDtoList.size() - 1),//최신 라우트,
 
                     readPartNumber.readPartnumbers(targetItem),
                     attachmentDtoList
@@ -217,7 +240,6 @@ public class ItemService {
         //1-2) 내가 reviewer_id, approver_id로 지정된 라우트들 찾기
 
         //1-2-1) 모든 아이템들 리스트
-
         List<Item> allItemList = itemRepository.findAll();
 
         //1-2-2) 모든 아이템들의 최종 라우트 추출
@@ -326,7 +348,7 @@ public class ItemService {
 
         Item item = itemRepository.findById(id).orElseThrow(ItemNotFoundException::new);
 
-        if (item.getInProgress()==false){ //true면 임시저장 상태, false면 찐 저장 상태
+        if (item.getTempsave()==false){ //true면 임시저장 상태, false면 찐 저장 상태
             //찐 저장 상태라면 UPDATE 불가, 임시저장 일때만 가능
             throw new ItemUpdateImpossibleException();
         }

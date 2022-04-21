@@ -2,6 +2,8 @@ package eci.server.ItemModule.dto.item;
 
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.querydsl.core.Tuple;
+import eci.server.ItemModule.entity.material.Material;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -24,6 +26,7 @@ public class ItemSimpleDto {
 
     private String username;
     private String materialName;
+//    private String materialName;
 
     private String colorName;
     private String imageAdress;

@@ -25,9 +25,9 @@ import static java.util.stream.Collectors.toList;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Item extends EntityDate {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQUENCE2")
-//    @SequenceGenerator(name="SEQUENCE2", sequenceName="SEQUENCE2", allocationSize=1)
+//    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQUENCE2")
+    @SequenceGenerator(name="SEQUENCE2", sequenceName="SEQUENCE2", allocationSize=1)
     private Long id;
 
     @Column(nullable = false)
@@ -70,7 +70,7 @@ public class Item extends EntityDate {
     )
     private List<Attachment> attachments;
 
-    private Boolean inProgress;
+    private Boolean tempsave;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "color_id", nullable = false)
@@ -99,7 +99,7 @@ public class Item extends EntityDate {
             String height,
             String weight,
             Member member,
-            Boolean inProgress,
+            Boolean tempsave,
             Color color,
 
             List<Image> thumbnail,
@@ -119,7 +119,7 @@ public class Item extends EntityDate {
         this.height = height;
         this.member = member;
         this.weight = weight;
-        this.inProgress = inProgress;
+        this.tempsave = tempsave;
         this.color = (color);
 
         this.thumbnail = new ArrayList<>();

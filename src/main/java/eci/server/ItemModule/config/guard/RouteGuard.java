@@ -21,27 +21,20 @@ public class RouteGuard {
     }
 
     private boolean hasAuthority(Long id) {
-        return hasAdminRole() || isResourceOwner(id) || isResourceReviewer(id) || isResourceApprover(id);
+        return hasAdminRole() || isResourceOwnerorReviewerorApprover(id);
     }
 
-    private boolean isResourceOwner(Long id) {
+    private boolean isResourceOwnerorReviewerorApprover(Long id) {
         Route Route = RouteRepository.findById(id).orElseThrow(() -> { throw new AccessDeniedException(""); });
         Long memberId = authHelper.extractMemberId();
-        return Route.getMember().getId().equals(memberId);
+        boolean result =
+                Route.getMember().getId().equals(memberId) ||
+                Route.getReviewer().getId().equals(memberId) ||
+                Route.getApprover().getId().equals(memberId);
+        return result;
     }
 
-    private boolean isResourceReviewer(Long id) {
-        Route Route = RouteRepository.findById(id).orElseThrow(() -> { throw new AccessDeniedException(""); });
-        Long memberId = authHelper.extractMemberId();
-        return Route.getReviewer().getId().equals(memberId);
-    }
 
-    private boolean isResourceApprover(Long id) {
-        Route Route = RouteRepository.findById(id).orElseThrow(() -> { throw new AccessDeniedException(""); });
-        Long memberId = authHelper.extractMemberId();
-
-        return Route.getApprover().getId().equals(memberId);
-    }
 
     private boolean hasAdminRole() {
         return authHelper.extractMemberRoles().contains(RoleType.ROLE_ADMIN);
