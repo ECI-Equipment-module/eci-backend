@@ -65,6 +65,9 @@ public class RouteProduct extends EntityDate {
     @Column(nullable = false)
     private boolean show;
 
+    @Column(nullable = false)
+    private boolean disabled;
+
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
@@ -87,6 +90,7 @@ public class RouteProduct extends EntityDate {
             boolean passed,
             boolean rejected,
             boolean show,
+            boolean disabled,
             Member member,
             NewRoute newRoute
 
@@ -98,11 +102,11 @@ public class RouteProduct extends EntityDate {
         this.passed = passed;
         this.rejected = rejected;
         this.show = show;
+        this.disabled = disabled;
         this.member = member;
         this.newRoute = newRoute;
 
     }
-
 
     /**
      * 라우트 프로덕트 승인 시 업데이트
@@ -131,6 +135,7 @@ public class RouteProduct extends EntityDate {
         this.rejected = false;
         this.newRoute = routeProduct.getNewRoute();
         this.show = true;
+        this.disabled = false;
         return req;
     }
 
@@ -148,6 +153,10 @@ public class RouteProduct extends EntityDate {
 
     public void setShow(boolean show) {
         this.show = show;
+    }
+
+    public void setDisabled(boolean disabled) {
+        this.disabled = disabled;
     }
 
     public void setRejected(boolean rejected) {

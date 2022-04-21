@@ -22,7 +22,7 @@ import javax.validation.constraints.Positive;
  */
 public class NewRouteRejectRequest {
 
-    @NotNull(message = "거절될 아이를 입력해주세요")
+    @NotNull(message = "거절될 sequence 를 입력해주세요")
     private Integer rejectedSequence;
 
     @NotNull(message = "거부 코멘트를 입력해주세요")

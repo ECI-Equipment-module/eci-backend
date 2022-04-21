@@ -23,10 +23,6 @@ public class NewRouteGuard {
     private final RouteProductRepository routeProductRepository;
 
     public boolean check(Long id) {
-        System.out.println("newRouteGuachkeccccccccccccccc");
-        System.out.println(newRouteRepository.findById(id));
-        System.out.println(routeProductRepository.findAllByNewRoute(newRouteRepository.findById(id).orElseThrow()));
-        System.out.println("newRouteGuddddddddachkeccccccccccccccc");
         return authHelper.isAuthenticated() && hasAuthority(id);
     }
 
@@ -40,15 +36,14 @@ public class NewRouteGuard {
         NewRoute newRoute =
                 newRouteRepository.findById(id).orElseThrow(() -> { throw new RouteNotFoundException(); });
 
-        System.out.println("newRouteGuarddddddddddddddd");
         //라우트에 딸린 routeProduct들
         List<RouteProduct> routeProduct =
                 routeProductRepository.findAllByNewRoute(newRoute);
 
         Long memberId = authHelper.extractMemberId();
 
-        //라우트에 딸린 routeProduct 애서 현재 진행 중인 애
         boolean result =
+                //라우트에 딸린 routeProduct 애서 현재 진행 중인 애
                 routeProduct.get(newRoute.getPresent())
                         .getMember().getId().toString().equals(memberId.toString());
 

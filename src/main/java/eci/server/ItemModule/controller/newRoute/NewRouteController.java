@@ -34,7 +34,6 @@ public class NewRouteController {
     @AssignMemberId
     public Response create2(
             @Valid NewRouteCreateRequest2 req) {
-
         newRouteService.create2(req);
         return Response.success();
     }

@@ -18,10 +18,7 @@ import javax.persistence.Lob;
  * update request => newRouteUpdateRequest(newRoute.getPresent()+1)
  */
 public class NewRouteUpdateRequest {
-
-    private Integer present;
     @Lob
     private String comment;
-
 
 }

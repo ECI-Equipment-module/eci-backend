@@ -11,6 +11,7 @@ import eci.server.ItemModule.exception.member.auth.AccessDeniedException;
 import eci.server.ItemModule.exception.member.auth.AccessExpiredException;
 import eci.server.ItemModule.exception.member.auth.AuthenticationEntryPointException;
 import eci.server.ItemModule.exception.member.sign.*;
+import eci.server.ItemModule.exception.route.UpdateImpossibleException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -180,6 +181,13 @@ public class ExceptionAdvice {
     public Response itemNotFoundException(ItemNotFoundException e) {
         log.info("e = {}", e.getMessage());
         return Response.failure(404, "존재하지 않는 아이템입니다.");
+    }
+
+    @ExceptionHandler(UpdateImpossibleException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Response updateImpossibleException(UpdateImpossibleException e) {
+        log.info("e = {}", e.getMessage());
+        return Response.failure(400, "이미 승인 과정이 만료됐습니다.");
     }
 
 }

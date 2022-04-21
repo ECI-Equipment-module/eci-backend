@@ -31,6 +31,7 @@ public class RouteProductCreateRequest4 {
                 false,
                 false,
                 true,
+                false,
                 memberRepository.findById(req.getMemberId()).orElseThrow(MemberNotFoundException::new),
                 newRoute
 
@@ -43,6 +44,7 @@ public class RouteProductCreateRequest4 {
                 false,
                 false,
                 true,
+                false,
                 memberRepository.findById(req.getMemberId2()).orElseThrow(MemberNotFoundException::new),
                 newRoute
 
@@ -55,6 +57,7 @@ public class RouteProductCreateRequest4 {
                 false,
                 false,
                 true,
+                false,
                 memberRepository.findById(req.getMemberId3()).orElseThrow(MemberNotFoundException::new),
                 newRoute
 

@@ -41,10 +41,8 @@ public class NewRouteCreateRequest2 {
 
     public static NewRoute toEntity(
             NewRouteCreateRequest2 req,
-            NewRouteRepository newRouteRepository,
             ItemRepository itemRepository,
-            NewRouteType newRouteType,
-            MemberRepository memberRepository
+            NewRouteType newRouteType
     ){
 
         List<String> typeList = new ArrayList<>();
@@ -52,30 +50,7 @@ public class NewRouteCreateRequest2 {
         for(Object type : routeProduct){
             typeList.add(type.toString());
         }
-//
-//        NewRoute newRoute = new NewRoute (
-//                typeList.toString(),
-//                itemRepository.findById(req.itemId)
-//                        .orElseThrow(MemberNotFoundException::new)
-//        );
-//
-//        System.out.println(newRoute.getPresent());
-//        System.out.println(newRoute.getLifecycleStatus());
-//        System.out.println(newRoute.getId());
-//
-//System.out.println(newRouteType.routeType[0][0]);
-//System.out.println(routeProduct.get(0));
-//        new RouteProduct(
-//                        0,
-//                (String) routeProduct.get(0),
-//                        req.getRequestComment(),
-//                        false,
-//                        false,
-//                        true,
-//                        memberRepository.findById(req.getMemberId()).orElseThrow(MemberNotFoundException::new),
-//                        newRoute
-//
-//        );
+
         return new NewRoute (
                 typeList.toString(),
                 itemRepository.findById(req.itemId)

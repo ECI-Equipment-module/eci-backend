@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -53,10 +54,8 @@ public class NewRouteService {
     public void create2(NewRouteCreateRequest2 req) {
         NewRoute newRoute = newRouteRepository.save(NewRouteCreateRequest2.toEntity(
                 req,
-                newRouteRepository,
                 itemRepository,
-                newRouteType,
-                memberRepository
+                newRouteType
                 )
         );
         routeProductRepository.save(RouteProductCreateRequest2.toEntity(
@@ -72,10 +71,8 @@ public class NewRouteService {
     public void create4(NewRouteCreateRequest4 req) {
         NewRoute newRoute = newRouteRepository.save(NewRouteCreateRequest4.toEntity(
                         req,
-                        newRouteRepository,
                         itemRepository,
-                        newRouteType,
-                        memberRepository
+                        newRouteType
                 )
         );
 
@@ -111,17 +108,22 @@ public class NewRouteService {
 
         );
 
-        //새로 만들어진 애들 저장해주기
+        List<RouteProduct> addedProducts = new ArrayList<>();
+
+        // 새로 만들어진 애들 저장
         for(RouteProduct routeProduct:rejectUpdatedRouteProductList){
-            routeProductRepository.save(routeProduct);
+            addedProducts.add(routeProductRepository.save(routeProduct));
         }
+
+        // present는 현재 만들어진 애로 설정
+        newRoute.setPresent(addedProducts.get(0).getSequence());
 
         List<RouteProductDto> allProductList =
                 RouteProductDto.toProductDtoList(
                         routeProductRepository.findAllByNewRoute(newRoute)
                 );
 
-        //기존 + 새 라우트프로덕트까지 해서 돌려줘버려...
+        // 기존 + 새 라우트프로덕트까지 해서 돌려주기
         return allProductList;
     }
 
@@ -133,9 +135,7 @@ public class NewRouteService {
 
         NewRouteUpdateRequest newRouteUpdateRequest =
                 newRoute.update(
-                id,
                 req,
-                newRouteRepository,
                 routeProductRepository
         );
 

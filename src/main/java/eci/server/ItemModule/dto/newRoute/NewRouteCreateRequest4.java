@@ -45,10 +45,8 @@ public class NewRouteCreateRequest4{
 
     public static NewRoute toEntity(
             NewRouteCreateRequest4 req,
-            NewRouteRepository newRouteRepository,
             ItemRepository itemRepository,
-            NewRouteType newRouteType,
-            MemberRepository memberRepository
+            NewRouteType newRouteType
     ){
         List<String> typeList = new ArrayList<>();
         List routeProduct = List.of((newRouteType.routeType[req.type]));
@@ -62,41 +60,6 @@ public class NewRouteCreateRequest4{
                 itemRepository.findById(req.itemId)
                         .orElseThrow(MemberNotFoundException::new)
         );
-
-//        List routeProduct = List.of(List.of(newRouteType.routeType).get(req.type));
-//
-//        RouteProduct routeProduct1 = new RouteProduct(
-//                        0,
-//                        routeProduct.get(0).toString(),
-//                        req.getRequestComment(),
-//                        false,
-//                        false,
-//                        true,
-//                        memberRepository.findById(req.getMemberId()).orElseThrow(MemberNotFoundException::new),
-//                        newRouteRepository.findById(newRoute.getId()).orElseThrow(RouteNotFoundException::new)
-//                );
-//
-//        RouteProduct routeProduct2 = new RouteProduct(
-//                1,
-//                routeProduct.get(1).toString(),
-//                "",
-//                false,
-//                false,
-//                true,
-//                memberRepository.findById(req.getMemberId2()).orElseThrow(MemberNotFoundException::new),
-//                newRouteRepository.findById(newRoute.getId()).orElseThrow(RouteNotFoundException::new)
-//        );
-//
-//        RouteProduct routeProduct3 = new RouteProduct(
-//                2,
-//                routeProduct.get(2).toString(),
-//                "",
-//                false,
-//                false,
-//                true,
-//                memberRepository.findById(req.getMemberId3()).orElseThrow(MemberNotFoundException::new),
-//                newRouteRepository.findById(newRoute.getId()).orElseThrow(RouteNotFoundException::new)
-//        );
 
         return newRoute;
     }

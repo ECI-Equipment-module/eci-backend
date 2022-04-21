@@ -1,10 +1,9 @@
 package eci.server.ItemModule.entity.newRoute;
 
 import eci.server.ItemModule.dto.newRoute.NewRouteUpdateRequest;
-import eci.server.ItemModule.dto.newRoute.RouteProductDto;
 import eci.server.ItemModule.entity.item.Item;
 import eci.server.ItemModule.entitycommon.EntityDate;
-import eci.server.ItemModule.exception.route.RouteNotFoundException;
+import eci.server.ItemModule.exception.route.UpdateImpossibleException;
 import eci.server.ItemModule.repository.newRoute.RouteProductRepository;
 import eci.server.ItemModule.repository.newRoute.NewRouteRepository;
 import lombok.AccessLevel;
@@ -77,40 +76,44 @@ public class NewRoute extends EntityDate {
         this.type = type;
         this.lifecycleStatus = "Development";
         this.revisedCnt = 0;
-        this.present = 0;
+        this.present = 1;
         this.item = item;
     }
 
     public void setPresent(Integer present) {
+        //초기 값은 1(진행 중인 아이)
         this.present = present;
     }
 
     public NewRouteUpdateRequest update(
-            Long id,
             NewRouteUpdateRequest req,
-            NewRouteRepository newRouteRepository,
             RouteProductRepository routeProductRepository
 
     ) {
-
         List<RouteProduct> routeProductList =
                 routeProductRepository.findAllByNewRoute(this);
+
+
+        if(this.present==routeProductList.size()-1){
+            throw new UpdateImpossibleException();
+        }
+
 
         /**
          * update에서 받은 코멘트를 현재 진행중인 routeProduct에 set
          */
         //지금 애는 패스
         //내 앞에 완료됐던 애는 pass로 바꿔주기
-        routeProductList.get(this.present).setPassed(true);
+        routeProductList.get(this.present-1).setPassed(true);
 
 
-        if(this.present<routeProductList.size()-1) {
+        if(this.present<=routeProductList.size()-1) {
             //지금 들어온 코멘트는 현재 애 다음에
-            routeProductList.get(this.present + 1).setComment(req.getComment());
+            routeProductList.get(this.present).setComment(req.getComment());
         }else{
-            //만약 present가 size()-1과 같아진다면 다 왔다는 거다.
+            //만약 present가 size() 가 됐다면 다 왔다는 거다.
             System.out.println("complete");
-            this.lifecycleStatus = "Release";
+            this.lifecycleStatus = "Complete";
         }
 
         /**
@@ -124,8 +127,10 @@ public class NewRoute extends EntityDate {
          * 서비스 단에서 routeProduct 승인 혹은 거절 후
          * 라우트 업데이트 호출해서 present 갱신해줄거야
          */
-        //present를 이제 지금 승인해준 애로 갱신
-        this.present = req.getPresent();
+        //present 를 다음 진행될 애로 갱신해주기
+        if(this.present<routeProductList.size()-1) {
+            this.present = this.present + 1;
+        }
 
         return req;
     }
@@ -137,12 +142,7 @@ public class NewRoute extends EntityDate {
             NewRouteRepository newRouteRepository,
             RouteProductRepository routeProductRepository
 
-
     ) {
-//        NewRoute newRoute =
-//                newRouteRepository
-//                        .findById(id)
-//                        .orElseThrow(RouteNotFoundException::new);
 
         /**
          * 현재 라우트에 딸린 라우트 생산물들
@@ -160,57 +160,54 @@ public class NewRoute extends EntityDate {
          * 거절 전의 아이 + 거절주체인 차례 아이도 passed = true로 해주기
          * (수행 된거니깐)
          */
+        routeProductList.get(this.present-1).setPassed(true);
         routeProductList.get(this.present).setPassed(true);
-        routeProductList.get(this.present+1).setPassed(true);
-
-        /**
-         * 라우트의 present는 복제된 아이의 sequence 전으로 해주기
-         */
 
         /**
          * 기존 애들 중에서 passed가 false인 애들의 show는 false로 변경해주기
          */
         for(RouteProduct routeProductshow : routeProductList){
-            System.out.println("기존 라우트프로덕트들 eeeeeeeeeeeeeee");
             if(!routeProductshow.isPassed()){
-                routeProductshow.setShow(false);//지나지 않은 애들은 화면에서 없애주기
-                System.out.println(routeProductshow.getId());
+                routeProductshow.setShow(false);
+                //아직 지나지 않은 애들은 화면에서 없애주기
+            }
+            if(routeProductshow.getSequence()>rejectedIndex){
+                //거부당한 인덱스보다 큰 애들은 무효화처리 (reject 대상이 되지 못해)
+                routeProductshow.setDisabled(true);
             }
         }
 
         /**
-         * 거부됐던 애의 reject 는 true 로 갱신하고
+         * 거부됐던 애의 reject 는 true 로 갱신하고 (거부받은자에게 알림용)
          * 거부한 차례 애의 comment엔 거부 코멘트(req에서 받은 것) set
          */
         routeProductList.get(rejectedIndex).setRejected(true);
-        routeProductList.get(this.present+1).setComment(rejectedComment);
+        routeProductList.get(rejectedIndex).setDisabled(true);
+        routeProductList.get(this.present).setComment(rejectedComment);
         /**
          * 거부된 라우트 하나 먼저 복제
-         *
-         *         // reject 시점의 인덱스부터 끝까지인덱스까지 생성
-         *         // (모두 라우트는 이 라우트를 바라보도록
          *         // 특히 리젝트 된 아이 복제 대상애는 rejected= 1 로 설정해주고,
-         *         // 라우트의 present 도 이 아이의 인덱스 값으로 변경시켜주자
          *         // comment들 싹 다 초기화해주고
          */
-        System.out.println("새로 투입될 인덱스 이건 3이어야 한다");
-        System.out.println(routeProductRepository.findAllByNewRoute(this).size());
+
         RouteProduct rejectedRouteProduct =
                 new RouteProduct(
-                        //sequence에 1 더해줘서 새로 생긴애부터 진행
                         routeProductRepository.findAllByNewRoute(this).size(),
-                routeProductList.get(rejectedIndex).getType(),
-                "default",
-                false, //passed
-                false,
-                true,
-                routeProductList.get(rejectedIndex).getMember(),
-                routeProductList.get(rejectedIndex).getNewRoute()
-
+                    routeProductList.get(rejectedIndex).getType(),
+                    "default",
+                    false,
+                    false,
+                    true,
+                    false,
+                    routeProductList.get(rejectedIndex).getMember(),
+                    routeProductList.get(rejectedIndex).getNewRoute()
                 );
-//
-//        NewRoute targetRoute = newRouteRepository.findById(id).orElseThrow(RouteNotFoundException::new);
-//        targetRoute.setPresent(rejectedRouteProduct.getSequence());
+
+        /**
+         * 라우트의 present 도 이 아이의 인덱스 값으로 변경시켜주자. (이건 서비스에서)
+         */
+
+
         /**
          * 거부된 라우트 이후부터
          * 쭉~~~ 끝 인덱스까지 슬라이싱 해서
@@ -237,6 +234,7 @@ public class NewRoute extends EntityDate {
                         false, //passed
                         false, //rejected
                         true,
+                        false,
                         i.getMember(),
                         i.getNewRoute()
                 )
@@ -250,6 +248,7 @@ public class NewRoute extends EntityDate {
         List<RouteProduct> addedRouteProductList =
                 new ArrayList<>();
 
+        //거절된 애 추가 중
         addedRouteProductList.add(rejectedRouteProduct);
 
         for(RouteProduct routeProduct : duplicateList){

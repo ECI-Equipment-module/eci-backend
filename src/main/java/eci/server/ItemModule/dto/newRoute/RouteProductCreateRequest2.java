@@ -17,15 +17,17 @@ public class RouteProductCreateRequest2 {
             NewRouteType newRouteType,
             MemberRepository memberRepository
     ) {
+
         List routeProduct = List.of((newRouteType.routeType[req.getType()]));
 
         return new RouteProduct(
                 0,
                 (String) routeProduct.get(0),
                 req.getRequestComment(),
-                false,
-                false,
-                true,
+                false,// 수행된 지 여부
+                false, //거절당했었는지 여부
+                true, // 보여질 대상
+                false, // 거절 가능한 대상
                 memberRepository.findById(req.getMemberId()).orElseThrow(MemberNotFoundException::new),
                 newRoute
 
