@@ -27,9 +27,9 @@ import java.util.Optional;
 public class Route extends EntityDate {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    @GeneratedValue(strategy= GenerationType.SEQUENCE, generator="SEQUENCE1")
-//    @SequenceGenerator(name="SEQUENCE1", sequenceName="SEQUENCE1", allocationSize=1)
+//    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy= GenerationType.SEQUENCE, generator="SEQUENCE1")
+    @SequenceGenerator(name="SEQUENCE1", sequenceName="SEQUENCE1", allocationSize=1)
 
     private Long id;
 
@@ -48,11 +48,11 @@ public class Route extends EntityDate {
     @Column(nullable = false)
     private int revisedCnt;
 
-    /**
-     * 최신 라우트만 true
-     */
-    @Column(nullable = false)
-    private boolean is_power;
+//    /**
+//     * 최신 라우트만 true
+//     */
+//    @Column(nullable = false)
+//    private boolean is_power;
 
     /**
      * 삭제 여부 표시

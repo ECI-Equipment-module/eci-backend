@@ -1,5 +1,6 @@
 package eci.server.ItemModule.dto.member;
 
+import eci.server.ItemModule.entity.member.ProfileImage;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,4 +14,5 @@ public class MemberSimpleDto {
     private String username;
     private String department;
     private String contact;
+    private String profileImage;
 }

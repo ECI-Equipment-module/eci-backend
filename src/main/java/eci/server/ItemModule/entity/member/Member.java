@@ -1,7 +1,9 @@
 package eci.server.ItemModule.entity.member;
 
 import eci.server.ItemModule.entity.entitycommon.EntityDate;
+import eci.server.ItemModule.entity.item.ItemManufacture;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -14,18 +16,14 @@ import static java.util.stream.Collectors.toSet;
 @Entity
 @Getter
 @Table(name="member")
+@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED) // 3
 public class Member extends EntityDate { // 5
 
     @Id
-<<<<<<< HEAD:src/main/java/eci/server/ItemModule/entity/member/Member.java
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="SEQUENCE3")
-//    @SequenceGenerator(name="SEQUENCE3", sequenceName="SEQUENCE3", allocationSize=1)
-=======
+//    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="SEQUENCE3")
     @SequenceGenerator(name="SEQUENCE3", sequenceName="SEQUENCE3", allocationSize=1)
->>>>>>> 90002839b992be427ae0f3cbad4476b4f45af2b7:src/main/java/eci/server/entity/member/Member.java
     @Column(name = "member_id")
     private Long id;
 
@@ -51,18 +49,24 @@ public class Member extends EntityDate { // 5
             fetch = FetchType.LAZY)
     private Set<MemberRole> roles;
 
-<<<<<<< HEAD:src/main/java/eci/server/ItemModule/entity/member/Member.java
+    @OneToOne(
+            mappedBy = "member",
+            fetch = FetchType.LAZY,
+            cascade = CascadeType.ALL,
+            optional = false
+    )
+    @JoinColumn(name = "profile_image", nullable = false)
+    private ProfileImage profileImage;
+
     public Member(
             String email,
             String password,
             String username,
             String department,
             String contact,
-            List<Role> roles
+            List<Role> roles,
+            ProfileImage profileImage
     ) {
-=======
-    public Member(String email, String password, String username, String department, String contact, List<Role> roles) {
->>>>>>> 90002839b992be427ae0f3cbad4476b4f45af2b7:src/main/java/eci/server/entity/member/Member.java
         System.out.println("");
         this.email = email;
         this.password = password;
@@ -71,13 +75,27 @@ public class Member extends EntityDate { // 5
         this.contact = contact;
         this.roles =
                 roles.stream().map(r -> new MemberRole(
-                        this, r))
+                                this, r))
                         .collect(toSet());
+        this.profileImage = profileImage;
+        addProfileImages(profileImage);
     }
 
     public void updateDepartment(String department) {
         this.department = department;
     }
+
+    /**
+     * 멤버에 새로운 이미지 정보를 등록하는 메소드
+     * 해당 Image에 this(Member)를 등록해줍니다.
+     * cascade 옵션을 PERSIST로 설정해두었기 때문에,
+     * Post가 저장되면서 Image도 함께 저장
+     * @param added
+     */
+    private void addProfileImages(ProfileImage added) {
+        added.initMember(this);
+    }
+
 
 
 }

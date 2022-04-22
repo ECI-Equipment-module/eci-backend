@@ -10,9 +10,13 @@ public class ImageDto {
     private Long id;
     private String originName;
     private String uniqueName;
+    private String imageAdress;
     public static ImageDto toDto(Image image) {
         return new ImageDto(image.getId(),
                 image.getOriginName(),
-                image.getUniqueName());
+                image.getUniqueName(),
+                image.getImageaddress()
+        );
     }
+
 }

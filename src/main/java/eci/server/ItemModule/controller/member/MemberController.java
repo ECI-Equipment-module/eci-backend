@@ -14,7 +14,7 @@ import javax.validation.Valid;
 @RequiredArgsConstructor
 @Slf4j
 
-@CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
+@CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app/")
 public class MemberController {
 
     private final MemberService memberService;

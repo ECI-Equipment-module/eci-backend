@@ -11,6 +11,7 @@ import javax.persistence.*;
 @EqualsAndHashCode
 @IdClass(ItemManufactureId.class)
 public class ItemManufacture {
+
     @Id
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "item_id")

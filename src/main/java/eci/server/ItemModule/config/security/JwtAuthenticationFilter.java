@@ -1,6 +1,9 @@
 package eci.server.ItemModule.config.security;
 
+import eci.server.ItemModule.config.guard.AuthHelper;
 import eci.server.ItemModule.exception.member.auth.AccessExpiredException;
+import eci.server.ItemModule.repository.newRoute.NewRouteRepository;
+import eci.server.ItemModule.repository.newRoute.RouteProductRepository;
 import eci.server.ItemModule.service.sign.TokenService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,6 +37,7 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
     private final TokenService tokenService;
     private final CustomUserDetailsService userDetailsService;
 
+
     private final Logger logger = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
 
     /*
@@ -47,12 +51,13 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
         HttpServletRequest request1 = (HttpServletRequest) request;
 
         response1.setHeader("Access-Control-Allow-Origin", "https://naughty-raman-7e7eb1.netlify.app");
-        response1.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
         response1.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE");
         response1.setHeader("Access-Control-Max-Age", "3600");
-        response1.setHeader("Access-Control-Allow-Headers", "Content-Type, Accept, X-Requested-With, remember-me");
+        response1.setHeader("Access-Control-Allow-Headers", "Content-Type, Accept, X-Requested-With, remember-me, Origin,Content-Type,Access-Control-Request-Method,Access-Control-Request-Headers,Authorization");
+        response1.setHeader("Access-Control-Allow-Credentials",  "true");
 
         String token = extractToken(request);
+
         if(validateToken(token)) {
             // SecurityContext에 Authentication 객체 저장
             setAuthentication(token);
@@ -75,6 +80,7 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
         String userId = tokenService.extractAccessTokenSubject(token);
         if(userId == null){
             throw new AccessExpiredException();
+
         }
 
         CustomUserDetails userDetails = userDetailsService.loadUserByUsername(userId);

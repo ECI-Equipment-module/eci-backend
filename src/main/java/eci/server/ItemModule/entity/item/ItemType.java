@@ -1,7 +1,7 @@
 package eci.server.ItemModule.entity.item;
 
 public enum ItemType {
-
+    NONE(0),
     ANNULUS_GEAR(100),
     ARM(101),
     ALTERNATOR(102),

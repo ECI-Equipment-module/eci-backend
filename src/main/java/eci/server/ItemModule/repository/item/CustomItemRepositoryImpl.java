@@ -1,9 +1,10 @@
 package eci.server.ItemModule.repository.item;
 
 import com.querydsl.core.BooleanBuilder;
-import com.querydsl.core.types.Expression;
+import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import eci.server.ItemModule.dto.item.ItemReadCondition;
 import eci.server.ItemModule.dto.item.ItemSimpleDto;
@@ -33,10 +34,12 @@ public class CustomItemRepositoryImpl extends QuerydslRepositorySupport implemen
 
     private final JPAQueryFactory jpaQueryFactory; // 3
 
+
     public CustomItemRepositoryImpl(JPAQueryFactory jpaQueryFactory) { // 4
         super(Item.class);
 
         this.jpaQueryFactory = jpaQueryFactory;
+
     }
 
     /**
@@ -54,6 +57,15 @@ public class CustomItemRepositoryImpl extends QuerydslRepositorySupport implemen
         return new PageImpl<>(fetchAll(predicate, pageable), pageable, fetchCount(predicate));
     }
 
+//    EntityManager em;
+//    JPAQueryFactory jpaQueryFactory1 = new JPAQueryFactory(em);
+//    JPAQuery<String> query = jpaQueryFactory1.select(
+//            itemMaterial.material.name
+//    ).from(itemMaterial.material)
+//            .where(
+//                    item.id.eq(itemMaterial.item.id)
+//            );
+
     /**
      * 아이템 목록을 ItemSimpleDto로 조회한 결과 반환환
      * @param predicate
@@ -62,36 +74,39 @@ public class CustomItemRepositoryImpl extends QuerydslRepositorySupport implemen
      */
     private List<ItemSimpleDto> fetchAll(Predicate predicate, Pageable pageable) {
 
-
         List<ItemSimpleDto> itemSimpleDtos = getQuerydsl().applyPagination(
                 pageable,
                 jpaQueryFactory
                         .select(constructor
-                                (ItemSimpleDto.class,
-                                        (Expression<?>) item.id,
+                                (
+                                        ItemSimpleDto.class,
+                                        item.id,
                                         item.name,
                                         item.type,
                                         item.itemNumber,
 
                                         item.width,
                                         item.height,
+                                        item.weight,
+
+                                        item.member.username,
 
                                         itemMaterial.material.name,
+                                        //itemMaterial.material.name,
 
-                                        item.weight,
                                         item.color.color,
 
                                         image.imageaddress,
 
                                         attachment.attachmentaddress,//이건 리스트로 와야하는디..
 
-                                        item.member.username,
                                         item.createdAt
+
+
 
                                         )
                         )
                         .from(item)
-
                         //.join(itemMaterial).on(item.id.eq(itemMaterial.item.id))
 
                         .join(itemMaterial).on(item.id.eq(itemMaterial.item.id))
@@ -111,7 +126,7 @@ public class CustomItemRepositoryImpl extends QuerydslRepositorySupport implemen
 
                         .where(predicate)
                         .orderBy(item.id.desc())
-        ).fetch();
+        ).fetch(); //리스트 반환
 
         return itemSimpleDtos;
     }

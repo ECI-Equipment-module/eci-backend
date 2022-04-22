@@ -1,8 +1,4 @@
 package eci.server.ItemModule.dto.response;
-<<<<<<< HEAD:src/main/java/eci/server/ItemModule/dto/response/Response.java
-=======
-
->>>>>>> 90002839b992be427ae0f3cbad4476b4f45af2b7:src/main/java/eci/server/dto/response/Response.java
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AccessLevel;

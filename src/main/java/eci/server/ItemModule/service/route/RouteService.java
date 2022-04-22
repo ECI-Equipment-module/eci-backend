@@ -44,7 +44,6 @@ public class RouteService {
 
     @Transactional
     public void delete(Long id) {
-        Object RouteNotFoundException;
         Route Route = RouteRepository.findById(id).orElseThrow(RouteNotFoundException::new);
         Route.findDeletableRoute().ifPresentOrElse(RouteRepository::delete, Route::delete);
     }

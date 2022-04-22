@@ -2,15 +2,18 @@ package eci.server.ItemModule.advice;
 
 import eci.server.ItemModule.dto.response.Response;
 import eci.server.ItemModule.exception.file.FileUploadFailureException;
+import eci.server.ItemModule.exception.item.ItemCreateNotEmptyException;
 import eci.server.ItemModule.exception.item.ItemNotFoundException;
-<<<<<<< HEAD:src/main/java/eci/server/ItemModule/advice/ExceptionAdvice.java
+import eci.server.ItemModule.exception.item.ItemTypeSaveException;
+import eci.server.ItemModule.exception.item.ItemUpdateImpossibleException;
 import eci.server.ItemModule.exception.member.auth.*;
-=======
 import eci.server.ItemModule.exception.member.auth.AccessDeniedException;
 import eci.server.ItemModule.exception.member.auth.AccessExpiredException;
 import eci.server.ItemModule.exception.member.auth.AuthenticationEntryPointException;
->>>>>>> 90002839b992be427ae0f3cbad4476b4f45af2b7:src/main/java/eci/server/advice/ExceptionAdvice.java
 import eci.server.ItemModule.exception.member.sign.*;
+import eci.server.ItemModule.exception.route.MemberNotAssignedException;
+import eci.server.ItemModule.exception.route.RejectImpossibleException;
+import eci.server.ItemModule.exception.route.UpdateImpossibleException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -25,6 +28,33 @@ import java.net.BindException;
 @Slf4j
 public class ExceptionAdvice {
 
+    @ExceptionHandler(ItemCreateNotEmptyException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public Response itemCreateNotEmptyException() {
+        //채워지지 않은 항목 존재 (저장 시에)
+        return Response.failure(400, "채워지지 않은 항목이 있습니다. 유효한 값을 넣어주세요");
+    }
+
+    @ExceptionHandler(ItemUpdateImpossibleException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public Response itemUpdateImpossibleException() {
+        //회원가입 할 때 비밀번호 체크 부분
+        return Response.failure(403, "임시저장이 아닌 아이템은 편집할 수 없습니다.");
+    }
+
+    @ExceptionHandler(ItemTypeSaveException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public Response itemTypeSaveException() {
+        //회원가입 할 때 비밀번호 체크 부분
+        return Response.failure(403, "유효한 아이템 타입을 정해주세요.");
+    }
+
+    @ExceptionHandler(PasswordNotSameException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public Response passwordNotSameException() {
+        //회원가입 할 때 비밀번호 체크 부분
+        return Response.failure(401, "비밀번호가 같지 않습니다.");
+    }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -32,11 +62,18 @@ public class ExceptionAdvice {
         return Response.failure(400, e.getBindingResult().getFieldError().getDefaultMessage());
     }
 
+    @ExceptionHandler(BindException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Response bindException(BindException e) {
+        return Response.failure(400, e.getMessage());
+    }
+
     @ExceptionHandler(LoginFailureException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    public Response loginFailureException() {
+    public Response failureException() {
         return Response.failure(401, "로그인에 실패하였습니다.");
     }
+
     @ExceptionHandler(PasswordNotValidateException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public Response passwordNotValidateException() {
@@ -148,4 +185,24 @@ public class ExceptionAdvice {
         return Response.failure(404, "존재하지 않는 아이템입니다.");
     }
 
+    @ExceptionHandler(UpdateImpossibleException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Response updateImpossibleException(UpdateImpossibleException e) {
+        log.info("e = {}", e.getMessage());
+        return Response.failure(400, "이미 승인 과정이 만료됐습니다.");
+    }
+
+    @ExceptionHandler(RejectImpossibleException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Response rejectImpossibleException(RejectImpossibleException e) {
+        log.info("e = {}", e.getMessage());
+        return Response.failure(400, "reject가 불가한 항목입니다.");
+    }
+
+    @ExceptionHandler(MemberNotAssignedException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Response memberNotAssignedException(MemberNotAssignedException e) {
+        log.info("e = {}", e.getMessage());
+        return Response.failure(400, "담당자가 배정받지 못한 항목이 있습니다.");
+    }
 }

@@ -1,9 +1,7 @@
 package eci.server.ItemModule.dto.item;
 
 import eci.server.ItemModule.entity.item.*;
-import eci.server.ItemModule.exception.item.ColorNotFoundException;
-import eci.server.ItemModule.exception.item.ManufactureNotFoundException;
-import eci.server.ItemModule.exception.item.MaterialNotFoundException;
+import eci.server.ItemModule.exception.item.*;
 import eci.server.ItemModule.exception.member.sign.MemberNotFoundException;
 import eci.server.ItemModule.repository.color.ColorRepository;
 import eci.server.ItemModule.repository.manufacture.ManufactureRepository;
@@ -19,9 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.SequenceGenerator;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Null;
+import javax.validation.constraints.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -36,14 +32,13 @@ import static java.util.stream.Collectors.toList;
 public class ItemCreateRequest {
     private final Logger logger = LoggerFactory.getLogger(ItemCreateRequest.class);
 
-    private ItemType itemType;
-
-    @NotBlank(message = "아이템 이름을 입력해주세요.")
+    @NotNull@NotBlank(message = "아이템 이름을 입력해주세요.")
     private String name;
 
-    @NotBlank(message = "아이템 타입을 입력해주세요.")
+    @NotNull(message = "아이템 타입을 입력해주세요.")
     private String type;
 
+    @Null
     @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="SEQUENCE1")
     @SequenceGenerator(name="SEQUENCE1", sequenceName="SEQUENCE1", allocationSize=1)
     private Integer itemNumber;
@@ -60,12 +55,13 @@ public class ItemCreateRequest {
     // hidden = true
     @Null
     private Long memberId;
-
+    @Null
     private Boolean inProgress;
 
     private List<MultipartFile> thumbnail = new ArrayList<>();
 
     private List<MultipartFile> attachments = new ArrayList<>();
+
     private List<String> tag = new ArrayList<>();
     private List<String> attachmentComment = new ArrayList<>();
 
@@ -87,10 +83,24 @@ public class ItemCreateRequest {
             MaterialRepository materialRepository,
             ManufactureRepository manufactureRepository) {
 
+        if (req.type.equals("NONE")){
+            //아이템 타입이 none이라면 제대로 저장하면 안됨
+
+            throw new ItemTypeSaveException();
+        }else if(
+                        req.height.toString().isBlank()||
+                        req.weight.toString().isBlank() ||
+                        req.width.toString().isBlank()
+
+            //길이, 높이, 너비가 빈 칸이라면 안됨
+        ){
+            throw new ItemCreateNotEmptyException();
+        }
+
         return new Item(
                 req.name,
-                req.type,
-                ItemType.valueOf(req.type).label()*1000000+(int)(Math.random()*1000),
+                req.type.isBlank()? "BEARING":req.type,
+                ItemType.valueOf(req.type.isBlank()? "NONE":req.type).label()*1000000+(int)(Math.random()*1000),
                 req.width,
                 req.height,
                 req.weight,
@@ -99,7 +109,7 @@ public class ItemCreateRequest {
                         req.getMemberId()
                 ).orElseThrow(MemberNotFoundException::new),
 
-                req.inProgress,
+                false, //임시저장 끝
 
                 colorRepository.findById(
                         req.getColorId()
@@ -112,7 +122,6 @@ public class ItemCreateRequest {
                 ).collect(
                         toList()
                 ),
-
                 req.attachments.stream().map(
                         i -> new Attachment(
                                 i.getOriginalFilename(),

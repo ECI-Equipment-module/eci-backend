@@ -4,16 +4,23 @@ package eci.server.ItemModule.service.item;
 import eci.server.ItemModule.config.guard.AuthHelper;
 import eci.server.ItemModule.dto.item.*;
 import eci.server.ItemModule.dto.manufacture.ReadPartNumberService;
-import eci.server.ItemModule.dto.route.RouteDto;
+import eci.server.ItemModule.dto.newRoute.NewRouteDto;
+import eci.server.ItemModule.dto.newRoute.RouteProductDto;
 import eci.server.ItemModule.entity.item.Attachment;
 import eci.server.ItemModule.entity.member.Member;
+import eci.server.ItemModule.entity.newRoute.NewRoute;
+import eci.server.ItemModule.entity.newRoute.RouteProduct;
+import eci.server.ItemModule.entity.newRoute.RouteProductMember;
 import eci.server.ItemModule.exception.item.AttachmentNotFoundException;
+import eci.server.ItemModule.exception.item.ItemUpdateImpossibleException;
+import eci.server.ItemModule.exception.member.MemberNotFoundException;
 import eci.server.ItemModule.exception.route.RouteNotFoundException;
 import eci.server.ItemModule.repository.color.ColorRepository;
 import eci.server.ItemModule.repository.item.AttachmentRepository;
-import eci.server.ItemModule.repository.item.ItemManufactureRepository;
 import eci.server.ItemModule.repository.manufacture.ManufactureRepository;
 import eci.server.ItemModule.repository.material.MaterialRepository;
+import eci.server.ItemModule.repository.newRoute.NewRouteRepository;
+import eci.server.ItemModule.repository.newRoute.RouteProductRepository;
 import eci.server.ItemModule.repository.route.RouteRepository;
 import eci.server.ItemModule.service.file.FileService;
 import eci.server.ItemModule.entity.item.Image;
@@ -48,6 +55,8 @@ public class ItemService {
     private final MaterialRepository materialRepository;
     private final ManufactureRepository manufactureRepository;
     private final AttachmentRepository attachmentRepository;
+    private final NewRouteRepository newRouteRepository;
+    private final RouteProductRepository routeProductRepository;
 
     private final ReadPartNumberService readPartNumber;
 
@@ -57,6 +66,33 @@ public class ItemService {
     private final AuthHelper authHelper;
 
     /**
+     * 아이템 임시로 저장 save
+     * @param req
+     * @return 생성된 아이템 번호
+     */
+
+    @Transactional
+    public ItemCreateResponse tempCreate(ItemTemporaryCreateRequest req) {
+
+        Item item = itemRepository.save(
+                ItemTemporaryCreateRequest.toEntity(
+                        req,
+                        memberRepository,
+                        colorRepository,
+                        materialRepository,
+                        manufactureRepository
+                )
+        );
+
+        uploadImages(item.getThumbnail(), req.getThumbnail());
+
+        uploadAttachments(item.getAttachments(), req.getAttachments());
+
+        return new ItemCreateResponse(item.getId());
+    }
+
+
+    /**
      * 아이템 create
      * @param req
      * @return 생성된 아이템 번호
@@ -64,6 +100,7 @@ public class ItemService {
 
     @Transactional
     public ItemCreateResponse create(ItemCreateRequest req) {
+        req.getAttachments().get(0).getContentType();
 
         Item item = itemRepository.save(
                 ItemCreateRequest.toEntity(
@@ -115,7 +152,6 @@ public class ItemService {
                 );
     }
 
-
     public byte[] readImg(Long id){
         Item targetItem = itemRepository.findById(id).orElseThrow(ItemNotFoundException::new);
         byte[] image = localFileService.getImage(
@@ -135,20 +171,37 @@ public class ItemService {
                 )
                 .orElseThrow(AttachmentNotFoundException::new);
 
-        //라우트가 없다면 라우트 없음 에러 던지기, 라우트 없으면 읽기도 사실상 불가능
-        List <RouteDto> routeDtoList = Optional.ofNullable(RouteDto.toDtoList(
-                routeRepository.findAllWithMemberAndParentByItemIdOrderByParentIdAscNullsFirstRouteIdAsc(id)
-        )).orElseThrow(RouteNotFoundException::new);
-
-
+        //아이템에 딸린 라우트가 없다면 라우트 없음 에러 던지기,
+        // 라우트 없으면 읽기도 사실상 불가능
+        List <NewRouteDto> routeDtoList = Optional.ofNullable(
+                NewRouteDto.toDtoList(
+                newRouteRepository.findByItem(targetItem),
+                        routeProductRepository,
+                        newRouteRepository
+        )
+        ).orElseThrow(RouteNotFoundException::new);
 
         if (routeDtoList.size()>0) {
-            //routeDto가 존재할 때
+            //아이템에 딸린 routeDto가 존재할 때
             ReadItemDto readItemDto = ReadItemDto.toDto(
                     ItemDto.toDto(targetItem),
                     routeDtoList,
-                    routeDtoList.
-                            get(routeDtoList.size() - 1),//최신 라우트,
+                    //최신 라우트
+                    routeDtoList.get(routeDtoList.size() - 1),
+                    //최신 라우트에 딸린 라우트프로덕트 리스트 중,
+                    // 라우트의 present 인덱스에 해당하는 타입을 데리고 오기
+                    RouteProductDto.toDto(
+                    routeProductRepository.findAllByNewRoute(
+                            newRouteRepository.findById(
+                                    routeDtoList.get(routeDtoList.size() - 1).getId()
+                            ).orElseThrow(RouteNotFoundException::new)
+                    ).get(
+                            routeDtoList.get(routeDtoList.size() - 1).getPresent()
+                    )
+                    )
+                    ,
+//                    routeDtoList.
+//                            get(routeDtoList.size() - 1),//최신 라우트,
 
                     readPartNumber.readPartnumbers(targetItem),
                     attachmentDtoList
@@ -179,44 +232,109 @@ public class ItemService {
         List<ItemTodoResponse> NEED_REVISE = new ArrayList<>();
         List<ItemTodoResponse> REJECTED = new ArrayList<>();
         List<ItemTodoResponse> WAITING_APPROVAL = new ArrayList<>();
+        //0) 현재 로그인 된 유저
+        Member member1 = memberRepository.findById(authHelper.extractMemberId()).orElseThrow(MemberNotFoundException::new);
 
-        //1) 내가 작성자인 모든 아이템들을 데려오기
-        Optional<Member> member1 = memberRepository.findById(authHelper.extractMemberId());
-        List<Item> itemList = itemRepository.findByMember(memberRepository.findById(authHelper.extractMemberId()));
+        //1-1 tempsave용 ) 내가 작성자인 모든 아이템들을 데려오기
+        List<Item> myItemList = itemRepository.findByMember(member1);
 
-        System.out.println(itemList.size());
-        //2) 해당 아이템들의 라우트 중 가장 마지막 라우트의 상태 경우 나누고 리스트에 담아주기
-        for(Item i : itemList){
-            List <RouteDto> routeDtoList = RouteDto.toDtoList(
-                    routeRepository.findAllWithMemberAndParentByItemIdOrderByParentIdAscNullsFirstRouteIdAsc(i.getId())
-            );
+        //1-2) 내가 reviewer_id, approver_id로 지정된 라우트들 찾기
 
-            if(routeDtoList.size()>0) {
-                String itemworkflowPhase = routeDtoList.get(routeDtoList.size() - 1).getWorkflowPhase();
+        //1-2-1) 모든 아이템들 리스트
+        List<Item> allItemList = itemRepository.findAll();
+
+        //1-2-2) 모든 아이템들의 최종 라우트 추출
+        List<NewRoute> liveRouteList = new ArrayList<>();
+        for(Item i : allItemList) {
+            //아이템의 모든 라우트
+            List<NewRoute> itemsAllRoute =
+                    newRouteRepository.findByItem(i);
+            //만약 아이템의 모든 라우트 리스트가 하나이상 존재하면 맨 마지막 라우트만이 유효하므로 그 마지막 아이를 데려온다
+            if(itemsAllRoute.size()>0) {
+                liveRouteList.add(
+                        itemsAllRoute.get(itemsAllRoute.size() - 1)
+                );
+            }
+        }
+
+        //1-1-1 ) 내가 작성한 아이템 중 임시저장된 아이템 담기
+        List<Item> tempsaveList = new ArrayList<>();
+        for(Item item : myItemList){
+            if(item.getTempsave()==true){
+                tempsaveList.add(item);
+            }
+        }
+        //1-2-3) Rejected 아이템 담기
+        // 살아있는 라우트 중, present인 라우트 프로덕트의
+        // rejcted=true고 member이 member1의 아이디와 같다면
+        List<Item> rejectedList = new ArrayList<>();
+        // 살아있는 라우트 중, present인 라우트 프로덕트의 type
+        // 이 review나 approve이고, 그 멤버가 나라면 나에게 할당된 것
+        List<Item> waitingList = new ArrayList<>();
+        for(NewRoute i : liveRouteList) {
+            List<RouteProduct> routeProductList = routeProductRepository.findAllByNewRoute(i);
+            RouteProduct targetRouteProduct = routeProductList.get(i.getPresent());
+
+            if(targetRouteProduct.isRejected()){//present아이가 reject이고
+                for(RouteProductMember routeProductMember : targetRouteProduct.getMembers()){
+                    //rejected된 product 작성자에 내가 있다면 rejct에 담기
+                    if(routeProductMember.getMember().getId().equals(member1.getId())){
+                        rejectedList.add(
+                                i.getItem()
+                        );
+                    }
+                }
+            }
+
+            if(
+                    targetRouteProduct.getType().equals("approve") ||
+            targetRouteProduct.getType().equals("review")
+            ){
+                for(RouteProductMember routeProductMember : targetRouteProduct.getMembers()){
+                    //rejected된 product 작성자에 내가 있다면 rejct에 담기
+                    if(routeProductMember.getMember().getId().equals(member1.getId())){
+                        waitingList.add(
+                                i.getItem()
+                        );
+                    }
+                }
+            }
+
+
+        }
+
+        //2-1) tempsave 추가
+            if(tempsaveList.size()>0) {
+                for (Item i : tempsaveList) {
+
+                    ItemTodoResponse itemTodoResponse =
+                            new ItemTodoResponse(i.getId(), i.getName(), i.getType(), i.getItemNumber());
+
+                    IN_PROGRESS.add(itemTodoResponse);
+                }
+        }
+        //2-2) rejected 추가
+        if(rejectedList.size()>0) {
+            for (Item i : rejectedList) {
 
                 ItemTodoResponse itemTodoResponse =
                         new ItemTodoResponse(i.getId(), i.getName(), i.getType(), i.getItemNumber());
 
-                if (itemworkflowPhase.equals("IN_PROGRESS")){
-
-                    IN_PROGRESS.add(itemTodoResponse);
-
-                }else if(itemworkflowPhase.equals("NEED_REVISE")){
-
-                    NEED_REVISE.add(itemTodoResponse);
-
-                }else if(itemworkflowPhase.equals("REJECTED")){
-
-                    REJECTED.add(itemTodoResponse);
-
-                }else if(itemworkflowPhase.equals("WAITING_APPROVAL")){
-
-                    WAITING_APPROVAL.add(itemTodoResponse);
-
-                }
-
+                REJECTED.add(itemTodoResponse);
             }
         }
+
+        //2-3 ) need review 추가
+        if(waitingList.size()>0) {
+            for (Item i : waitingList) {
+
+                ItemTodoResponse itemTodoResponse =
+                        new ItemTodoResponse(i.getId(), i.getName(), i.getType(), i.getItemNumber());
+
+                REJECTED.add(itemTodoResponse);
+            }
+        }
+
         //3) 이쁜 response 형태로 담아주기 - ItemTodoResponse
 
         return new ItemTodoResponseList(IN_PROGRESS, NEED_REVISE, REJECTED, WAITING_APPROVAL);
@@ -256,6 +374,12 @@ public class ItemService {
     public ItemUpdateResponse update(Long id, ItemUpdateRequest req) {
 
         Item item = itemRepository.findById(id).orElseThrow(ItemNotFoundException::new);
+
+        if (item.getTempsave()==false){ //true면 임시저장 상태, false면 찐 저장 상태
+            //찐 저장 상태라면 UPDATE 불가, 임시저장 일때만 가능
+            throw new ItemUpdateImpossibleException();
+        }
+
         Item.FileUpdatedResult result = item.update(req, colorRepository);
 
         uploadImages(

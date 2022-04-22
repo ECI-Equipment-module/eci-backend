@@ -6,33 +6,27 @@ import eci.server.ItemModule.dto.sign.SignInRequest;
 import eci.server.ItemModule.dto.sign.SignInResponse;
 import eci.server.ItemModule.dto.sign.SignUpRequest;
 import eci.server.ItemModule.entity.member.Member;
+import eci.server.ItemModule.entity.member.ProfileImage;
 import eci.server.ItemModule.entity.member.RoleType;
-
-import eci.server.ItemModule.exception.member.auth.AuthenticationEntryPointException;
-<<<<<<< HEAD:src/main/java/eci/server/ItemModule/service/sign/SignService.java
 import eci.server.ItemModule.exception.member.auth.RefreshExpiredException;
-=======
->>>>>>> 90002839b992be427ae0f3cbad4476b4f45af2b7:src/main/java/eci/server/service/sign/SignService.java
 import eci.server.ItemModule.exception.member.sign.MemberEmailAlreadyExistsException;
 import eci.server.ItemModule.exception.member.sign.MemberNotFoundException;
 import eci.server.ItemModule.exception.member.sign.PasswordNotValidateException;
 import eci.server.ItemModule.exception.member.sign.RoleNotFoundException;
 import eci.server.ItemModule.repository.member.MemberRepository;
 import eci.server.ItemModule.repository.member.RoleRepository;
+import eci.server.ItemModule.service.file.FileService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.ServletResponse;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.net.URLEncoder;
+import java.util.List;
+import java.util.stream.IntStream;
+
 
 @Service
 @RequiredArgsConstructor
@@ -43,6 +37,7 @@ import java.net.URLEncoder;
 public class SignService {
     Logger logger = LoggerFactory.getLogger(SignService.class);
 
+    private final FileService fileService;
     private final MemberRepository memberRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
@@ -51,10 +46,18 @@ public class SignService {
     @Transactional
     public void signUp(SignUpRequest req) {
         validateSignUpInfo(req);
-        memberRepository.save(SignUpRequest.toEntity(
+       Member member = memberRepository.save(
+               SignUpRequest.toEntity(
                 req,
                 roleRepository.findByRoleType(RoleType.ROLE_NORMAL).orElseThrow(RoleNotFoundException::new),
-                passwordEncoder));
+                passwordEncoder)
+        );
+        uploadProfileImage(member.getProfileImage(), req.getProfileImage());
+    }
+
+    private void uploadProfileImage(ProfileImage profileImage, MultipartFile fileImage) {
+        fileService.upload(fileImage, profileImage.getUniqueName()
+        );
     }
 
     @Transactional(readOnly = true)
@@ -65,6 +68,8 @@ public class SignService {
         String accessToken = tokenService.createAccessToken(subject);
         String refreshToken = tokenService.createRefreshToken(subject);
         MemberDto member1 =  MemberDto.toDto(memberRepository.findById(member.getId()).orElseThrow(MemberNotFoundException::new));
+
+
 
         return new SignInResponse(accessToken, refreshToken, member1);
     }
@@ -80,7 +85,6 @@ public class SignService {
 //        return new SignInResponse(accessToken, refreshToken, member1);
 //
 //    }
-
 
     private void validateSignUpInfo(SignUpRequest req) {
         if(memberRepository.existsByEmail(req.getEmail()))
