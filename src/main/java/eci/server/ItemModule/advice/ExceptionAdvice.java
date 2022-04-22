@@ -11,6 +11,7 @@ import eci.server.ItemModule.exception.member.auth.AccessDeniedException;
 import eci.server.ItemModule.exception.member.auth.AccessExpiredException;
 import eci.server.ItemModule.exception.member.auth.AuthenticationEntryPointException;
 import eci.server.ItemModule.exception.member.sign.*;
+import eci.server.ItemModule.exception.route.MemberNotAssignedException;
 import eci.server.ItemModule.exception.route.RejectImpossibleException;
 import eci.server.ItemModule.exception.route.UpdateImpossibleException;
 import lombok.extern.slf4j.Slf4j;
@@ -198,4 +199,10 @@ public class ExceptionAdvice {
         return Response.failure(400, "reject가 불가한 항목입니다.");
     }
 
+    @ExceptionHandler(MemberNotAssignedException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Response memberNotAssignedException(MemberNotAssignedException e) {
+        log.info("e = {}", e.getMessage());
+        return Response.failure(400, "담당자가 배정받지 못한 항목이 있습니다.");
+    }
 }
