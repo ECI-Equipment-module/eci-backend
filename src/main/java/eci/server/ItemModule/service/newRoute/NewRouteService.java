@@ -51,25 +51,8 @@ public class NewRouteService {
     }
 
     @Transactional
-    public void create2(NewRouteCreateRequest2 req) {
-        NewRoute newRoute = newRouteRepository.save(NewRouteCreateRequest2.toEntity(
-                req,
-                itemRepository,
-                newRouteType
-                )
-        );
-        routeProductRepository.save(RouteProductCreateRequest2.toEntity(
-                req,
-                newRoute,
-                newRouteType,
-                memberRepository
-
-        ));
-    }
-
-    @Transactional
-    public void create4(NewRouteCreateRequest4 req) {
-        NewRoute newRoute = newRouteRepository.save(NewRouteCreateRequest4.toEntity(
+    public void create(NewRouteCreateRequest req) {
+        NewRoute newRoute = newRouteRepository.save(NewRouteCreateRequest.toEntity(
                         req,
                         itemRepository,
                         newRouteType
@@ -77,19 +60,60 @@ public class NewRouteService {
         );
 
         List<RouteProduct> routeProductList =
-                RouteProductCreateRequest4.toEntityList(
-                req,
-                newRoute,
-                newRouteType,
-                memberRepository
+                RouteProductCreateRequest.toEntityList(
+                        req,
+                        newRoute,
+                        newRouteType,
+                        memberRepository
 
-        );
+                );
 
         for(RouteProduct routeProduct : routeProductList ){
             routeProductRepository.save(routeProduct);
         }
 
     }
+//
+//    @Transactional
+//    public void create2(NewRouteCreateRequest2 req) {
+//        NewRoute newRoute = newRouteRepository.save(NewRouteCreateRequest2.toEntity(
+//                req,
+//                itemRepository,
+//                newRouteType
+//                )
+//        );
+//        routeProductRepository.save(RouteProductCreateRequest2.toEntity(
+//                req,
+//                newRoute,
+//                newRouteType,
+//                memberRepository
+//
+//        ));
+//    }
+//
+//    @Transactional
+//    public void create4(NewRouteCreateRequest4 req) {
+//        NewRoute newRoute = newRouteRepository.save(NewRouteCreateRequest4.toEntity(
+//                        req,
+//                        itemRepository,
+//                        newRouteType
+//                )
+//        );
+//
+//        List<RouteProduct> routeProductList =
+//                RouteProductCreateRequest4.toEntityList(
+//                req,
+//                newRoute,
+//                newRouteType,
+//                memberRepository
+//
+//        );
+//
+//        for(RouteProduct routeProduct : routeProductList ){
+//            routeProductRepository.save(routeProduct);
+//        }
+//
+//    }
 
     @Transactional
     public List<RouteProductDto> rejectUpdate(

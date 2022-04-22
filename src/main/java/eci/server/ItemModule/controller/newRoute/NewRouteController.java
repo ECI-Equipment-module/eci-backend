@@ -29,23 +29,32 @@ public class NewRouteController {
         return Response.success(newRouteService.readAll(cond));
     }
 
-    @PostMapping("/newRoutes2")
+    @PostMapping("/newRoutes")
     @ResponseStatus(HttpStatus.CREATED)
     @AssignMemberId
-    public Response create2(
-            @Valid NewRouteCreateRequest2 req) {
-        newRouteService.create2(req);
+    public Response createRoutes(
+            @Valid NewRouteCreateRequest req) {
+        newRouteService.create(req);
         return Response.success();
     }
-
-    @PostMapping("/newRoutes4")
-    @ResponseStatus(HttpStatus.CREATED)
-    @AssignMemberId
-    public Response create4(
-            @Valid NewRouteCreateRequest4 req) {
-        newRouteService.create4(req);
-        return Response.success();
-    }
+//
+//    @PostMapping("/newRoutes2")
+//    @ResponseStatus(HttpStatus.CREATED)
+//    @AssignMemberId
+//    public Response create2(
+//            @Valid NewRouteCreateRequest2 req) {
+//        newRouteService.create2(req);
+//        return Response.success();
+//    }
+//
+//    @PostMapping("/newRoutes4")
+//    @ResponseStatus(HttpStatus.CREATED)
+//    @AssignMemberId
+//    public Response create4(
+//            @Valid NewRouteCreateRequest4 req) {
+//        newRouteService.create4(req);
+//        return Response.success();
+//    }
 
     @GetMapping("/newRoutes/{id}")
     @ResponseStatus(HttpStatus.OK)
