@@ -12,9 +12,10 @@ public class NewRouteType {
 
     public String [][] routeType = {
 
-            {"request", "complete"},
-            {"request", "approval", "review", "complete"} ,
-            {"request", "design", "review", "design", "complete"},
+            {"request", "complete"}, //type 0
+            {"request", "approval", "review", "complete"}, //type 1
+            {"request", "design", "review", "design", "complete"}, //type 2
+            {"request", "design", "review", "design", "approve", "complete"}, //type3
 
     };
 

@@ -17,6 +17,7 @@ import org.hibernate.annotations.OnDeleteAction;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static java.util.stream.Collectors.toList;
 
@@ -94,7 +95,7 @@ public class NewRoute extends EntityDate {
         List<RouteProduct> routeProductList =
                 routeProductRepository.findAllByNewRoute(this);
 
-
+        //이미 승인 완료됐을 시에는 더이상 승인이 불가능해 에러 던지기
         if(this.present==routeProductList.size()-1){
             throw new UpdateImpossibleException();
         }
@@ -235,11 +236,13 @@ public class NewRoute extends EntityDate {
         System.out.println("지금 상황에선 거절대상 이후로 복제돼야 하는게 한개");
         System.out.println(duplicateRouteProductList.size());
 
-        Integer sequence = rejectedRouteProduct.getSequence();
+        AtomicReference<Integer> sequence = new AtomicReference<>(rejectedRouteProduct.getSequence());
         List<RouteProduct> duplicateList = duplicateRouteProductList.stream().map(
-                i -> new RouteProduct(
+                i ->
+                        new RouteProduct(
                         //자기 복제대상보다 1이 더 커야해 다들
-                        routeProductRepository.findAllByNewRoute(this).size(),
+                                sequence.updateAndGet(v -> v + 1),
+                        //routeProductRepository.findAllByNewRoute(this).size(),
                         i.getType(),
                         "default",
                         false, //passed

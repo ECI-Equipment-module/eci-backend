@@ -14,11 +14,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Component;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 @Component
 @RequiredArgsConstructor
 @Slf4j
+@Transactional
 public class NewRouteGuard {
     private final AuthHelper authHelper;
     private final NewRouteRepository newRouteRepository;
@@ -32,6 +34,7 @@ public class NewRouteGuard {
         return hasAdminRole() || isResponsible(id);
     }
 
+    @Transactional
     private boolean isResponsible(Long id) {
 
         NewRoute newRoute =
@@ -41,12 +44,15 @@ public class NewRouteGuard {
         List<RouteProduct> routeProduct =
                 routeProductRepository.findAllByNewRoute(newRoute);
 
+        //현재 로그인 된 유저
         Long memberId = authHelper.extractMemberId();
 
         //라우트에 딸린 routeProduct 애서 현재 진행 중인 애
         List<RouteProductMember> members = routeProduct.get(newRoute.getPresent()).getMembers();
 
         boolean result = false;
+
+
         for(RouteProductMember member : members){
             if(member.getMember().getId().toString().equals(memberId.toString())){
                 result = true;

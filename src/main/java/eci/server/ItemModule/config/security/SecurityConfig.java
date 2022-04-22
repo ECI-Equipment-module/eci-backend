@@ -59,6 +59,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.PUT, "/routes/{id}").access("@routeGuard.check(#id)")
                 .antMatchers(HttpMethod.DELETE, "/routes/{id}").access("@routeGuard.check(#id)")
 
+                .antMatchers(HttpMethod.POST, "/newRoutes").authenticated()
                 .antMatchers(HttpMethod.POST, "/newRoutes2").authenticated()
                 .antMatchers(HttpMethod.POST, "/newRoutes4").authenticated()
                 .antMatchers(HttpMethod.PUT, "/approveRoutes/{id}").access("@newRouteGuard.check(#id)")

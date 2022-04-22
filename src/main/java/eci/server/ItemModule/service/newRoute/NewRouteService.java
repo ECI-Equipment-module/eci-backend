@@ -73,47 +73,6 @@ public class NewRouteService {
         }
 
     }
-//
-//    @Transactional
-//    public void create2(NewRouteCreateRequest2 req) {
-//        NewRoute newRoute = newRouteRepository.save(NewRouteCreateRequest2.toEntity(
-//                req,
-//                itemRepository,
-//                newRouteType
-//                )
-//        );
-//        routeProductRepository.save(RouteProductCreateRequest2.toEntity(
-//                req,
-//                newRoute,
-//                newRouteType,
-//                memberRepository
-//
-//        ));
-//    }
-//
-//    @Transactional
-//    public void create4(NewRouteCreateRequest4 req) {
-//        NewRoute newRoute = newRouteRepository.save(NewRouteCreateRequest4.toEntity(
-//                        req,
-//                        itemRepository,
-//                        newRouteType
-//                )
-//        );
-//
-//        List<RouteProduct> routeProductList =
-//                RouteProductCreateRequest4.toEntityList(
-//                req,
-//                newRoute,
-//                newRouteType,
-//                memberRepository
-//
-//        );
-//
-//        for(RouteProduct routeProduct : routeProductList ){
-//            routeProductRepository.save(routeProduct);
-//        }
-//
-//    }
 
     @Transactional
     public List<RouteProductDto> rejectUpdate(
@@ -135,13 +94,15 @@ public class NewRouteService {
         );
 
 
-
         List<RouteProduct> addedProducts = new ArrayList<>();
 
         // 새로 만들어진 애들 저장
         for(RouteProduct routeProduct:rejectUpdatedRouteProductList){
             addedProducts.add(routeProductRepository.save(routeProduct));
         }
+
+        // 처음으로 복제된 애는 거부대상 아이의 복제품 => 얘의 set reject=true로 변경
+        addedProducts.get(0).setRejected(true);
 
         // present는 현재 만들어진 애로 설정
         newRoute.setPresent(addedProducts.get(0).getSequence());
@@ -151,7 +112,9 @@ public class NewRouteService {
                         routeProductRepository.findAllByNewRoute(newRoute)
                 );
 
+
         // 기존 + 새 라우트프로덕트까지 해서 돌려주기
+
         return allProductList;
     }
 
