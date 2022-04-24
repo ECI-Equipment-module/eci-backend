@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.Lob;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Positive;
 
 @Data
 @NoArgsConstructor
@@ -20,7 +19,7 @@ import javax.validation.constraints.Positive;
  *
  * update request => newRouteUpdateRequest(newRoute.getPresent()+1)
  */
-public class NewRouteRejectRequest {
+public class RouteOrderingRejectRequest {
 
     @NotNull(message = "거절될 sequence 를 입력해주세요")
     private Integer rejectedSequence;

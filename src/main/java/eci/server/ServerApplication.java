@@ -9,6 +9,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @EnableJpaAuditing
 @SpringBootApplication
+//@SpringBootApplication(scanBasePackages = {"eci.server.ItemModule.entity.item"})
 public class ServerApplication{
 
 	public static void main(String[] args) {

@@ -1,18 +1,14 @@
 package eci.server.ItemModule.repository.newRoute;
 
 import eci.server.ItemModule.entity.item.Item;
-import eci.server.ItemModule.entity.member.Member;
-import eci.server.ItemModule.entity.newRoute.NewRoute;
-import eci.server.ItemModule.entity.route.Route;
+import eci.server.ItemModule.entity.newRoute.RouteOrdering;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
-public interface NewRouteRepository extends JpaRepository<NewRoute, Long> {
+public interface NewRouteRepository extends JpaRepository<RouteOrdering, Long> {
 
-    List<NewRoute> findByItem(Item item);
+    List<RouteOrdering> findByItem(Item item);
 
     //
 //    /**

@@ -2,22 +2,15 @@ package eci.server.ItemModule.dto.newRoute;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import eci.server.ItemModule.dto.member.MemberDto;
-import eci.server.ItemModule.entity.newRoute.NewRoute;
-import eci.server.ItemModule.entity.newRoute.RouteProduct;
-import eci.server.ItemModule.entity.route.Route;
-import eci.server.ItemModule.helper.NestedConvertHelper;
+import eci.server.ItemModule.entity.newRoute.RouteOrdering;
 import eci.server.ItemModule.repository.newRoute.NewRouteRepository;
 import eci.server.ItemModule.repository.newRoute.RouteProductRepository;
-import eci.server.ItemModule.repository.route.RouteRepository;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
@@ -25,7 +18,7 @@ import static java.util.stream.Collectors.toList;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class NewRouteDto {
+public class RouteOrderingDto {
 
     private Long id;
     private String type;
@@ -38,15 +31,15 @@ public class NewRouteDto {
     private List<RouteProductDto> routeProductList;
 
 
-    public static List <NewRouteDto> toDtoList(
-            List <NewRoute> NewRoutes,
+    public static List <RouteOrderingDto> toDtoList(
+            List <RouteOrdering> NewRoutes,
             RouteProductRepository routeProductRepository,
             NewRouteRepository newRouteRepository
     ) {
 
 
-        List<NewRouteDto> newRouteDtos = NewRoutes.stream().map(
-                c -> new NewRouteDto(
+        List<RouteOrderingDto> newRouteDtos = NewRoutes.stream().map(
+                c -> new RouteOrderingDto(
                         c.getId(),
                         c.getType(),
                         c.getLifecycleStatus(),
@@ -72,13 +65,13 @@ public class NewRouteDto {
         return newRouteDtos;
     }
 
-    public static NewRouteDto toDto(
-            NewRoute Route,
+    public static RouteOrderingDto toDto(
+            RouteOrdering Route,
             RouteProductRepository routeProductRepository,
             NewRouteRepository newRouteRepository
     ) {
 
-        return new NewRouteDto(
+        return new RouteOrderingDto(
                 Route.getId(),
                 Route.getType(),
                 Route.getLifecycleStatus(),

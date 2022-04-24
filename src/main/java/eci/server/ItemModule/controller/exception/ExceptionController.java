@@ -1,21 +1,14 @@
 package eci.server.ItemModule.controller.exception;
 
-import eci.server.ItemModule.config.guard.AuthHelper;
-import eci.server.ItemModule.entity.newRoute.NewRoute;
-import eci.server.ItemModule.entity.newRoute.RouteProduct;
 import eci.server.ItemModule.exception.member.auth.AccessDeniedException;
 import eci.server.ItemModule.exception.member.auth.AccessExpiredException;
 import eci.server.ItemModule.exception.member.auth.AuthenticationEntryPointException;
-import eci.server.ItemModule.repository.newRoute.NewRouteRepository;
-import eci.server.ItemModule.repository.newRoute.RouteProductRepository;
 import eci.server.ItemModule.service.sign.TokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
 
 
 /**

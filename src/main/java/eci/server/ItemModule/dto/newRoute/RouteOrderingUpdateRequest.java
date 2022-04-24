@@ -17,7 +17,7 @@ import javax.persistence.Lob;
  *
  * update request => newRouteUpdateRequest(newRoute.getPresent()+1)
  */
-public class NewRouteUpdateRequest {
+public class RouteOrderingUpdateRequest {
     @Lob
     private String comment;
 
