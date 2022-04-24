@@ -20,6 +20,7 @@ public class RouteProductDto {
     private Long id;
     private Integer sequence;
     private String type;
+    private String name;
     private String comment;
     private boolean passed;
     private boolean rejected;
@@ -33,7 +34,8 @@ public class RouteProductDto {
                 c -> new RouteProductDto(
                         c.getId(),
                         c.getSequence(),
-                        c.getType(),
+                        c.getType().getName(),
+                        c.getName(),
                         c.getComments(),
                         c.isPassed(),
                         c.isRejected(),
@@ -55,7 +57,8 @@ public class RouteProductDto {
         return new RouteProductDto(
                 routeProduct.getId(),
                 routeProduct.getSequence(),
-                routeProduct.getType(),
+                routeProduct.getType().getName(),
+                routeProduct.getName(),
                 routeProduct.getComments(),
                 routeProduct.isPassed(),
                 routeProduct.isRejected(),

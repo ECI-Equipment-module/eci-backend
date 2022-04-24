@@ -1,6 +1,6 @@
 package eci.server.ItemModule.entity.newRoute;
 
-import eci.server.ItemModule.dto.newRoute.NewRouteUpdateRequest;
+import eci.server.ItemModule.dto.newRoute.RouteOrderingUpdateRequest;
 import eci.server.ItemModule.entity.item.Item;
 import eci.server.ItemModule.entitycommon.EntityDate;
 import eci.server.ItemModule.exception.route.RejectImpossibleException;
@@ -29,7 +29,7 @@ import static java.util.stream.Collectors.toList;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Slf4j
-public class NewRoute extends EntityDate {
+public class RouteOrdering extends EntityDate {
 
     @Id
 //    @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -70,13 +70,13 @@ public class NewRoute extends EntityDate {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Item item;
 
-    public NewRoute(
+    public RouteOrdering(
             String type,
             Item item
 
     ){
         this.type = type;
-        this.lifecycleStatus = "Development";
+        this.lifecycleStatus = "WORKING";
         this.revisedCnt = 0;
         this.present = 1;
         this.item = item;
@@ -87,8 +87,8 @@ public class NewRoute extends EntityDate {
         this.present = present;
     }
 
-    public NewRouteUpdateRequest update(
-            NewRouteUpdateRequest req,
+    public RouteOrderingUpdateRequest update(
+            RouteOrderingUpdateRequest req,
             RouteProductRepository routeProductRepository
 
     ) {
@@ -115,7 +115,7 @@ public class NewRoute extends EntityDate {
         }else{
             //만약 present가 size() 가 됐다면 다 왔다는 거다.
             System.out.println("complete");
-            this.lifecycleStatus = "Complete";
+            this.lifecycleStatus = "COMPLETE";
         }
 
         /**
@@ -146,9 +146,7 @@ public class NewRoute extends EntityDate {
             RouteProductRepository routeProductRepository
 
     ) {
-
-
-        /**
+      /**
          * 현재 라우트에 딸린 라우트 생산물들
          */
         List<RouteProduct> routeProductList =
@@ -156,6 +154,10 @@ public class NewRoute extends EntityDate {
 
         if(rejectedIndex > this.present || routeProductList.get(rejectedIndex).isDisabled()){
             throw new RejectImpossibleException();
+        }
+
+        if(this.present<routeProductList.size()-1) {
+            this.present = this.present + 1;
         }
 
         /**
@@ -198,9 +200,11 @@ public class NewRoute extends EntityDate {
          *         // comment들 싹 다 초기화해주고
          */
 
+        Integer seq = this.present+1;
         RouteProduct rejectedRouteProduct =
                 new RouteProduct(
-                        routeProductRepository.findAllByNewRoute(this).size(),
+                    seq,
+                    routeProductList.get(rejectedIndex).getName(),
                     routeProductList.get(rejectedIndex).getType(),
                     "default",
                     false,
@@ -233,7 +237,7 @@ public class NewRoute extends EntityDate {
                         //sublist는 하나 0,3이라면 0,1,2 인덱스 복사
                 );
 
-        System.out.println("지금 상황에선 거절대상 이후로 복제돼야 하는게 한개");
+        System.out.println("지금 상황에선 거절대상 이후로 복제돼야 하는 갯수");
         System.out.println(duplicateRouteProductList.size());
 
         AtomicReference<Integer> sequence = new AtomicReference<>(rejectedRouteProduct.getSequence());
@@ -241,7 +245,9 @@ public class NewRoute extends EntityDate {
                 i ->
                         new RouteProduct(
                         //자기 복제대상보다 1이 더 커야해 다들
-                                sequence.updateAndGet(v -> v + 1),
+
+                        sequence.updateAndGet(v -> v + 1),
+                        i.getName(),
                         //routeProductRepository.findAllByNewRoute(this).size(),
                         i.getType(),
                         "default",
@@ -271,7 +277,7 @@ public class NewRoute extends EntityDate {
             addedRouteProductList.add(routeProduct);
         }
 
-        System.out.println("추가적으로 생길 애들 길이야(두개여야해요 시발)");
+        System.out.println("추가적으로 생길 애들 길이");
         System.out.println(addedRouteProductList.size());
 
         return addedRouteProductList;

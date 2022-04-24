@@ -5,16 +5,13 @@ import eci.server.ItemModule.dto.color.ColorDto;
 import eci.server.ItemModule.dto.manufacture.ManufactureSimpleDto;
 import eci.server.ItemModule.dto.material.MaterialSimpleDto;
 import eci.server.ItemModule.dto.member.MemberDto;
-import eci.server.ItemModule.dto.newRoute.NewRouteDto;
+import eci.server.ItemModule.dto.newRoute.RouteOrderingDto;
 import eci.server.ItemModule.dto.newRoute.RouteProductDto;
-import eci.server.ItemModule.dto.route.RouteDto;
-import eci.server.ItemModule.entity.newRoute.NewRoute;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
-import java.util.Locale;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Data
@@ -45,7 +42,7 @@ public class ReadItemDto {
     private List<ManufactureSimpleDto> manufactures;
     private List<String> partnumbers;
 
-    private List<NewRouteDto> routeDtoList;
+    private List<RouteOrderingDto> routeDtoList;
 
     private char revision;
     private String workflowPhase;
@@ -55,8 +52,8 @@ public class ReadItemDto {
 
     public static ReadItemDto toDto(
             ItemDto itemDto,
-            List<NewRouteDto> routeDtoList,
-            NewRouteDto newRouteDto,
+            List<RouteOrderingDto> routeDtoList,
+            RouteOrderingDto newRouteDto,
             RouteProductDto routeProductDto,
             List<String> partNumbers,
             List<AttachmentDto> attachmentDtoList
@@ -104,7 +101,7 @@ public class ReadItemDto {
 
     public static ReadItemDto noRoutetoDto(
             ItemDto itemDto,
-            List<NewRouteDto> routeDtoList,
+            List<RouteOrderingDto> routeDtoList,
             List<String> partnumbers,
             List<AttachmentDto> attachmentDtoList
 

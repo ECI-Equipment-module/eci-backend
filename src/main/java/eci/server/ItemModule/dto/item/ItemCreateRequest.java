@@ -100,7 +100,9 @@ public class ItemCreateRequest {
         return new Item(
                 req.name,
                 req.type.isBlank()? "BEARING":req.type,
-                ItemType.valueOf(req.type.isBlank()? "NONE":req.type).label()*1000000+(int)(Math.random()*1000),
+                ItemType.valueOf(
+                        req.type.isBlank()? "NONE":req.type)
+                        .label()*1000000+(int)(Math.random()*1000),
                 req.width,
                 req.height,
                 req.weight,

@@ -6,6 +6,7 @@ import eci.server.ItemModule.exception.item.ItemCreateNotEmptyException;
 import eci.server.ItemModule.exception.item.ItemNotFoundException;
 import eci.server.ItemModule.exception.item.ItemTypeSaveException;
 import eci.server.ItemModule.exception.item.ItemUpdateImpossibleException;
+import eci.server.ItemModule.exception.member.MemberOverAssignedException;
 import eci.server.ItemModule.exception.member.auth.*;
 import eci.server.ItemModule.exception.member.auth.AccessDeniedException;
 import eci.server.ItemModule.exception.member.auth.AccessExpiredException;
@@ -204,5 +205,12 @@ public class ExceptionAdvice {
     public Response memberNotAssignedException(MemberNotAssignedException e) {
         log.info("e = {}", e.getMessage());
         return Response.failure(400, "담당자가 배정받지 못한 항목이 있습니다.");
+    }
+
+    @ExceptionHandler(MemberOverAssignedException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Response memberOverAssignedException(MemberOverAssignedException e) {
+        log.info("e = {}", e.getMessage());
+        return Response.failure(400, "담당자가 과도하게 배정되었습니다.");
     }
 }

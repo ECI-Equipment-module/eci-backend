@@ -1,9 +1,8 @@
 package eci.server.ItemModule.config.guard;
 
 
-import eci.server.ItemModule.entity.member.Member;
 import eci.server.ItemModule.entity.member.RoleType;
-import eci.server.ItemModule.entity.newRoute.NewRoute;
+import eci.server.ItemModule.entity.newRoute.RouteOrdering;
 import eci.server.ItemModule.entity.newRoute.RouteProduct;
 import eci.server.ItemModule.entity.newRoute.RouteProductMember;
 import eci.server.ItemModule.exception.route.RouteNotFoundException;
@@ -11,7 +10,6 @@ import eci.server.ItemModule.repository.newRoute.NewRouteRepository;
 import eci.server.ItemModule.repository.newRoute.RouteProductRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Component;
 
 import javax.transaction.Transactional;
@@ -37,7 +35,7 @@ public class NewRouteGuard {
     @Transactional
     private boolean isResponsible(Long id) {
 
-        NewRoute newRoute =
+        RouteOrdering newRoute =
                 newRouteRepository.findById(id).orElseThrow(() -> { throw new RouteNotFoundException(); });
 
         //라우트에 딸린 routeProduct들

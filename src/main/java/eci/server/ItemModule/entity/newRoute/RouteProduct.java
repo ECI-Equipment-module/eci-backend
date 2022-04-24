@@ -1,8 +1,6 @@
 package eci.server.ItemModule.entity.newRoute;
 
 import eci.server.ItemModule.dto.newRoute.RouteProductUpdateRequest;
-import eci.server.ItemModule.entity.item.ItemManufacture;
-import eci.server.ItemModule.entity.material.ItemMaterial;
 import eci.server.ItemModule.entity.member.Member;
 import eci.server.ItemModule.entitycommon.EntityDate;
 import eci.server.ItemModule.exception.RouteProductNotFoundException;
@@ -38,11 +36,17 @@ public class RouteProduct extends EntityDate {
     @Column(nullable = false)
     private Integer sequence;
 
+    @Column(nullable = false)
+    private String name;
+
     /**
      * request, approve, review, design, complete 중 하나
      */
-    @Column(nullable = false)
-    private String type;
+    @ManyToOne
+    @JoinColumn(name ="route_type")
+    private RouteType type;
+
+
 
     /**
      * comment 남기기
@@ -70,7 +74,7 @@ public class RouteProduct extends EntityDate {
     @Column(nullable = false)
     private boolean show;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private boolean disabled;
 
     @OneToMany(
@@ -86,24 +90,26 @@ public class RouteProduct extends EntityDate {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "newRoute_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    private NewRoute newRoute;
+    private RouteOrdering newRoute;
     /**
      * 라우트 프로덕트 생성자 (reject 시 재 생산용)
      */
     public RouteProduct(
             Integer sequence,
-            String type,
+            String name,
+            RouteType type,
             String comments,
             boolean passed,
             boolean rejected,
             boolean show,
             boolean disabled,
             List<Member> member,
-            NewRoute newRoute
+            RouteOrdering newRoute
 
     ) {
 
         this.sequence = sequence;
+        this.name = name;
         this.type = type;
         this.comments = comments;
         this.passed = passed;
@@ -141,6 +147,7 @@ public class RouteProduct extends EntityDate {
                         .orElseThrow(RouteProductNotFoundException::new);
 
         this.sequence = routeProduct.getSequence();
+        this.name = routeProduct.getName();
         this.type = routeProduct.getType();
         this.comments = req.getComment();
         this.passed = true;
@@ -155,7 +162,7 @@ public class RouteProduct extends EntityDate {
         this.passed = passed;
     }
 
-    public void setType(String type) {
+    public void setType(RouteType type) {
         this.type = type;
     }
 

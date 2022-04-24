@@ -4,11 +4,11 @@ package eci.server.ItemModule.service.item;
 import eci.server.ItemModule.config.guard.AuthHelper;
 import eci.server.ItemModule.dto.item.*;
 import eci.server.ItemModule.dto.manufacture.ReadPartNumberService;
-import eci.server.ItemModule.dto.newRoute.NewRouteDto;
+import eci.server.ItemModule.dto.newRoute.RouteOrderingDto;
 import eci.server.ItemModule.dto.newRoute.RouteProductDto;
 import eci.server.ItemModule.entity.item.Attachment;
 import eci.server.ItemModule.entity.member.Member;
-import eci.server.ItemModule.entity.newRoute.NewRoute;
+import eci.server.ItemModule.entity.newRoute.RouteOrdering;
 import eci.server.ItemModule.entity.newRoute.RouteProduct;
 import eci.server.ItemModule.entity.newRoute.RouteProductMember;
 import eci.server.ItemModule.exception.item.AttachmentNotFoundException;
@@ -173,8 +173,8 @@ public class ItemService {
 
         //아이템에 딸린 라우트가 없다면 라우트 없음 에러 던지기,
         // 라우트 없으면 읽기도 사실상 불가능
-        List <NewRouteDto> routeDtoList = Optional.ofNullable(
-                NewRouteDto.toDtoList(
+        List <RouteOrderingDto> routeDtoList = Optional.ofNullable(
+                RouteOrderingDto.toDtoList(
                 newRouteRepository.findByItem(targetItem),
                         routeProductRepository,
                         newRouteRepository
@@ -244,10 +244,10 @@ public class ItemService {
         List<Item> allItemList = itemRepository.findAll();
 
         //1-2-2) 모든 아이템들의 최종 라우트 추출
-        List<NewRoute> liveRouteList = new ArrayList<>();
+        List<RouteOrdering> liveRouteList = new ArrayList<>();
         for(Item i : allItemList) {
             //아이템의 모든 라우트
-            List<NewRoute> itemsAllRoute =
+            List<RouteOrdering> itemsAllRoute =
                     newRouteRepository.findByItem(i);
             //만약 아이템의 모든 라우트 리스트가 하나이상 존재하면 맨 마지막 라우트만이 유효하므로 그 마지막 아이를 데려온다
             if(itemsAllRoute.size()>0) {
@@ -271,7 +271,7 @@ public class ItemService {
         // 살아있는 라우트 중, present인 라우트 프로덕트의 type
         // 이 review나 approve이고, 그 멤버가 나라면 나에게 할당된 것
         List<Item> waitingList = new ArrayList<>();
-        for(NewRoute i : liveRouteList) {
+        for(RouteOrdering i : liveRouteList) {
             List<RouteProduct> routeProductList = routeProductRepository.findAllByNewRoute(i);
             RouteProduct targetRouteProduct = routeProductList.get(i.getPresent());
 
