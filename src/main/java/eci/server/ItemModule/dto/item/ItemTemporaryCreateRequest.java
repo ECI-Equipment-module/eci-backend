@@ -94,6 +94,7 @@ public class ItemTemporaryCreateRequest {
                 ).orElseThrow(MemberNotFoundException::new),
 
                 true, //inProgress = true
+                false, // 임시
 
                 colorRepository.findById(
                         req.getColorId()

@@ -88,9 +88,9 @@ public class ItemCreateRequest {
 
             throw new ItemTypeSaveException();
         }else if(
-                        req.height.toString().isBlank()||
-                        req.weight.toString().isBlank() ||
-                        req.width.toString().isBlank()
+                        req.height.isBlank()||
+                        req.weight.isBlank() ||
+                        req.width.isBlank()
 
             //길이, 높이, 너비가 빈 칸이라면 안됨
         ){
@@ -112,6 +112,7 @@ public class ItemCreateRequest {
                 ).orElseThrow(MemberNotFoundException::new),
 
                 false, //임시저장 끝
+                false, //생성 시에는 개정되는 것이 false
 
                 colorRepository.findById(
                         req.getColorId()

@@ -5,7 +5,9 @@ import eci.server.ItemModule.entity.member.RoleType;
 import eci.server.ItemModule.entity.newRoute.RouteOrdering;
 import eci.server.ItemModule.entity.newRoute.RouteProduct;
 import eci.server.ItemModule.entity.newRoute.RouteProductMember;
+import eci.server.ItemModule.exception.item.ItemUpdateImpossibleException;
 import eci.server.ItemModule.exception.route.RouteNotFoundException;
+import eci.server.ItemModule.exception.route.UpdateImpossibleException;
 import eci.server.ItemModule.repository.newRoute.NewRouteRepository;
 import eci.server.ItemModule.repository.newRoute.RouteProductRepository;
 import lombok.RequiredArgsConstructor;
@@ -45,8 +47,15 @@ public class NewRouteGuard {
         //현재 로그인 된 유저
         Long memberId = authHelper.extractMemberId();
 
+        Integer targetIdx = newRoute.getPresent();
         //라우트에 딸린 routeProduct 애서 현재 진행 중인 애
-        List<RouteProductMember> members = routeProduct.get(newRoute.getPresent()).getMembers();
+
+        if(targetIdx == routeProduct.size()){
+            targetIdx= targetIdx- 1;
+            //인덱스 에러가 나서 일단은 이걸로 멤버 검사하고,
+            //승인 완료 됐다는 에러를 routeOrdering에서 던지도록 설정
+        }
+        List<RouteProductMember> members = routeProduct.get(targetIdx).getMembers();
 
         boolean result = false;
 

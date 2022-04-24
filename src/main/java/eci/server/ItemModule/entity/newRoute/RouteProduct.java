@@ -36,8 +36,17 @@ public class RouteProduct extends EntityDate {
     @Column(nullable = false)
     private Integer sequence;
 
+    /**
+     * 라우트 오더링에서 정의된 최초의 SEQ 를 나타냄
+     */
+
+    @Column(nullable = false)
+    private Integer origin_seq;
+
     @Column(nullable = false)
     private String name;
+
+
 
     /**
      * request, approve, review, design, complete 중 하나
@@ -45,7 +54,6 @@ public class RouteProduct extends EntityDate {
     @ManyToOne
     @JoinColumn(name ="route_type")
     private RouteType type;
-
 
 
     /**
@@ -81,9 +89,9 @@ public class RouteProduct extends EntityDate {
             mappedBy = "routeProduct",
             cascade = CascadeType.ALL,
             orphanRemoval = true,
-            fetch = FetchType.LAZY)
+            fetch = FetchType.LAZY
+    )
     private List<RouteProductMember> members;
-
     /**
      * routeproduct 가 속하는 route 하나
      */
@@ -91,11 +99,15 @@ public class RouteProduct extends EntityDate {
     @JoinColumn(name = "newRoute_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private RouteOrdering newRoute;
+
     /**
      * 라우트 프로덕트 생성자 (reject 시 재 생산용)
      */
     public RouteProduct(
             Integer sequence,
+
+            Integer origin_seq,
+
             String name,
             RouteType type,
             String comments,
@@ -107,8 +119,10 @@ public class RouteProduct extends EntityDate {
             RouteOrdering newRoute
 
     ) {
-
         this.sequence = sequence;
+
+        this.origin_seq = origin_seq;
+
         this.name = name;
         this.type = type;
         this.comments = comments;
@@ -122,9 +136,7 @@ public class RouteProduct extends EntityDate {
                 )
                 .collect(toList());
         this.newRoute = newRoute;
-
     }
-
 
     /**
      * 라우트 프로덕트 승인 시 업데이트
@@ -139,7 +151,7 @@ public class RouteProduct extends EntityDate {
             RouteProductUpdateRequest req,
             RouteProductRepository routeProductRepository
 
-    ) {
+    ){
 
         RouteProduct routeProduct =
                 routeProductRepository

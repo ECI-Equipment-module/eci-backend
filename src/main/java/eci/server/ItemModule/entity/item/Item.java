@@ -70,7 +70,12 @@ public class Item extends EntityDate {
     )
     private List<Attachment> attachments;
 
+    @Column(nullable = false)
     private Boolean tempsave;
+
+    @Column(nullable = false)
+    private Boolean revise_progress;
+
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "color_id", nullable = false)
@@ -100,6 +105,8 @@ public class Item extends EntityDate {
             String weight,
             Member member,
             Boolean tempsave,
+            Boolean revise_progress,
+
             Color color,
 
             List<Image> thumbnail,
@@ -120,6 +127,8 @@ public class Item extends EntityDate {
         this.member = member;
         this.weight = weight;
         this.tempsave = tempsave;
+        this.revise_progress = revise_progress;
+
         this.color = (color);
 
         this.thumbnail = new ArrayList<>();
@@ -163,6 +172,7 @@ public class Item extends EntityDate {
         this.width = req.getWidth();
         this.height = req.getHeight();
         this.weight = req.getWeight();
+
         this.color = colorRepository.findById(Long.valueOf(req.getColorId()))
                 .orElseThrow(ColorNotFoundException::new);
 
