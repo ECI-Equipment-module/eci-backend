@@ -206,6 +206,7 @@ public class RouteOrdering extends EntityDate {
                 new RouteProduct(
                     seq,
                     routeProductList.get(rejectedIndex).getOrigin_seq(),
+
                     routeProductList.get(rejectedIndex).getName(),
                     routeProductList.get(rejectedIndex).getType(),
                     "default",

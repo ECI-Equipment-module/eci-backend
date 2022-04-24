@@ -39,11 +39,14 @@ public class RouteProduct extends EntityDate {
     /**
      * 라우트 오더링에서 정의된 최초의 SEQ 를 나타냄
      */
+
     @Column(nullable = false)
     private Integer origin_seq;
 
     @Column(nullable = false)
     private String name;
+
+
 
     /**
      * request, approve, review, design, complete 중 하나
@@ -51,6 +54,7 @@ public class RouteProduct extends EntityDate {
     @ManyToOne
     @JoinColumn(name ="route_type")
     private RouteType type;
+
 
     /**
      * comment 남기기
@@ -101,7 +105,9 @@ public class RouteProduct extends EntityDate {
      */
     public RouteProduct(
             Integer sequence,
+
             Integer origin_seq,
+
             String name,
             RouteType type,
             String comments,
@@ -114,7 +120,9 @@ public class RouteProduct extends EntityDate {
 
     ) {
         this.sequence = sequence;
+
         this.origin_seq = origin_seq;
+
         this.name = name;
         this.type = type;
         this.comments = comments;
