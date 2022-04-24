@@ -62,6 +62,7 @@ public class RouteProductCreateRequest {
 
         RouteProduct requestRouteProduct = new RouteProduct(
                 0,
+                0,
                 (String) routeProductName.get(0),
 
                 routeTypeRepository.findByName((String) routeProductType.get(0)).
@@ -87,7 +88,7 @@ public class RouteProductCreateRequest {
                         i ->
         new RouteProduct(
                 req.getMemberIds().indexOf(i)+1, //request이후의 sequence 이므로 1부터 시작
-
+                req.getMemberIds().indexOf(i)+1,
                 (String) routeProductName.get(req.getMemberIds().indexOf(i)+1),
                 routeTypeRepository.findByName((String) routeProductType.get(req.getMemberIds().indexOf(i)+1)).
                         stream().filter(

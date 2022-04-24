@@ -34,6 +34,7 @@ public class ItemUpdateRequest {
     @PositiveOrZero(message = "0 이상을 입력해주세요")
     private String weight;
 
+
     /**
      * 추가된 이미지를 첨부
      */

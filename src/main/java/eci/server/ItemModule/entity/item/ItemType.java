@@ -1,8 +1,5 @@
 package eci.server.ItemModule.entity.item;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 public enum ItemType {
 
     NONE(0),

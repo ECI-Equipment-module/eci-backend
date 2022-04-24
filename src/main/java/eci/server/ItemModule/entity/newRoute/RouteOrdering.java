@@ -204,6 +204,7 @@ public class RouteOrdering extends EntityDate {
         RouteProduct rejectedRouteProduct =
                 new RouteProduct(
                     seq,
+                    routeProductList.get(rejectedIndex).getOrigin_seq(),
                     routeProductList.get(rejectedIndex).getName(),
                     routeProductList.get(rejectedIndex).getType(),
                     "default",
@@ -222,7 +223,6 @@ public class RouteOrdering extends EntityDate {
         /**
          * 라우트의 present 도 이 아이의 인덱스 값으로 변경시켜주자. (이건 서비스에서)
          */
-
 
         /**
          * 거부된 라우트 이후부터
@@ -247,6 +247,9 @@ public class RouteOrdering extends EntityDate {
                         //자기 복제대상보다 1이 더 커야해 다들
 
                         sequence.updateAndGet(v -> v + 1),
+
+                        i.getOrigin_seq(),
+
                         i.getName(),
                         //routeProductRepository.findAllByNewRoute(this).size(),
                         i.getType(),

@@ -1,9 +1,7 @@
 package eci.server.ItemModule.entity.newRoute;
-
 /**
  * routeType - 미리 admin에서 등록
  */
-
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -13,12 +11,10 @@ import org.springframework.stereotype.Component;
 @AllArgsConstructor
 public class RoutePreset {
     public String[][] routeName = {
-
             {"Item Request", "Item Complete"}, //type 0
             {"Item Request", "Item Request Review", "Item Registration Review", "Item complete"}, //type 1
             {"Item Request", "기구Design 생성", "기구Design Review", "기구Design생성", "Item complete"}, //type 2
             {"Item Request", "기구Design 생성", "기구Design Review", "기구Design생성", "Approve", "complete"}, //type3
-
     };
 
     public String[][] routeType = {
