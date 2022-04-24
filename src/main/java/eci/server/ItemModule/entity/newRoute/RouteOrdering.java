@@ -3,6 +3,7 @@ package eci.server.ItemModule.entity.newRoute;
 import eci.server.ItemModule.dto.newRoute.RouteOrderingUpdateRequest;
 import eci.server.ItemModule.entity.item.Item;
 import eci.server.ItemModule.entitycommon.EntityDate;
+import eci.server.ItemModule.exception.item.ItemUpdateImpossibleException;
 import eci.server.ItemModule.exception.route.RejectImpossibleException;
 import eci.server.ItemModule.exception.route.UpdateImpossibleException;
 import eci.server.ItemModule.repository.newRoute.RouteProductRepository;
@@ -96,7 +97,7 @@ public class RouteOrdering extends EntityDate {
                 routeProductRepository.findAllByNewRoute(this);
 
         //이미 승인 완료됐을 시에는 더이상 승인이 불가능해 에러 던지기
-        if(this.present==routeProductList.size()-1){
+        if(this.present==routeProductList.size()){
             throw new UpdateImpossibleException();
         }
 
@@ -130,7 +131,7 @@ public class RouteOrdering extends EntityDate {
          * 라우트 업데이트 호출해서 present 갱신해줄거야
          */
         //present 를 다음 진행될 애로 갱신해주기
-        if(this.present<routeProductList.size()-1) {
+        if(this.present<routeProductList.size()) {
             this.present = this.present + 1;
         }
 
