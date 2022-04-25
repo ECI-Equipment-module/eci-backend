@@ -80,7 +80,7 @@ public class RouteProduct extends EntityDate {
      * 화면에 띄울 변수
      */
     @Column(nullable = false)
-    private boolean show;
+    private boolean route_show;
 
     @Column(nullable = true)
     private boolean disabled;
@@ -128,7 +128,7 @@ public class RouteProduct extends EntityDate {
         this.comments = comments;
         this.passed = passed;
         this.rejected = rejected;
-        this.show = show;
+        this.route_show = show;
         this.disabled = disabled;
         this.members = member.stream().map(
                         r -> new RouteProductMember(
@@ -165,7 +165,7 @@ public class RouteProduct extends EntityDate {
         this.passed = true;
         this.rejected = false;
         this.newRoute = routeProduct.getNewRoute();
-        this.show = true;
+        this.route_show = true;
         this.disabled = false;
         return req;
     }
@@ -183,7 +183,7 @@ public class RouteProduct extends EntityDate {
     }
 
     public void setShow(boolean show) {
-        this.show = show;
+        this.route_show = show;
     }
 
     public void setDisabled(boolean disabled) {

@@ -39,7 +39,7 @@ public class RouteProductDto {
                         c.getComments(),
                         c.isPassed(),
                         c.isRejected(),
-                        c.isShow(),
+                        c.isRoute_show(),
                         MemberDto.toDtoList(
                                 c.getMembers().stream().map(
                                         m -> m.getMember()
@@ -62,7 +62,7 @@ public class RouteProductDto {
                 routeProduct.getComments(),
                 routeProduct.isPassed(),
                 routeProduct.isRejected(),
-                routeProduct.isShow(),
+                routeProduct.isRoute_show(),
                 MemberDto.toDtoList(
                         routeProduct.getMembers().stream().map(
                                 m -> m.getMember()
