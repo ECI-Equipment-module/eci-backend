@@ -124,7 +124,7 @@ public class RouteOrderingService {
                 routeProductRepository.findAllByNewRoute(routeOrdering)
                         .subList(routeOrdering.getPresent()-1, range)
                         .stream().filter(
-                                d -> d.isShow()==false
+                                d -> d.isRoute_show()==false
                         )
                         .collect(
                                 Collectors.toList()
