@@ -48,6 +48,8 @@ public class RouteProduct extends EntityDate {
 
 
 
+
+
     /**
      * request, approve, review, design, complete 중 하나
      */
@@ -123,7 +125,9 @@ public class RouteProduct extends EntityDate {
 
         this.origin_seq = origin_seq;
 
+
         this.route_name = name;
+
         this.type = type;
         this.comments = comments;
         this.passed = passed;
