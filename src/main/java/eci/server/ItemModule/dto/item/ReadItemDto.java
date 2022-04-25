@@ -7,10 +7,13 @@ import eci.server.ItemModule.dto.material.MaterialSimpleDto;
 import eci.server.ItemModule.dto.member.MemberDto;
 import eci.server.ItemModule.dto.newRoute.RouteOrderingDto;
 import eci.server.ItemModule.dto.newRoute.RouteProductDto;
+import eci.server.ItemModule.entity.item.ItemType;
+import eci.server.ItemModule.entity.newRoute.RoutePreset;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -41,6 +44,7 @@ public class ReadItemDto {
 
     private List<ManufactureSimpleDto> manufactures;
     private List<String> partnumbers;
+
 
     private List<RouteOrderingDto> routeDtoList;
 
@@ -103,9 +107,17 @@ public class ReadItemDto {
             ItemDto itemDto,
             List<RouteOrderingDto> routeDtoList,
             List<String> partnumbers,
-            List<AttachmentDto> attachmentDtoList
+            List<AttachmentDto> attachmentDtoList,
+            RoutePreset routePreset
 
     ) {
+
+        List<String> typeList = new ArrayList<>();
+        Integer routeType =  ItemType.valueOf(itemDto.getType()).label();
+        List routeProduct = List.of((routePreset.routeName[routeType]));
+        for(Object type : routeProduct){
+            typeList.add(type.toString());
+        }
 
         return new ReadItemDto(
                 itemDto.isTempsave(),//true면 임시저장 상태, false면 찐 저장 상태
@@ -134,7 +146,7 @@ public class ReadItemDto {
                 routeDtoList,
 
                 '0',
-                "WORKFLOW_NONE",
+                typeList.toString(),
                 "LIFESTATUS_NONE"
 
         );
