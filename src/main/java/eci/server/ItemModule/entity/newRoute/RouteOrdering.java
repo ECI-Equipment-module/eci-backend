@@ -207,7 +207,7 @@ public class RouteOrdering extends EntityDate {
                     seq,
                     routeProductList.get(rejectedIndex).getOrigin_seq(),
 
-                    routeProductList.get(rejectedIndex).getName(),
+                    routeProductList.get(rejectedIndex).getRoute_name(),
                     routeProductList.get(rejectedIndex).getType(),
                     "default",
                     false,
@@ -252,7 +252,7 @@ public class RouteOrdering extends EntityDate {
 
                         i.getOrigin_seq(),
 
-                        i.getName(),
+                        i.getRoute_name(),
                         //routeProductRepository.findAllByNewRoute(this).size(),
                         i.getType(),
                         "default",

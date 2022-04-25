@@ -44,7 +44,7 @@ public class RouteProduct extends EntityDate {
     private Integer origin_seq;
 
     @Column(nullable = false)
-    private String name;
+    private String route_name;
 
 
 
@@ -123,7 +123,7 @@ public class RouteProduct extends EntityDate {
 
         this.origin_seq = origin_seq;
 
-        this.name = name;
+        this.route_name = name;
         this.type = type;
         this.comments = comments;
         this.passed = passed;
@@ -159,7 +159,7 @@ public class RouteProduct extends EntityDate {
                         .orElseThrow(RouteProductNotFoundException::new);
 
         this.sequence = routeProduct.getSequence();
-        this.name = routeProduct.getName();
+        this.route_name = routeProduct.getRoute_name();
         this.type = routeProduct.getType();
         this.comments = req.getComment();
         this.passed = true;
