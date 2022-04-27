@@ -1,11 +1,15 @@
 package eci.server.ItemModule.repository.item;
 
 import com.querydsl.core.BooleanBuilder;
-import com.querydsl.core.types.ExpressionUtils;
+import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.Predicate;
+import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.jpa.JPAExpressions;
+import com.querydsl.core.types.dsl.NumberPath;
+import com.querydsl.core.types.dsl.StringPath;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import eci.server.ItemModule.dto.item.AttachmentSimpleDto;
 import eci.server.ItemModule.dto.item.ItemReadCondition;
 import eci.server.ItemModule.dto.item.ItemSimpleDto;
 import eci.server.ItemModule.entity.item.Item;
@@ -15,11 +19,14 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
 import static com.querydsl.core.types.Projections.constructor;
+
 import static eci.server.ItemModule.entity.item.QItem.item;
 
 import static eci.server.ItemModule.entity.material.QItemMaterial.itemMaterial;
@@ -66,13 +73,46 @@ public class CustomItemRepositoryImpl extends QuerydslRepositorySupport implemen
 //                    item.id.eq(itemMaterial.item.id)
 //            );
 
+
+
+    private List<AttachmentSimpleDto> attachmentSimpleDtos(NumberPath<Long> itemId){
+        List<AttachmentSimpleDto> attachmentSimpleDtoList = jpaQueryFactory
+                .select(constructor(
+                        AttachmentSimpleDto.class,
+                        attachment.attachmentaddress
+                        )
+                ).from(attachment)
+                .where(attachment.item.id.eq(itemId)
+                )
+                .fetch();
+//        List<StringPath> list = new ArrayList<>();
+//        jpaQueryFactory.select(
+//                        (constructor(
+//                                AttachmentSimpleDto.class,
+//                                attachment.attachmentaddress
+//
+//                        ))
+//                ).from(attachment)
+//                .where(attachment.item.id.eq(id))
+//                .fetch()
+//                .stream().map(
+//                        i ->
+//                                list.add(
+//                                        i.getAttachmentAdress()
+//                                                        )
+//                                            );
+//        return list;
+        return attachmentSimpleDtoList;
+    }
     /**
      * 아이템 목록을 ItemSimpleDto로 조회한 결과 반환환
      * @param predicate
      * @param pageable
      * @return getQuerydsl().applyPagination (페이징 적용 쿼리)
      */
+
     private List<ItemSimpleDto> fetchAll(Predicate predicate, Pageable pageable) {
+
 
         List<ItemSimpleDto> itemSimpleDtos = getQuerydsl().applyPagination(
                 pageable,
@@ -98,13 +138,12 @@ public class CustomItemRepositoryImpl extends QuerydslRepositorySupport implemen
 
                                         image.imageaddress,
 
-                                        attachment.attachmentaddress,//이건 리스트로 와야하는디..
+                                        attachment.attachmentaddress,
 
                                         item.createdAt
 
-
-
                                         )
+
                         )
                         .from(item)
                         //.join(itemMaterial).on(item.id.eq(itemMaterial.item.id))

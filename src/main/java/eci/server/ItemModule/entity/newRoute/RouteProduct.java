@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.*;
 import java.util.List;
@@ -22,6 +23,7 @@ import static java.util.stream.Collectors.toList;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Slf4j
+@Transactional
 public class RouteProduct extends EntityDate {
 
     @Id
@@ -89,8 +91,8 @@ public class RouteProduct extends EntityDate {
 
     @OneToMany(
             mappedBy = "routeProduct",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true,
+            //cascade = CascadeType.ALL,
+            //orphanRemoval = true,
             fetch = FetchType.LAZY
     )
     private List<RouteProductMember> members;
@@ -99,7 +101,7 @@ public class RouteProduct extends EntityDate {
      */
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "newRoute_id", nullable = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
+    //@OnDelete(action = OnDeleteAction.CASCADE)
     private RouteOrdering newRoute;
 
     /**
