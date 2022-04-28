@@ -114,7 +114,7 @@ public class ReadItemDto {
 
         List<String> typeList = new ArrayList<>();
         Integer routeType =  ItemType.valueOf(itemDto.getType()).label();
-        List routeProduct = List.of((routePreset.routeName[routeType]));
+        List routeProduct = List.of((routePreset.itemRouteName[routeType]));
         for(Object type : routeProduct){
             typeList.add(type.toString());
         }

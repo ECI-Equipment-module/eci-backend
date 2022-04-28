@@ -51,12 +51,6 @@ public class Project extends EntityDate {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
     private LocalDate overPeriod;
 
-    @Column(nullable = false)
-    private ProjectType projectType;
-
-    @Column(nullable = false)
-    private ProjectLevel projectLevel;
-
     @OneToOne
     @JoinColumn(name = "item_id")
     private Item item;
@@ -71,12 +65,15 @@ public class Project extends EntityDate {
     @Column(nullable = false)
     private Boolean tempsave;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "projectType_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private ProjectType projectType;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "color_id", nullable = false)
+    @JoinColumn(name = "projectLevel_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    private Color color;
-
+    private ProjectLevel projectLevel;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "produceOrganization_id", nullable = false)
@@ -89,9 +86,7 @@ public class Project extends EntityDate {
     private ClientOrganization clientOrganization;
 
     //차종
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "carType_id", nullable = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
+    @Column(nullable = false)
     private String carType;
 
     @OneToMany(
