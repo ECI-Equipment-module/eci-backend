@@ -2,9 +2,9 @@ package eci.server.ItemModule.dto.newRoute;
 
 import eci.server.ItemModule.entity.item.Item;
 import eci.server.ItemModule.entity.item.ItemType;
+import eci.server.ItemModule.entity.newRoute.ItemRouteType;
 import eci.server.ItemModule.entity.newRoute.RouteOrdering;
 import eci.server.ItemModule.entity.newRoute.RoutePreset;
-import eci.server.ItemModule.entity.newRoute.RouteType;
 import eci.server.ItemModule.exception.item.ItemNotFoundException;
 import eci.server.ItemModule.exception.member.sign.MemberNotFoundException;
 import eci.server.ItemModule.repository.item.ItemRepository;
@@ -55,11 +55,11 @@ public class RouteOrderingCreateRequest {
         //아이템 타입에따라서 라우트 타입이 선택된다.
         Integer routeType =  ItemType.valueOf(targetItem.getType()).label();
 
-        RouteType routeType1 = routeTypeRepository.findByName("REVIEW").get(0);
+        ItemRouteType routeType1 = routeTypeRepository.findByName("REVIEW").get(0);
 //        System.out.println(routeType1.getName());
 //        System.out.println(routeType1.getId());
 //        System.out.println("succccccccccccessssssssssssss");
-        List routeProduct = List.of((newRouteType.routeName[routeType]));
+        List routeProduct = List.of((newRouteType.itemRouteName[routeType]));
 
         System.out.println(routeProduct.size());
         for(Object type : routeProduct){

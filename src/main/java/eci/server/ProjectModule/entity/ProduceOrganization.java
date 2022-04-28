@@ -1,6 +1,5 @@
-package eci.server.ItemModule.entity.item;
+package eci.server.ProjectModule.entity;
 
-import eci.server.ItemModule.entitycommon.EntityDate;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,7 +9,7 @@ import javax.persistence.*;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Color extends EntityDate {
+public class ProduceOrganization {
     @Id
 //    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQUENCE2")
@@ -18,16 +17,11 @@ public class Color extends EntityDate {
     private Long id;
 
     @Column(nullable = false)
-    private String code;
+    private String name;
 
-    @Column(nullable = false)
-    private String color;
-
-    public Color(
-            String code,
-            String color
+    public ProduceOrganization(
+            String name
     ){
-        this.code=code;
-        this.color=color;
+        this.name = name;
     }
 }

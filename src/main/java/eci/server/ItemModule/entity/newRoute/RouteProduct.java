@@ -10,8 +10,6 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.*;
@@ -27,9 +25,9 @@ import static java.util.stream.Collectors.toList;
 public class RouteProduct extends EntityDate {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    @GeneratedValue(strategy= GenerationType.SEQUENCE, generator="SEQUENCE1")
-//    @SequenceGenerator(name="SEQUENCE1", sequenceName="SEQUENCE1", allocationSize=1)
+//    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy= GenerationType.SEQUENCE, generator="SEQUENCE1")
+    @SequenceGenerator(name="SEQUENCE1", sequenceName="SEQUENCE1", allocationSize=1)
     private Long id;
 
     /**
@@ -57,7 +55,7 @@ public class RouteProduct extends EntityDate {
      */
     @ManyToOne
     @JoinColumn(name ="route_type")
-    private RouteType type;
+    private ItemRouteType type;
 
 
     /**
@@ -113,7 +111,7 @@ public class RouteProduct extends EntityDate {
             Integer origin_seq,
 
             String name,
-            RouteType type,
+            ItemRouteType type,
             String comments,
             boolean passed,
             boolean rejected,
@@ -180,7 +178,7 @@ public class RouteProduct extends EntityDate {
         this.passed = passed;
     }
 
-    public void setType(RouteType type) {
+    public void setType(ItemRouteType type) {
         this.type = type;
     }
 

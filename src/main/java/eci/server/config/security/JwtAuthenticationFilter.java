@@ -1,9 +1,6 @@
-package eci.server.ItemModule.config.security;
+package eci.server.config.security;
 
-import eci.server.ItemModule.config.guard.AuthHelper;
 import eci.server.ItemModule.exception.member.auth.AccessExpiredException;
-import eci.server.ItemModule.repository.newRoute.NewRouteRepository;
-import eci.server.ItemModule.repository.newRoute.RouteProductRepository;
 import eci.server.ItemModule.service.sign.TokenService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,11 +10,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.GenericFilterBean;
 
 import javax.servlet.*;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.net.URLEncoder;
 
 @RequiredArgsConstructor
 @Slf4j

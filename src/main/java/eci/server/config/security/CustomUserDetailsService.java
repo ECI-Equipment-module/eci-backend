@@ -1,4 +1,4 @@
-package eci.server.ItemModule.config.security;
+package eci.server.config.security;
 
 import eci.server.ItemModule.entity.member.Member;
 import eci.server.ItemModule.repository.member.MemberRepository;

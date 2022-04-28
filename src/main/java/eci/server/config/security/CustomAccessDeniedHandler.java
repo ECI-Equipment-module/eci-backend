@@ -1,4 +1,4 @@
-package eci.server.ItemModule.config.security;
+package eci.server.config.security;
 
 import lombok.NoArgsConstructor;
 import org.springframework.security.access.AccessDeniedException;

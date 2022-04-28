@@ -1,7 +1,7 @@
 package eci.server.ItemModule.service.item;
 
 
-import eci.server.ItemModule.config.guard.AuthHelper;
+import eci.server.config.guard.AuthHelper;
 import eci.server.ItemModule.dto.item.*;
 import eci.server.ItemModule.dto.manufacture.ReadPartNumberService;
 import eci.server.ItemModule.dto.newRoute.RouteOrderingDto;
@@ -22,7 +22,6 @@ import eci.server.ItemModule.repository.manufacture.ManufactureRepository;
 import eci.server.ItemModule.repository.material.MaterialRepository;
 import eci.server.ItemModule.repository.newRoute.NewRouteRepository;
 import eci.server.ItemModule.repository.newRoute.RouteProductRepository;
-import eci.server.ItemModule.repository.route.RouteRepository;
 import eci.server.ItemModule.service.file.FileService;
 import eci.server.ItemModule.entity.item.Image;
 import eci.server.ItemModule.entity.item.Item;

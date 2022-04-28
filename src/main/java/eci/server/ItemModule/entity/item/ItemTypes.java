@@ -1,5 +1,6 @@
 package eci.server.ItemModule.entity.item;
 
+import eci.server.ItemModule.entity.member.RoleType;
 import eci.server.ItemModule.entity.route.Route;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -19,15 +20,14 @@ import java.util.List;
 public class ItemTypes {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    @GeneratedValue(strategy= GenerationType.SEQUENCE, generator="SEQUENCE1")
-//    @SequenceGenerator(name="SEQUENCE1", sequenceName="SEQUENCE1", allocationSize=1)
+//    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy= GenerationType.SEQUENCE, generator="SEQUENCE1")
+    @SequenceGenerator(name="SEQUENCE1", sequenceName="SEQUENCE1", allocationSize=1)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "item_id")
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private Item item;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, unique = true)
+    private ItemType itemType;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id")

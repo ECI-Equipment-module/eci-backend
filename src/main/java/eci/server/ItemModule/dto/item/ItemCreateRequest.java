@@ -55,8 +55,6 @@ public class ItemCreateRequest {
     // hidden = true
     @Null
     private Long memberId;
-    @Null
-    private Boolean inProgress;
 
     private List<MultipartFile> thumbnail = new ArrayList<>();
 

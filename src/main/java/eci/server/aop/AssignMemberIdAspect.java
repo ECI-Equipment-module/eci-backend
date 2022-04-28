@@ -1,6 +1,6 @@
 package eci.server.aop;
 
-import eci.server.ItemModule.config.guard.AuthHelper;
+import eci.server.config.guard.AuthHelper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;

@@ -1,4 +1,4 @@
-package eci.server.ItemModule.config.security;
+package eci.server.config.security;
 
 import eci.server.ItemModule.service.sign.TokenService;
 import lombok.RequiredArgsConstructor;

@@ -1,4 +1,4 @@
-package eci.server.ItemModule.config.guard;
+package eci.server.config.guard;
 
 import eci.server.ItemModule.entity.item.Item;
 import eci.server.ItemModule.entity.member.RoleType;

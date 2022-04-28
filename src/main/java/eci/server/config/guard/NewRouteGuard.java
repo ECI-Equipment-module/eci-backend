@@ -1,13 +1,11 @@
-package eci.server.ItemModule.config.guard;
+package eci.server.config.guard;
 
 
 import eci.server.ItemModule.entity.member.RoleType;
 import eci.server.ItemModule.entity.newRoute.RouteOrdering;
 import eci.server.ItemModule.entity.newRoute.RouteProduct;
 import eci.server.ItemModule.entity.newRoute.RouteProductMember;
-import eci.server.ItemModule.exception.item.ItemUpdateImpossibleException;
 import eci.server.ItemModule.exception.route.RouteNotFoundException;
-import eci.server.ItemModule.exception.route.UpdateImpossibleException;
 import eci.server.ItemModule.repository.newRoute.NewRouteRepository;
 import eci.server.ItemModule.repository.newRoute.RouteProductRepository;
 import lombok.RequiredArgsConstructor;

@@ -26,13 +26,16 @@ import static java.util.stream.Collectors.toList;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Item extends EntityDate {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQUENCE2")
-//    @SequenceGenerator(name="SEQUENCE2", sequenceName="SEQUENCE2", allocationSize=1)
+//    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQUENCE2")
+    @SequenceGenerator(name="SEQUENCE2", sequenceName="SEQUENCE2", allocationSize=1)
     private Long id;
 
     @Column(nullable = false)
     private String name;
+
+//    @Column(nullable = false)
+//    private String type;
 
     @Column(nullable = false)
     private String type;
@@ -77,7 +80,9 @@ public class Item extends EntityDate {
 
     @Column(nullable = false)
     private Boolean revise_progress;
-
+//
+//    @Column(nullable = false)
+//    private Boolean revise_progress;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "color_id", nullable = false)

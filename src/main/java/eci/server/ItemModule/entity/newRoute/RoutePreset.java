@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 @AllArgsConstructor
 public class RoutePreset {
-    public String[][] routeName = {
+    public String[][] itemRouteName = {
 
             {"Item Request", "Item Complete"}, //type 0
             {"Item Request", "Item Request Review", "Item Registration Review", "Item complete"}, //type 1
@@ -21,7 +21,7 @@ public class RoutePreset {
 
     };
 
-    public String[][] routeType = {
+    public String[][] itemRouteType = {
 
             // 타입이름
             {"REQUEST", "COMPLETE"}, //type 0
@@ -31,7 +31,7 @@ public class RoutePreset {
 
     };
 
-    public String[][] routeTypeModule = {
+    public String[][] itemRouteTypeModule = {
 
             // 타입이 속하는 모듈명
             {"ITEM", "ITEM"}, //type 0

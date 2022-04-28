@@ -1,5 +1,7 @@
-package eci.server.ItemModule.entity.item;
+package eci.server.ProjectModule.entity;
 
+
+import eci.server.ItemModule.entity.item.Item;
 import eci.server.ItemModule.entitycommon.EntityDate;
 import eci.server.ItemModule.exception.image.UnsupportedImageFormatException;
 import lombok.AccessLevel;
@@ -16,7 +18,7 @@ import java.util.*;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Attachment extends EntityDate {
+public class ProjectAttachment extends EntityDate {
 
     @Id
 //    @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,9 +44,9 @@ public class Attachment extends EntityDate {
      * 파일 사라지면 삭제됨
      */
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "item_id", nullable = false)
+    @JoinColumn(name = "project_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    private Item item;
+    private Project project;
 
     @Column(nullable = false)
     @Lob
@@ -75,7 +77,7 @@ public class Attachment extends EntityDate {
      *
      * @param originName
      */
-    public Attachment(String originName, String tag, String attach_comment) {
+    public ProjectAttachment(String originName, String tag, String attach_comment) {
         SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date now = new Date();
 
@@ -85,7 +87,7 @@ public class Attachment extends EntityDate {
         this.attach_comment = attach_comment;
         this.attachmentaddress =
                 "src/main/prodmedia/image/" +
-                sdf1.format(now).substring(0,10)
+                        sdf1.format(now).substring(0,10)
                         + "/"
                         + this.uniqueName; //이미지 저장 폴더 + 이미지 저장명
     }
@@ -96,19 +98,19 @@ public class Attachment extends EntityDate {
      *
      * @param originName
      */
-    public Attachment(String originName) {
+    public ProjectAttachment(String originName) {
         this.uniqueName = generateUniqueName(extractExtension(originName));
         this.originName = originName;
     }
 
     /**
-     * 아이템과 연관관계가 없다면 등록
+     * 프로젝트와 연관관계가 없다면 등록
      *
-     * @param item
+     * @param project
      */
-    public void initItem(Item item) {
-        if (this.item == null) {
-            this.item = item;
+    public void initProject(Project project) {
+        if (this.project == null) {
+            this.project = project;
         }
     }
 
@@ -139,8 +141,8 @@ public class Attachment extends EntityDate {
             return ext;
         } catch (StringIndexOutOfBoundsException e) {
         }
-       throw new UnsupportedImageFormatException();
-   }
+        throw new UnsupportedImageFormatException();
+    }
 
 
 

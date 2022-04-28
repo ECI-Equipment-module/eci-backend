@@ -1,4 +1,4 @@
-package eci.server.ItemModule.config;
+package eci.server.config;
 
 
 import com.querydsl.jpa.impl.JPAQueryFactory;

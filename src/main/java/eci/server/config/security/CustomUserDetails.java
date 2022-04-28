@@ -1,4 +1,4 @@
-package eci.server.ItemModule.config.security;
+package eci.server.config.security;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
