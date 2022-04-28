@@ -1,30 +1,21 @@
-package eci.server.ProjectModule.entity;
+package eci.server.ProjectModule.entity.project;
 
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import eci.server.ItemModule.dto.item.ItemUpdateRequest;
 import eci.server.ItemModule.entity.entitycommon.EntityDate;
 import eci.server.ItemModule.entity.item.*;
-import eci.server.ItemModule.entity.material.ItemMaterial;
-import eci.server.ItemModule.entity.material.Material;
 import eci.server.ItemModule.entity.member.Member;
-import eci.server.ItemModule.exception.item.ColorNotFoundException;
-import eci.server.ItemModule.repository.color.ColorRepository;
+import eci.server.ProjectModule.entity.projectAttachment.ProjectAttachment;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-
-import static java.util.stream.Collectors.toList;
 
 @Getter
 @Entity

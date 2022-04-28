@@ -1,67 +1,66 @@
-package eci.server.ProjectModule.repository.projectType;
+package eci.server.ProjectModule.repository.clientOrg;
 
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import eci.server.ProjectModule.dto.projectType.ProjectTypeReadCondition;
-import eci.server.ProjectModule.dto.projectType.ProjectTypeReadResponse;
+import eci.server.ProjectModule.dto.clientOrg.ClientOrganizationReadCondition;
+import eci.server.ProjectModule.dto.clientOrg.ClientOrganizationReadResponse;
 import eci.server.ProjectModule.entity.project.ProjectType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-
-import static com.querydsl.core.types.Projections.constructor;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.function.Function;
 
-import static eci.server.ProjectModule.entity.QProjectType.projectType;
+import static com.querydsl.core.types.Projections.constructor;
+import static eci.server.ProjectModule.entity.QClientOrganization.clientOrganization;
 
 @Transactional(readOnly = true)
-public class CustomProjectTypeRepositoryImpl extends QuerydslRepositorySupport implements CustomProjectTypeRepository {
+public class CustomClientOrganizationRepositoryImpl extends QuerydslRepositorySupport implements CustomClientOrganizationRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
 
-    public CustomProjectTypeRepositoryImpl(JPAQueryFactory jpaQueryFactory) { // 4
+    public CustomClientOrganizationRepositoryImpl(JPAQueryFactory jpaQueryFactory) { // 4
         super(ProjectType.class);
         this.jpaQueryFactory = jpaQueryFactory;
     }
 
     @Override
-    public Page<ProjectTypeReadResponse> findAllByCondition(ProjectTypeReadCondition cond) {
+    public Page<ClientOrganizationReadResponse> findAllByCondition(ClientOrganizationReadCondition cond) {
         Pageable pageable = PageRequest.of(cond.getPage(), cond.getSize());
         Predicate predicate = createPredicate(cond);
         return new PageImpl<>(fetchAll(predicate, pageable), pageable, fetchCount(predicate));
     }
 
 
-    private List<ProjectTypeReadResponse> fetchAll(Predicate predicate, Pageable pageable) { // 6
+    private List<ClientOrganizationReadResponse> fetchAll(Predicate predicate, Pageable pageable) { // 6
         return getQuerydsl().applyPagination(
                 pageable,
                 jpaQueryFactory
                         .select(constructor(
-                                ProjectTypeReadResponse.class,
-                                projectType.id,
-                                projectType.name
+                                ClientOrganizationReadResponse.class,
+                                clientOrganization.id,
+                                clientOrganization.name
                         ))
-                        .from(projectType)
+                        .from(clientOrganization)
                         .where(predicate)
-                        .orderBy(projectType.id.desc())
+                        .orderBy(clientOrganization.id.desc())
         ).fetch();
     }
 
     private Long fetchCount(Predicate predicate) { // 7
         return jpaQueryFactory.select(
-                        projectType.count()
-                ).from(projectType).
+                        clientOrganization.count()
+                ).from(clientOrganization).
                 where(predicate).fetchOne();
     }
 
-    private Predicate createPredicate(ProjectTypeReadCondition cond) { // 8
+    private Predicate createPredicate(ClientOrganizationReadCondition cond) { // 8
         return new BooleanBuilder();
     }
 

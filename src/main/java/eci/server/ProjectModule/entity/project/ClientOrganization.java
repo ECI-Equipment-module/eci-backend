@@ -1,4 +1,4 @@
-package eci.server.ProjectModule.entity;
+package eci.server.ProjectModule.entity.project;
 
 import lombok.AccessLevel;
 import lombok.Getter;

@@ -1,9 +1,9 @@
-package eci.server.ProjectModule.entity;
+package eci.server.ProjectModule.entity.projectAttachment;
 
 
-import eci.server.ItemModule.entity.item.Item;
 import eci.server.ItemModule.entitycommon.EntityDate;
 import eci.server.ItemModule.exception.image.UnsupportedImageFormatException;
+import eci.server.ProjectModule.entity.project.Project;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
