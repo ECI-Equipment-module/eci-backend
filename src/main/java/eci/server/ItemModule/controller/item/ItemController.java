@@ -130,6 +130,12 @@ public class ItemController {
         return Response.success(itemService.update(id, req));
     }
 
+    /**
+     * 아이템 전부 읽어오기긴 한데 페이징 needed
+     * @param cond
+     * @return
+     */
+
     @CrossOrigin(origins = "https://localhost:3000")
     @GetMapping("/items")
     @ResponseStatus(HttpStatus.OK)

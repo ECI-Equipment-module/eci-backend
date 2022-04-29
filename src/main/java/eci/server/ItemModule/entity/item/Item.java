@@ -173,7 +173,8 @@ public class Item extends EntityDate {
             ItemUpdateRequest req,
             ColorRepository colorRepository
     ) {
-
+        //TODO update할 때 사용자가 기존 값 없애고 보낼 수도 있자나 => fix needed
+        //isBlank 랑 isNull로 판단해서 기존 값 / req 값 채워넣기
         this.name = req.getName();
         this.type = req.getType();
         this.width = req.getWidth();

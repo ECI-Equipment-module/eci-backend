@@ -7,11 +7,15 @@ import eci.server.ItemModule.service.file.LocalFileService;
 import eci.server.ProjectModule.dto.ProjectCreateRequest;
 import eci.server.ProjectModule.dto.ProjectCreateUpdateResponse;
 import eci.server.ProjectModule.dto.ProjectTemporaryCreateRequest;
+import eci.server.ProjectModule.dto.ProjectUpdateRequest;
 import eci.server.ProjectModule.entity.project.Project;
 import eci.server.ProjectModule.entity.projectAttachment.ProjectAttachment;
+import eci.server.ProjectModule.exception.ProjectNotFoundException;
+import eci.server.ProjectModule.exception.ProjectUpdateImpossibleException;
 import eci.server.ProjectModule.repository.clientOrg.ClientOrganizationRepository;
 import eci.server.ProjectModule.repository.produceOrg.ProduceOrganizationRepository;
 import eci.server.ProjectModule.repository.project.ProjectRepository;
+import eci.server.ProjectModule.repository.projectAttachmentRepository.ProjectAttachmentRepository;
 import eci.server.ProjectModule.repository.projectLevel.ProjectLevelRepository;
 import eci.server.ProjectModule.repository.projectType.ProjectTypeRepository;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +38,7 @@ public class ProjectService {
     private final ProjectLevelRepository projectLevelRepository;
     private final ProduceOrganizationRepository produceOrganizationRepository;
     private final ClientOrganizationRepository clientOrganizationRepository;
-
+    private final ProjectAttachmentRepository projectAttachmentRepositoryl;
     private final FileService fileService;
     private final LocalFileService localFileService;
 
@@ -93,5 +97,56 @@ public class ProjectService {
                                 )
                 );
     }
+
+    private void deleteAttachments(List<ProjectAttachment> attachments) {
+//        attachments.stream().forEach(i -> fileService.delete(i.getUniqueName()));
+        attachments.
+                stream().
+                forEach(
+                        i -> i.setDeleted(true)
+                );
+    }
+
+
+    @Transactional
+    public ProjectCreateUpdateResponse update(Long id, ProjectUpdateRequest req) {
+
+        Project project =  projectRepository.findById(id).orElseThrow(ProjectNotFoundException::new);
+
+
+        if (project.getTempsave()==false){
+
+            //true면 임시저장 상태, false면 찐 저장 상태
+            //찐 저장 상태라면 UPDATE 불가, 임시저장 일때만 가능
+
+            throw new ProjectUpdateImpossibleException();
+        }
+
+        Project.FileUpdatedResult result = project.update(
+                req,
+                itemRepository,
+                projectTypeRepository,
+                projectLevelRepository,
+                produceOrganizationRepository,
+                clientOrganizationRepository,
+                projectAttachmentRepositoryl
+        );
+
+
+        uploadAttachments(
+                result.getAttachmentUpdatedResult().getAddedAttachments(),
+                result.getAttachmentUpdatedResult().getAddedAttachmentFiles()
+        );
+        deleteAttachments(
+                result.getAttachmentUpdatedResult().getDeletedAttachments()
+        );
+
+
+
+
+
+        return new ProjectCreateUpdateResponse(id);
+    }
+
 
 }

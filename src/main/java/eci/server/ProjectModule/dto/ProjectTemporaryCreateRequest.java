@@ -1,16 +1,8 @@
 package eci.server.ProjectModule.dto;
 
-import eci.server.ItemModule.dto.item.ItemCreateRequest;
-import eci.server.ItemModule.entity.item.*;
-import eci.server.ItemModule.exception.item.ColorNotFoundException;
 import eci.server.ItemModule.exception.item.ItemNotFoundException;
-import eci.server.ItemModule.exception.item.ManufactureNotFoundException;
-import eci.server.ItemModule.exception.item.MaterialNotFoundException;
 import eci.server.ItemModule.exception.member.sign.MemberNotFoundException;
-import eci.server.ItemModule.repository.color.ColorRepository;
 import eci.server.ItemModule.repository.item.ItemRepository;
-import eci.server.ItemModule.repository.manufacture.ManufactureRepository;
-import eci.server.ItemModule.repository.material.MaterialRepository;
 import eci.server.ItemModule.repository.member.MemberRepository;
 import eci.server.ProjectModule.entity.project.Project;
 import eci.server.ProjectModule.entity.projectAttachment.ProjectAttachment;
@@ -22,15 +14,8 @@ import eci.server.ProjectModule.repository.projectType.ProjectTypeRepository;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.SequenceGenerator;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -88,14 +73,10 @@ public class ProjectTemporaryCreateRequest  {
             //임시저장용 인스턴스 id 99999 건네주기
 
             Long itemId = req.itemId==null?99999L:req.itemId;
-            Long projectTypeId = req.projectTypeId.toString().isBlank()?99999L:req.projectTypeId;
-            Long projectLevelId = req.projectLevelId.toString().isBlank()?99999L:req.projectLevelId;
-            Long produceOrgId = req.produceOrganizationId.toString().isBlank()?99999L:req.produceOrganizationId;
-            //Long clientOrgId = req.clientOrganizationId.toString().isBlank()?99999L:req.clientOrganizationId;
-
-            Long clientOrgId = 9999L;
-
-            clientOrgId = req.clientOrganizationId==null?99999L:req.clientOrganizationId;
+            Long projectTypeId = req.projectTypeId==null?99999L:req.projectTypeId;
+            Long projectLevelId = req.projectLevelId==null?99999L:req.projectLevelId;
+            Long produceOrgId = req.produceOrganizationId==null?99999L:req.produceOrganizationId;
+            Long clientOrgId = req.clientOrganizationId==null?99999L:req.clientOrganizationId;
 
             return new Project(
                     req.name.isBlank()?" default ":req.name,
@@ -103,10 +84,10 @@ public class ProjectTemporaryCreateRequest  {
                     //해당 형식은 스크럼 회의 후 변경
                     "M-"+year.toString()+"-"+"저장 시 생성",
 
-                    req.startPeriod.toString().isBlank()? LocalDate.parse("") :
+                    req.startPeriod.toString().isBlank()? LocalDate.parse("1900-01-01") :
                             LocalDate.parse(req.startPeriod, DateTimeFormatter.ISO_DATE),
 
-                    req.overPeriod.toString().isBlank()? LocalDate.parse("") :
+                    req.overPeriod.toString().isBlank()? LocalDate.parse("1900-01-01") :
                             LocalDate.parse(req.overPeriod, DateTimeFormatter.ISO_DATE),
 
                     //아이템, 프로젝트 타입 등 객체를
@@ -145,7 +126,7 @@ public class ProjectTemporaryCreateRequest  {
                             )
                     ).collect(
                             toList()
-                    ),
+                    ), //Project 생성자에 들이밀기
 
                     req.carType.toString().isBlank()?"":req.carType
             );

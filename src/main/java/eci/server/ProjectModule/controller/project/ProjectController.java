@@ -3,6 +3,7 @@ package eci.server.ProjectModule.controller.project;
 import eci.server.ItemModule.dto.response.Response;
 import eci.server.ProjectModule.dto.ProjectCreateRequest;
 import eci.server.ProjectModule.dto.ProjectTemporaryCreateRequest;
+import eci.server.ProjectModule.dto.ProjectUpdateRequest;
 import eci.server.ProjectModule.service.ProjectService;
 import eci.server.aop.AssignMemberId;
 import lombok.RequiredArgsConstructor;
@@ -54,5 +55,23 @@ public class ProjectController {
 
                 projectService.create(req));
     }
+
+    /**
+     * 특정 프로젝트 수정
+     *
+     * @param id
+     * @param req
+     * @return
+     */
+    @CrossOrigin(origins = "https://localhost:3000")
+    @PutMapping("/project/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public Response update(
+            @PathVariable Long id,
+            @Valid @ModelAttribute ProjectUpdateRequest req) {
+
+        return Response.success(projectService.update(id, req));
+    }
+
 
 }

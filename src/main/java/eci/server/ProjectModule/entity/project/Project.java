@@ -5,7 +5,20 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import eci.server.ItemModule.entity.entitycommon.EntityDate;
 import eci.server.ItemModule.entity.item.*;
 import eci.server.ItemModule.entity.member.Member;
+import eci.server.ItemModule.exception.item.ItemNotFoundException;
+import eci.server.ItemModule.repository.item.ItemRepository;
+import eci.server.ItemModule.repository.member.MemberRepository;
+import eci.server.ProjectModule.dto.ProjectUpdateRequest;
 import eci.server.ProjectModule.entity.projectAttachment.ProjectAttachment;
+import eci.server.ProjectModule.exception.ClientOrganizationNotFoundException;
+import eci.server.ProjectModule.exception.ProduceOrganizationNotFoundException;
+import eci.server.ProjectModule.exception.ProjectLevelNotFoundException;
+import eci.server.ProjectModule.exception.ProjectTypeNotFoundException;
+import eci.server.ProjectModule.repository.clientOrg.ClientOrganizationRepository;
+import eci.server.ProjectModule.repository.produceOrg.ProduceOrganizationRepository;
+import eci.server.ProjectModule.repository.projectAttachmentRepository.ProjectAttachmentRepository;
+import eci.server.ProjectModule.repository.projectLevel.ProjectLevelRepository;
+import eci.server.ProjectModule.repository.projectType.ProjectTypeRepository;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -15,8 +28,11 @@ import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -136,44 +152,6 @@ public class Project extends EntityDate {
 
     }
 
-//    public eci.server.ItemModule.entity.item.Item.FileUpdatedResult update(
-//            ItemUpdateRequest req,
-//            ColorRepository colorRepository
-//    ) {
-//
-//        this.name = req.getName();
-//        this.type = req.getType();
-//        this.width = req.getWidth();
-//        this.height = req.getHeight();
-//        this.weight = req.getWeight();
-//
-//        this.color = colorRepository.findById(Long.valueOf(req.getColorId()))
-//                .orElseThrow(ColorNotFoundException::new);
-//
-//        eci.server.ItemModule.entity.item.Item.ImageUpdatedResult resultImage =
-//                findImageUpdatedResult(
-//                        req.getAddedImages(),
-//                        req.getDeletedImages()
-//                );
-//
-//        addImages(resultImage.getAddedImages());
-//        deleteImages(resultImage.getDeletedImages());
-//
-//        eci.server.ItemModule.entity.item.Item.AttachmentUpdatedResult resultAttachment =
-//
-//                findAttachmentUpdatedResult(
-//                        req.getAddedAttachments(),
-//                        req.getDeletedAttachments()
-//                );
-//
-//        addAttachments(resultAttachment.getAddedAttachments());
-//        deleteAttachments(resultAttachment.getDeletedAttachments());
-//
-//        eci.server.ItemModule.entity.item.Item.FileUpdatedResult fileUpdatedResult = new eci.server.ItemModule.entity.item.Item.FileUpdatedResult(resultAttachment,resultImage);
-//
-//        return fileUpdatedResult;
-//    }
-
     /**
      * 추가할 attachments
      *
@@ -185,6 +163,133 @@ public class Project extends EntityDate {
             i.initProject(this);
         });
     }
+
+
+    public FileUpdatedResult update(
+            ProjectUpdateRequest req,
+            ItemRepository itemRepository,
+            ProjectTypeRepository projectTypeRepository,
+            ProjectLevelRepository projectLevelRepository,
+            ProduceOrganizationRepository produceOrganizationRepository,
+            ClientOrganizationRepository clientOrganizationRepository
+    )
+
+    {
+
+        this.name = req.getName().isBlank() ? " " : req.getName();
+
+        this.projectType =
+                req.getProjectTypeId() ==null?
+                        this.projectType:
+                        projectTypeRepository.findById(req.getProjectTypeId())
+                .orElseThrow(ProjectTypeNotFoundException::new);
+
+        this.startPeriod =
+                req.getStartPeriod().isBlank()?
+                        this.startPeriod:
+                        LocalDate.parse(req.getStartPeriod(), DateTimeFormatter.ISO_DATE);
+
+        this.overPeriod =
+                req.getOverPeriod().isBlank()?
+                        this.overPeriod:
+                        LocalDate.parse(req.getOverPeriod(), DateTimeFormatter.ISO_DATE);
+
+        this.item =
+                req.getItemId()==null?
+                        this.item:
+                        itemRepository.findById(req.getItemId())
+                                .orElseThrow(ItemNotFoundException::new);
+
+        this.projectLevel =
+                req.getProjectLevelId() == null?
+                        this.projectLevel:
+                        projectLevelRepository.findById(req.getProjectLevelId())
+                                .orElseThrow(ProjectLevelNotFoundException::new);
+
+        this.clientOrganization =
+                req.getClientOrganizationId() == null?
+                        this.clientOrganization:
+                        clientOrganizationRepository.findById(2L)//req.getProjectLevelId())
+                                .orElseThrow(ClientOrganizationNotFoundException::new);
+
+        this.produceOrganization =
+                req.getProduceOrganizationId() == null?
+                        this.produceOrganization:
+                        produceOrganizationRepository.findById(req.getProduceOrganizationId())
+                                .orElseThrow(ProduceOrganizationNotFoundException::new);
+
+        this.carType =
+                req.getCarType().isBlank()?
+                        this.carType:
+                        req.getCarType();
+
+
+        ProjectAttachmentUpdatedResult resultAttachment =
+
+                findAttachmentUpdatedResult(
+                        req.getAddedAttachments(),
+                        req.getDeletedAttachments()
+                );
+        addUpdatedProjectAttachments(req, resultAttachment.getAddedAttachments());
+        //addProjectAttachments(resultAttachment.getAddedAttachments());
+        deleteProjectAttachments(resultAttachment.getDeletedAttachments());
+
+        FileUpdatedResult fileUpdatedResult = new FileUpdatedResult(
+                resultAttachment//, updatedAddedProjectAttachmentList
+        );
+
+        return fileUpdatedResult;
+    }
+
+    private void addUpdatedProjectAttachments(ProjectUpdateRequest req, List<ProjectAttachment> added) {
+        SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date now = new Date();
+
+        added.stream().forEach(i -> {
+            projectAttachments.add(i);
+            i.initProject(this);
+
+            i.setAttach_comment(req.getAddedAttachmentComment().get((added.indexOf(i))));
+            i.setTag(req.getAddedTag().get((added.indexOf(i))));
+            i.setAttachmentaddress(
+                    "src/main/prodmedia/image/" +
+                    sdf1.format(now).substring(0,10)
+                    + "/"
+                    + i.getUniqueName()
+            );
+
+        });
+
+
+    }
+//
+//
+//    private List<ProjectAttachment> addUpdatedProjectAttachments(ProjectUpdateRequest req, List<ProjectAttachment> added) {
+//
+//        List <ProjectAttachment> projectAttachmentList = new ArrayList<>();
+//
+//        added.stream().forEach(i -> {
+//            projectAttachments.add(i);
+//            i.initProject(this);
+//        });
+//
+//        projectAttachmentList = req.getAddedAttachments().stream().map(
+//                i -> new ProjectAttachment(
+//                        i.getOriginalFilename(),
+//                        req.getAddedTag().get(req.getAddedAttachments().indexOf(i)),
+//                        req.getAddedAttachmentComment().get(req.getAddedAttachments().indexOf(i))
+//                )
+//        ).collect(
+//                toList()
+//        );
+//
+//        projectAttachmentList.stream().forEach(i -> {
+//            projectAttachments.add(i);
+//            i.initProject(this);
+//        });
+//
+//        return projectAttachmentList;
+//    }
 
     /**
      * 삭제될 이미지 제거 (고아 객체 이미지 제거)
@@ -198,10 +303,8 @@ public class Project extends EntityDate {
                 );
     }
 
-
-
     /**
-     * 업데이트 돼야 할 이미지 정보 만들어줌
+     * 업데이트 돼야 할 파일 정보 만들어줌
      *
      * @return
      */
@@ -252,5 +355,6 @@ public class Project extends EntityDate {
     @AllArgsConstructor
     public static class FileUpdatedResult {
         private ProjectAttachmentUpdatedResult attachmentUpdatedResult;
+        //private List <ProjectAttachment> projectAttachmentList;
     }
 }
