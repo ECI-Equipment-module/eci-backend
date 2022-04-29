@@ -19,7 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.function.Function;
 
-import static eci.server.ProjectModule.entity.QProjectType.projectType;
+import static eci.server.ProjectModule.entity.project.QProjectType.projectType;
 
 @Transactional(readOnly = true)
 public class CustomProjectTypeRepositoryImpl extends QuerydslRepositorySupport implements CustomProjectTypeRepository {

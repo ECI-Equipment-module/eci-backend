@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.function.Function;
 
 import static com.querydsl.core.types.Projections.constructor;
-import static eci.server.ProjectModule.entity.QProjectLevel.projectLevel;
+import static eci.server.ProjectModule.entity.project.QProjectLevel.projectLevel;
 
 @Transactional(readOnly = true)
 public class CustomProjectLevelRepositoryImpl extends QuerydslRepositorySupport implements CustomProjectLevelRepository {

@@ -18,8 +18,7 @@ import java.util.List;
 import java.util.function.Function;
 
 import static com.querydsl.core.types.Projections.constructor;
-import static eci.server.ProjectModule.entity.QClientOrganization.clientOrganization;
-
+import static eci.server.ProjectModule.entity.project.QClientOrganization.clientOrganization;
 @Transactional(readOnly = true)
 public class CustomClientOrganizationRepositoryImpl extends QuerydslRepositorySupport implements CustomClientOrganizationRepository {
 

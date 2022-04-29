@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.function.Function;
 
 import static com.querydsl.core.types.Projections.constructor;
-import static eci.server.ProjectModule.entity.QProduceOrganization.produceOrganization;
+import static eci.server.ProjectModule.entity.project.QProduceOrganization.produceOrganization;
 
 @Transactional(readOnly = true)
 public class CustomProduceOrganizationRepositoryImpl extends QuerydslRepositorySupport implements CustomProduceOrganizationRepository {
