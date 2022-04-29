@@ -60,10 +60,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.DELETE, "/routes/{id}").access("@routeGuard.check(#id)")
 
                 .antMatchers(HttpMethod.POST, "/newRoutes").authenticated()
-                .antMatchers(HttpMethod.POST, "/newRoutes2").authenticated()
-                .antMatchers(HttpMethod.POST, "/newRoutes4").authenticated()
                 .antMatchers(HttpMethod.PUT, "/approveRoutes/{id}").access("@newRouteGuard.check(#id)")
                 .antMatchers(HttpMethod.PUT, "/rejectRoutes/{id}").access("@newRouteGuard.check(#id)")
+
+                .antMatchers(HttpMethod.POST, "/project").authenticated()
+                .antMatchers(HttpMethod.POST, "/project/temp").authenticated()
+//                .antMatchers(HttpMethod.PUT, "/approveRoutes/{id}").access("@newRouteGuard.check(#id)")
+//                .antMatchers(HttpMethod.PUT, "/rejectRoutes/{id}").access("@newRouteGuard.check(#id)")
 
                 .anyRequest().hasAnyRole("ADMIN")
                 .and()

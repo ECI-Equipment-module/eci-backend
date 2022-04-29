@@ -27,37 +27,31 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.SequenceGenerator;
 import javax.validation.constraints.*;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 import java.util.stream.Collectors;
 
-import static java.util.stream.Collectors.partitioningBy;
-import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.*;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class ProjectCreateRequest {
 
-    @NotNull@NotBlank(message = "프로젝트 이름을 입력해주세요.")
+    @NotNull(message = "프로젝트 이름을 입력해주세요.")
     private String name;
 
 
     @NotNull(message = "프로젝트 타입을 입력해주세요.")
     private Long projectTypeId;
 
-    @Null
-    @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="SEQUENCE1")
-    @SequenceGenerator(name="SEQUENCE1", sequenceName="SEQUENCE1", allocationSize=1)
-    private Integer projectNumber;//프로젝트 넘버에 2022-N-projectNumber
-
     @NotNull(message = "시작 시기를 입력해주세요.")
-    private LocalDate startPeriod;
+    private String startPeriod;
 
     @NotNull(message = "종료 시기를 입력해주세요.")
-    private LocalDate overPeriod;
+    private String overPeriod;
 
     // 로그인 된 멤버 자동 주입
     @Null
@@ -76,14 +70,12 @@ public class ProjectCreateRequest {
     @NotNull(message = "프로젝트 레벨을 입력해주세요.")
     private Long projectLevelId;
 
-    @NotNull(message = "고객사를 입력해주세요.")
-    private Long clientOrganizationId;
+    private Long clientOrganizationId; //양산 아니면 없어도 됨
 
     @NotNull(message = "생산사를 입력해주세요.")
     private Long produceOrganizationId;
 
-    @NotNull(message = "차종을 입력해주세요.")
-    private String carType;
+    private String carType; //양산 아니면 없어도 됨
 
     public static Project toEntity(
             ProjectCreateRequest req,
@@ -99,7 +91,7 @@ public class ProjectCreateRequest {
         //양산 개발의 아이디가 1 (Long)
         if (req.projectTypeId.equals(1L)){
             //TODO 프로젝트 타입이 양산개발이라면 필수 속성은 고객사 / 차종 은 null 이 되면 안됨 검사
-            if(req.clientOrganizationId.toString().isBlank()&&req.carType.isEmpty())
+            if(req.clientOrganizationId==null||req.carType.isEmpty())
             throw new MassProductionSaveException();
 
         }else if( //필수 속성 중 저장 안된 부분 있나 체크
@@ -108,20 +100,37 @@ public class ProjectCreateRequest {
                         req.projectLevelId.toString().isBlank()||
                         req.name.isBlank()|| req.itemId.toString().isBlank()
         ){
+
             throw new ProjectCreateNotEmptyException();
         }
 
         Integer year = Calendar.getInstance().get(Calendar.YEAR);
-        String projectNum = String.format("%05d", req.projectNumber);
+
+        Date now = new Date();
+        //projectNum 겹치지않도록 설정(순간의 연-월시분초
+        String projectNum = new SimpleDateFormat("MMddHHmmss", Locale.ENGLISH).format(now);
+        String finalProjNum = "";
+
+        if(req.projectTypeId.equals(1L)) {
+            finalProjNum = "M-" + year.toString() + "-" + projectNum;
+        }else {
+            finalProjNum = "N-" + year.toString() + "-" + projectNum;
+        }
+
+        Long clientOrgId = 100000L;
+        clientOrgId = req.clientOrganizationId==null?100000L:req.clientOrganizationId;
 
         return new Project(
                 req.name,
                 //TODO 임시 : 프로젝트 number은 양산이면  M-현재년도-REQ.NUM / 선형이면 N-~
                 //해당 형식 스크럼 회의 후 변경 예정
-                "M-"+year.toString()+"-"+projectNum,
 
-                req.startPeriod,
-                req.overPeriod,
+
+
+                finalProjNum,
+
+                LocalDate.parse(req.startPeriod, DateTimeFormatter.ISO_DATE),
+                LocalDate.parse(req.overPeriod, DateTimeFormatter.ISO_DATE),
 
                 itemRepository.findById(req.itemId)
                         .orElseThrow(ItemNotFoundException::new),
@@ -143,7 +152,7 @@ public class ProjectCreateRequest {
                         .orElseThrow(ProduceOrganizationNotFoundException::new),
                 // 예외 만들기
 
-                clientOrganizationRepository.findById(req.clientOrganizationId)
+                clientOrganizationRepository.findById(clientOrgId)
                         .orElseThrow(ClientOrganizationNotFoundException::new),
                 // 예외 만들기
 

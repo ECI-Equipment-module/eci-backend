@@ -33,6 +33,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -49,14 +50,9 @@ public class ProjectTemporaryCreateRequest  {
 
         private Long projectTypeId;
 
-        @Null
-        @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="SEQUENCE1")
-        @SequenceGenerator(name="SEQUENCE1", sequenceName="SEQUENCE1", allocationSize=1)
-        private Integer projectNumber;//프로젝트 넘버에 2022-N-projectNumber
+        private String startPeriod;
 
-        private LocalDate startPeriod;
-
-        private LocalDate overPeriod;
+        private String overPeriod;
 
         // 로그인 된 멤버 자동 주입
         @Null
@@ -91,20 +87,27 @@ public class ProjectTemporaryCreateRequest  {
             //객체 findById 하는 애들이 빈칸이면
             //임시저장용 인스턴스 id 99999 건네주기
 
-            Long itemId = req.itemId.toString().isBlank()?99999L:req.itemId;
+            Long itemId = req.itemId==null?99999L:req.itemId;
             Long projectTypeId = req.projectTypeId.toString().isBlank()?99999L:req.projectTypeId;
             Long projectLevelId = req.projectLevelId.toString().isBlank()?99999L:req.projectLevelId;
             Long produceOrgId = req.produceOrganizationId.toString().isBlank()?99999L:req.produceOrganizationId;
-            Long clientOrgId = req.clientOrganizationId.toString().isBlank()?99999L:req.clientOrganizationId;
+            //Long clientOrgId = req.clientOrganizationId.toString().isBlank()?99999L:req.clientOrganizationId;
+
+            Long clientOrgId = 9999L;
+
+            clientOrgId = req.clientOrganizationId==null?99999L:req.clientOrganizationId;
 
             return new Project(
-                    req.name.isBlank()?"":req.name,
+                    req.name.isBlank()?" default ":req.name,
                     //프로젝트 number은 양산이면 M-현재년도-REQ.NUM / 선형이면 N-~
                     //해당 형식은 스크럼 회의 후 변경
                     "M-"+year.toString()+"-"+"저장 시 생성",
 
-                    req.startPeriod.toString().isBlank()? LocalDate.parse("") :req.startPeriod,
-                    req.overPeriod.toString().isBlank()? LocalDate.parse("") :req.overPeriod,
+                    req.startPeriod.toString().isBlank()? LocalDate.parse("") :
+                            LocalDate.parse(req.startPeriod, DateTimeFormatter.ISO_DATE),
+
+                    req.overPeriod.toString().isBlank()? LocalDate.parse("") :
+                            LocalDate.parse(req.overPeriod, DateTimeFormatter.ISO_DATE),
 
                     //아이템, 프로젝트 타입 등 객체를
                     // 지정하지 않았으면 어쩌지? 임시 객체들을 만들어둬야 하나

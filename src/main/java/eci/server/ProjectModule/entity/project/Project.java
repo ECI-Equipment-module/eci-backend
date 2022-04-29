@@ -40,10 +40,12 @@ public class Project extends EntityDate {
     //save 할 시에 type + id 값으로 지정
 
     //@DateTimeFormat(pattern = "yyyy-MM-dd") -> request로 받아올 때 이와 같이 받아오기
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
+    //@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
+    @Column(nullable = false)
     private LocalDate startPeriod;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
+    //@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
+    @Column(nullable = false)
     private LocalDate overPeriod;
 
     @OneToOne
@@ -76,12 +78,12 @@ public class Project extends EntityDate {
     private ProduceOrganization produceOrganization;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "clientOrganization_id", nullable = false)
+    @JoinColumn(name = "clientOrganization_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private ClientOrganization clientOrganization;
 
     //차종
-    @Column(nullable = false)
+    @Column
     private String carType;
 
     @OneToMany(
