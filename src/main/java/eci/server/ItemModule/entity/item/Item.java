@@ -15,7 +15,9 @@ import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -199,8 +201,8 @@ public class Item extends EntityDate {
                         req.getAddedAttachments(),
                         req.getDeletedAttachments()
                 );
-
-        addAttachments(resultAttachment.getAddedAttachments());
+        addUpdatedAttachments(req, resultAttachment.getAddedAttachments());
+        //addAttachments(resultAttachment.getAddedAttachments());
         deleteAttachments(resultAttachment.getDeletedAttachments());
 
         FileUpdatedResult fileUpdatedResult = new FileUpdatedResult(resultAttachment,resultImage);
@@ -229,6 +231,24 @@ public class Item extends EntityDate {
         added.stream().forEach(i -> {
             attachments.add(i);
             i.initItem(this);
+        });
+    }
+
+    private void addUpdatedAttachments(ItemUpdateRequest req, List<Attachment> added) {
+        SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date now = new Date();
+
+        added.stream().forEach(i -> {
+            attachments.add(i);
+            i.initItem(this);
+            i.setAttach_comment(req.getAddedAttachmentComment().get((added.indexOf(i))));
+            i.setTag(req.getAddedTag().get((added.indexOf(i))));
+            i.setAttachmentaddress(
+                    "src/main/prodmedia/image/" +
+                            sdf1.format(now).substring(0,10)
+                            + "/"
+                            + i.getUniqueName()
+            );
         });
     }
 

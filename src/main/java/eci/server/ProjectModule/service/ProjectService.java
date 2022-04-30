@@ -128,8 +128,7 @@ public class ProjectService {
                 projectTypeRepository,
                 projectLevelRepository,
                 produceOrganizationRepository,
-                clientOrganizationRepository,
-                projectAttachmentRepositoryl
+                clientOrganizationRepository
         );
 
 
