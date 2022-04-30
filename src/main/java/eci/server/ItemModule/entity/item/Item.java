@@ -82,9 +82,6 @@ public class Item extends EntityDate {
 
     @Column(nullable = false)
     private Boolean revise_progress;
-//
-//    @Column(nullable = false)
-//    private Boolean revise_progress;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "color_id", nullable = false)
@@ -104,6 +101,9 @@ public class Item extends EntityDate {
             orphanRemoval = true,
             fetch = FetchType.LAZY)
     private List<ItemManufacture> manufactures;
+
+    @Column
+    private int revision;
 
     public Item(
             String name,
@@ -126,6 +126,7 @@ public class Item extends EntityDate {
 
             List<Manufacture> manufactures,
             List<String> partnumbers
+
 
     ) {
         this.name = name;
@@ -162,6 +163,8 @@ public class Item extends EntityDate {
                                 )
                         )
                         .collect(toList());
+
+        this.revision = 65;
 
     }
 
@@ -202,7 +205,7 @@ public class Item extends EntityDate {
                         req.getDeletedAttachments()
                 );
         addUpdatedAttachments(req, resultAttachment.getAddedAttachments());
-        //addAttachments(resultAttachment.getAddedAttachments());
+
         deleteAttachments(resultAttachment.getDeletedAttachments());
 
         FileUpdatedResult fileUpdatedResult = new FileUpdatedResult(resultAttachment,resultImage);

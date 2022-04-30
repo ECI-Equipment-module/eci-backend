@@ -20,7 +20,7 @@ public class RouteProductCreateRequest {
 
     public static List<RouteProduct> toEntityList(
             RouteOrderingCreateRequest req,
-            RouteOrdering newRoute,
+            RouteOrdering routeOrdering,
             RoutePreset routePreset,
             MemberRepository memberRepository,
             RouteTypeRepository routeTypeRepository
@@ -28,7 +28,7 @@ public class RouteProductCreateRequest {
     ) {
         //아이템 타입의해 routeType 결정됨
         Integer routeTypeIdx = ItemType.valueOf(
-                newRoute.getItem().getType()
+                routeOrdering.getItem().getType()
                             ).label();
 
 
@@ -81,7 +81,7 @@ public class RouteProductCreateRequest {
                 true,
                 false,
                 member1,
-                newRoute
+                routeOrdering
 
         );
 
@@ -117,7 +117,7 @@ public class RouteProductCreateRequest {
                 ).collect(
                         toList()
                 ),
-                newRoute
+                routeOrdering
         )
         ).collect(toList());
 

@@ -2,7 +2,7 @@ package eci.server.ItemModule.dto.newRoute;
 
 import eci.server.ItemModule.entity.item.Item;
 import eci.server.ItemModule.entity.item.ItemType;
-import eci.server.ItemModule.entity.newRoute.ItemRouteType;
+import eci.server.ItemModule.entity.newRoute.RouteType;
 import eci.server.ItemModule.entity.newRoute.RouteOrdering;
 import eci.server.ItemModule.entity.newRoute.RoutePreset;
 import eci.server.ItemModule.exception.item.ItemNotFoundException;
@@ -44,7 +44,7 @@ public class RouteOrderingCreateRequest {
     public static RouteOrdering toEntity(
             RouteOrderingCreateRequest req,
             ItemRepository itemRepository,
-            RoutePreset newRouteType,
+            RoutePreset routePreset,
             RouteTypeRepository routeTypeRepository
             //ItemType itemType
     ){
@@ -53,13 +53,14 @@ public class RouteOrderingCreateRequest {
         List<String> typeList = new ArrayList<>();
 
         //아이템 타입에따라서 라우트 타입이 선택된다.
+        // TODO 라벨 아니고 ITEM.ROUTE_TYPE.ID 로 선택해준다
         Integer routeType =  ItemType.valueOf(targetItem.getType()).label();
-
-        ItemRouteType routeType1 = routeTypeRepository.findByName("REVIEW").get(0);
+//
+//        RouteType routeType1 = routeTypeRepository.findByName("REVIEW").get(0);
 //        System.out.println(routeType1.getName());
 //        System.out.println(routeType1.getId());
 //        System.out.println("succccccccccccessssssssssssss");
-        List routeProduct = List.of((newRouteType.itemRouteName[routeType]));
+        List routeProduct = List.of((routePreset.itemRouteName[routeType]));
 
         System.out.println(routeProduct.size());
         for(Object type : routeProduct){

@@ -39,7 +39,7 @@ public class RouteOrdering extends EntityDate {
 
     /**
      * 요청 int로 받아서 지정할 때
-     * NewRouteType.get(int)로 지정
+     * routePreset.get(int)로 지정
      */
     @Column(nullable = false)
     private String type;
@@ -66,7 +66,7 @@ public class RouteOrdering extends EntityDate {
     private Integer present;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "item_id", nullable = false)
+    @JoinColumn(name = "item_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Item item;
 

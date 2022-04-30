@@ -92,7 +92,7 @@ public class ReadItemDto {
 
                 routeDtoList,
 
-                (char)(newRouteDto.getRevisedCnt().intValue()),
+                itemDto.getRevision(),
 //                ((Character)newRouteDto.getRevisedCnt()),
 
                 routeProductDto.getType(),//이게 곧 work phase
@@ -145,9 +145,9 @@ public class ReadItemDto {
 
                 routeDtoList,
 
-                '0',
+                itemDto.getRevision(),
                 typeList.toString(),
-                "LIFESTATUS_NONE"
+                "LIFECYCLE_NONE"
 
         );
     }

@@ -1,23 +1,17 @@
-package eci.server.ItemModule.dto.item;
+package eci.server.ProjectModule.dto.projectAttachmentDto;
 
-import eci.server.ItemModule.dto.member.MemberDto;
-import eci.server.ItemModule.dto.route.RouteDto;
 import eci.server.ItemModule.entity.item.Attachment;
-import eci.server.ItemModule.entity.item.Image;
-import eci.server.ItemModule.entity.route.Route;
-import eci.server.ItemModule.helper.NestedConvertHelper;
+import eci.server.ProjectModule.entity.projectAttachment.ProjectAttachment;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
 
 @Data
 @AllArgsConstructor
-public class AttachmentDto {
+public class ProjectAttachmentDto  {
     private Long id;
     private String originName;
     private String uniqueName;
@@ -28,8 +22,8 @@ public class AttachmentDto {
     private String date;
     private String upload;
 
-    public static AttachmentDto toDto(Attachment attachment) {
-        return new AttachmentDto(
+    public static ProjectAttachmentDto toDto(ProjectAttachment attachment) {
+        return new ProjectAttachmentDto(
                 attachment.getId(),
                 attachment.getOriginName(),
                 attachment.getUniqueName(),
@@ -49,17 +43,17 @@ public class AttachmentDto {
 
                 attachment.getModifiedAt().toString().split("_")[0].substring(0, 10),
 
-                attachment.getItem().getMember().getUsername()
+                attachment.getProject().getMember().getUsername()
 
         );
     }
 
 
-    public static List<AttachmentDto> toDtoList(List<Attachment> Attachments) {
+    public static List<ProjectAttachmentDto> toDtoList(List<ProjectAttachment> Attachments) {
 
-        List<AttachmentDto> attachmentDtoList =
+        List<ProjectAttachmentDto> attachmentDtoList =
                 Attachments.stream().map(
-                        i -> new AttachmentDto(
+                        i -> new ProjectAttachmentDto(
                                 i.getId(),
                                 i.getOriginName(),
                                 i.getUniqueName(),
@@ -78,8 +72,7 @@ public class AttachmentDto {
                                         i.getUniqueName(),
 
                                 i.getModifiedAt().toString().split("_")[0].substring(0, 10),
-
-                                i.getItem().getMember().getUsername()
+                                i.getProject().getMember().getUsername()
                         )
                 ).collect(
                         toList()

@@ -1,14 +1,9 @@
 package eci.server.ProjectModule.dto;
 
-import eci.server.ItemModule.entity.item.*;
 import eci.server.ItemModule.exception.item.*;
 import eci.server.ItemModule.exception.member.sign.MemberNotFoundException;
-import eci.server.ItemModule.repository.color.ColorRepository;
 import eci.server.ItemModule.repository.item.ItemRepository;
-import eci.server.ItemModule.repository.manufacture.ManufactureRepository;
-import eci.server.ItemModule.repository.material.MaterialRepository;
 import eci.server.ItemModule.repository.member.MemberRepository;
-import eci.server.ProjectModule.dto.projectLevel.ProjectLevelReadCondition;
 import eci.server.ProjectModule.entity.project.Project;
 import eci.server.ProjectModule.entity.projectAttachment.ProjectAttachment;
 import eci.server.ProjectModule.exception.*;
@@ -19,19 +14,13 @@ import eci.server.ProjectModule.repository.projectType.ProjectTypeRepository;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.SequenceGenerator;
 import javax.validation.constraints.*;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.*;
 
@@ -169,4 +158,5 @@ public class ProjectCreateRequest {
                 req.carType
         );
     }
+
 }

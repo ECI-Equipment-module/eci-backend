@@ -109,6 +109,9 @@ public class Project extends EntityDate {
     )
     private List<ProjectAttachment> projectAttachments;
 
+    @Column
+    private char revision;
+
     public Project(
             String name,
             String projectNumber,
@@ -149,6 +152,8 @@ public class Project extends EntityDate {
 
         this.projectAttachments = new ArrayList<>();
         addProjectAttachments(projectAttachments);
+
+        this.revision = 65;
 
     }
 
@@ -238,6 +243,7 @@ public class Project extends EntityDate {
                 resultAttachment//, updatedAddedProjectAttachmentList
         );
 
+
         return fileUpdatedResult;
     }
 
@@ -262,34 +268,7 @@ public class Project extends EntityDate {
 
 
     }
-//
-//
-//    private List<ProjectAttachment> addUpdatedProjectAttachments(ProjectUpdateRequest req, List<ProjectAttachment> added) {
-//
-//        List <ProjectAttachment> projectAttachmentList = new ArrayList<>();
-//
-//        added.stream().forEach(i -> {
-//            projectAttachments.add(i);
-//            i.initProject(this);
-//        });
-//
-//        projectAttachmentList = req.getAddedAttachments().stream().map(
-//                i -> new ProjectAttachment(
-//                        i.getOriginalFilename(),
-//                        req.getAddedTag().get(req.getAddedAttachments().indexOf(i)),
-//                        req.getAddedAttachmentComment().get(req.getAddedAttachments().indexOf(i))
-//                )
-//        ).collect(
-//                toList()
-//        );
-//
-//        projectAttachmentList.stream().forEach(i -> {
-//            projectAttachments.add(i);
-//            i.initProject(this);
-//        });
-//
-//        return projectAttachmentList;
-//    }
+
 
     /**
      * 삭제될 이미지 제거 (고아 객체 이미지 제거)
@@ -355,6 +334,5 @@ public class Project extends EntityDate {
     @AllArgsConstructor
     public static class FileUpdatedResult {
         private ProjectAttachmentUpdatedResult attachmentUpdatedResult;
-        //private List <ProjectAttachment> projectAttachmentList;
     }
 }

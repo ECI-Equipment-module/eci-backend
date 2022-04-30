@@ -1,75 +1,64 @@
 package eci.server.ProjectModule.dto;
 
-import eci.server.ItemModule.dto.color.ColorDto;
-import eci.server.ItemModule.dto.item.AttachmentDto;
-import eci.server.ItemModule.dto.item.ImageDto;
-import eci.server.ItemModule.dto.manufacture.ManufactureSimpleDto;
-import eci.server.ItemModule.dto.material.MaterialSimpleDto;
+import eci.server.ItemModule.dto.item.ItemDto;
 import eci.server.ItemModule.dto.member.MemberDto;
 import eci.server.ItemModule.entity.item.Item;
+import eci.server.ItemModule.entity.member.Member;
+import eci.server.ProjectModule.dto.clientOrg.ClientOrganizationDto;
+import eci.server.ProjectModule.dto.produceOrg.ProduceOrganizationDto;
+import eci.server.ProjectModule.dto.projectAttachmentDto.ProjectAttachmentDto;
+import eci.server.ProjectModule.dto.projectLevel.ProjectLevelDto;
+import eci.server.ProjectModule.dto.projectType.ProjectTypeDto;
+import eci.server.ProjectModule.entity.project.*;
+import eci.server.ProjectModule.entity.projectAttachment.ProjectAttachment;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
+import java.time.LocalDate;
 import java.util.List;
-import java.util.stream.Collectors;
+
 
 import static java.util.stream.Collectors.toList;
 
 @Data
 @AllArgsConstructor
 public class ProjectDto {
-    private boolean tempsave;
-
     private Long id;
     private String name;
-    private String type;
-    private Integer itemNumber;
-    private String width;
-    private String height;
-    private String weight;
+    private String projectNumber;
+    private LocalDate startPeriod;
+    private LocalDate overPeriod;
+    private ItemDto item;
     private MemberDto member;
-    private List<ImageDto> thumbnail;
-    private List<AttachmentDto> attachments;
-    private ColorDto color;
+    private Boolean tempsave;
+    private ProjectTypeDto projectType;
+    private ProjectLevelDto projectLevel;
+    private ProduceOrganizationDto produceOrganization;
+    private ClientOrganizationDto clientOrganization;
+    private String carType;
+    private List<ProjectAttachmentDto> projectAttachments;
 
-    private List<MaterialSimpleDto> materialDto;
-    private List<ManufactureSimpleDto> manufactureSimpleDtos;
+    public static ProjectDto toDto(Project project){
 
-    public static eci.server.ItemModule.dto.item.ItemDto toDto(Item Item) {
-
-        return new eci.server.ItemModule.dto.item.ItemDto(
-                Item.getTempsave(),
-
-                Item.getId(),
-                Item.getName(),
-                Item.getType(),
-                Item.getItemNumber(),
-                Item.getWidth(),
-                Item.getHeight(),
-                Item.getWeight(),
-                MemberDto.toDto(Item.getMember()),
-
-                Item.getThumbnail().
+        return new ProjectDto(
+                project.getId(),
+                project.getName(),
+                project.getProjectNumber(),
+                project.getStartPeriod(),
+                project.getOverPeriod(),
+                ItemDto.toDto(project.getItem()),
+                MemberDto.toDto(project.getMember()),
+                project.getTempsave(),
+                ProjectTypeDto.toDto(project.getProjectType()),
+                ProjectLevelDto.toDto(project.getProjectLevel()),
+                ProduceOrganizationDto.toDto(project.getProduceOrganization()),
+                ClientOrganizationDto.toDto(project.getClientOrganization()),
+                project.getCarType(),
+                project.getProjectAttachments().
                         stream().
-                        map(i -> ImageDto.toDto(i)).collect(toList()),
+                        map(i -> ProjectAttachmentDto.toDto(i))
+                        .collect(toList())
 
-                Item.getAttachments().
-                        stream().
-                        map(i -> AttachmentDto.toDto(i)).collect(toList()),
-
-                ColorDto.toDto(Item.getColor()),
-
-                Item.getMaterials().
-                        stream().
-                        map(i -> MaterialSimpleDto.toDto(
-                                i.getMaterial())
-                        ).collect(toList()),
-
-                Item.getManufactures().
-                        stream().
-                        map(i -> ManufactureSimpleDto.toDto(
-                                i.getManufacture())
-                        ).collect(toList())
 
         );
     }

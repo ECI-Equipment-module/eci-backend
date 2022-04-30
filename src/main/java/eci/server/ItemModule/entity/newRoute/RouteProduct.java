@@ -55,7 +55,7 @@ public class RouteProduct extends EntityDate {
      */
     @ManyToOne
     @JoinColumn(name ="route_type")
-    private ItemRouteType type;
+    private RouteType type;
 
 
     /**
@@ -111,7 +111,7 @@ public class RouteProduct extends EntityDate {
             Integer origin_seq,
 
             String name,
-            ItemRouteType type,
+            RouteType type,
             String comments,
             boolean passed,
             boolean rejected,
@@ -178,7 +178,7 @@ public class RouteProduct extends EntityDate {
         this.passed = passed;
     }
 
-    public void setType(ItemRouteType type) {
+    public void setType(RouteType type) {
         this.type = type;
     }
 
