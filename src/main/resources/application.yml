@@ -4,7 +4,7 @@ whitelist:
 #  chans: https://6a3e-118-36-38-193.ngrok.io
 
 server:
-  port: 8181
+  port: 8081
 #  ssl:
 #    key-store: classpath:ecikey.p12
 #    key-store-type: PKCS12

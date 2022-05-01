@@ -35,11 +35,11 @@ public class RouteProductDto {
                         c.getId(),
                         c.getSequence(),
                         c.getType().getName(),
-                        c.getName(),
+                        c.getRoute_name(),
                         c.getComments(),
                         c.isPassed(),
                         c.isRejected(),
-                        c.isShow(),
+                        c.isRoute_show(),
                         MemberDto.toDtoList(
                                 c.getMembers().stream().map(
                                         m -> m.getMember()
@@ -58,11 +58,11 @@ public class RouteProductDto {
                 routeProduct.getId(),
                 routeProduct.getSequence(),
                 routeProduct.getType().getName(),
-                routeProduct.getName(),
+                routeProduct.getRoute_name(),
                 routeProduct.getComments(),
                 routeProduct.isPassed(),
                 routeProduct.isRejected(),
-                routeProduct.isShow(),
+                routeProduct.isRoute_show(),
                 MemberDto.toDtoList(
                         routeProduct.getMembers().stream().map(
                                 m -> m.getMember()

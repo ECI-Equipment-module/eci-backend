@@ -31,7 +31,7 @@ public class ItemSimpleDto {
     private String colorName;
     private String imageAdress;
 
-    private String attachmentName;
+    private List<String> attachmentName;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime createdAt;

@@ -1,6 +1,9 @@
 package eci.server.ItemModule.entity.item;
 
+import eci.server.ItemModule.entity.member.RoleType;
+import eci.server.ItemModule.entity.newRoute.RouteOrdering;
 import eci.server.ItemModule.entity.route.Route;
+import eci.server.ItemModule.entity.route.RouteType;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,10 +27,15 @@ public class ItemTypes {
     @SequenceGenerator(name="SEQUENCE1", sequenceName="SEQUENCE1", allocationSize=1)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "item_id")
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private Item item;
+    //@Enumerated(EnumType.STRING)
+    @Column(nullable = false, unique = true)
+    private String name;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "routetype_id", nullable = false)
+    private RouteType routeType;
+    //itemType 이 지정된다면 routeOrdering 은
+    // routeType으로 지정된다.
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id")

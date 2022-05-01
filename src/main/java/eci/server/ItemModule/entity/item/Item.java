@@ -1,5 +1,6 @@
 package eci.server.ItemModule.entity.item;
 
+import com.querydsl.core.annotations.QueryProjection;
 import eci.server.ItemModule.dto.item.ItemUpdateRequest;
 
 import eci.server.ItemModule.entity.entitycommon.EntityDate;
@@ -14,7 +15,9 @@ import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,6 +35,9 @@ public class Item extends EntityDate {
 
     @Column(nullable = false)
     private String name;
+
+//    @Column(nullable = false)
+//    private String type;
 
     @Column(nullable = false)
     private String type;
@@ -68,6 +74,7 @@ public class Item extends EntityDate {
             cascade = CascadeType.PERSIST,
             orphanRemoval = true
     )
+
     private List<Attachment> attachments;
 
     @Column(nullable = false)
@@ -75,7 +82,6 @@ public class Item extends EntityDate {
 
     @Column(nullable = false)
     private Boolean revise_progress;
-
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "color_id", nullable = false)
@@ -95,6 +101,9 @@ public class Item extends EntityDate {
             orphanRemoval = true,
             fetch = FetchType.LAZY)
     private List<ItemManufacture> manufactures;
+
+    @Column
+    private int revision;
 
     public Item(
             String name,
@@ -117,6 +126,7 @@ public class Item extends EntityDate {
 
             List<Manufacture> manufactures,
             List<String> partnumbers
+
 
     ) {
         this.name = name;
@@ -154,6 +164,8 @@ public class Item extends EntityDate {
                         )
                         .collect(toList());
 
+        this.revision = 65;
+
     }
 
     /**
@@ -166,7 +178,8 @@ public class Item extends EntityDate {
             ItemUpdateRequest req,
             ColorRepository colorRepository
     ) {
-
+        //TODO update할 때 사용자가 기존 값 없애고 보낼 수도 있자나 => fix needed
+        //isBlank 랑 isNull로 판단해서 기존 값 / req 값 채워넣기
         this.name = req.getName();
         this.type = req.getType();
         this.width = req.getWidth();
@@ -191,8 +204,8 @@ public class Item extends EntityDate {
                         req.getAddedAttachments(),
                         req.getDeletedAttachments()
                 );
+        addUpdatedAttachments(req, resultAttachment.getAddedAttachments());
 
-        addAttachments(resultAttachment.getAddedAttachments());
         deleteAttachments(resultAttachment.getDeletedAttachments());
 
         FileUpdatedResult fileUpdatedResult = new FileUpdatedResult(resultAttachment,resultImage);
@@ -221,6 +234,24 @@ public class Item extends EntityDate {
         added.stream().forEach(i -> {
             attachments.add(i);
             i.initItem(this);
+        });
+    }
+
+    private void addUpdatedAttachments(ItemUpdateRequest req, List<Attachment> added) {
+        SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date now = new Date();
+
+        added.stream().forEach(i -> {
+            attachments.add(i);
+            i.initItem(this);
+            i.setAttach_comment(req.getAddedAttachmentComment().get((added.indexOf(i))));
+            i.setTag(req.getAddedTag().get((added.indexOf(i))));
+            i.setAttachmentaddress(
+                    "src/main/prodmedia/image/" +
+                            sdf1.format(now).substring(0,10)
+                            + "/"
+                            + i.getUniqueName()
+            );
         });
     }
 

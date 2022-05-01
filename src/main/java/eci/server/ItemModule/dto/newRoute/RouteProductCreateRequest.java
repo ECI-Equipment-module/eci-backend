@@ -20,7 +20,7 @@ public class RouteProductCreateRequest {
 
     public static List<RouteProduct> toEntityList(
             RouteOrderingCreateRequest req,
-            RouteOrdering newRoute,
+            RouteOrdering routeOrdering,
             RoutePreset routePreset,
             MemberRepository memberRepository,
             RouteTypeRepository routeTypeRepository
@@ -28,16 +28,16 @@ public class RouteProductCreateRequest {
     ) {
         //아이템 타입의해 routeType 결정됨
         Integer routeTypeIdx = ItemType.valueOf(
-                newRoute.getItem().getType()
+                routeOrdering.getItem().getType()
                             ).label();
 
 
         List<RouteProduct> willBeSavedRouteProductList
                 = new ArrayList<>();
 
-        List routeProductName = List.of((routePreset.routeName[routeTypeIdx]));
-        List routeProductType = List.of((routePreset.routeType[routeTypeIdx]));
-        List routeProductTypeModule = List.of((routePreset.routeTypeModule[routeTypeIdx]));
+        List routeProductName = List.of((routePreset.itemRouteName[routeTypeIdx]));
+        List routeProductType = List.of((routePreset.itemRouteType[routeTypeIdx]));
+        List routeProductTypeModule = List.of((routePreset.itemRouteTypeModule[routeTypeIdx]));
 
         //만들어져야 하는 객체는 타입 길이에서 complete 뺀 만큼
         Integer neededRouteProductCnt = routeProductType.size()-1;
@@ -67,9 +67,11 @@ public class RouteProductCreateRequest {
 
                 (String) routeProductName.get(0),
 
+                //우선 NAME 으로 찾아와서
                 routeTypeRepository.findByName((String) routeProductType.get(0)).
                         stream().filter(
                                 i-> i.getModule().equals(
+                                        //그것이 지정된 모듈이랑 SAME 한 라우트 타입 최종 고르기
                                         routeProductTypeModule.get(0)
                                 )
                         ).collect(toList()).get(0),
@@ -79,7 +81,7 @@ public class RouteProductCreateRequest {
                 true,
                 false,
                 member1,
-                newRoute
+                routeOrdering
 
         );
 
@@ -94,12 +96,14 @@ public class RouteProductCreateRequest {
                 req.getMemberIds().indexOf(i)+1,
 
                 (String) routeProductName.get(req.getMemberIds().indexOf(i)+1),
+
                 routeTypeRepository.findByName((String) routeProductType.get(req.getMemberIds().indexOf(i)+1)).
                         stream().filter(
                                 m-> m.getModule().equals(
                                         routeProductTypeModule.get(req.getMemberIds().indexOf(i)+1)
                                 )
                         ).collect(toList()).get(0),
+
                 "default",
                 false,
                 false,
@@ -113,7 +117,7 @@ public class RouteProductCreateRequest {
                 ).collect(
                         toList()
                 ),
-                newRoute
+                routeOrdering
         )
         ).collect(toList());
 

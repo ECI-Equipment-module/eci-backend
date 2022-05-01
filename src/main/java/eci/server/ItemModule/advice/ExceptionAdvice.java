@@ -213,4 +213,13 @@ public class ExceptionAdvice {
         log.info("e = {}", e.getMessage());
         return Response.failure(400, "담당자가 과도하게 배정되었습니다.");
     }
+
+//    @ExceptionHandler(MemberNotFoundException.class)
+//    @ResponseStatus(HttpStatus.NOT_FOUND)
+//    public Response memberNotFoundException(MemberNotFoundException e) {
+//        log.info("e = {}", e.getMessage());
+//        return Response.failure(404, "존재하지 않는 멤버입니다.");
+//    }
+
+
 }

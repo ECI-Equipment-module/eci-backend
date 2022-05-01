@@ -2,6 +2,8 @@ package eci.server.ItemModule.repository.item;
 
 import eci.server.ItemModule.entity.item.Item;
 import eci.server.ItemModule.entity.member.Member;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -13,9 +15,8 @@ public interface ItemRepository extends JpaRepository<Item, Long>,  CustomItemRe
     @Query("select p from Item p join fetch p.member where p.id = :id")
     Optional<Item> findByIdWithMember(Long id);
 
-//    @Query(value = "SELECT u FROM Item u JOIN FETCH u.reservations")
     List<Item> findByMember(Member member);
 
-
+    Page<Item> findAll(Pageable pageable);
 
 }

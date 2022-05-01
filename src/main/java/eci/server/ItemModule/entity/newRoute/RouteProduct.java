@@ -10,8 +10,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.*;
 import java.util.List;
@@ -22,6 +21,7 @@ import static java.util.stream.Collectors.toList;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Slf4j
+@Transactional
 public class RouteProduct extends EntityDate {
 
     @Id
@@ -44,7 +44,9 @@ public class RouteProduct extends EntityDate {
     private Integer origin_seq;
 
     @Column(nullable = false)
-    private String name;
+    private String route_name;
+
+
 
 
 
@@ -80,15 +82,15 @@ public class RouteProduct extends EntityDate {
      * 화면에 띄울 변수
      */
     @Column(nullable = false)
-    private boolean show;
+    private boolean route_show;
 
     @Column(nullable = true)
     private boolean disabled;
 
     @OneToMany(
             mappedBy = "routeProduct",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true,
+            //cascade = CascadeType.ALL,
+            //orphanRemoval = true,
             fetch = FetchType.LAZY
     )
     private List<RouteProductMember> members;
@@ -97,7 +99,7 @@ public class RouteProduct extends EntityDate {
      */
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "newRoute_id", nullable = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
+    //@OnDelete(action = OnDeleteAction.CASCADE)
     private RouteOrdering newRoute;
 
     /**
@@ -123,12 +125,14 @@ public class RouteProduct extends EntityDate {
 
         this.origin_seq = origin_seq;
 
-        this.name = name;
+
+        this.route_name = name;
+
         this.type = type;
         this.comments = comments;
         this.passed = passed;
         this.rejected = rejected;
-        this.show = show;
+        this.route_show = show;
         this.disabled = disabled;
         this.members = member.stream().map(
                         r -> new RouteProductMember(
@@ -159,13 +163,13 @@ public class RouteProduct extends EntityDate {
                         .orElseThrow(RouteProductNotFoundException::new);
 
         this.sequence = routeProduct.getSequence();
-        this.name = routeProduct.getName();
+        this.route_name = routeProduct.getRoute_name();
         this.type = routeProduct.getType();
         this.comments = req.getComment();
         this.passed = true;
         this.rejected = false;
         this.newRoute = routeProduct.getNewRoute();
-        this.show = true;
+        this.route_show = true;
         this.disabled = false;
         return req;
     }
@@ -183,7 +187,7 @@ public class RouteProduct extends EntityDate {
     }
 
     public void setShow(boolean show) {
-        this.show = show;
+        this.route_show = show;
     }
 
     public void setDisabled(boolean disabled) {

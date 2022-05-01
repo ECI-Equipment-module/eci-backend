@@ -13,7 +13,7 @@ import javax.validation.Valid;
 
 @RestController
 @RequiredArgsConstructor
-@CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app/")
+@CrossOrigin(origins = "https://localhost:3000")
 public class RouteOrderingController {
     private final RouteOrderingService newRouteService;
 

@@ -28,7 +28,7 @@ public class RouteOrderingService {
     private final MemberRepository memberRepository;
     private final ItemRepository itemRepository;
     private final NewRouteRepository newRouteRepository;
-    private final RoutePreset newRouteType;//private final ItemType itemType;
+    private final RoutePreset routePreset;//private final ItemType itemType;
     private final RouteTypeRepository routeTypeRepository;
 
 
@@ -59,7 +59,7 @@ public class RouteOrderingService {
         RouteOrdering newRoute = newRouteRepository.save(RouteOrderingCreateRequest.toEntity(
                         req,
                         itemRepository,
-                        newRouteType,
+                        routePreset,
                 routeTypeRepository
 
 
@@ -71,7 +71,7 @@ public class RouteOrderingService {
                 RouteProductCreateRequest.toEntityList(
                         req,
                         newRoute,
-                        newRouteType,
+                        routePreset,
                         memberRepository,
                         routeTypeRepository
                         //itemType
@@ -124,7 +124,7 @@ public class RouteOrderingService {
                 routeProductRepository.findAllByNewRoute(routeOrdering)
                         .subList(routeOrdering.getPresent()-1, range)
                         .stream().filter(
-                                d -> d.isShow()==false
+                                d -> d.isRoute_show()==false
                         )
                         .collect(
                                 Collectors.toList()

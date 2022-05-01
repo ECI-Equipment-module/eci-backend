@@ -34,6 +34,8 @@ public class ItemDto {
     private List<MaterialSimpleDto> materialDto;
     private List<ManufactureSimpleDto> manufactureSimpleDtos;
 
+    private char revision;
+
     public static ItemDto toDto(Item Item) {
 
         return new ItemDto(
@@ -54,7 +56,8 @@ public class ItemDto {
 
                 Item.getAttachments().
                         stream().
-                        map(i -> AttachmentDto.toDto(i)).collect(toList()),
+                        map(i -> AttachmentDto.toDto(i))
+                        .collect(toList()),
 
                 ColorDto.toDto(Item.getColor()),
 
@@ -68,7 +71,11 @@ public class ItemDto {
                         stream().
                         map(i -> ManufactureSimpleDto.toDto(
                                 i.getManufacture())
-                        ).collect(toList())
+                        ).collect(toList()),
+
+                (char) Item.getRevision()
+
+
 
         );
     }

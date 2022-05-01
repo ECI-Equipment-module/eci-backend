@@ -3,7 +3,6 @@ package eci.server.ItemModule.entity.newRoute;
 import eci.server.ItemModule.dto.newRoute.RouteOrderingUpdateRequest;
 import eci.server.ItemModule.entity.item.Item;
 import eci.server.ItemModule.entitycommon.EntityDate;
-import eci.server.ItemModule.exception.item.ItemUpdateImpossibleException;
 import eci.server.ItemModule.exception.route.RejectImpossibleException;
 import eci.server.ItemModule.exception.route.UpdateImpossibleException;
 import eci.server.ItemModule.repository.newRoute.RouteProductRepository;
@@ -40,7 +39,7 @@ public class RouteOrdering extends EntityDate {
 
     /**
      * 요청 int로 받아서 지정할 때
-     * NewRouteType.get(int)로 지정
+     * routePreset.get(int)로 지정
      */
     @Column(nullable = false)
     private String type;
@@ -67,7 +66,7 @@ public class RouteOrdering extends EntityDate {
     private Integer present;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "item_id", nullable = false)
+    @JoinColumn(name = "item_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Item item;
 
@@ -207,7 +206,9 @@ public class RouteOrdering extends EntityDate {
                     seq,
                     routeProductList.get(rejectedIndex).getOrigin_seq(),
 
-                    routeProductList.get(rejectedIndex).getName(),
+
+                    routeProductList.get(rejectedIndex).getRoute_name(),
+
                     routeProductList.get(rejectedIndex).getType(),
                     "default",
                     false,
@@ -252,7 +253,8 @@ public class RouteOrdering extends EntityDate {
 
                         i.getOrigin_seq(),
 
-                        i.getName(),
+                        i.getRoute_name(),
+
                         //routeProductRepository.findAllByNewRoute(this).size(),
                         i.getType(),
                         "default",

@@ -25,8 +25,6 @@ public class AttachmentDto {
     private boolean deleted;
     private String tag;
     private String attachmentaddress;
-    //time.split("_")[0].substring(0, 10)
-//    private LocalDateTime created_at;
     private String date;
     private String upload;
 
