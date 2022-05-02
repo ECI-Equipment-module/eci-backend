@@ -28,9 +28,11 @@ public class ItemTypes {
     @Column(nullable = false, unique = true)
     private String name;
 
-    @Column(nullable = true)
-    private Integer routeOrderingTypeIdx; //정수로 저장
-
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "routetype_id", nullable = false)
+    private RouteType routeType;
+    //itemType 이 지정된다면 routeOrdering 은
+    // routeType으로 지정된다.
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id")
