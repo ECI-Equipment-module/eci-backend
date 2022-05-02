@@ -1,8 +1,13 @@
 package eci.server.ItemModule.controller.page;
 
+import eci.server.ItemModule.dto.item.ItemProjectDto;
 import eci.server.ItemModule.dto.item.ItemSimpleDto;
 import eci.server.ItemModule.entity.item.Item;
 import eci.server.ItemModule.repository.item.ItemRepository;
+import eci.server.ProjectModule.dto.project.ProjectSimpleDto;
+import eci.server.ProjectModule.entity.project.Project;
+import eci.server.ProjectModule.entity.projectAttachment.ProjectAttachment;
+import eci.server.ProjectModule.repository.project.ProjectRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -54,6 +59,61 @@ public class PageController {
                                 a -> a.getAttachmentaddress()
                         ).collect(Collectors.toList()),
                         item.getCreatedAt()
+
+                )
+        );
+
+        return pagingList;
+    }
+
+    @Autowired
+    ProjectRepository projectRepository;
+    @CrossOrigin(origins = "https://localhost:3000")
+    @GetMapping("/project/page")
+    public Page<ProjectSimpleDto> pagingProject(@PageableDefault(size=5)
+                                      @SortDefault.SortDefaults({
+                                              @SortDefault(
+                                                      sort = "createdAt",
+                                                      direction = Sort.Direction.DESC)
+                                      })
+                                              Pageable pageRequest) {
+
+        Page<Project> projectList = projectRepository.findAll(pageRequest);
+
+        Page<ProjectSimpleDto> pagingList = projectList.map(
+                project -> new ProjectSimpleDto(
+
+                        project.getId(),
+                        project.getProjectNumber(),
+                        project.getName(),
+                        project.getCarType(),
+
+                        ItemProjectDto.toDto(project.getItem()),
+
+                        project.getRevision(),
+                        project.getStartPeriod(),
+                        project.getOverPeriod(),
+
+                        project.getTempsave(),
+
+                        //tag가 개발
+                        project.getProjectAttachments().stream().filter(
+                                a -> a.getTag().equals("DEVELOP")
+                        ).collect(Collectors.toList())
+                        .stream().map(
+                                        ProjectAttachment::getAttachmentaddress
+                        ).collect(Collectors.toList()),
+
+                        //tag가 디자인
+                        project.getProjectAttachments().stream().filter(
+                                a -> a.getTag().equals("DESIGN")
+                        ).collect(Collectors.toList())
+                                .stream().map(
+                                        ProjectAttachment::getAttachmentaddress
+                                ).collect(Collectors.toList()),
+
+
+                        project.getCreatedAt()
 
                 )
         );

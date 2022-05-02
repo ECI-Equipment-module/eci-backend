@@ -4,14 +4,11 @@ package eci.server.ItemModule.entity.item;
 public enum ItemType {
 
     NONE(0),
-    ANNULUS_GEAR(1),
-    ARM(2),
-    ALTERNATOR(3),
-    AXEL(1),
-    BEARING(2),
-    BOLT(3),
-    CLUTCH(1),
-    COIL_SPRING(2)
+    TYPE0(0), //자가개발
+    TYPE1(1),//원재료
+    TYPE2(2), // 외주구매품(단순)2
+    TYPE3(3),//사내가공품 외주구매품(시방)3
+    TYPE4(4)//제품4
     ;
 
     private final Integer label;

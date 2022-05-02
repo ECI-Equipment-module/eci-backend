@@ -3,7 +3,7 @@ package eci.server.ItemModule.dto.newRoute;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import eci.server.ItemModule.entity.newRoute.RouteOrdering;
-import eci.server.ItemModule.repository.newRoute.NewRouteRepository;
+import eci.server.ItemModule.repository.newRoute.RouteOrderingRepository;
 import eci.server.ItemModule.repository.newRoute.RouteProductRepository;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -34,7 +34,7 @@ public class RouteOrderingDto {
     public static List <RouteOrderingDto> toDtoList(
             List <RouteOrdering> NewRoutes,
             RouteProductRepository routeProductRepository,
-            NewRouteRepository newRouteRepository
+            RouteOrderingRepository routeOrderingRepository
     ) {
 
 
@@ -49,13 +49,13 @@ public class RouteOrderingDto {
                         c.getPresent(),
                         c.getCreatedAt(),
                         RouteProductDto.toProductDtoList(
-                                routeProductRepository.findAllByNewRoute(
-                                        newRouteRepository.findById(c.getId()).orElseThrow()
+                                routeProductRepository.findAllByRouteOrdering(
+                                        routeOrderingRepository.findById(c.getId()).orElseThrow()
                         )
                         )
 
-//                        routeProductRepository.findAllByNewRoute(
-//                                newRouteRepository.findById(c.getId()).orElseThrow()
+//                        routeProductRepository.findAllByRouteOrdering(
+//                                routeOrderingRepository.findById(c.getId()).orElseThrow()
 
 
         )
@@ -68,7 +68,7 @@ public class RouteOrderingDto {
     public static RouteOrderingDto toDto(
             RouteOrdering Route,
             RouteProductRepository routeProductRepository,
-            NewRouteRepository newRouteRepository
+            RouteOrderingRepository routeOrderingRepository
     ) {
 
         return new RouteOrderingDto(
@@ -81,8 +81,8 @@ public class RouteOrderingDto {
                 Route.getPresent(),
                 Route.getCreatedAt(),
                 RouteProductDto.toProductDtoList(
-                        routeProductRepository.findAllByNewRoute(
-                        newRouteRepository.findById(
+                        routeProductRepository.findAllByRouteOrdering(
+                        routeOrderingRepository.findById(
                                 Route.getId()
                         )
                                 .orElseThrow()

@@ -55,17 +55,25 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.PUT, "/items/{id}").access("@itemGuard.check(#id)")
                 .antMatchers(HttpMethod.DELETE, "/items/{id}").access("@itemGuard.check(#id)")
 
-                .antMatchers(HttpMethod.POST, "/routes").authenticated()
-                .antMatchers(HttpMethod.PUT, "/routes/{id}").access("@routeGuard.check(#id)")
-                .antMatchers(HttpMethod.DELETE, "/routes/{id}").access("@routeGuard.check(#id)")
 
-                .antMatchers(HttpMethod.POST, "/newRoutes").authenticated()
-                .antMatchers(HttpMethod.PUT, "/approveRoutes/{id}").access("@newRouteGuard.check(#id)")
-                .antMatchers(HttpMethod.PUT, "/rejectRoutes/{id}").access("@newRouteGuard.check(#id)")
+                .antMatchers(HttpMethod.POST, "/route").authenticated()
+
+                .antMatchers(HttpMethod.POST, "/route/project").authenticated()
+
+                .antMatchers(HttpMethod.PUT, "/route/{id}").access("@routeGuard.check(#id)")
+                .antMatchers(HttpMethod.DELETE, "/route/{id}").access("@routeGuard.check(#id)")
+
+
+                .antMatchers(HttpMethod.PUT, "/approveRoute/{id}").access("@newRouteGuard.check(#id)")
+                .antMatchers(HttpMethod.PUT, "/rejectRoute/{id}").access("@newRouteGuard.check(#id)")
+
+
+
 
                 .antMatchers(HttpMethod.POST, "/project").authenticated()
                 .antMatchers(HttpMethod.POST, "/project/temp").authenticated()
                 .antMatchers(HttpMethod.PUT, "/project/{id}").access("@projectGuard.check(#id)")
+                .antMatchers(HttpMethod.DELETE, "/project/{id}").access("@projectGuard.check(#id)")
 //                .antMatchers(HttpMethod.PUT, "/rejectRoutes/{id}").access("@newRouteGuard.check(#id)")
 
                 .anyRequest().hasAnyRole("ADMIN")

@@ -1,17 +1,22 @@
 package eci.server.ItemModule.service.newRoute;
 
 import eci.server.ItemModule.dto.newRoute.*;
+import eci.server.ItemModule.dto.newRoute.projectRoute.ProjectRouteOrderingCreateRequest;
+import eci.server.ItemModule.dto.newRoute.projectRoute.ProjectRouteProductCreateRequest;
 import eci.server.ItemModule.dto.route.*;
-import eci.server.ItemModule.entity.item.ItemType;
 import eci.server.ItemModule.entity.newRoute.RouteOrdering;
 import eci.server.ItemModule.entity.newRoute.RoutePreset;
 import eci.server.ItemModule.entity.newRoute.RouteProduct;
+import eci.server.ItemModule.entity.newRoute.RouteProductMember;
 import eci.server.ItemModule.exception.route.RouteNotFoundException;
 import eci.server.ItemModule.repository.item.ItemRepository;
 import eci.server.ItemModule.repository.member.MemberRepository;
-import eci.server.ItemModule.repository.newRoute.NewRouteRepository;
+
+import eci.server.ItemModule.repository.newRoute.RouteOrderingRepository;
+import eci.server.ItemModule.repository.newRoute.RouteOrderingRepository;
 import eci.server.ItemModule.repository.newRoute.RouteProductRepository;
 import eci.server.ItemModule.repository.newRoute.RouteTypeRepository;
+import eci.server.ProjectModule.repository.project.ProjectRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,22 +32,25 @@ public class RouteOrderingService {
     private final RouteProductRepository routeProductRepository;
     private final MemberRepository memberRepository;
     private final ItemRepository itemRepository;
-    private final NewRouteRepository newRouteRepository;
-    private final RoutePreset routePreset;//private final ItemType itemType;
+
+    private final RouteOrderingRepository routeOrderingRepository;
+    private final RoutePreset routePreset;
+
     private final RouteTypeRepository routeTypeRepository;
+
 
 
     public RouteOrderingDto read(Long id) {
         return RouteOrderingDto.toDto(
-                newRouteRepository.findById(id).orElseThrow(RouteNotFoundException::new),
+                routeOrderingRepository.findById(id).orElseThrow(RouteNotFoundException::new),
                 routeProductRepository,
-                newRouteRepository
+                routeOrderingRepository
         );
     }
 
     public List<RouteOrderingDto> readAll(RouteOrderingReadCondition cond) {
 
-        List<RouteOrdering> newRoutes = newRouteRepository.findByItem(
+        List<RouteOrdering> newRoutes = routeOrderingRepository.findByItem(
                 itemRepository.findById(cond.getItemId())
                         .orElseThrow(RouteNotFoundException::new)
         );
@@ -50,17 +58,19 @@ public class RouteOrderingService {
         return RouteOrderingDto.toDtoList(
                 newRoutes,
                 routeProductRepository,
-                newRouteRepository
+                routeOrderingRepository
         );
     }
 
     @Transactional
-    public RouteOrderingCreateResponse create(RouteOrderingCreateRequest req) {
-        RouteOrdering newRoute = newRouteRepository.save(RouteOrderingCreateRequest.toEntity(
+    public RouteOrderingCreateResponse createItemRoute(RouteOrderingCreateRequest req) {
+        RouteOrdering newRoute = routeOrderingRepository.save(RouteOrderingCreateRequest.toEntity(
                         req,
                         itemRepository,
                         routePreset,
-                routeTypeRepository
+
+                        routeTypeRepository
+
 
 
                         //itemType
@@ -74,16 +84,56 @@ public class RouteOrderingService {
                         routePreset,
                         memberRepository,
                         routeTypeRepository
-                        //itemType
 
                 );
 
         for(RouteProduct routeProduct : routeProductList ){
-            routeProductRepository.save(routeProduct);
+//            System.out.println("왜 멤버 저장안되냐 시발라라");
+//            System.out.println(routeProduct.getMembers().size());
+            RouteProduct routeProduct1 =
+                    routeProductRepository.save(routeProduct);
+            System.out.println(routeProduct1.getRoute_name());
+
+                    System.out.println(routeProduct1.getMembers().get(0).getMember());
+                    System.out.println(routeProduct1.getMembers().get(0).getRouteProduct());
+//            System.out.println(routeProduct1.getMembers().size());
+//            for(RouteProductMember routeProductMember : routeProduct1.getMembers()) {
+//                routeProductMemberRepository.save(routeProductMember);
+//            }
         }
 
         return new RouteOrderingCreateResponse(newRoute.getId());
     }
+
+//
+//    @Transactional
+//    public RouteOrderingCreateResponse  createProjectRoute(ProjectRouteOrderingCreateRequest req) {
+//        RouteOrdering newRoute = routeOrderingRepository.save(ProjectRouteOrderingCreateRequest.toEntity(
+//                        req,
+//                        projectRepository,
+//                        routePreset,
+//                        routeTypeRepository
+//                        //itemType
+//                )
+//        );
+//
+//        List<RouteProduct> routeProductList =
+//                ProjectRouteProductCreateRequest.toEntityList(
+//                        req,
+//                        newRoute,
+//                        routePreset,
+//                        memberRepository,
+//                        routeTypeRepository
+//
+//                );
+//
+//        for(RouteProduct routeProduct : routeProductList ){
+//            routeProductRepository.save(routeProduct);
+//        }
+//
+//        return new RouteOrderingCreateResponse(newRoute.getId());
+//    }
+
 
     @Transactional
     public List<RouteProductDto> rejectUpdate(
@@ -92,14 +142,14 @@ public class RouteOrderingService {
             Integer rejectedSequence
     ) {
 
-        RouteOrdering routeOrdering = newRouteRepository.findById(id).orElseThrow(RouteNotFoundException::new);
+        RouteOrdering routeOrdering = routeOrderingRepository.findById(id).orElseThrow(RouteNotFoundException::new);
 
         //추가적으로 만들어진 애들 반환
         List<RouteProduct> rejectUpdatedRouteProductList = routeOrdering.rejectUpdate(
                 id,
                 rejectComment,
                 rejectedSequence,
-                newRouteRepository,
+                routeOrderingRepository,
                 routeProductRepository
 
         );
@@ -121,7 +171,7 @@ public class RouteOrderingService {
 
         List<RouteProduct> deletedList =
         //isShow 가 false 인 것은 삭제 처리
-                routeProductRepository.findAllByNewRoute(routeOrdering)
+                routeProductRepository.findAllByRouteOrdering(routeOrdering)
                         .subList(routeOrdering.getPresent()-1, range)
                         .stream().filter(
                                 d -> d.isRoute_show()==false
@@ -137,7 +187,7 @@ public class RouteOrderingService {
 
         List<RouteProductDto> allProductList =
                 RouteProductDto.toProductDtoList(
-                        routeProductRepository.findAllByNewRoute(routeOrdering)
+                        routeProductRepository.findAllByRouteOrdering(routeOrdering)
                 );
         // 기존 + 새 라우트프로덕트까지 해서 돌려주기
         return allProductList;
@@ -145,7 +195,7 @@ public class RouteOrderingService {
 
     @Transactional
     public RouteUpdateResponse update(Long id, RouteOrderingUpdateRequest req) {
-        RouteOrdering newRoute = newRouteRepository
+        RouteOrdering newRoute = routeOrderingRepository
                 .findById(id)
                 .orElseThrow(RouteNotFoundException::new);
 

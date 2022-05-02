@@ -89,8 +89,8 @@ public class RouteProduct extends EntityDate {
 
     @OneToMany(
             mappedBy = "routeProduct",
-            //cascade = CascadeType.ALL,
-            //orphanRemoval = true,
+            cascade = CascadeType.ALL,//이거
+            orphanRemoval = true, //없애면 안돼 동윤아...
             fetch = FetchType.LAZY
     )
     private List<RouteProductMember> members;
@@ -98,9 +98,9 @@ public class RouteProduct extends EntityDate {
      * routeproduct 가 속하는 route 하나
      */
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "newRoute_id", nullable = false)
+    @JoinColumn(name = "routeOrdering_id", nullable = false)
     //@OnDelete(action = OnDeleteAction.CASCADE)
-    private RouteOrdering newRoute;
+    private RouteOrdering routeOrdering;
 
     /**
      * 라우트 프로덕트 생성자 (reject 시 재 생산용)
@@ -134,12 +134,13 @@ public class RouteProduct extends EntityDate {
         this.rejected = rejected;
         this.route_show = show;
         this.disabled = disabled;
-        this.members = member.stream().map(
+        this.members =
+                member.stream().map(
                         r -> new RouteProductMember(
                                 this, r)
                 )
                 .collect(toList());
-        this.newRoute = newRoute;
+        this.routeOrdering = newRoute;
     }
 
     /**
@@ -168,7 +169,9 @@ public class RouteProduct extends EntityDate {
         this.comments = req.getComment();
         this.passed = true;
         this.rejected = false;
-        this.newRoute = routeProduct.getNewRoute();
+
+        this.routeOrdering = routeProduct.getRouteOrdering();
+
         this.route_show = true;
         this.disabled = false;
         return req;

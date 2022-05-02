@@ -1,7 +1,9 @@
 package eci.server.ProjectModule.controller.project;
 
+import eci.server.ItemModule.dto.member.MemberReadCondition;
 import eci.server.ItemModule.dto.response.Response;
 import eci.server.ProjectModule.dto.ProjectCreateRequest;
+import eci.server.ProjectModule.dto.ProjectReadCondition;
 import eci.server.ProjectModule.dto.ProjectTemporaryCreateRequest;
 import eci.server.ProjectModule.dto.ProjectUpdateRequest;
 import eci.server.ProjectModule.service.ProjectService;
@@ -73,5 +75,24 @@ public class ProjectController {
         return Response.success(projectService.update(id, req));
     }
 
+    @GetMapping("/project/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public Response read(@PathVariable Long id) {
+        return Response.success(projectService.read(id));
+    }
+
+
+    @GetMapping("/project")
+    @ResponseStatus(HttpStatus.OK)
+    public Response readAll(@Valid ProjectReadCondition cond) {
+        return Response.success(projectService.readAll(cond));
+    }
+
+    @DeleteMapping("project/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public Response delete(@PathVariable Long id) {
+        projectService.delete(id);
+        return Response.success();
+    }
 
 }

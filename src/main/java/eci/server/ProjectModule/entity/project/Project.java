@@ -78,6 +78,9 @@ public class Project extends EntityDate {
     @Column(nullable = false)
     private Boolean tempsave;
 
+    @Column(nullable = false)
+    private String lifecycle;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "projectType_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
@@ -154,7 +157,7 @@ public class Project extends EntityDate {
         addProjectAttachments(projectAttachments);
 
         this.revision = 65;
-
+        this.lifecycle = "DEVELOPMENT";
     }
 
     /**

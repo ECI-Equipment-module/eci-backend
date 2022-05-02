@@ -18,6 +18,7 @@ import static java.util.stream.Collectors.toList;
 
 public class RouteProductCreateRequest {
 
+    //item -> toEntityList
     public static List<RouteProduct> toEntityList(
             RouteOrderingCreateRequest req,
             RouteOrdering routeOrdering,
@@ -43,15 +44,16 @@ public class RouteProductCreateRequest {
         Integer neededRouteProductCnt = routeProductType.size()-1;
 
         //request member 제외해서 일을 빼줌
-        if(neededRouteProductCnt-1 < req.getMemberIds().size()) {
-            //멤버가 할당되지 않아서 짝이 안맞아
-            throw new MemberOverAssignedException();
-        }
+                if (neededRouteProductCnt - 1 < req.getMemberIds().size()) {
+                    //멤버가 할당되지 않아서 짝이 안맞아
+                    throw new MemberOverAssignedException();
+                }
 
-        if(neededRouteProductCnt-1 > req.getMemberIds().size()) {
-            //멤버가 할당되지 않아서 짝이 안맞아
-                throw new MemberNotAssignedException();
-        }
+                if (neededRouteProductCnt - 1 > req.getMemberIds().size()) {
+                    //멤버가 할당되지 않아서 짝이 안맞아
+                    throw new MemberNotAssignedException();
+                }
+
         // 1) request RouteProduct는 별도 생성 (코멘트 및 멤버 지정 이슈)
 
         //request하는 사람은 한 명인데, 리스트로 만드는 이유는 routeProduct에선 member을 List로 받기 때문이지
@@ -129,4 +131,6 @@ public class RouteProductCreateRequest {
         return willBeSavedRouteProductList;
 
     }
+
+
 }
