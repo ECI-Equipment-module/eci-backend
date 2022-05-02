@@ -2,6 +2,7 @@ package eci.server.ItemModule.controller.newRoute;
 
 
 import eci.server.ItemModule.dto.newRoute.*;
+import eci.server.ItemModule.dto.newRoute.projectRoute.ProjectRouteOrderingCreateRequest;
 import eci.server.ItemModule.dto.response.Response;
 import eci.server.ItemModule.service.newRoute.RouteOrderingService;
 import eci.server.aop.AssignMemberId;
@@ -18,7 +19,7 @@ public class RouteOrderingController {
     private final RouteOrderingService newRouteService;
 
 
-    @GetMapping("/newRoutes")
+    @GetMapping("/route")
     @ResponseStatus(HttpStatus.OK)
     public Response readAll(
             @Valid RouteOrderingReadCondition cond
@@ -26,18 +27,29 @@ public class RouteOrderingController {
         return Response.success(newRouteService.readAll(cond));
     }
 
-    @PostMapping("/newRoutes")
+    @PostMapping("/route")
     @ResponseStatus(HttpStatus.CREATED)
     @AssignMemberId
     public Response createRoutes(
             @Valid RouteOrderingCreateRequest req) {
 
         return Response.success(
-                newRouteService.create(req)
+                newRouteService.createItemRoute(req)
         );
     }
 
-    @GetMapping("/newRoutes/{id}")
+//    @PostMapping("/route/project")
+//    @ResponseStatus(HttpStatus.CREATED)
+//    @AssignMemberId
+//    public Response createRoutes(
+//            @Valid ProjectRouteOrderingCreateRequest req) {
+//
+//        return Response.success(
+//                newRouteService.createProjectRoute(req)
+//        );
+//    }
+
+    @GetMapping("/route/{id}")
     @ResponseStatus(HttpStatus.OK)
     public Response read(@PathVariable Long id) {
         return Response.success(
@@ -45,7 +57,7 @@ public class RouteOrderingController {
         );
     }
 
-    @PutMapping("/approveRoutes/{id}")
+    @PutMapping("/approveRoute/{id}")
     @ResponseStatus(HttpStatus.OK)
     public Response update(
             @PathVariable Long id,
@@ -54,7 +66,7 @@ public class RouteOrderingController {
                 newRouteService.update(id, req));
     }
 
-    @PutMapping("/rejectRoutes/{id}")
+    @PutMapping("/rejectRoute/{id}")
     @ResponseStatus(HttpStatus.OK)
     public Response rejectUpdate(
             @PathVariable Long id,

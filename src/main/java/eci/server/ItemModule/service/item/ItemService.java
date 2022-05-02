@@ -1,6 +1,7 @@
 package eci.server.ItemModule.service.item;
 
 
+import eci.server.ItemModule.repository.newRoute.RouteOrderingRepository;
 import eci.server.config.guard.AuthHelper;
 import eci.server.ItemModule.dto.item.*;
 import eci.server.ItemModule.dto.manufacture.ReadPartNumberService;
@@ -20,7 +21,6 @@ import eci.server.ItemModule.repository.color.ColorRepository;
 import eci.server.ItemModule.repository.item.AttachmentRepository;
 import eci.server.ItemModule.repository.manufacture.ManufactureRepository;
 import eci.server.ItemModule.repository.material.MaterialRepository;
-import eci.server.ItemModule.repository.newRoute.NewRouteRepository;
 import eci.server.ItemModule.repository.newRoute.RouteProductRepository;
 import eci.server.ItemModule.service.file.FileService;
 import eci.server.ItemModule.entity.item.Image;
@@ -54,7 +54,7 @@ public class ItemService {
     private final MaterialRepository materialRepository;
     private final ManufactureRepository manufactureRepository;
     private final AttachmentRepository attachmentRepository;
-    private final NewRouteRepository newRouteRepository;
+    private final RouteOrderingRepository routeOrderingRepository;
     private final RouteProductRepository routeProductRepository;
 
     private final ReadPartNumberService readPartNumber;
@@ -176,9 +176,9 @@ public class ItemService {
         // 라우트 없으면 읽기도 사실상 불가능
         List <RouteOrderingDto> routeDtoList = Optional.ofNullable(
                 RouteOrderingDto.toDtoList(
-                newRouteRepository.findByItem(targetItem),
+                routeOrderingRepository.findByItem(targetItem),
                         routeProductRepository,
-                        newRouteRepository
+                        routeOrderingRepository
         )
         ).orElseThrow(RouteNotFoundException::new);
 
@@ -192,8 +192,8 @@ public class ItemService {
                     //최신 라우트에 딸린 라우트프로덕트 리스트 중,
                     // 라우트의 present 인덱스에 해당하는 타입을 데리고 오기
                     RouteProductDto.toDto(
-                    routeProductRepository.findAllByNewRoute(
-                            newRouteRepository.findById(
+                    routeProductRepository.findAllByRouteOrdering(
+                            routeOrderingRepository.findById(
                                     routeDtoList.get(routeDtoList.size() - 1).getId()
                             ).orElseThrow(RouteNotFoundException::new)
                     ).get(
@@ -250,7 +250,7 @@ public class ItemService {
         for(Item i : allItemList) {
             //아이템의 모든 라우트
             List<RouteOrdering> itemsAllRoute =
-                    newRouteRepository.findByItem(i);
+                    routeOrderingRepository.findByItem(i);
             //만약 아이템의 모든 라우트 리스트가 하나이상 존재하면 맨 마지막 라우트만이 유효하므로 그 마지막 아이를 데려온다
             if(itemsAllRoute.size()>0) {
                 liveRouteList.add(
@@ -274,7 +274,7 @@ public class ItemService {
         // 이 review나 approve이고, 그 멤버가 나라면 나에게 할당된 것
         List<Item> waitingList = new ArrayList<>();
         for(RouteOrdering i : liveRouteList) {
-            List<RouteProduct> routeProductList = routeProductRepository.findAllByNewRoute(i);
+            List<RouteProduct> routeProductList = routeProductRepository.findAllByRouteOrdering(i);
             RouteProduct targetRouteProduct = routeProductList.get(i.getPresent());
 
             if(targetRouteProduct.isRejected()){//present아이가 reject이고

@@ -5,8 +5,9 @@ import eci.server.ItemModule.entity.item.Item;
 import eci.server.ItemModule.entitycommon.EntityDate;
 import eci.server.ItemModule.exception.route.RejectImpossibleException;
 import eci.server.ItemModule.exception.route.UpdateImpossibleException;
+import eci.server.ItemModule.repository.newRoute.RouteOrderingRepository;
 import eci.server.ItemModule.repository.newRoute.RouteProductRepository;
-import eci.server.ItemModule.repository.newRoute.NewRouteRepository;
+import eci.server.ProjectModule.entity.project.Project;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -65,11 +66,23 @@ public class RouteOrdering extends EntityDate {
     @Column(nullable = false)
     private Integer present;
 
+    /**
+     * null 가능, 아이템에서 라우트 생성 시 지정
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "item_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Item item;
 
+    /**
+     * null 가능, 플젝에서 라우트 생성 시 지정
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "project_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private Project project;
+
+    //아이템 라우트용 생성자
     public RouteOrdering(
             String type,
             Item item
@@ -80,6 +93,18 @@ public class RouteOrdering extends EntityDate {
         this.revisedCnt = 0;
         this.present = 1;
         this.item = item;
+    }
+    //프로젝트 라우트용 생성자
+    public RouteOrdering(
+            String type,
+            Project project
+
+    ){
+        this.type = type;
+        this.lifecycleStatus = "WORKING";
+        this.revisedCnt = 0;
+        this.present = 1;
+        this.project = project;
     }
 
     public void setPresent(Integer present) {
@@ -93,7 +118,7 @@ public class RouteOrdering extends EntityDate {
 
     ) {
         List<RouteProduct> routeProductList =
-                routeProductRepository.findAllByNewRoute(this);
+                routeProductRepository.findAllByRouteOrdering(this);
 
         //이미 승인 완료됐을 시에는 더이상 승인이 불가능해 에러 던지기
         if(this.present==routeProductList.size()){
@@ -142,7 +167,7 @@ public class RouteOrdering extends EntityDate {
             Long id,
             String rejectedComment,
             Integer rejectedIndex,
-            NewRouteRepository newRouteRepository,
+            RouteOrderingRepository routeOrderingRepository,
             RouteProductRepository routeProductRepository
 
     ) {
@@ -150,7 +175,7 @@ public class RouteOrdering extends EntityDate {
          * 현재 라우트에 딸린 라우트 생산물들
          */
         List<RouteProduct> routeProductList =
-                routeProductRepository.findAllByNewRoute(this);
+                routeProductRepository.findAllByRouteOrdering(this);
 
         if(rejectedIndex > this.present || routeProductList.get(rejectedIndex).isDisabled()){
             throw new RejectImpossibleException();
@@ -220,7 +245,7 @@ public class RouteOrdering extends EntityDate {
                             m -> m.getMember()
                     )
                             .collect(toList()),
-                    routeProductList.get(rejectedIndex).getNewRoute()
+                    routeProductList.get(rejectedIndex).getRouteOrdering()
                 );
 
         /**
@@ -255,7 +280,7 @@ public class RouteOrdering extends EntityDate {
 
                         i.getRoute_name(),
 
-                        //routeProductRepository.findAllByNewRoute(this).size(),
+                        //routeProductRepository.findAllByRouteOrdering(this).size(),
                         i.getType(),
                         "default",
                         false, //passed
@@ -265,13 +290,13 @@ public class RouteOrdering extends EntityDate {
                         i.getMembers().stream().map(
                                 m -> m.getMember()
                         ).collect(toList()),
-                        i.getNewRoute()
+                        i.getRouteOrdering()
                 )
         ).collect(
                 toList()
         );
         List<RouteProduct> allRouteProductList =
-                routeProductRepository.findAllByNewRoute(this);
+                routeProductRepository.findAllByRouteOrdering(this);
 
         Integer lastIndex = allRouteProductList.size()-1;
         List<RouteProduct> addedRouteProductList =

@@ -6,7 +6,8 @@ import eci.server.ItemModule.entity.newRoute.RouteOrdering;
 import eci.server.ItemModule.entity.newRoute.RouteProduct;
 import eci.server.ItemModule.entity.newRoute.RouteProductMember;
 import eci.server.ItemModule.exception.route.RouteNotFoundException;
-import eci.server.ItemModule.repository.newRoute.NewRouteRepository;
+
+import eci.server.ItemModule.repository.newRoute.RouteOrderingRepository;
 import eci.server.ItemModule.repository.newRoute.RouteProductRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,7 +22,7 @@ import java.util.List;
 @Transactional
 public class NewRouteGuard {
     private final AuthHelper authHelper;
-    private final NewRouteRepository newRouteRepository;
+    private final RouteOrderingRepository routeOrderingRepository;
     private final RouteProductRepository routeProductRepository;
 
     public boolean check(Long id) {
@@ -36,11 +37,11 @@ public class NewRouteGuard {
     private boolean isResponsible(Long id) {
 
         RouteOrdering newRoute =
-                newRouteRepository.findById(id).orElseThrow(() -> { throw new RouteNotFoundException(); });
+                routeOrderingRepository.findById(id).orElseThrow(() -> { throw new RouteNotFoundException(); });
 
         //라우트에 딸린 routeProduct들
         List<RouteProduct> routeProduct =
-                routeProductRepository.findAllByNewRoute(newRoute);
+                routeProductRepository.findAllByRouteOrdering(newRoute);
 
         //현재 로그인 된 유저
         Long memberId = authHelper.extractMemberId();

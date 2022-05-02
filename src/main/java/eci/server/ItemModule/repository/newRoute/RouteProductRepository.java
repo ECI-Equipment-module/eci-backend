@@ -8,5 +8,5 @@ import java.util.List;
 
 public interface RouteProductRepository extends JpaRepository<RouteProduct, Long> {
 
-    List<RouteProduct> findAllByNewRoute(RouteOrdering newRoute);
+    List<RouteProduct> findAllByRouteOrdering(RouteOrdering routeOrdering);
 }
