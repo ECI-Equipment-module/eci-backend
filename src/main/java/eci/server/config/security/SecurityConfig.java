@@ -55,6 +55,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.PUT, "/items/{id}").access("@itemGuard.check(#id)")
                 .antMatchers(HttpMethod.DELETE, "/items/{id}").access("@itemGuard.check(#id)")
 
+
                 .antMatchers(HttpMethod.POST, "/route").authenticated()
 
                 .antMatchers(HttpMethod.POST, "/route/project").authenticated()
@@ -65,6 +66,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
                 .antMatchers(HttpMethod.PUT, "/approveRoute/{id}").access("@newRouteGuard.check(#id)")
                 .antMatchers(HttpMethod.PUT, "/rejectRoute/{id}").access("@newRouteGuard.check(#id)")
+
 
 
 

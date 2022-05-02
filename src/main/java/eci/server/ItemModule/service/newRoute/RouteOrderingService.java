@@ -32,8 +32,10 @@ public class RouteOrderingService {
     private final RouteProductRepository routeProductRepository;
     private final MemberRepository memberRepository;
     private final ItemRepository itemRepository;
+
     private final RouteOrderingRepository routeOrderingRepository;
     private final RoutePreset routePreset;
+
     private final RouteTypeRepository routeTypeRepository;
 
 
@@ -66,7 +68,9 @@ public class RouteOrderingService {
                         req,
                         itemRepository,
                         routePreset,
+
                         routeTypeRepository
+
 
 
                         //itemType

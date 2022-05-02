@@ -280,7 +280,6 @@ public class RouteOrdering extends EntityDate {
 
                         i.getRoute_name(),
 
-                        //routeProductRepository.findAllByRouteOrdering(this).size(),
                         i.getType(),
                         "default",
                         false, //passed
