@@ -6,7 +6,6 @@ import eci.server.ItemModule.entity.newRoute.RouteType;
 import eci.server.ItemModule.entity.member.RoleType;
 import eci.server.ItemModule.entity.newRoute.RouteOrdering;
 import eci.server.ItemModule.entity.route.Route;
-import eci.server.ItemModule.entity.route.RouteType;
 
 import lombok.AccessLevel;
 import lombok.Getter;

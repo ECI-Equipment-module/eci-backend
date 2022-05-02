@@ -1,6 +1,7 @@
 package eci.server.ProjectModule.dto;
 
 import eci.server.ItemModule.dto.item.ItemDto;
+import eci.server.ItemModule.dto.item.ItemProjectDto;
 import eci.server.ItemModule.dto.member.MemberDto;
 import eci.server.ItemModule.entity.item.Item;
 import eci.server.ItemModule.entity.member.Member;
@@ -28,7 +29,7 @@ public class ProjectDto {
     private String projectNumber;
     private LocalDate startPeriod;
     private LocalDate overPeriod;
-    private ItemDto item;
+    private ItemProjectDto item;
     private MemberDto member;
     private Boolean tempsave;
     private ProjectTypeDto projectType;
@@ -46,7 +47,7 @@ public class ProjectDto {
                 project.getProjectNumber(),
                 project.getStartPeriod(),
                 project.getOverPeriod(),
-                ItemDto.toDto(project.getItem()),
+                ItemProjectDto.toDto(project.getItem()),
                 MemberDto.toDto(project.getMember()),
                 project.getTempsave(),
                 ProjectTypeDto.toDto(project.getProjectType()),
