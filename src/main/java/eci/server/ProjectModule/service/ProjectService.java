@@ -1,20 +1,20 @@
 package eci.server.ProjectModule.service;
 
+import eci.server.ItemModule.dto.item.ReadItemDto;
+import eci.server.ItemModule.dto.member.MemberListDto;
+import eci.server.ItemModule.dto.member.MemberReadCondition;
 import eci.server.ItemModule.repository.item.ItemRepository;
 import eci.server.ItemModule.repository.member.MemberRepository;
+import eci.server.ItemModule.repository.newRoute.RouteOrderingRepository;
+import eci.server.ItemModule.repository.newRoute.RouteProductRepository;
 import eci.server.ItemModule.service.file.FileService;
 import eci.server.ItemModule.service.file.LocalFileService;
 
-import eci.server.ProjectModule.dto.ProjectCreateRequest;
-import eci.server.ProjectModule.dto.ProjectCreateUpdateResponse;
-import eci.server.ProjectModule.dto.ProjectTemporaryCreateRequest;
-import eci.server.ProjectModule.dto.ProjectUpdateRequest;
+import eci.server.ProjectModule.dto.*;
 import eci.server.ProjectModule.entity.project.Project;
 import eci.server.ProjectModule.entity.projectAttachment.ProjectAttachment;
 import eci.server.ProjectModule.exception.ProjectNotFoundException;
 import eci.server.ProjectModule.exception.ProjectUpdateImpossibleException;
-
-import eci.server.ProjectModule.dto.*;
 
 import eci.server.ProjectModule.repository.clientOrg.ClientOrganizationRepository;
 import eci.server.ProjectModule.repository.produceOrg.ProduceOrganizationRepository;
@@ -45,6 +45,8 @@ public class ProjectService {
     private final ProjectAttachmentRepository projectAttachmentRepositoryl;
     private final FileService fileService;
     private final LocalFileService localFileService;
+    private final RouteOrderingRepository routeOrderingRepository;
+    private final RouteProductRepository routeProductRepository;
 
     @Transactional
     public ProjectCreateUpdateResponse tempCreate(ProjectTemporaryCreateRequest req) {
@@ -148,7 +150,31 @@ public class ProjectService {
 
 
     // read one project
+    public ProjectDto read(Long id){
+        Project targetProject = projectRepository.findById(id).orElseThrow(ProjectNotFoundException::new);
+        return ProjectDto.toDto(
+                targetProject,
+                routeOrderingRepository,
+                routeProductRepository
+                );
+    }
 
-    // delete one project
+    public ProjectListDto readAll(ProjectReadCondition cond) {
+        return ProjectListDto.toDto(
+                projectRepository.findAllByCondition(cond)
+        );
+    }
+     //delete one project
+
+    @Transactional
+    public void delete(Long id) {
+        Project project = projectRepository.findById(id).orElseThrow(ProjectNotFoundException::new);
+        deleteProjectAttachments(project.getProjectAttachments());
+        projectRepository.delete(project);
+    }
+
+    private void deleteProjectAttachments(List<ProjectAttachment> projectAttachments) {
+        projectAttachments.stream().forEach(i -> fileService.delete(i.getUniqueName()));
+    }
 
 }

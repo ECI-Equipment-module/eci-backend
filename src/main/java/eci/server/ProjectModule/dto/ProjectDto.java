@@ -3,8 +3,13 @@ package eci.server.ProjectModule.dto;
 import eci.server.ItemModule.dto.item.ItemDto;
 import eci.server.ItemModule.dto.item.ItemProjectDto;
 import eci.server.ItemModule.dto.member.MemberDto;
+import eci.server.ItemModule.dto.newRoute.RouteOrderingDto;
+import eci.server.ItemModule.dto.newRoute.RouteProductDto;
 import eci.server.ItemModule.entity.item.Item;
 import eci.server.ItemModule.entity.member.Member;
+import eci.server.ItemModule.exception.route.RouteNotFoundException;
+import eci.server.ItemModule.repository.newRoute.RouteOrderingRepository;
+import eci.server.ItemModule.repository.newRoute.RouteProductRepository;
 import eci.server.ProjectModule.dto.clientOrg.ClientOrganizationDto;
 import eci.server.ProjectModule.dto.produceOrg.ProduceOrganizationDto;
 import eci.server.ProjectModule.dto.projectAttachmentDto.ProjectAttachmentDto;
@@ -17,6 +22,7 @@ import lombok.Data;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 
 import static java.util.stream.Collectors.toList;
@@ -39,7 +45,20 @@ public class ProjectDto {
     private String carType;
     private List<ProjectAttachmentDto> projectAttachments;
 
-    public static ProjectDto toDto(Project project){
+    private List<RouteOrderingDto> routeDtoList;
+
+    public static ProjectDto toDto(
+            Project project,
+            RouteOrderingRepository routeOrderingRepository,
+            RouteProductRepository routeProductRepository
+    ){
+        List <RouteOrderingDto> routeDtoList = Optional.ofNullable(
+                RouteOrderingDto.toDtoList(
+                        routeOrderingRepository.findByItem(project.getItem()),
+                        routeProductRepository,
+                        routeOrderingRepository
+                )
+        ).orElseThrow(RouteNotFoundException::new);
 
         return new ProjectDto(
                 project.getId(),
@@ -58,8 +77,9 @@ public class ProjectDto {
                 project.getProjectAttachments().
                         stream().
                         map(i -> ProjectAttachmentDto.toDto(i))
-                        .collect(toList())
+                        .collect(toList()),
 
+                routeDtoList
 
         );
     }
