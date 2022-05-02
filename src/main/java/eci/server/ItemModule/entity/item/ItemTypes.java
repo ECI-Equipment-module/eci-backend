@@ -1,6 +1,13 @@
 package eci.server.ItemModule.entity.item;
 
+
 import eci.server.ItemModule.entity.newRoute.RouteType;
+
+import eci.server.ItemModule.entity.member.RoleType;
+import eci.server.ItemModule.entity.newRoute.RouteOrdering;
+import eci.server.ItemModule.entity.route.Route;
+import eci.server.ItemModule.entity.route.RouteType;
+
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,8 +35,11 @@ public class ItemTypes {
     @Column(nullable = false, unique = true)
     private String name;
 
-    @Column(nullable = true)
-    private Integer routeOrderingTypeIdx; //정수로 저장
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "routetype_id", nullable = false)
+    private RouteType routeType;
+    //itemType 이 지정된다면 routeOrdering 은
+    // routeType으로 지정된다.
 
 
     @ManyToOne(fetch = FetchType.LAZY)

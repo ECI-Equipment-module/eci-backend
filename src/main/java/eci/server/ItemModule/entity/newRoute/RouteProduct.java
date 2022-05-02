@@ -169,7 +169,9 @@ public class RouteProduct extends EntityDate {
         this.comments = req.getComment();
         this.passed = true;
         this.rejected = false;
+
         this.routeOrdering = routeProduct.getRouteOrdering();
+
         this.route_show = true;
         this.disabled = false;
         return req;
