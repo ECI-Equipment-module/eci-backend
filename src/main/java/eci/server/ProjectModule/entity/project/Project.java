@@ -158,6 +158,7 @@ public class Project extends EntityDate {
 
         this.revision = 65;
         this.lifecycle = "DEVELOPMENT";
+
     }
 
 
@@ -202,6 +203,7 @@ public class Project extends EntityDate {
 
         this.revision = 65;
         this.lifecycle = "DEVELOPMENT";
+
     }
 
     /**
