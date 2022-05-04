@@ -158,6 +158,7 @@ public class Project extends EntityDate {
 
         this.revision = 65;
         this.lifecycle = "DEVELOPMENT";
+
     }
 
 
@@ -177,6 +178,30 @@ public class Project extends EntityDate {
             ProduceOrganization produceOrganization,
 
             ClientOrganization clientOrganizations,
+
+            String carType
+
+    ) {
+        this.name = name;
+
+        this.projectType = projectType;
+        this.projectLevel = projectLevel;
+        this.projectNumber = projectNumber;
+
+        this.member = member;
+        this.tempsave = tempsave;
+        this.startPeriod = startPeriod;
+        this.overPeriod = overPeriod;
+
+        this.produceOrganization = produceOrganization;
+        this.clientOrganization = clientOrganizations;
+
+        this.item = item;
+        this.carType = carType;
+
+
+        this.revision = 65;
+        this.lifecycle = "DEVELOPMENT";
 
 
             String carType

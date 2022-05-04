@@ -12,6 +12,7 @@ public class ProjectListDto{
         private Long totalElements;
     private Integer totalPages;
     private boolean hasNext;
+
     private List<ProjectReadDto> content;
 
     public static ProjectListDto toDto(Page<ProjectReadDto> page) {
