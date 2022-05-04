@@ -85,23 +85,7 @@ public class CustomItemRepositoryImpl extends QuerydslRepositorySupport implemen
                 .where(attachment.item.id.eq(itemId)
                 )
                 .fetch();
-//        List<StringPath> list = new ArrayList<>();
-//        jpaQueryFactory.select(
-//                        (constructor(
-//                                AttachmentSimpleDto.class,
-//                                attachment.attachmentaddress
-//
-//                        ))
-//                ).from(attachment)
-//                .where(attachment.item.id.eq(id))
-//                .fetch()
-//                .stream().map(
-//                        i ->
-//                                list.add(
-//                                        i.getAttachmentAdress()
-//                                                        )
-//                                            );
-//        return list;
+
         return attachmentSimpleDtoList;
     }
     /**
