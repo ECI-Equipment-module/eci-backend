@@ -43,9 +43,9 @@ import static java.util.stream.Collectors.toList;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Project extends EntityDate {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQUENCE2")
-//    @SequenceGenerator(name="SEQUENCE2", sequenceName="SEQUENCE2", allocationSize=1)
+//    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQUENCE2")
+    @SequenceGenerator(name="SEQUENCE2", sequenceName="SEQUENCE2", allocationSize=1)
     private Long id;
 
     @Column(nullable = false)
@@ -155,6 +155,50 @@ public class Project extends EntityDate {
 
         this.projectAttachments = new ArrayList<>();
         addProjectAttachments(projectAttachments);
+
+        this.revision = 65;
+        this.lifecycle = "DEVELOPMENT";
+    }
+
+
+    public Project(
+            String name,
+            String projectNumber,
+
+            LocalDate startPeriod,
+            LocalDate overPeriod,
+
+            Item item,
+            Member member,
+            Boolean tempsave,
+
+            ProjectType projectType,
+            ProjectLevel projectLevel,
+            ProduceOrganization produceOrganization,
+
+            ClientOrganization clientOrganizations,
+
+
+            String carType
+
+    ) {
+        this.name = name;
+
+        this.projectType = projectType;
+        this.projectLevel = projectLevel;
+        this.projectNumber = projectNumber;
+
+        this.member = member;
+        this.tempsave = tempsave;
+        this.startPeriod = startPeriod;
+        this.overPeriod = overPeriod;
+
+        this.produceOrganization = produceOrganization;
+        this.clientOrganization = clientOrganizations;
+
+        this.item = item;
+        this.carType = carType;
+
 
         this.revision = 65;
         this.lifecycle = "DEVELOPMENT";

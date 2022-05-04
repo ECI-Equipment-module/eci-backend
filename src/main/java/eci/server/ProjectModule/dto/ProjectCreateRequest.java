@@ -76,19 +76,18 @@ public class ProjectCreateRequest {
             ClientOrganizationRepository clientOrganizationRepository
             ) {
 
-
         //양산 개발의 아이디가 1 (Long)
-        if (req.projectTypeId.equals(1L)){
+        if (req.projectTypeId.equals(1L)) {
             //TODO 프로젝트 타입이 양산개발이라면 필수 속성은 고객사 / 차종 은 null 이 되면 안됨 검사
-            if(req.clientOrganizationId==null||req.carType.isEmpty())
-            throw new MassProductionSaveException();
+            if (req.clientOrganizationId == null || req.carType.isEmpty())
+                throw new MassProductionSaveException();
 
-        }else if( //필수 속성 중 저장 안된 부분 있나 체크
-                //TODO 필수 속성 부분 체크 needed
-                        req.projectTypeId.toString().isBlank()||
-                        req.projectLevelId.toString().isBlank()||
-                        req.name.isBlank()|| req.itemId.toString().isBlank()
-        ){
+        } else if ( //필수 속성 중 저장 안된 부분 있나 체크
+            //TODO 필수 속성 부분 체크 needed
+                req.projectTypeId.toString().isBlank() ||
+                        req.projectLevelId.toString().isBlank() ||
+                        req.name.isBlank() || req.itemId.toString().isBlank()
+        ) {
 
             throw new ProjectCreateNotEmptyException();
         }
@@ -100,63 +99,102 @@ public class ProjectCreateRequest {
         String projectNum = new SimpleDateFormat("MMddHHmmss", Locale.ENGLISH).format(now);
         String finalProjNum = "";
 
-        if(req.projectTypeId.equals(1L)) {
+        if (req.projectTypeId.equals(1L)) {
             finalProjNum = "M-" + year.toString() + "-" + projectNum;
-        }else {
+        } else {
             finalProjNum = "N-" + year.toString() + "-" + projectNum;
         }
 
         Long clientOrgId = 100000L;
-        clientOrgId = req.clientOrganizationId==null?100000L:req.clientOrganizationId;
+        clientOrgId = req.clientOrganizationId == null ? 100000L : req.clientOrganizationId;
 
-        return new Project(
-                req.name,
-                //TODO 임시 : 프로젝트 number은 양산이면  M-현재년도-REQ.NUM / 선형이면 N-~
-                //해당 형식 스크럼 회의 후 변경 예정
-
-
-
-                finalProjNum,
-
-                LocalDate.parse(req.startPeriod, DateTimeFormatter.ISO_DATE),
-                LocalDate.parse(req.overPeriod, DateTimeFormatter.ISO_DATE),
-
-                itemRepository.findById(req.itemId)
-                        .orElseThrow(ItemNotFoundException::new),
-
-                memberRepository.findById(
-                        req.getMemberId()
-                ).orElseThrow(MemberNotFoundException::new),
+        if (req.tag.size() == 0) {
+            return new Project(
+            req.name,
+                    //TODO 임시 : 프로젝트 number은 양산이면  M-현재년도-REQ.NUM / 선형이면 N-~
+                    //해당 형식 스크럼 회의 후 변경 예정
 
 
-                false,
+                    finalProjNum,
 
-                projectTypeRepository.findById(req.projectTypeId)
-                        .orElseThrow(ProjectTypeNotFoundException::new),
+                    LocalDate.parse(req.startPeriod, DateTimeFormatter.ISO_DATE),
+                    LocalDate.parse(req.overPeriod, DateTimeFormatter.ISO_DATE),
 
-                projectLevelRepository.findById(req.projectLevelId)
-                        .orElseThrow(ProjectLevelNotFoundException::new),
-                // 예외 만들기
-                produceOrganizationRepository.findById(req.produceOrganizationId)
-                        .orElseThrow(ProduceOrganizationNotFoundException::new),
-                // 예외 만들기
+                    itemRepository.findById(req.itemId)
+                            .orElseThrow(ItemNotFoundException::new),
 
-                clientOrganizationRepository.findById(clientOrgId)
-                        .orElseThrow(ClientOrganizationNotFoundException::new),
-                // 예외 만들기
+                    memberRepository.findById(
+                            req.getMemberId()
+                    ).orElseThrow(MemberNotFoundException::new),
 
-                req.attachments.stream().map(
-                        i -> new ProjectAttachment(
-                                i.getOriginalFilename(),
-                                req.getTag().get(req.attachments.indexOf(i)),
-                                req.getAttachmentComment().get(req.attachments.indexOf(i))
-                        )
-                ).collect(
-                        toList()
-                ),
 
-                req.carType
-        );
+                    false,
+
+                    projectTypeRepository.findById(req.projectTypeId)
+                            .orElseThrow(ProjectTypeNotFoundException::new),
+
+                    projectLevelRepository.findById(req.projectLevelId)
+                            .orElseThrow(ProjectLevelNotFoundException::new),
+                    // 예외 만들기
+                    produceOrganizationRepository.findById(req.produceOrganizationId)
+                            .orElseThrow(ProduceOrganizationNotFoundException::new),
+                    // 예외 만들기
+
+                    clientOrganizationRepository.findById(clientOrgId)
+                            .orElseThrow(ClientOrganizationNotFoundException::new),
+                    // 예외 만들기
+
+                    req.carType
+            );
+
+        } else {
+            return new Project(
+                    req.name,
+                    //TODO 임시 : 프로젝트 number은 양산이면  M-현재년도-REQ.NUM / 선형이면 N-~
+                    //해당 형식 스크럼 회의 후 변경 예정
+
+
+                    finalProjNum,
+
+                    LocalDate.parse(req.startPeriod, DateTimeFormatter.ISO_DATE),
+                    LocalDate.parse(req.overPeriod, DateTimeFormatter.ISO_DATE),
+
+                    itemRepository.findById(req.itemId)
+                            .orElseThrow(ItemNotFoundException::new),
+
+                    memberRepository.findById(
+                            req.getMemberId()
+                    ).orElseThrow(MemberNotFoundException::new),
+
+
+                    false,
+
+                    projectTypeRepository.findById(req.projectTypeId)
+                            .orElseThrow(ProjectTypeNotFoundException::new),
+
+                    projectLevelRepository.findById(req.projectLevelId)
+                            .orElseThrow(ProjectLevelNotFoundException::new),
+                    // 예외 만들기
+                    produceOrganizationRepository.findById(req.produceOrganizationId)
+                            .orElseThrow(ProduceOrganizationNotFoundException::new),
+                    // 예외 만들기
+
+                    clientOrganizationRepository.findById(clientOrgId)
+                            .orElseThrow(ClientOrganizationNotFoundException::new),
+                    // 예외 만들기
+
+                    req.attachments.stream().map(
+                            i -> new ProjectAttachment(
+                                    i.getOriginalFilename(),
+                                    req.getTag().get(req.attachments.indexOf(i)),
+                                    req.getAttachmentComment().get(req.attachments.indexOf(i))
+                            )
+                    ).collect(
+                            toList()
+                    ),
+
+                    req.carType
+            );
+        }
     }
-
 }

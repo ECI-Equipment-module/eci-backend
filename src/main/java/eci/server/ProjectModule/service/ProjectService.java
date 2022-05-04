@@ -1,8 +1,5 @@
 package eci.server.ProjectModule.service;
 
-import eci.server.ItemModule.dto.item.ReadItemDto;
-import eci.server.ItemModule.dto.member.MemberListDto;
-import eci.server.ItemModule.dto.member.MemberReadCondition;
 import eci.server.ItemModule.entity.newRoute.RouteOrdering;
 import eci.server.ItemModule.repository.item.ItemRepository;
 import eci.server.ItemModule.repository.member.MemberRepository;
@@ -84,9 +81,9 @@ public class ProjectService {
                         clientOrganizationRepository
                 )
         );
-
-        uploadAttachments(project.getProjectAttachments(), req.getAttachments());
-
+        if(!(req.getTag().size()==0)) {
+            uploadAttachments(project.getProjectAttachments(), req.getAttachments());
+        }
         List<RouteOrdering> routeOrdering = routeOrderingRepository.findByItem(project.getItem());
         //프로젝트에 딸린 라우트
         Long routeId = routeOrderingRepository.findByItem(project.getItem()).get(routeOrdering.size()-1).getId();
