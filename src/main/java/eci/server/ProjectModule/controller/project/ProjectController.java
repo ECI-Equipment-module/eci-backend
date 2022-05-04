@@ -1,5 +1,6 @@
 package eci.server.ProjectModule.controller.project;
 
+import eci.server.ItemModule.dto.member.MemberReadCondition;
 import eci.server.ItemModule.dto.response.Response;
 import eci.server.ProjectModule.dto.ProjectCreateRequest;
 import eci.server.ProjectModule.dto.ProjectReadCondition;
