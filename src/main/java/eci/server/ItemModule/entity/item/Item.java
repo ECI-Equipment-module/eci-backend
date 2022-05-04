@@ -1,6 +1,5 @@
 package eci.server.ItemModule.entity.item;
 
-import com.querydsl.core.annotations.QueryProjection;
 import eci.server.ItemModule.dto.item.ItemUpdateRequest;
 
 import eci.server.ItemModule.entity.entitycommon.EntityDate;

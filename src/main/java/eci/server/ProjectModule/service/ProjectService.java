@@ -1,8 +1,12 @@
 package eci.server.ProjectModule.service;
 
+
+import eci.server.ItemModule.entity.newRoute.RouteOrdering;
+
 import eci.server.ItemModule.dto.item.ReadItemDto;
 import eci.server.ItemModule.dto.member.MemberListDto;
 import eci.server.ItemModule.dto.member.MemberReadCondition;
+
 import eci.server.ItemModule.repository.item.ItemRepository;
 import eci.server.ItemModule.repository.member.MemberRepository;
 import eci.server.ItemModule.repository.newRoute.RouteOrderingRepository;
@@ -49,7 +53,7 @@ public class ProjectService {
     private final RouteProductRepository routeProductRepository;
 
     @Transactional
-    public ProjectCreateUpdateResponse tempCreate(ProjectTemporaryCreateRequest req) {
+    public ProjectTempCreateUpdateResponse tempCreate(ProjectTemporaryCreateRequest req) {
 
         Project project = projectRepository.save(
                 ProjectTemporaryCreateRequest.toEntity(
@@ -64,7 +68,7 @@ public class ProjectService {
         );
         uploadAttachments(project.getProjectAttachments(), req.getAttachments());
 
-        return new ProjectCreateUpdateResponse(project.getId());
+        return new ProjectTempCreateUpdateResponse(project.getId());
     }
 
 
@@ -83,10 +87,14 @@ public class ProjectService {
                         clientOrganizationRepository
                 )
         );
+        if(!(req.getTag().size()==0)) {
+            uploadAttachments(project.getProjectAttachments(), req.getAttachments());
+        }
+        List<RouteOrdering> routeOrdering = routeOrderingRepository.findByItem(project.getItem());
+        //프로젝트에 딸린 라우트
+        Long routeId = routeOrderingRepository.findByItem(project.getItem()).get(routeOrdering.size()-1).getId();
 
-        uploadAttachments(project.getProjectAttachments(), req.getAttachments());
-
-        return new ProjectCreateUpdateResponse(project.getId());
+        return new ProjectCreateUpdateResponse(project.getId(), routeId);
     }
 
 
@@ -114,7 +122,9 @@ public class ProjectService {
     }
 
     @Transactional
-    public ProjectCreateUpdateResponse update(Long id, ProjectUpdateRequest req) {
+
+    public ProjectTempCreateUpdateResponse update(Long id, ProjectUpdateRequest req) {
+
 
         Project project =  projectRepository.findById(id).orElseThrow(ProjectNotFoundException::new);
 
@@ -145,7 +155,9 @@ public class ProjectService {
                 result.getAttachmentUpdatedResult().getDeletedAttachments()
         );
 
-        return new ProjectCreateUpdateResponse(id);
+
+        return new ProjectTempCreateUpdateResponse(id);
+
     }
 
 

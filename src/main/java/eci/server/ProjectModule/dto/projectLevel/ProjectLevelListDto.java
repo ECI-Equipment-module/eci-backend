@@ -12,7 +12,7 @@ public class ProjectLevelListDto {
     private Long totalElements;
     private Integer totalPages;
     private boolean hasNext;
-    private List<ProjectLevelReadResponse> postList;
+    private List<ProjectLevelReadResponse> content;
 
     public static ProjectLevelListDto toDto(Page<ProjectLevelReadResponse> page) {
         return new ProjectLevelListDto(page.getTotalElements(), page.getTotalPages(), page.hasNext(), page.getContent());

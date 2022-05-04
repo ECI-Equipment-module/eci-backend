@@ -1,14 +1,11 @@
 package eci.server.config.guard;
 
-import eci.server.ItemModule.entity.item.Item;
 import eci.server.ItemModule.entity.member.RoleType;
-import eci.server.ItemModule.repository.item.ItemRepository;
 import eci.server.ProjectModule.entity.project.Project;
 import eci.server.ProjectModule.exception.ProjectNotFoundException;
 import eci.server.ProjectModule.repository.project.ProjectRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Component;
 
 @Component

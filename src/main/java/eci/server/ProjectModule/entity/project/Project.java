@@ -158,6 +158,52 @@ public class Project extends EntityDate {
 
         this.revision = 65;
         this.lifecycle = "DEVELOPMENT";
+
+    }
+
+
+    public Project(
+            String name,
+            String projectNumber,
+
+            LocalDate startPeriod,
+            LocalDate overPeriod,
+
+            Item item,
+            Member member,
+            Boolean tempsave,
+
+            ProjectType projectType,
+            ProjectLevel projectLevel,
+            ProduceOrganization produceOrganization,
+
+            ClientOrganization clientOrganizations,
+
+
+            String carType
+
+    ) {
+        this.name = name;
+
+        this.projectType = projectType;
+        this.projectLevel = projectLevel;
+        this.projectNumber = projectNumber;
+
+        this.member = member;
+        this.tempsave = tempsave;
+        this.startPeriod = startPeriod;
+        this.overPeriod = overPeriod;
+
+        this.produceOrganization = produceOrganization;
+        this.clientOrganization = clientOrganizations;
+
+        this.item = item;
+        this.carType = carType;
+
+
+        this.revision = 65;
+        this.lifecycle = "DEVELOPMENT";
+
     }
 
     /**

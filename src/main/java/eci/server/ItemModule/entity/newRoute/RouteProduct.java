@@ -25,9 +25,9 @@ import static java.util.stream.Collectors.toList;
 public class RouteProduct extends EntityDate {
 
     @Id
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @GeneratedValue(strategy= GenerationType.SEQUENCE, generator="SEQUENCE1")
-    @SequenceGenerator(name="SEQUENCE1", sequenceName="SEQUENCE1", allocationSize=1)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+//    @GeneratedValue(strategy= GenerationType.SEQUENCE, generator="SEQUENCE1")
+//    @SequenceGenerator(name="SEQUENCE1", sequenceName="SEQUENCE1", allocationSize=1)
     private Long id;
 
     /**
@@ -39,16 +39,11 @@ public class RouteProduct extends EntityDate {
     /**
      * 라우트 오더링에서 정의된 최초의 SEQ 를 나타냄
      */
-
     @Column(nullable = false)
     private Integer origin_seq;
 
     @Column(nullable = false)
     private String route_name;
-
-
-
-
 
     /**
      * request, approve, review, design, complete 중 하나
@@ -56,7 +51,6 @@ public class RouteProduct extends EntityDate {
     @ManyToOne
     @JoinColumn(name ="route_type")
     private RouteType type;
-
 
     /**
      * comment 남기기

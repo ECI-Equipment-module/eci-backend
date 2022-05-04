@@ -12,7 +12,7 @@ public class ItemListDto {
     private Long totalElements;
     private Integer totalPages;
     private boolean hasNext;
-    private List<ItemSimpleDto> postList;
+    private List<ItemSimpleDto> content;
 
     public static ItemListDto toDto(Page<ItemSimpleDto> page) {
         return new ItemListDto(page.getTotalElements(), page.getTotalPages(), page.hasNext(), page.getContent());

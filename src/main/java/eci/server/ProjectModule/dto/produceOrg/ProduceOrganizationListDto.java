@@ -12,7 +12,7 @@ public class ProduceOrganizationListDto {
     private Long totalElements;
     private Integer totalPages;
     private boolean hasNext;
-    private List<ProduceOrganizationReadResponse> postList;
+    private List<ProduceOrganizationReadResponse> content;
 
     public static ProduceOrganizationListDto toDto(Page<ProduceOrganizationReadResponse> page) {
         return new ProduceOrganizationListDto(page.getTotalElements(), page.getTotalPages(), page.hasNext(), page.getContent());

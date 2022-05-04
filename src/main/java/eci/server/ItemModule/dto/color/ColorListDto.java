@@ -12,7 +12,7 @@ public class ColorListDto {
     private Long totalElements;
     private Integer totalPages;
     private boolean hasNext;
-    private List<ColorReadResonse> postList;
+    private List<ColorReadResonse> content;
 
     public static ColorListDto toDto(Page<ColorReadResonse> page) {
         return new ColorListDto(page.getTotalElements(), page.getTotalPages(), page.hasNext(), page.getContent());

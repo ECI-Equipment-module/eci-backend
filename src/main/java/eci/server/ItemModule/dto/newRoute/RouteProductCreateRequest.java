@@ -107,7 +107,7 @@ public class RouteProductCreateRequest {
                         ).collect(toList()).get(0),
 
                 "default",
-                false,
+                true,
                 false,
                 true,
                 false,
