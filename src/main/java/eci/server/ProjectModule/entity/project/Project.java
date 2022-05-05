@@ -43,7 +43,7 @@ import static java.util.stream.Collectors.toList;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Project extends EntityDate {
     @Id
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
+//  @GeneratedValue(strategy = GenerationType.IDENTITY)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQUENCE2")
     @SequenceGenerator(name="SEQUENCE2", sequenceName="SEQUENCE2", allocationSize=1)
     private Long id;
@@ -160,7 +160,21 @@ public class Project extends EntityDate {
         this.lifecycle = "DEVELOPMENT";
     }
 
-
+    /**
+     * Project에 Attachment 존재하지 않을 시에 생성자입니다.
+     * @param name
+     * @param projectNumber
+     * @param startPeriod
+     * @param overPeriod
+     * @param item
+     * @param member
+     * @param tempsave
+     * @param projectType
+     * @param projectLevel
+     * @param produceOrganization
+     * @param clientOrganizations
+     * @param carType
+     */
     public Project(
             String name,
             String projectNumber,

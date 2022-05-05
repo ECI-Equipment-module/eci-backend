@@ -32,15 +32,16 @@ import static java.util.stream.Collectors.toList;
 public class ItemCreateRequest {
     private final Logger logger = LoggerFactory.getLogger(ItemCreateRequest.class);
 
-    @NotNull@NotBlank(message = "아이템 이름을 입력해주세요.")
+    @NotNull
+    @NotBlank(message = "아이템 이름을 입력해주세요.")
     private String name;
 
     @NotNull(message = "아이템 타입을 입력해주세요.")
     private String type;
 
     @Null
-    @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="SEQUENCE1")
-    @SequenceGenerator(name="SEQUENCE1", sequenceName="SEQUENCE1", allocationSize=1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQUENCE1")
+    @SequenceGenerator(name = "SEQUENCE1", sequenceName = "SEQUENCE1", allocationSize = 1)
     private Integer itemNumber;
 
     @NotNull(message = "너비를 입력해주세요.")
@@ -81,26 +82,77 @@ public class ItemCreateRequest {
             MaterialRepository materialRepository,
             ManufactureRepository manufactureRepository) {
 
-        if (req.type.equals("NONE")){
+        if (req.type.equals("NONE")) {
             //아이템 타입이 none이라면 제대로 저장하면 안됨
 
             throw new ItemTypeSaveException();
-        }else if(
-                        req.height.isBlank()||
+        } else if (
+                req.height.isBlank() ||
                         req.weight.isBlank() ||
                         req.width.isBlank()
 
             //길이, 높이, 너비가 빈 칸이라면 안됨
-        ){
+        ) {
             throw new ItemCreateNotEmptyException();
+        }
+
+        if (req.getTag().size() == 0) {
+            return new Item(
+                    req.name,
+                    req.type.isBlank() ? "NONE" : req.type,
+                    ItemType.valueOf(
+                                    req.type.isBlank() ? "NONE" : req.type)
+                            .label() * 1000000 + (int) (Math.random() * 1000),
+                    req.width,
+                    req.height,
+                    req.weight,
+
+                    memberRepository.findById(
+                            req.getMemberId()
+                    ).orElseThrow(MemberNotFoundException::new),
+
+                    false, //임시저장 끝
+                    false, //생성 시에는 개정되는 것이 false
+
+                    colorRepository.findById(
+                            req.getColorId()
+                    ).orElseThrow(ColorNotFoundException::new),
+
+                    req.thumbnail.stream().map(
+                            i -> new Image(
+                                    i.getOriginalFilename()
+                            )
+                    ).collect(
+                            toList()
+                    ),
+
+
+                    req.materials.stream().map(
+                            i ->
+                                    materialRepository.
+                                            findById(i).orElseThrow(MaterialNotFoundException::new)
+                    ).collect(
+                            toList()
+                    ),
+
+                    req.manufactures.stream().map(
+                            i ->
+                                    manufactureRepository.
+                                            findById(i).orElseThrow(ManufactureNotFoundException::new)
+                    ).collect(
+                            toList()
+                    ),
+
+                    req.partnumbers
+            );
         }
 
         return new Item(
                 req.name,
-                req.type.isBlank()? "BEARING":req.type,
+                req.type.isBlank() ? "NONE" : req.type,
                 ItemType.valueOf(
-                        req.type.isBlank()? "NONE":req.type)
-                        .label()*1000000+(int)(Math.random()*1000),
+                                req.type.isBlank() ? "NONE" : req.type)
+                        .label() * 1000000 + (int) (Math.random() * 1000),
                 req.width,
                 req.height,
                 req.weight,
@@ -151,5 +203,7 @@ public class ItemCreateRequest {
 
                 req.partnumbers
         );
+
     }
+
 }

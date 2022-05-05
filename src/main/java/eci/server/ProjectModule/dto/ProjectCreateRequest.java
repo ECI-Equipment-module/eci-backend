@@ -108,7 +108,8 @@ public class ProjectCreateRequest {
         Long clientOrgId = 100000L;
         clientOrgId = req.clientOrganizationId == null ? 100000L : req.clientOrganizationId;
 
-        if (req.tag.size() == 0) {
+
+        if (req.tag.size() == 0) { //Project에 Attachment 존재하지 않을 시에 생성자
             return new Project(
             req.name,
                     //TODO 임시 : 프로젝트 number은 양산이면  M-현재년도-REQ.NUM / 선형이면 N-~
@@ -147,7 +148,7 @@ public class ProjectCreateRequest {
                     req.carType
             );
 
-        } else {
+        } else { //Project에 Attachment 존재할 시에 생성자
             return new Project(
                     req.name,
                     //TODO 임시 : 프로젝트 number은 양산이면  M-현재년도-REQ.NUM / 선형이면 N-~
