@@ -43,7 +43,7 @@ import static java.util.stream.Collectors.toList;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Project extends EntityDate {
     @Id
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
+//  @GeneratedValue(strategy = GenerationType.IDENTITY)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQUENCE2")
     @SequenceGenerator(name="SEQUENCE2", sequenceName="SEQUENCE2", allocationSize=1)
     private Long id;
@@ -158,10 +158,30 @@ public class Project extends EntityDate {
 
         this.revision = 65;
         this.lifecycle = "DEVELOPMENT";
+<<<<<<< HEAD
+    }
+
+    /**
+     * Project에 Attachment 존재하지 않을 시에 생성자입니다.
+     * @param name
+     * @param projectNumber
+     * @param startPeriod
+     * @param overPeriod
+     * @param item
+     * @param member
+     * @param tempsave
+     * @param projectType
+     * @param projectLevel
+     * @param produceOrganization
+     * @param clientOrganizations
+     * @param carType
+     */
+=======
 
     }
 
 
+>>>>>>> 3f9be407f2102ba559ea51c74810a0b8fc4e145a
     public Project(
             String name,
             String projectNumber,
@@ -179,6 +199,8 @@ public class Project extends EntityDate {
 
             ClientOrganization clientOrganizations,
 
+<<<<<<< HEAD
+=======
 
             String carType
 
@@ -203,7 +225,31 @@ public class Project extends EntityDate {
 
         this.revision = 65;
         this.lifecycle = "DEVELOPMENT";
+>>>>>>> 3f9be407f2102ba559ea51c74810a0b8fc4e145a
 
+            String carType
+
+    ) {
+        this.name = name;
+
+        this.projectType = projectType;
+        this.projectLevel = projectLevel;
+        this.projectNumber = projectNumber;
+
+        this.member = member;
+        this.tempsave = tempsave;
+        this.startPeriod = startPeriod;
+        this.overPeriod = overPeriod;
+
+        this.produceOrganization = produceOrganization;
+        this.clientOrganization = clientOrganizations;
+
+        this.item = item;
+        this.carType = carType;
+
+
+        this.revision = 65;
+        this.lifecycle = "DEVELOPMENT";
     }
 
     /**

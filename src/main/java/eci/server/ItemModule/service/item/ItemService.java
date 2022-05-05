@@ -115,8 +115,10 @@ public class ItemService {
         );
 
         uploadImages(item.getThumbnail(), req.getThumbnail());
-
-        uploadAttachments(item.getAttachments(), req.getAttachments());
+        if(!(req.getTag().size()==0)) {//TODO : 나중에 함수로 빼기 (Attachment 유무 판단)
+            //attachment가 존재할 땜나
+            uploadAttachments(item.getAttachments(), req.getAttachments());
+        }
 
         return new ItemCreateResponse(item.getId());
     }

@@ -1,5 +1,8 @@
 package eci.server.ProjectModule.service;
 
+<<<<<<< HEAD
+import eci.server.ItemModule.entity.newRoute.RouteOrdering;
+=======
 
 import eci.server.ItemModule.entity.newRoute.RouteOrdering;
 
@@ -7,6 +10,7 @@ import eci.server.ItemModule.dto.item.ReadItemDto;
 import eci.server.ItemModule.dto.member.MemberListDto;
 import eci.server.ItemModule.dto.member.MemberReadCondition;
 
+>>>>>>> 3f9be407f2102ba559ea51c74810a0b8fc4e145a
 import eci.server.ItemModule.repository.item.ItemRepository;
 import eci.server.ItemModule.repository.member.MemberRepository;
 import eci.server.ItemModule.repository.newRoute.RouteOrderingRepository;
@@ -122,10 +126,15 @@ public class ProjectService {
     }
 
     @Transactional
+<<<<<<< HEAD
+    public ProjectTempCreateUpdateResponse update(Long id, ProjectUpdateRequest req) {
+
+=======
 
     public ProjectTempCreateUpdateResponse update(Long id, ProjectUpdateRequest req) {
 
 
+>>>>>>> 3f9be407f2102ba559ea51c74810a0b8fc4e145a
         Project project =  projectRepository.findById(id).orElseThrow(ProjectNotFoundException::new);
 
 
@@ -155,9 +164,13 @@ public class ProjectService {
                 result.getAttachmentUpdatedResult().getDeletedAttachments()
         );
 
+<<<<<<< HEAD
+        return new ProjectTempCreateUpdateResponse(id);
+=======
 
         return new ProjectTempCreateUpdateResponse(id);
 
+>>>>>>> 3f9be407f2102ba559ea51c74810a0b8fc4e145a
     }
 
 

@@ -27,7 +27,7 @@ import static java.util.stream.Collectors.toList;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Item extends EntityDate {
     @Id
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
+//  @GeneratedValue(strategy = GenerationType.IDENTITY)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQUENCE2")
     @SequenceGenerator(name="SEQUENCE2", sequenceName="SEQUENCE2", allocationSize=1)
     private Long id;
@@ -104,6 +104,24 @@ public class Item extends EntityDate {
     @Column
     private int revision;
 
+    /**
+     * Item에 Attachment 존재할 시에 생성자
+     * @param name
+     * @param type
+     * @param itemNumber
+     * @param width
+     * @param height
+     * @param weight
+     * @param member
+     * @param tempsave
+     * @param revise_progress
+     * @param color
+     * @param thumbnail
+     * @param attachments
+     * @param materials
+     * @param manufactures
+     * @param partnumbers
+     */
     public Item(
             String name,
             String type,
@@ -166,6 +184,86 @@ public class Item extends EntityDate {
         this.revision = 65;
 
     }
+
+    /**
+     * Item에 attachment 존재하지 않을 시 생성자
+     * @param name
+     * @param type
+     * @param itemNumber
+     * @param width
+     * @param height
+     * @param weight
+     * @param member
+     * @param tempsave
+     * @param revise_progress
+     * @param color
+     * @param thumbnail
+     * @param materials
+     * @param manufactures
+     * @param partnumbers
+     */
+    public Item(
+            String name,
+            String type,
+            Integer itemNumber,
+            String width,
+            String height,
+            String weight,
+            Member member,
+            Boolean tempsave,
+            Boolean revise_progress,
+
+            Color color,
+
+            List<Image> thumbnail,
+
+
+            List<Material> materials,
+
+            List<Manufacture> manufactures,
+            List<String> partnumbers
+
+
+    ) {
+        this.name = name;
+        this.type = type;
+        this.itemNumber = itemNumber;
+        this.width = width;
+        this.height = height;
+        this.member = member;
+        this.weight = weight;
+        this.tempsave = tempsave;
+        this.revise_progress = revise_progress;
+
+        this.color = (color);
+
+        this.thumbnail = new ArrayList<>();
+        addImages(thumbnail);
+
+
+
+        this.materials =
+                materials.stream().map(
+                                r -> new ItemMaterial(
+                                        this, r)
+                        )
+                        .collect(toList());
+
+        this.manufactures =
+                manufactures.stream().map(
+
+                                //다대다 관계를 만드는 구간
+                                r -> new ItemManufacture(
+                                        this, r, partnumbers.get(manufactures.indexOf(r))
+                                )
+                        )
+                        .collect(toList());
+
+        this.revision = 65;
+
+    }
+
+
 
     /**
      * postupdaterequest 받아서 update 수행

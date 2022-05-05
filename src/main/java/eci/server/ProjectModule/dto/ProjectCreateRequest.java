@@ -108,13 +108,24 @@ public class ProjectCreateRequest {
         Long clientOrgId = 100000L;
         clientOrgId = req.clientOrganizationId == null ? 100000L : req.clientOrganizationId;
 
+<<<<<<< HEAD
+=======
         if (req.tag.size() == 0) {
             return new Project(
             req.name,
                     //TODO 임시 : 프로젝트 number은 양산이면  M-현재년도-REQ.NUM / 선형이면 N-~
                     //해당 형식 스크럼 회의 후 변경 예정
+>>>>>>> 3f9be407f2102ba559ea51c74810a0b8fc4e145a
 
+        if (req.tag.size() == 0) { //Project에 Attachment 존재하지 않을 시에 생성자
+            return new Project(
+            req.name,
+                    //TODO 임시 : 프로젝트 number은 양산이면  M-현재년도-REQ.NUM / 선형이면 N-~
+                    //해당 형식 스크럼 회의 후 변경 예정
 
+                    finalProjNum,
+
+<<<<<<< HEAD
                     finalProjNum,
 
                     LocalDate.parse(req.startPeriod, DateTimeFormatter.ISO_DATE),
@@ -126,8 +137,22 @@ public class ProjectCreateRequest {
                     memberRepository.findById(
                             req.getMemberId()
                     ).orElseThrow(MemberNotFoundException::new),
+=======
+                    LocalDate.parse(req.startPeriod, DateTimeFormatter.ISO_DATE),
+                    LocalDate.parse(req.overPeriod, DateTimeFormatter.ISO_DATE),
 
+                    itemRepository.findById(req.itemId)
+                            .orElseThrow(ItemNotFoundException::new),
 
+                    memberRepository.findById(
+                            req.getMemberId()
+                    ).orElseThrow(MemberNotFoundException::new),
+
+>>>>>>> 3f9be407f2102ba559ea51c74810a0b8fc4e145a
+
+                    false,
+
+<<<<<<< HEAD
                     false,
 
                     projectTypeRepository.findById(req.projectTypeId)
@@ -147,7 +172,27 @@ public class ProjectCreateRequest {
                     req.carType
             );
 
+        } else { //Project에 Attachment 존재할 시에 생성자
+=======
+                    projectTypeRepository.findById(req.projectTypeId)
+                            .orElseThrow(ProjectTypeNotFoundException::new),
+
+                    projectLevelRepository.findById(req.projectLevelId)
+                            .orElseThrow(ProjectLevelNotFoundException::new),
+                    // 예외 만들기
+                    produceOrganizationRepository.findById(req.produceOrganizationId)
+                            .orElseThrow(ProduceOrganizationNotFoundException::new),
+                    // 예외 만들기
+
+                    clientOrganizationRepository.findById(clientOrgId)
+                            .orElseThrow(ClientOrganizationNotFoundException::new),
+                    // 예외 만들기
+
+                    req.carType
+            );
+
         } else {
+>>>>>>> 3f9be407f2102ba559ea51c74810a0b8fc4e145a
             return new Project(
                     req.name,
                     //TODO 임시 : 프로젝트 number은 양산이면  M-현재년도-REQ.NUM / 선형이면 N-~
