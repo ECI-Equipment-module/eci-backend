@@ -157,9 +157,10 @@ public class Project extends EntityDate {
         addProjectAttachments(projectAttachments);
 
         this.revision = 65;
-        this.lifecycle = "DEVELOPMENT";
-<<<<<<< HEAD
+        this.lifecycle = "WORKING";
+
     }
+
 
     /**
      * Project에 Attachment 존재하지 않을 시에 생성자입니다.
@@ -176,12 +177,7 @@ public class Project extends EntityDate {
      * @param clientOrganizations
      * @param carType
      */
-=======
 
-    }
-
-
->>>>>>> 3f9be407f2102ba559ea51c74810a0b8fc4e145a
     public Project(
             String name,
             String projectNumber,
@@ -199,12 +195,9 @@ public class Project extends EntityDate {
 
             ClientOrganization clientOrganizations,
 
-<<<<<<< HEAD
-=======
-
             String carType
 
-    ) {
+    ){
         this.name = name;
 
         this.projectType = projectType;
@@ -224,32 +217,8 @@ public class Project extends EntityDate {
 
 
         this.revision = 65;
-        this.lifecycle = "DEVELOPMENT";
->>>>>>> 3f9be407f2102ba559ea51c74810a0b8fc4e145a
+        this.lifecycle = "WORKING";
 
-            String carType
-
-    ) {
-        this.name = name;
-
-        this.projectType = projectType;
-        this.projectLevel = projectLevel;
-        this.projectNumber = projectNumber;
-
-        this.member = member;
-        this.tempsave = tempsave;
-        this.startPeriod = startPeriod;
-        this.overPeriod = overPeriod;
-
-        this.produceOrganization = produceOrganization;
-        this.clientOrganization = clientOrganizations;
-
-        this.item = item;
-        this.carType = carType;
-
-
-        this.revision = 65;
-        this.lifecycle = "DEVELOPMENT";
     }
 
     /**
