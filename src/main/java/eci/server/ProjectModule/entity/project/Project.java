@@ -157,12 +157,9 @@ public class Project extends EntityDate {
         addProjectAttachments(projectAttachments);
 
         this.revision = 65;
-        this.lifecycle = "DEVELOPMENT";
+        this.lifecycle = "WORKING";
 
     }
-
-
-
 
 
     /**
@@ -197,9 +194,10 @@ public class Project extends EntityDate {
             ProduceOrganization produceOrganization,
 
             ClientOrganization clientOrganizations,
+
             String carType
 
-    ) {
+    ){
         this.name = name;
 
         this.projectType = projectType;
@@ -219,7 +217,8 @@ public class Project extends EntityDate {
 
 
         this.revision = 65;
-        this.lifecycle = "DEVELOPMENT";
+        this.lifecycle = "WORKING";
+
     }
 
     /**

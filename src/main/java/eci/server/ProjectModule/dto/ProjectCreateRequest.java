@@ -112,9 +112,10 @@ public class ProjectCreateRequest {
 
         if (req.tag.size() == 0) { //Project에 Attachment 존재하지 않을 시에 생성자
             return new Project(
-            req.name,
+                    req.name,
                     //TODO 임시 : 프로젝트 number은 양산이면  M-현재년도-REQ.NUM / 선형이면 N-~
                     //해당 형식 스크럼 회의 후 변경 예정
+
 
                     finalProjNum,
 
@@ -127,6 +128,7 @@ public class ProjectCreateRequest {
                     memberRepository.findById(
                             req.getMemberId()
                     ).orElseThrow(MemberNotFoundException::new),
+
 
                     false,
 
@@ -143,6 +145,7 @@ public class ProjectCreateRequest {
                     clientOrganizationRepository.findById(clientOrgId)
                             .orElseThrow(ClientOrganizationNotFoundException::new),
                     // 예외 만들기
+
 
                     req.carType
             );
