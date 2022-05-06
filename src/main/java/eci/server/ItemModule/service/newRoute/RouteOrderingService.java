@@ -1,18 +1,14 @@
 package eci.server.ItemModule.service.newRoute;
 
 import eci.server.ItemModule.dto.newRoute.*;
-import eci.server.ItemModule.dto.newRoute.projectRoute.ProjectRouteOrderingCreateRequest;
-import eci.server.ItemModule.dto.newRoute.projectRoute.ProjectRouteProductCreateRequest;
 import eci.server.ItemModule.dto.route.*;
 import eci.server.ItemModule.entity.newRoute.RouteOrdering;
 import eci.server.ItemModule.entity.newRoute.RoutePreset;
 import eci.server.ItemModule.entity.newRoute.RouteProduct;
-import eci.server.ItemModule.entity.newRoute.RouteProductMember;
 import eci.server.ItemModule.exception.route.RouteNotFoundException;
 import eci.server.ItemModule.repository.item.ItemRepository;
 import eci.server.ItemModule.repository.member.MemberRepository;
 
-import eci.server.ItemModule.repository.newRoute.RouteOrderingRepository;
 import eci.server.ItemModule.repository.newRoute.RouteOrderingRepository;
 import eci.server.ItemModule.repository.newRoute.RouteProductRepository;
 import eci.server.ItemModule.repository.newRoute.RouteTypeRepository;
@@ -31,6 +27,7 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class RouteOrderingService {
+
     private final ProjectRepository projectRepository;
     private final RouteProductRepository routeProductRepository;
     private final MemberRepository memberRepository;
@@ -40,8 +37,6 @@ public class RouteOrderingService {
     private final RoutePreset routePreset;
 
     private final RouteTypeRepository routeTypeRepository;
-
-
 
     public RouteOrderingDto read(Long id) {
         return RouteOrderingDto.toDto(
@@ -71,12 +66,7 @@ public class RouteOrderingService {
                         req,
                         itemRepository,
                         routePreset,
-
                         routeTypeRepository
-
-
-
-                        //itemType
                 )
         );
 
@@ -91,52 +81,16 @@ public class RouteOrderingService {
                 );
 
         for(RouteProduct routeProduct : routeProductList ){
-//            System.out.println("왜 멤버 저장안되냐 시발라라");
-//            System.out.println(routeProduct.getMembers().size());
+
             RouteProduct routeProduct1 =
                     routeProductRepository.save(routeProduct);
             System.out.println(routeProduct1.getRoute_name());
-
                     System.out.println(routeProduct1.getMembers().get(0).getMember());
                     System.out.println(routeProduct1.getMembers().get(0).getRouteProduct());
-//            System.out.println(routeProduct1.getMembers().size());
-//            for(RouteProductMember routeProductMember : routeProduct1.getMembers()) {
-//                routeProductMemberRepository.save(routeProductMember);
-//            }
         }
 
         return new RouteOrderingCreateResponse(newRoute.getId());
     }
-
-//
-//    @Transactional
-//    public RouteOrderingCreateResponse  createProjectRoute(ProjectRouteOrderingCreateRequest req) {
-//        RouteOrdering newRoute = routeOrderingRepository.save(ProjectRouteOrderingCreateRequest.toEntity(
-//                        req,
-//                        projectRepository,
-//                        routePreset,
-//                        routeTypeRepository
-//                        //itemType
-//                )
-//        );
-//
-//        List<RouteProduct> routeProductList =
-//                ProjectRouteProductCreateRequest.toEntityList(
-//                        req,
-//                        newRoute,
-//                        routePreset,
-//                        memberRepository,
-//                        routeTypeRepository
-//
-//                );
-//
-//        for(RouteProduct routeProduct : routeProductList ){
-//            routeProductRepository.save(routeProduct);
-//        }
-//
-//        return new RouteOrderingCreateResponse(newRoute.getId());
-//    }
-
 
     @Transactional
     public List<RouteProductDto> rejectUpdate(
@@ -229,13 +183,12 @@ public class RouteOrderingService {
         }
 
         RouteOrderingUpdateRequest newRouteUpdateRequest =
+
                 routeOrdering
                         .update(
                 req,
                 routeProductRepository
         );
-
-
 
         return new RouteUpdateResponse(id);
     }

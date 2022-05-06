@@ -9,6 +9,7 @@ import eci.server.ItemModule.dto.member.MemberSimpleDto;
 import eci.server.ItemModule.entity.member.Member;
 import eci.server.ProjectModule.dto.ProjectReadCondition;
 import eci.server.ProjectModule.dto.ProjectReadDto;
+import eci.server.ProjectModule.dto.project.ProjectMemberRequest;
 import eci.server.ProjectModule.entity.project.Project;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -34,6 +35,13 @@ public class CustomProjectRepositoryImpl extends QuerydslRepositorySupport imple
         super(Project.class);
         this.jpaQueryFactory = jpaQueryFactory;
     }
+
+//    @Override
+//    public Page<ProjectReadDto> findAllByCondition(ProjectReadCondition cond, ProjectMemberRequest req) {
+//        Pageable pageable = PageRequest.of(cond.getPage(), cond.getSize());
+//        Predicate predicate = createPredicate(cond);
+//        return new PageImpl<>(fetchAll(predicate, pageable), pageable, fetchCount(predicate));
+//    }
 
     @Override
     public Page<ProjectReadDto> findAllByCondition(ProjectReadCondition cond) {
