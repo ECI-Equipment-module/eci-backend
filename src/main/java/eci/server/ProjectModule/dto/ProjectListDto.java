@@ -13,11 +13,16 @@ public class ProjectListDto{
     private Integer totalPages;
     private boolean hasNext;
 
-
-
     private List<ProjectReadDto> content;
 
     public static ProjectListDto toDto(Page<ProjectReadDto> page) {
-        return new ProjectListDto(page.getTotalElements(), page.getTotalPages(), page.hasNext(), page.getContent());
+
+        return new ProjectListDto(
+
+                page.getTotalElements(),
+                page.getTotalPages(),
+                page.hasNext(),
+                page.getContent()
+        );
     }
 }

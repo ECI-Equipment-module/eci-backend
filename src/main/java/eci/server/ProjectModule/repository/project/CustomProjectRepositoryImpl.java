@@ -22,6 +22,7 @@ import java.util.function.Function;
 
 import static com.querydsl.core.types.Projections.constructor;
 import static eci.server.ItemModule.entity.item.QItem.item;
+import static eci.server.ItemModule.entity.newRoute.QRouteProduct.routeProduct;
 import static eci.server.ProjectModule.entity.project.QProject.project;
 
 @Transactional(readOnly = true)
@@ -52,22 +53,34 @@ public class CustomProjectRepositoryImpl extends QuerydslRepositorySupport imple
                                 project.projectNumber,
                                 project.name,
                                 project.carType,
-                                item.type,
+
                                 item.name,
                                 item.itemNumber,
-                                project.revision,
+
 
                                 project.startPeriod,
                                 project.overPeriod,
 
-                                project.tempsave
+                                project.tempsave,
+
+                                project.lifecycle,
+
+                                routeProduct.route_name,
+
+
+                                project.createdAt
 
                         ))
                         .from(project)
+
                         .join(item).on(project.item.id.eq(item.id))
+
+                        .join(routeProduct).on(project.id.eq(routeProduct.project.id))
 
                         .where(predicate)
                         .orderBy(project.id.desc())
+
+
         ).fetch();
     }
 

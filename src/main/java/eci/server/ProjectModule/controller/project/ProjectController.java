@@ -6,6 +6,7 @@ import eci.server.ProjectModule.dto.ProjectCreateRequest;
 import eci.server.ProjectModule.dto.ProjectReadCondition;
 import eci.server.ProjectModule.dto.ProjectTemporaryCreateRequest;
 import eci.server.ProjectModule.dto.ProjectUpdateRequest;
+import eci.server.ProjectModule.dto.clientOrg.ClientOrganizationReadCondition;
 import eci.server.ProjectModule.service.ProjectService;
 import eci.server.aop.AssignMemberId;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,17 @@ import javax.validation.Valid;
 public class ProjectController {
 
     private final ProjectService projectService;
+
+    @CrossOrigin(origins = "https://localhost:3000")
+    @AssignMemberId
+    @GetMapping("/project")
+    @ResponseStatus(HttpStatus.OK)
+    public Response readDashboardAll(@Valid ProjectReadCondition cond) {
+        return Response.success(
+                projectService.
+                        readDashboardAll(cond));
+    }
+
 
     @CrossOrigin(origins = "https://localhost:3000")
     @PostMapping("/project/temp")
@@ -82,11 +94,11 @@ public class ProjectController {
     }
 
 
-    @GetMapping("/project")
-    @ResponseStatus(HttpStatus.OK)
-    public Response readAll(@Valid ProjectReadCondition cond) {
-        return Response.success(projectService.readAll(cond));
-    }
+//    @GetMapping("/project")
+//    @ResponseStatus(HttpStatus.OK)
+//    public Response readAll(@Valid ProjectReadCondition cond) {
+//        return Response.success(projectService.readAll(cond));
+//    }
 
     @DeleteMapping("project/{id}")
     @ResponseStatus(HttpStatus.OK)

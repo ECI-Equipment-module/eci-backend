@@ -39,7 +39,7 @@ public class ProjectRouteProductCreateRequest {
 
         //프로젝트의 아이템 타입의해 routeType 결정됨
         Integer routeTypeIdx = ItemType.valueOf(
-                routeOrdering.getProject().getItem().getType()
+                routeOrdering.getItem().getType()
         ).label();
 
 

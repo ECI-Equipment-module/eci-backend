@@ -6,8 +6,8 @@ import org.springframework.data.domain.Page;
 
 import java.util.List;
 
-    @Data
-    @AllArgsConstructor
+@Data
+@AllArgsConstructor
     public class ClientOrganizationListDto {
         private Long totalElements;
         private Integer totalPages;

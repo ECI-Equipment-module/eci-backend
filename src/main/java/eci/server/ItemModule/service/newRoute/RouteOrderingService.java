@@ -16,6 +16,8 @@ import eci.server.ItemModule.repository.newRoute.RouteOrderingRepository;
 import eci.server.ItemModule.repository.newRoute.RouteOrderingRepository;
 import eci.server.ItemModule.repository.newRoute.RouteProductRepository;
 import eci.server.ItemModule.repository.newRoute.RouteTypeRepository;
+import eci.server.ProjectModule.entity.project.Project;
+import eci.server.ProjectModule.exception.ProjectNotLinkedException;
 import eci.server.ProjectModule.repository.project.ProjectRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -29,6 +31,7 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class RouteOrderingService {
+    private final ProjectRepository projectRepository;
     private final RouteProductRepository routeProductRepository;
     private final MemberRepository memberRepository;
     private final ItemRepository itemRepository;
@@ -195,15 +198,44 @@ public class RouteOrderingService {
 
     @Transactional
     public RouteUpdateResponse update(Long id, RouteOrderingUpdateRequest req) {
-        RouteOrdering newRoute = routeOrderingRepository
+
+        RouteOrdering routeOrdering = routeOrderingRepository
                 .findById(id)
                 .orElseThrow(RouteNotFoundException::new);
 
+
+        List<RouteProduct> presentRouteProductCandidate = routeProductRepository
+                .findAllByRouteOrdering(routeOrdering);
+
+        //현재 진행중인 라우트프로덕트
+        RouteProduct targetRoutProduct = presentRouteProductCandidate.get(routeOrdering.getPresent());
+
+        // TODO : 함수로 따로 빼기 availableAccept("route_name)
+    //route_name에 따른 조건을 각각 설정해서 해당 조건 부합할 때만 accept 가능하게, 아니면 exception 날리게 설정
+        if(targetRoutProduct.getRoute_name().equals("프로젝트와 Item(제품) Link(설계자)")){
+
+            //아이템에 링크된 맨 마지막 (최신) 프로젝트 데려오기
+            if( projectRepository.findByItem(routeOrdering.getItem()).size()==0){
+                throw new ProjectNotLinkedException();
+            }else{
+                Project linkedProject =
+                        projectRepository.findByItem(routeOrdering.getItem())
+                    .get(
+                        projectRepository.findByItem(routeOrdering.getItem()).size()-1
+                );
+                //그 프로젝트를 라우트 프로덕트에 set 해주기
+                targetRoutProduct.setProject(linkedProject);
+            }
+        }
+
         RouteOrderingUpdateRequest newRouteUpdateRequest =
-                newRoute.update(
+                routeOrdering
+                        .update(
                 req,
                 routeProductRepository
         );
+
+
 
         return new RouteUpdateResponse(id);
     }
