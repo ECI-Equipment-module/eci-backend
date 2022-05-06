@@ -77,7 +77,9 @@ public class ProjectService {
                         clientOrganizationRepository
                 )
         );
-        uploadAttachments(project.getProjectAttachments(), req.getAttachments());
+        if(!(req.getTag().size()==0)) {
+            uploadAttachments(project.getProjectAttachments(), req.getAttachments());
+        }
 
         return new ProjectTempCreateUpdateResponse(project.getId());
     }

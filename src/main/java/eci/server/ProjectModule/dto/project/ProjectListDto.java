@@ -60,7 +60,10 @@ public class ProjectListDto{
         private String carType;
         private List<ProjectAttachmentDto> projectAttachments;
 
-        private List<RouteOrderingDto> routeDtoList;
+        //private List<RouteOrderingDto> routeDtoList;
+
+        private Long routeId;
+
 
         public static ProjectDto toDto(
                 Project project,
@@ -94,7 +97,13 @@ public class ProjectListDto{
                             map(i -> ProjectAttachmentDto.toDto(i))
                             .collect(toList()),
 
-                    routeDtoList
+                    //routeDtoList
+
+                    //가장 최신의 라우트 오더링 중 최신의 라우트 오더링 아이디
+                    routeOrderingRepository.findByItem(project.getItem()).
+                            get(routeOrderingRepository.findByItem(project.getItem()).size()-1)
+                            .getId()
+
 
             );
         }

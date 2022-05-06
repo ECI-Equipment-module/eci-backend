@@ -46,18 +46,20 @@ public class ReadItemDto {
     private List<String> partnumbers;
 
 
-    private List<RouteOrderingDto> routeDtoList;
+    //private List<RouteOrderingDto> routeDtoList;
 
     private char revision;
     private String workflowPhase;
     private String lifecyclePhase;
+
+    private Long routeId;
 
 
 
     public static ReadItemDto toDto(
             ItemDto itemDto,
             List<RouteOrderingDto> routeDtoList,
-            RouteOrderingDto newRouteDto,
+            RouteOrderingDto routeOrderingDto,
             RouteProductDto routeProductDto,
             List<String> partNumbers,
             List<AttachmentDto> attachmentDtoList
@@ -90,14 +92,16 @@ public class ReadItemDto {
 
                 partNumbers,
 
-                routeDtoList,
+                //routeDtoList,
 
                 itemDto.getRevision(),
 //                ((Character)newRouteDto.getRevisedCnt()),
 
                 routeProductDto.getType(),//이게 곧 work phase
 
-                newRouteDto.getLifecycleStatus()//develop이나 release 중 하나
+                routeOrderingDto.getLifecycleStatus(),//develop이나 release 중 하나
+
+                routeOrderingDto.getId()
 
         );
     }
@@ -143,11 +147,12 @@ public class ReadItemDto {
 
                 partnumbers,
 
-                routeDtoList,
+                //routeDtoList,
 
                 itemDto.getRevision(),
                 typeList.toString(),
-                "LIFECYCLE_NONE"
+                "LIFECYCLE_NONE",
+                0L
 
         );
     }
