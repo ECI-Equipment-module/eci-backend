@@ -1,13 +1,10 @@
 package eci.server.ProjectModule.controller.project;
 
-import eci.server.ItemModule.dto.member.MemberReadCondition;
 import eci.server.ItemModule.dto.response.Response;
-import eci.server.ProjectModule.dto.ProjectCreateRequest;
-import eci.server.ProjectModule.dto.ProjectReadCondition;
-import eci.server.ProjectModule.dto.ProjectTemporaryCreateRequest;
-import eci.server.ProjectModule.dto.ProjectUpdateRequest;
-import eci.server.ProjectModule.dto.clientOrg.ClientOrganizationReadCondition;
-import eci.server.ProjectModule.dto.project.ProjectMemberRequest;
+import eci.server.ProjectModule.dto.project.ProjectCreateRequest;
+import eci.server.ProjectModule.dto.project.ProjectReadCondition;
+import eci.server.ProjectModule.dto.project.ProjectTemporaryCreateRequest;
+import eci.server.ProjectModule.dto.project.ProjectUpdateRequest;
 import eci.server.ProjectModule.service.ProjectService;
 import eci.server.aop.AssignMemberId;
 import lombok.RequiredArgsConstructor;
@@ -108,30 +105,4 @@ public class ProjectController {
         return Response.success(projectService.read(id));
     }
 
-//    /**
-//     * 프로젝트 전체 읽어오기
-//     * @param cond
-//     * @return
-//     */
-//    @CrossOrigin(origins = "https://localhost:3000")
-//    @GetMapping("/project")
-//    @ResponseStatus(HttpStatus.OK)
-//    public Response readAll(@Valid ProjectReadCondition cond) {
-//        return Response.success(projectService.readAll(cond));
-//    }
-
-//    /**대쉬보드에서 읽어오는 경우 - pagecontroller에서 처리
-//     *
-//     * @param cond
-//     * @return
-//     */
-//    @CrossOrigin(origins = "https://localhost:3000")
-//    @AssignMemberId
-//    @GetMapping("/project")
-//    @ResponseStatus(HttpStatus.OK)
-//    public Response readDashboardAll(@Valid ProjectReadCondition cond) {
-//        return Response.success(
-//                projectService.
-//                        readDashboardAll(cond));
-//    }
 }

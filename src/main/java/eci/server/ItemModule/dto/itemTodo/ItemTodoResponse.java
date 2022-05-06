@@ -1,4 +1,4 @@
-package eci.server.ItemModule.dto.item;
+package eci.server.ItemModule.dto.itemTodo;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

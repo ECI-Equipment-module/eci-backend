@@ -1,6 +1,5 @@
-package eci.server.ItemModule.dto.item;
+package eci.server.ItemModule.dto.itemTodo;
 
-import eci.server.ItemModule.entity.item.Item;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

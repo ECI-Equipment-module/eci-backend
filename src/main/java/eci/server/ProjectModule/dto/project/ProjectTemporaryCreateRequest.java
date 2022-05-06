@@ -1,4 +1,4 @@
-package eci.server.ProjectModule.dto;
+package eci.server.ProjectModule.dto.project;
 
 import eci.server.ItemModule.exception.item.ItemNotFoundException;
 import eci.server.ItemModule.exception.member.sign.MemberNotFoundException;

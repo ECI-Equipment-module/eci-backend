@@ -4,12 +4,8 @@ import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import eci.server.ItemModule.dto.member.MemberReadCondition;
-import eci.server.ItemModule.dto.member.MemberSimpleDto;
-import eci.server.ItemModule.entity.member.Member;
-import eci.server.ProjectModule.dto.ProjectReadCondition;
-import eci.server.ProjectModule.dto.ProjectReadDto;
-import eci.server.ProjectModule.dto.project.ProjectMemberRequest;
+import eci.server.ProjectModule.dto.project.ProjectReadCondition;
+import eci.server.ProjectModule.dto.project.ProjectReadDto;
 import eci.server.ProjectModule.entity.project.Project;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -23,7 +19,6 @@ import java.util.function.Function;
 
 import static com.querydsl.core.types.Projections.constructor;
 import static eci.server.ItemModule.entity.item.QItem.item;
-import static eci.server.ItemModule.entity.member.QMember.member;
 import static eci.server.ItemModule.entity.newRoute.QRouteProduct.routeProduct;
 import static eci.server.ProjectModule.entity.project.QProject.project;
 

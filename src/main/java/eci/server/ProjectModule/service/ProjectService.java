@@ -1,12 +1,8 @@
 package eci.server.ProjectModule.service;
 
+import eci.server.DashBoardModule.dto.ProjectDashboardDto;
 import eci.server.ItemModule.dto.item.ItemProjectDashboardDto;
-import eci.server.ItemModule.entity.member.Member;
 
-import eci.server.ItemModule.entity.newRoute.RouteOrdering;
-
-import eci.server.ItemModule.exception.member.MemberNotFoundException;
-import eci.server.ItemModule.dto.item.ItemProjectDashboardDto;
 import eci.server.ItemModule.entity.newRoute.RouteOrdering;
 
 import eci.server.ItemModule.exception.member.MemberNotFoundException;
@@ -17,11 +13,7 @@ import eci.server.ItemModule.repository.newRoute.RouteOrderingRepository;
 import eci.server.ItemModule.repository.newRoute.RouteProductRepository;
 import eci.server.ItemModule.service.file.FileService;
 
-import eci.server.ProjectModule.dto.*;
-import eci.server.ProjectModule.dto.clientOrg.ClientOrganizationListDto;
-import eci.server.ProjectModule.dto.clientOrg.ClientOrganizationReadCondition;
-
-import eci.server.ProjectModule.dto.project.ProjectMemberRequest;
+import eci.server.ProjectModule.dto.project.*;
 import eci.server.ProjectModule.entity.project.Project;
 import eci.server.ProjectModule.entity.projectAttachment.ProjectAttachment;
 import eci.server.ProjectModule.exception.ProjectNotFoundException;
@@ -40,7 +32,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Service
@@ -176,9 +167,9 @@ public class ProjectService {
 
 
     // read one project
-    public ProjectDto read(Long id){
+    public ProjectListDto.ProjectDto read(Long id){
         Project targetProject = projectRepository.findById(id).orElseThrow(ProjectNotFoundException::new);
-        return ProjectDto.toDto(
+        return ProjectListDto.ProjectDto.toDto(
                 targetProject,
                 routeOrderingRepository,
                 routeProductRepository
@@ -216,6 +207,9 @@ public class ProjectService {
                 );
 
         //이 프로젝트의 아이템의 맨 마지막 라우트 오더링의 라우트 프로덕트들 중 현재 라우트 오더링의 sequence에 해당하는 값
+
+
+
 
         Page<ProjectDashboardDto> pagingList = projectList.map(
                 project -> new ProjectDashboardDto(
@@ -258,24 +252,15 @@ public class ProjectService {
 
                         //현재 phase의 sequence가
 
-                        (double) (routeProductRepository.findAllByRouteOrdering(
-                                        routeOrderingRepository.findByItem(
-                                                project.getItem()
-                                        ).get(
-                                                routeOrderingRepository.findByItem(
-                                                        project.getItem()
-                                                ).size()-1 //아이템의 라우트 오더링 중에서 최신 아이
-                                        )
-                                ).get(
-                                        routeOrderingRepository.findByItem(
+                        (double) routeOrderingRepository.findByItem(
                                                 project.getItem()
                                         ).get(
                                                 routeOrderingRepository.findByItem(
                                                         project.getItem()
                                                 ).size()-1
                                         ).getPresent() //라우트 오더링 중에서 현재 진행중인 라우트프로덕트
-                                )
-                                .getSequence()/routeProductRepository.findAllByRouteOrdering(
+                                /
+                                routeProductRepository.findAllByRouteOrdering(
                                 routeOrderingRepository.findByItem(
                                         project.getItem()
                                 ).get(
@@ -283,10 +268,9 @@ public class ProjectService {
                                                 project.getItem()
                                         ).size()-1 //아이템의 라우트 오더링 중에서 최신 아이
                                 )
-                        ).size()),
+                        ).size(),
 
                         project.getCreatedAt()
-
                 )
         );
 
