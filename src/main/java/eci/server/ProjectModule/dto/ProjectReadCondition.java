@@ -22,6 +22,6 @@ public class ProjectReadCondition {
     private Integer size;
 
     @Null
-    private Long id;
+    private Long memberId;
     //자동 주입 예정
 }

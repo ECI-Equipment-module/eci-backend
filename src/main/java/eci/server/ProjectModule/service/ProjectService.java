@@ -9,11 +9,8 @@ import eci.server.ItemModule.repository.member.MemberRepository;
 import eci.server.ItemModule.repository.newRoute.RouteOrderingRepository;
 import eci.server.ItemModule.repository.newRoute.RouteProductRepository;
 import eci.server.ItemModule.service.file.FileService;
-import eci.server.ItemModule.service.file.LocalFileService;
 
 import eci.server.ProjectModule.dto.*;
-import eci.server.ProjectModule.dto.clientOrg.ClientOrganizationListDto;
-import eci.server.ProjectModule.dto.clientOrg.ClientOrganizationReadCondition;
 import eci.server.ProjectModule.dto.project.ProjectMemberRequest;
 import eci.server.ProjectModule.entity.project.Project;
 import eci.server.ProjectModule.entity.projectAttachment.ProjectAttachment;
@@ -23,7 +20,6 @@ import eci.server.ProjectModule.exception.ProjectUpdateImpossibleException;
 import eci.server.ProjectModule.repository.clientOrg.ClientOrganizationRepository;
 import eci.server.ProjectModule.repository.produceOrg.ProduceOrganizationRepository;
 import eci.server.ProjectModule.repository.project.ProjectRepository;
-import eci.server.ProjectModule.repository.projectAttachmentRepository.ProjectAttachmentRepository;
 import eci.server.ProjectModule.repository.projectLevel.ProjectLevelRepository;
 import eci.server.ProjectModule.repository.projectType.ProjectTypeRepository;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +30,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Service
@@ -49,9 +44,7 @@ public class ProjectService {
     private final ProjectLevelRepository projectLevelRepository;
     private final ProduceOrganizationRepository produceOrganizationRepository;
     private final ClientOrganizationRepository clientOrganizationRepository;
-    private final ProjectAttachmentRepository projectAttachmentRepositoryl;
     private final FileService fileService;
-    private final LocalFileService localFileService;
     private final RouteOrderingRepository routeOrderingRepository;
     private final RouteProductRepository routeProductRepository;
 
@@ -60,6 +53,7 @@ public class ProjectService {
                 projectRepository.findAllByCondition(cond)
         );
     }
+
     @Transactional
     public ProjectTempCreateUpdateResponse tempCreate(ProjectTemporaryCreateRequest req) {
 
@@ -105,11 +99,9 @@ public class ProjectService {
         return new ProjectCreateUpdateResponse(project.getId(), routeId);
     }
 
-
-
     private void uploadAttachments(List<ProjectAttachment> attachments, List<MultipartFile> filedAttachments) {
         // 실제 이미지 파일을 가지고 있는 Multipart 파일을
-        // 파일이 가지는 uniquename을 파일명으로 해서 파일저장소 업로드
+        // 파일이 가지는 unique name 을 파일명으로 해서 파일저장소 업로드
         IntStream.range(0, attachments.size())
                 .forEach(
                         i -> fileService.upload
@@ -130,11 +122,9 @@ public class ProjectService {
     }
 
     @Transactional
-
     public ProjectTempCreateUpdateResponse update(Long id, ProjectUpdateRequest req) {
 
         Project project =  projectRepository.findById(id).orElseThrow(ProjectNotFoundException::new);
-
 
         if (project.getTempsave()==false){
 
@@ -176,21 +166,32 @@ public class ProjectService {
                 );
     }
 
-    public ProjectListDto readAll(ProjectReadCondition cond) {
+    //로젝트 리스트에서 찾아노는 경우
+    public ProjectListDto readAll
+            (
+                    ProjectReadCondition cond,
+                    ProjectMemberRequest req
+            ){
         return ProjectListDto.toDto(
-                projectRepository.findAllByCondition(cond)
+                projectRepository.findAllByCondition(
+                        cond
+                )
         );
     }
 
+    /**
+     * pagecontroller 용
+     * @param pageRequest
+     * @param req
+     * @return
+     */
     public Page<ProjectDashboardDto> readDashboard(
 
             Pageable pageRequest,
             ProjectMemberRequest req
 
     ){
-        System.out.println("project serviceeeeeeeeeeeeeeeee에 들어온거ㅑㅇ야야야야");
-        System.out.println(memberRepository.findById(req.getMemberId()).get().getUsername());
-
+     //System.out.println(memberRepository.findById(req.getMemberId()).get().getUsername());
         Page<Project> projectList = projectRepository.
                 findByMember(
                         memberRepository.findById(req.getMemberId())

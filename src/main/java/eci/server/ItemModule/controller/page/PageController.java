@@ -82,19 +82,17 @@ public class PageController {
      */
 
     @Autowired
-
-    ProjectRepository projectRepository;
-    MemberRepository memberRepository;
-    RouteProductRepository routeProductRepository;
-    RouteOrderingRepository routeOrderingRepository;
     ProjectService projectService;
     //이걸로 프로젝트의 라우트 오더링, 프로덕트에 해당하는 아이들을 찾아서 데려올 것이다
 
     @CrossOrigin(origins = "https://localhost:3000")
     @GetMapping("dashboard/project/page")
     @AssignMemberId //작성한 멤버
-    public Page<ProjectDashboardDto> pagingDashboardProject(@PageableDefault(size=5)
-                                      @SortDefault.SortDefaults({
+    public Page<ProjectDashboardDto> pagingDashboardProject(
+            @PageableDefault(size=5)
+                                      @SortDefault.SortDefaults
+                                              (
+                                      {
                                               @SortDefault(
                                                       sort = "createdAt",
                                                       direction = Sort.Direction.DESC
@@ -102,14 +100,45 @@ public class PageController {
                                       }
                                       )
                                               Pageable pageRequest,
-                                                            ProjectMemberRequest req) {
+                                              ProjectMemberRequest req
+    ) {
 
-        projectService.readDashboard(
-                    pageRequest, req
+
+        Page<ProjectDashboardDto> projectDashboardDtos = projectService.readDashboard(
+                pageRequest,
+                req
         );
 
-
-        return null;
+        return projectDashboardDtos;
     }
+
+//    @Autowired
+//    @CrossOrigin(origins = "https://localhost:3000")
+//    @GetMapping("project/page")
+//    @AssignMemberId //작성한 멤버
+//    public Page<ProjectDashboardDto> Project(
+//            @PageableDefault(size=5)
+//            @SortDefault.SortDefaults
+//                    (
+//                            {
+//                                    @SortDefault(
+//                                            sort = "createdAt",
+//                                            direction = Sort.Direction.DESC
+//                                    )
+//                            }
+//                    )
+//                    Pageable pageRequest,
+//            ProjectMemberRequest req
+//    ) {
+//
+//
+//        Page<ProjectDashboardDto> projectDashboardDtos = projectService.readA(
+//                pageRequest,
+//                req
+//        );
+//
+//        return projectDashboardDtos;
+//    }
+
 
 }

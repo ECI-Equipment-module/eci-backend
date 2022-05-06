@@ -24,6 +24,11 @@ public class ProjectController {
 
     private final ProjectService projectService;
 
+    /**대쉬보드에서 읽어오는 경우
+     *
+     * @param cond
+     * @return
+     */
     @CrossOrigin(origins = "https://localhost:3000")
     @AssignMemberId
     @GetMapping("/project")
