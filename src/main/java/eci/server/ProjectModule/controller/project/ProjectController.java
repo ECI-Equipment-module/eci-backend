@@ -7,6 +7,7 @@ import eci.server.ProjectModule.dto.ProjectReadCondition;
 import eci.server.ProjectModule.dto.ProjectTemporaryCreateRequest;
 import eci.server.ProjectModule.dto.ProjectUpdateRequest;
 import eci.server.ProjectModule.dto.clientOrg.ClientOrganizationReadCondition;
+import eci.server.ProjectModule.dto.project.ProjectMemberRequest;
 import eci.server.ProjectModule.service.ProjectService;
 import eci.server.aop.AssignMemberId;
 import lombok.RequiredArgsConstructor;
@@ -23,22 +24,6 @@ import javax.validation.Valid;
 public class ProjectController {
 
     private final ProjectService projectService;
-
-    /**대쉬보드에서 읽어오는 경우
-     *
-     * @param cond
-     * @return
-     */
-    @CrossOrigin(origins = "https://localhost:3000")
-    @AssignMemberId
-    @GetMapping("/project")
-    @ResponseStatus(HttpStatus.OK)
-    public Response readDashboardAll(@Valid ProjectReadCondition cond) {
-        return Response.success(
-                projectService.
-                        readDashboardAll(cond));
-    }
-
 
 
 
@@ -94,19 +79,9 @@ public class ProjectController {
         return Response.success(projectService.update(id, req));
     }
 
-    @GetMapping("/project/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public Response read(@PathVariable Long id) {
-        return Response.success(projectService.read(id));
-    }
 
 
-//    @GetMapping("/project")
-//    @ResponseStatus(HttpStatus.OK)
-//    public Response readAll(@Valid ProjectReadCondition cond) {
-//        return Response.success(projectService.readAll(cond));
-//    }
-
+    @CrossOrigin(origins = "https://localhost:3000")
     @DeleteMapping("project/{id}")
     @ResponseStatus(HttpStatus.OK)
     public Response delete(@PathVariable Long id) {
@@ -114,4 +89,37 @@ public class ProjectController {
         return Response.success();
     }
 
+
+    @GetMapping("/project/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public Response read(@PathVariable Long id) {
+        return Response.success(projectService.read(id));
+    }
+
+//    /**
+//     * 프로젝트 전체 읽어오기
+//     * @param cond
+//     * @return
+//     */
+//    @CrossOrigin(origins = "https://localhost:3000")
+//    @GetMapping("/project")
+//    @ResponseStatus(HttpStatus.OK)
+//    public Response readAll(@Valid ProjectReadCondition cond) {
+//        return Response.success(projectService.readAll(cond));
+//    }
+
+//    /**대쉬보드에서 읽어오는 경우 - pagecontroller에서 처리
+//     *
+//     * @param cond
+//     * @return
+//     */
+//    @CrossOrigin(origins = "https://localhost:3000")
+//    @AssignMemberId
+//    @GetMapping("/project")
+//    @ResponseStatus(HttpStatus.OK)
+//    public Response readDashboardAll(@Valid ProjectReadCondition cond) {
+//        return Response.success(
+//                projectService.
+//                        readDashboardAll(cond));
+//    }
 }

@@ -111,34 +111,59 @@ public class PageController {
         return projectDashboardDtos;
     }
 
-//    @Autowired
-//    @CrossOrigin(origins = "https://localhost:3000")
-//    @GetMapping("project/page")
-//    @AssignMemberId //작성한 멤버
-//    public Page<ProjectDashboardDto> Project(
-//            @PageableDefault(size=5)
-//            @SortDefault.SortDefaults
-//                    (
-//                            {
-//                                    @SortDefault(
-//                                            sort = "createdAt",
-//                                            direction = Sort.Direction.DESC
-//                                    )
-//                            }
-//                    )
-//                    Pageable pageRequest,
-//            ProjectMemberRequest req
-//    ) {
-//
-//
-//        Page<ProjectDashboardDto> projectDashboardDtos = projectService.readA(
-//                pageRequest,
-//                req
-//        );
-//
-//        return projectDashboardDtos;
-//    }
+    @Autowired
+    ProjectRepository projectRepository;
+    @CrossOrigin(origins = "https://localhost:3000")
+    @GetMapping("/project/page")
+    public Page<ProjectSimpleDto> pagingProject(@PageableDefault(size=5)
+                                                @SortDefault.SortDefaults({
+                                                        @SortDefault(
+                                                                sort = "createdAt",
+                                                                direction = Sort.Direction.DESC)
+                                                })
+                                                        Pageable pageRequest) {
+
+        Page<Project> projectList = projectRepository.findAll(pageRequest);
+
+        Page<ProjectSimpleDto> pagingList = projectList.map(
+                project -> new ProjectSimpleDto(
+
+                        project.getId(),
+                        project.getProjectNumber(),
+                        project.getName(),
+                        project.getCarType(),
+
+                        ItemProjectDto.toDto(project.getItem()),
+
+                        project.getRevision(),
+                        project.getStartPeriod(),
+                        project.getOverPeriod(),
+
+                        project.getTempsave(),
+
+                        //tag가 개발
+                        project.getProjectAttachments().stream().filter(
+                                        a -> a.getTag().equals("DEVELOP")
+                                ).collect(Collectors.toList())
+                                .stream().map(
+                                        ProjectAttachment::getAttachmentaddress
+                                ).collect(Collectors.toList()),
+
+                        //tag가 디자인
+                        project.getProjectAttachments().stream().filter(
+                                        a -> a.getTag().equals("DESIGN")
+                                ).collect(Collectors.toList())
+                                .stream().map(
+                                        ProjectAttachment::getAttachmentaddress
+                                ).collect(Collectors.toList()),
 
 
+                        project.getCreatedAt()
+
+                )
+        );
+
+        return pagingList;
+    }
 
 }
