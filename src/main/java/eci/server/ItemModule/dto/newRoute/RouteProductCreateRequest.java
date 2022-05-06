@@ -87,15 +87,18 @@ public class RouteProductCreateRequest {
 
         );
 
+        int seq = 0;
+
         // 2) 나머지 routeProduct는 돌려서 생성
         List<RouteProduct> restRouteProducts =
 
                 req.getMemberIds().stream().map(
                         i ->
+                                //TODO : MEMBER가 똑같아지면 에러사항!
         new RouteProduct(
                 req.getMemberIds().indexOf(i)+1, //request이후의 sequence 이므로 1부터 시작
 
-                req.getMemberIds().indexOf(i)+1,
+                 req.getMemberIds().indexOf(i)+1,
 
                 (String) routeProductName.get(req.getMemberIds().indexOf(i)+1),
 
@@ -107,7 +110,7 @@ public class RouteProductCreateRequest {
                         ).collect(toList()).get(0),
 
                 "default",
-                true,
+                false,
                 false,
                 true,
                 false,

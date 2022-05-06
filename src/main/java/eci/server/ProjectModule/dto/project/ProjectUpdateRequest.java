@@ -1,4 +1,4 @@
-package eci.server.ProjectModule.dto;
+package eci.server.ProjectModule.dto.project;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

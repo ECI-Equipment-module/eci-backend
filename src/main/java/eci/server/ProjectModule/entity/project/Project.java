@@ -1,14 +1,12 @@
 package eci.server.ProjectModule.entity.project;
 
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import eci.server.ItemModule.entity.entitycommon.EntityDate;
 import eci.server.ItemModule.entity.item.*;
 import eci.server.ItemModule.entity.member.Member;
 import eci.server.ItemModule.exception.item.ItemNotFoundException;
 import eci.server.ItemModule.repository.item.ItemRepository;
-import eci.server.ItemModule.repository.member.MemberRepository;
-import eci.server.ProjectModule.dto.ProjectUpdateRequest;
+import eci.server.ProjectModule.dto.project.ProjectUpdateRequest;
 import eci.server.ProjectModule.entity.projectAttachment.ProjectAttachment;
 import eci.server.ProjectModule.exception.ClientOrganizationNotFoundException;
 import eci.server.ProjectModule.exception.ProduceOrganizationNotFoundException;
@@ -16,7 +14,6 @@ import eci.server.ProjectModule.exception.ProjectLevelNotFoundException;
 import eci.server.ProjectModule.exception.ProjectTypeNotFoundException;
 import eci.server.ProjectModule.repository.clientOrg.ClientOrganizationRepository;
 import eci.server.ProjectModule.repository.produceOrg.ProduceOrganizationRepository;
-import eci.server.ProjectModule.repository.projectAttachmentRepository.ProjectAttachmentRepository;
 import eci.server.ProjectModule.repository.projectLevel.ProjectLevelRepository;
 import eci.server.ProjectModule.repository.projectType.ProjectTypeRepository;
 import lombok.AccessLevel;

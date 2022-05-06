@@ -1,4 +1,4 @@
-package eci.server.ProjectModule.dto;
+package eci.server.ProjectModule.dto.project;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 

@@ -1,8 +1,7 @@
 package eci.server.ProjectModule.repository.project;
 
-import eci.server.ItemModule.entity.member.Member;
-import eci.server.ProjectModule.dto.ProjectReadCondition;
-import eci.server.ProjectModule.dto.ProjectReadDto;
+import eci.server.ProjectModule.dto.project.ProjectReadCondition;
+import eci.server.ProjectModule.dto.project.ProjectReadDto;
 import org.springframework.data.domain.Page;
 
 public interface CustomProjectRepository{
