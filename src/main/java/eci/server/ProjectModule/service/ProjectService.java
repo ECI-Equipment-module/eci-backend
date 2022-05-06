@@ -1,7 +1,10 @@
 package eci.server.ProjectModule.service;
 
 import eci.server.ItemModule.dto.item.ItemProjectDashboardDto;
+<<<<<<< HEAD
 import eci.server.ItemModule.entity.member.Member;
+=======
+>>>>>>> c1d7cb51d9be2c828a188817261b479eda260c9a
 import eci.server.ItemModule.entity.newRoute.RouteOrdering;
 
 import eci.server.ItemModule.exception.member.MemberNotFoundException;
@@ -58,11 +61,19 @@ public class ProjectService {
     private final RouteOrderingRepository routeOrderingRepository;
     private final RouteProductRepository routeProductRepository;
 
+<<<<<<< HEAD
 //    public ProjectListDto readDashboardAll(ProjectReadCondition cond) {
 //        return ProjectListDto.toDto(
 //                projectRepository.findAllByCondition(cond)
 //        );
 //    }
+=======
+    public ProjectListDto readDashboardAll(ProjectReadCondition cond) {
+        return ProjectListDto.toDto(
+                projectRepository.findAllByCondition(cond)
+        );
+    }
+>>>>>>> c1d7cb51d9be2c828a188817261b479eda260c9a
 
     @Transactional
     public ProjectTempCreateUpdateResponse tempCreate(ProjectTemporaryCreateRequest req) {
@@ -177,12 +188,29 @@ public class ProjectService {
                 );
     }
 
+<<<<<<< HEAD
 //    public ProjectListDto readAll(ProjectReadCondition cond) {
 //        return ProjectListDto.toDto(
 //                projectRepository.findAllByCondition(cond)
 //        );
 //    }
 //}
+
+
+=======
+    //로젝트 리스트에서 찾아노는 경우
+    public ProjectListDto readAll
+            (
+                    ProjectReadCondition cond,
+                    ProjectMemberRequest req
+            ){
+        return ProjectListDto.toDto(
+                projectRepository.findAllByCondition(
+                        cond
+                )
+        );
+    }
+>>>>>>> c1d7cb51d9be2c828a188817261b479eda260c9a
 
 
 
