@@ -10,6 +10,8 @@ public interface MemberRepository extends JpaRepository<Member, Long> , CustomMe
     Optional<Member> findByEmail(String email);
     Optional<Member> findByUsername(String username);
 
+    //Optional<Member> findById(Long id);//member_id 라고 되어있어서 이런 식으로 명명함
+
     boolean existsByEmail(String email);
 
     boolean existsByUsername(String username);

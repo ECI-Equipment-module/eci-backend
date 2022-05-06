@@ -1,7 +1,9 @@
 package eci.server.ProjectModule.service;
 
+import eci.server.ItemModule.dto.item.ItemProjectDashboardDto;
 import eci.server.ItemModule.entity.newRoute.RouteOrdering;
 
+import eci.server.ItemModule.exception.member.MemberNotFoundException;
 import eci.server.ItemModule.repository.item.ItemRepository;
 import eci.server.ItemModule.repository.member.MemberRepository;
 import eci.server.ItemModule.repository.newRoute.RouteOrderingRepository;
@@ -10,6 +12,9 @@ import eci.server.ItemModule.service.file.FileService;
 import eci.server.ItemModule.service.file.LocalFileService;
 
 import eci.server.ProjectModule.dto.*;
+import eci.server.ProjectModule.dto.clientOrg.ClientOrganizationListDto;
+import eci.server.ProjectModule.dto.clientOrg.ClientOrganizationReadCondition;
+import eci.server.ProjectModule.dto.project.ProjectMemberRequest;
 import eci.server.ProjectModule.entity.project.Project;
 import eci.server.ProjectModule.entity.projectAttachment.ProjectAttachment;
 import eci.server.ProjectModule.exception.ProjectNotFoundException;
@@ -22,11 +27,14 @@ import eci.server.ProjectModule.repository.projectAttachmentRepository.ProjectAt
 import eci.server.ProjectModule.repository.projectLevel.ProjectLevelRepository;
 import eci.server.ProjectModule.repository.projectType.ProjectTypeRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Service
@@ -47,6 +55,11 @@ public class ProjectService {
     private final RouteOrderingRepository routeOrderingRepository;
     private final RouteProductRepository routeProductRepository;
 
+    public ProjectListDto readDashboardAll(ProjectReadCondition cond) {
+        return ProjectListDto.toDto(
+                projectRepository.findAllByCondition(cond)
+        );
+    }
     @Transactional
     public ProjectTempCreateUpdateResponse tempCreate(ProjectTemporaryCreateRequest req) {
 
@@ -168,6 +181,103 @@ public class ProjectService {
                 projectRepository.findAllByCondition(cond)
         );
     }
+
+    public Page<ProjectDashboardDto> readDashboard(
+
+            Pageable pageRequest,
+            ProjectMemberRequest req
+
+    ){
+        System.out.println("project serviceeeeeeeeeeeeeeeee에 들어온거ㅑㅇ야야야야");
+        System.out.println(memberRepository.findById(req.getMemberId()).get().getUsername());
+
+        Page<Project> projectList = projectRepository.
+                findByMember(
+                        memberRepository.findById(req.getMemberId())
+                                .orElseThrow(MemberNotFoundException::new)
+                        ,
+                        pageRequest
+                );
+
+        //이 프로젝트의 아이템의 맨 마지막 라우트 오더링의 라우트 프로덕트들 중 현재 라우트 오더링의 sequence에 해당하는 값
+
+        Page<ProjectDashboardDto> pagingList = projectList.map(
+                project -> new ProjectDashboardDto(
+
+                        project.getId(),
+                        project.getProjectNumber(),
+                        project.getName(),
+                        project.getCarType(),
+
+                        ItemProjectDashboardDto.toDto(project.getItem()),
+
+                        project.getStartPeriod(),
+                        project.getOverPeriod(),
+
+                        project.getTempsave(),
+
+                        project.getLifecycle(),
+
+                        //현재 phase의 이름
+
+                        routeProductRepository.findAllByRouteOrdering(
+                                        routeOrderingRepository.findByItem(
+                                                project.getItem()
+                                        ).get(
+                                                routeOrderingRepository.findByItem(
+                                                        project.getItem()
+                                                ).size()-1 //아이템의 라우트 오더링 중에서 최신 아이
+                                        )
+                                ).get(
+                                        routeOrderingRepository.findByItem(
+                                                project.getItem()
+                                        ).get(
+                                                routeOrderingRepository.findByItem(
+                                                        project.getItem()
+                                                ).size()-1
+                                        ).getPresent() //라우트 오더링 중에서 현재 진행중인 라우트프로덕트
+                                )
+                                .getRoute_name(),
+
+
+                        //현재 phase의 sequence가
+
+                        (double) (routeProductRepository.findAllByRouteOrdering(
+                                        routeOrderingRepository.findByItem(
+                                                project.getItem()
+                                        ).get(
+                                                routeOrderingRepository.findByItem(
+                                                        project.getItem()
+                                                ).size()-1 //아이템의 라우트 오더링 중에서 최신 아이
+                                        )
+                                ).get(
+                                        routeOrderingRepository.findByItem(
+                                                project.getItem()
+                                        ).get(
+                                                routeOrderingRepository.findByItem(
+                                                        project.getItem()
+                                                ).size()-1
+                                        ).getPresent() //라우트 오더링 중에서 현재 진행중인 라우트프로덕트
+                                )
+                                .getSequence()/routeProductRepository.findAllByRouteOrdering(
+                                routeOrderingRepository.findByItem(
+                                        project.getItem()
+                                ).get(
+                                        routeOrderingRepository.findByItem(
+                                                project.getItem()
+                                        ).size()-1 //아이템의 라우트 오더링 중에서 최신 아이
+                                )
+                        ).size()),
+
+                        project.getCreatedAt()
+
+                )
+        );
+
+        return pagingList;
+
+    }
+
      //delete one project
 
     @Transactional
@@ -180,5 +290,7 @@ public class ProjectService {
     private void deleteProjectAttachments(List<ProjectAttachment> projectAttachments) {
         projectAttachments.stream().forEach(i -> fileService.delete(i.getUniqueName()));
     }
+
+
 
 }

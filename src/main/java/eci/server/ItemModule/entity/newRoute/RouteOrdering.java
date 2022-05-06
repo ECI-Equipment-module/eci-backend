@@ -33,9 +33,9 @@ import static java.util.stream.Collectors.toList;
 public class RouteOrdering extends EntityDate {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    @GeneratedValue(strategy= GenerationType.SEQUENCE, generator="SEQUENCE1")
-//    @SequenceGenerator(name="SEQUENCE1", sequenceName="SEQUENCE1", allocationSize=1)
+//    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy= GenerationType.SEQUENCE, generator="SEQUENCE1")
+    @SequenceGenerator(name="SEQUENCE1", sequenceName="SEQUENCE1", allocationSize=1)
     private Long id;
 
     /**
@@ -74,13 +74,13 @@ public class RouteOrdering extends EntityDate {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Item item;
 
-    /**
-     * null 가능, 플젝에서 라우트 생성 시 지정
-     */
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "project_id")
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private Project project;
+//    /**
+//     * null 가능, 플젝에서 라우트 생성 시 지정
+//     */
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "project_id")
+//    @OnDelete(action = OnDeleteAction.CASCADE)
+//    private Project project;
 
     //아이템 라우트용 생성자
     public RouteOrdering(
@@ -104,7 +104,7 @@ public class RouteOrdering extends EntityDate {
         this.lifecycleStatus = "WORKING";
         this.revisedCnt = 0;
         this.present = 1;
-        this.project = project;
+//        this.project = project;
     }
 
     public void setPresent(Integer present) {

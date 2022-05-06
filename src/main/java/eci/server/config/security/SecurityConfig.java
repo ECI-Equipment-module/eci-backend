@@ -72,6 +72,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.PUT, "/project/{id}").access("@projectGuard.check(#id)")
                 .antMatchers(HttpMethod.DELETE, "/project/{id}").access("@projectGuard.check(#id)")
 
+                .antMatchers(HttpMethod.GET, "/dashboard/project/page").authenticated()
+
                 .anyRequest().hasAnyRole("ADMIN")
                 .and()
                 .exceptionHandling().authenticationEntryPoint(new CustomAuthenticationEntryPoint())

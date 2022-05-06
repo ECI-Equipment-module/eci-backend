@@ -6,10 +6,13 @@ import eci.server.ItemModule.entitycommon.EntityDate;
 import eci.server.ItemModule.exception.RouteProductNotFoundException;
 import eci.server.ItemModule.repository.newRoute.RouteProductRepository;
 
+import eci.server.ProjectModule.entity.project.Project;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.*;
@@ -25,9 +28,9 @@ import static java.util.stream.Collectors.toList;
 public class RouteProduct extends EntityDate {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    @GeneratedValue(strategy= GenerationType.SEQUENCE, generator="SEQUENCE1")
-//    @SequenceGenerator(name="SEQUENCE1", sequenceName="SEQUENCE1", allocationSize=1)
+//    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy= GenerationType.SEQUENCE, generator="SEQUENCE1")
+    @SequenceGenerator(name="SEQUENCE1", sequenceName="SEQUENCE1", allocationSize=1)
     private Long id;
 
     /**
@@ -95,6 +98,14 @@ public class RouteProduct extends EntityDate {
     @JoinColumn(name = "routeOrdering_id", nullable = false)
     //@OnDelete(action = OnDeleteAction.CASCADE)
     private RouteOrdering routeOrdering;
+
+        /**
+     * null 가능, 플젝에서 라우트 생성 시 지정
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "project_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private Project project;
 
     /**
      * 라우트 프로덕트 생성자 (reject 시 재 생산용)
@@ -193,5 +204,9 @@ public class RouteProduct extends EntityDate {
 
     public void setRejected(boolean rejected) {
         this.rejected = rejected;
+    }
+
+    public void setProject(Project project) {
+        this.project = project;
     }
 }

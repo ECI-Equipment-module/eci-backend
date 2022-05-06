@@ -4,6 +4,7 @@ package eci.server.ItemModule.controller.newRoute;
 import eci.server.ItemModule.dto.newRoute.*;
 import eci.server.ItemModule.dto.newRoute.projectRoute.ProjectRouteOrderingCreateRequest;
 import eci.server.ItemModule.dto.response.Response;
+import eci.server.ItemModule.dto.route.RouteUpdateResponse;
 import eci.server.ItemModule.service.newRoute.RouteOrderingService;
 import eci.server.aop.AssignMemberId;
 import lombok.RequiredArgsConstructor;
@@ -62,8 +63,12 @@ public class RouteOrderingController {
     public Response update(
             @PathVariable Long id,
             @Valid @ModelAttribute RouteOrderingUpdateRequest req) {
+
+        RouteUpdateResponse routeUpdateResponse = newRouteService.update(id, req);
+
         return Response.success(
-                newRouteService.update(id, req));
+                routeUpdateResponse
+        );
     }
 
     @PutMapping("/rejectRoute/{id}")

@@ -35,12 +35,12 @@ public class ItemTypes {
     //@Enumerated(EnumType.STRING)
     @Column(nullable = false, unique = true)
     private String name;
-
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "routetype_id", nullable = false)
-    private RouteType routeType;
-    //itemType 이 지정된다면 routeOrdering 은
-    // routeType으로 지정된다.
+//
+//    @OneToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "routetype_id", nullable = false)
+//    private RouteType routeType;
+//    //itemType 이 지정된다면 routeOrdering 은
+//    // routeType으로 지정된다.
 
 
     @ManyToOne(fetch = FetchType.LAZY)

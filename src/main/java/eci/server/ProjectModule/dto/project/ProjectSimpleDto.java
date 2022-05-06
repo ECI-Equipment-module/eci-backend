@@ -28,6 +28,8 @@ public class ProjectSimpleDto {
 
     private Boolean tempsave;
 
+    private String lifecycle;
+
     //태그가 개발 사양서
     private List<String> developAttachmentName;
 
