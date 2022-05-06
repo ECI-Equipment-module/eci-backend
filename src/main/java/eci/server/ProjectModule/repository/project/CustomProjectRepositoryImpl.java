@@ -23,6 +23,7 @@ import java.util.function.Function;
 
 import static com.querydsl.core.types.Projections.constructor;
 import static eci.server.ItemModule.entity.item.QItem.item;
+import static eci.server.ItemModule.entity.member.QMember.member;
 import static eci.server.ItemModule.entity.newRoute.QRouteProduct.routeProduct;
 import static eci.server.ProjectModule.entity.project.QProject.project;
 
@@ -44,14 +45,14 @@ public class CustomProjectRepositoryImpl extends QuerydslRepositorySupport imple
 //    }
 
     @Override
-    public Page<ProjectReadDto> findAllByCondition(ProjectReadCondition cond) {
+    public Page<ProjectReadDto> findAllByConditionAndMember(ProjectReadCondition cond, Member member) {
         Pageable pageable = PageRequest.of(cond.getPage(), cond.getSize());
         Predicate predicate = createPredicate(cond);
-        return new PageImpl<>(fetchAll(predicate, pageable), pageable, fetchCount(predicate));
+        return new PageImpl<>(fetchAll(predicate, pageable, member.getId()), pageable, fetchCount(predicate));
     }
 
 
-    private List<ProjectReadDto> fetchAll(Predicate predicate, Pageable pageable) { // 6
+    private List<ProjectReadDto> fetchAll(Predicate predicate, Pageable pageable, Long memberId){//,ProjectMemberRequest req) { // 6
         return getQuerydsl().applyPagination(
                 pageable,
                 jpaQueryFactory
@@ -75,7 +76,6 @@ public class CustomProjectRepositoryImpl extends QuerydslRepositorySupport imple
 
                                 routeProduct.route_name,
 
-
                                 project.createdAt
 
                         ))
@@ -85,7 +85,11 @@ public class CustomProjectRepositoryImpl extends QuerydslRepositorySupport imple
 
                         .join(routeProduct).on(project.id.eq(routeProduct.project.id))
 
+//                        .join(member).on(project.member.id.eq(memberId))
+                        //지금 로그인된 멤버가 작성한 프로젝트
+
                         .where(predicate)
+                        .where(project.member.id.eq(memberId))
                         .orderBy(project.id.desc())
 
 

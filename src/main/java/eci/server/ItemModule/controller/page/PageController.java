@@ -80,35 +80,59 @@ public class PageController {
     /**
      * 프로젝트 모듈에서의 프로젝트 리스트 (내가 만든 프로젝트들 maybe..?)
      */
-
     @Autowired
-    ProjectService projectService;
-    //이걸로 프로젝트의 라우트 오더링, 프로덕트에 해당하는 아이들을 찾아서 데려올 것이다
+    ProjectRepository projectRepository;
     @CrossOrigin(origins = "https://localhost:3000")
-    @GetMapping("dashboard/project/page")
-    @AssignMemberId //작성한 멤버
-    public Page<ProjectDashboardDto> pagingDashboardProject(
-            @PageableDefault(size=5)
-                                      @SortDefault.SortDefaults
-                                              (
-                                      {
-                                              @SortDefault(
-                                                      sort = "createdAt",
-                                                      direction = Sort.Direction.DESC
-                                              )
-                                      }
-                                      )
-                                              Pageable pageRequest,
-                                              ProjectMemberRequest req
-    ) {
+    @GetMapping("/project/page")
+    public Page<ProjectSimpleDto> pagingProject(@PageableDefault(size=5)
+                                                @SortDefault.SortDefaults({
+                                                        @SortDefault(
+                                                                sort = "createdAt",
+                                                                direction = Sort.Direction.DESC)
+                                                })
+                                                        Pageable pageRequest) {
+
+        Page<Project> projectList = projectRepository.findAll(pageRequest);
+
+        Page<ProjectSimpleDto> pagingList = projectList.map(
+                project -> new ProjectSimpleDto(
+
+                        project.getId(),
+                        project.getProjectNumber(),
+                        project.getName(),
+                        project.getCarType(),
+
+                        ItemProjectDto.toDto(project.getItem()),
+
+                        project.getRevision(),
+                        project.getStartPeriod(),
+                        project.getOverPeriod(),
+
+                        project.getTempsave(),
+
+                        //tag가 개발
+                        project.getProjectAttachments().stream().filter(
+                                        a -> a.getTag().equals("DEVELOP")
+                                ).collect(Collectors.toList())
+                                .stream().map(
+                                        ProjectAttachment::getAttachmentaddress
+                                ).collect(Collectors.toList()),
+
+                        //tag가 디자인
+                        project.getProjectAttachments().stream().filter(
+                                        a -> a.getTag().equals("DESIGN")
+                                ).collect(Collectors.toList())
+                                .stream().map(
+                                        ProjectAttachment::getAttachmentaddress
+                                ).collect(Collectors.toList()),
 
 
-        Page<ProjectDashboardDto> projectDashboardDtos = projectService.readDashboard(
-                pageRequest,
-                req
+                        project.getCreatedAt()
+
+                )
         );
 
-        return projectDashboardDtos;
+        return pagingList;
     }
 
 //    @Autowired

@@ -37,11 +37,12 @@ public class ProjectReadDto {
     //phase
     private String phase;
 
+
+
     //status
     //private Double status;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime createdAt;
-
 
 }
