@@ -59,12 +59,17 @@ public class ProjectService {
     private final RouteOrderingRepository routeOrderingRepository;
     private final RouteProductRepository routeProductRepository;
 
-
 //    public ProjectListDto readDashboardAll(ProjectReadCondition cond) {
 //        return ProjectListDto.toDto(
 //                projectRepository.findAllByCondition(cond)
 //        );
 //    }
+
+    public ProjectListDto readDashboardAll(ProjectReadCondition cond) {
+        return ProjectListDto.toDto(
+                projectRepository.findAllByCondition(cond)
+        );
+    }
 
 
     @Transactional
@@ -181,30 +186,19 @@ public class ProjectService {
     }
 
 
-//    public ProjectListDto readAll(ProjectReadCondition cond) {
-//        return ProjectListDto.toDto(
-//                projectRepository.findAllByCondition(cond)
-//        );
-//    }
-//}
-//
-//
-//=======
-//    //로젝트 리스트에서 찾아노는 경우
-//    public ProjectListDto readAll
-//            (
-//                    ProjectReadCondition cond,
-//                    ProjectMemberRequest req
-//            ){
-//        return ProjectListDto.toDto(
-//                projectRepository.findAllByCondition(
-//                        cond
-//                )
-//        );
-//    }
-//>>>>>>> c1d7cb51d9be2c828a188817261b479eda260c9a
 
-
+    //로젝트 리스트에서 찾아노는 경우
+    public ProjectListDto readAll
+            (
+                    ProjectReadCondition cond,
+                    ProjectMemberRequest req
+            ){
+        return ProjectListDto.toDto(
+                projectRepository.findAllByCondition(
+                        cond
+                )
+        );
+    }
 
     public Page<ProjectDashboardDto> readDashboard(
 

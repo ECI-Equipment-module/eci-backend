@@ -24,21 +24,20 @@ import javax.validation.Valid;
 public class ProjectController {
 
     private final ProjectService projectService;
-
-//    /**대쉬보드에서 읽어오는 경우
-//     *
-//     * @param cond
-//     * @return
-//     */
-//    @CrossOrigin(origins = "https://localhost:3000")
-//    @AssignMemberId
-//    @GetMapping("/project")
-//    @ResponseStatus(HttpStatus.OK)
-//    public Response readDashboardAll(@Valid ProjectReadCondition cond) {
-//        return Response.success(
-//                projectService.
-//                        readDashboardAll(cond));
-//    }
+    /**대쉬보드에서 읽어오는 경우
+     *
+     * @param cond
+     * @return
+     */
+    @CrossOrigin(origins = "https://localhost:3000")
+    @AssignMemberId
+    @GetMapping("/project")
+    @ResponseStatus(HttpStatus.OK)
+    public Response readDashboardAll(@Valid ProjectReadCondition cond) {
+        return Response.success(
+                projectService.
+                        readDashboardAll(cond));
+    }
 
     @CrossOrigin(origins = "https://localhost:3000")
     @PostMapping("/project/temp")

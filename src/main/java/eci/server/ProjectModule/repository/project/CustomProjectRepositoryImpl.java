@@ -45,14 +45,14 @@ public class CustomProjectRepositoryImpl extends QuerydslRepositorySupport imple
 //    }
 
     @Override
-    public Page<ProjectReadDto> findAllByConditionAndMember(ProjectReadCondition cond, Member member) {
+    public Page<ProjectReadDto> findAllByCondition(ProjectReadCondition cond) {
         Pageable pageable = PageRequest.of(cond.getPage(), cond.getSize());
         Predicate predicate = createPredicate(cond);
-        return new PageImpl<>(fetchAll(predicate, pageable, member.getId()), pageable, fetchCount(predicate));
+        return new PageImpl<>(fetchAll(predicate, pageable), pageable, fetchCount(predicate));
     }
 
 
-    private List<ProjectReadDto> fetchAll(Predicate predicate, Pageable pageable, Long memberId){//,ProjectMemberRequest req) { // 6
+    private List<ProjectReadDto> fetchAll(Predicate predicate, Pageable pageable){//,ProjectMemberRequest req) { // 6
         return getQuerydsl().applyPagination(
                 pageable,
                 jpaQueryFactory
@@ -89,7 +89,7 @@ public class CustomProjectRepositoryImpl extends QuerydslRepositorySupport imple
                         //지금 로그인된 멤버가 작성한 프로젝트
 
                         .where(predicate)
-                        .where(project.member.id.eq(memberId))
+
                         .orderBy(project.id.desc())
 
 

@@ -80,7 +80,6 @@ public class PageController {
     /**
      * 프로젝트 모듈에서의 프로젝트 리스트 (내가 만든 프로젝트들 maybe..?)
      */
-
     @Autowired
     ProjectRepository projectRepository;
     @CrossOrigin(origins = "https://localhost:3000")
@@ -163,7 +162,6 @@ public class PageController {
 
 
         return projectDashboardDtos;
+
     }
-
-
 }
