@@ -84,7 +84,6 @@ public class PageController {
     @Autowired
     ProjectService projectService;
     //이걸로 프로젝트의 라우트 오더링, 프로덕트에 해당하는 아이들을 찾아서 데려올 것이다
-
     @CrossOrigin(origins = "https://localhost:3000")
     @GetMapping("dashboard/project/page")
     @AssignMemberId //작성한 멤버
@@ -139,6 +138,7 @@ public class PageController {
 //
 //        return projectDashboardDtos;
 //    }
+
 
 
 }

@@ -183,10 +183,13 @@ public class RouteOrderingService {
         }
 
         RouteOrderingUpdateRequest newRouteUpdateRequest =
-                routeOrdering.update(
+
+                routeOrdering
+                        .update(
                 req,
                 routeProductRepository
         );
+
         return new RouteUpdateResponse(id);
     }
 

@@ -75,7 +75,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
                 .antMatchers(HttpMethod.GET, "/dashboard/project/page").authenticated()
 
-
                 .anyRequest().hasAnyRole("ADMIN")
                 .and()
                 .exceptionHandling().authenticationEntryPoint(new CustomAuthenticationEntryPoint())

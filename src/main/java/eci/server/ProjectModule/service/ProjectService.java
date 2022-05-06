@@ -4,6 +4,11 @@ import eci.server.ItemModule.dto.item.ItemProjectDashboardDto;
 import eci.server.ItemModule.entity.newRoute.RouteOrdering;
 
 import eci.server.ItemModule.exception.member.MemberNotFoundException;
+import eci.server.ItemModule.dto.item.ItemProjectDashboardDto;
+import eci.server.ItemModule.entity.newRoute.RouteOrdering;
+
+import eci.server.ItemModule.exception.member.MemberNotFoundException;
+
 import eci.server.ItemModule.repository.item.ItemRepository;
 import eci.server.ItemModule.repository.member.MemberRepository;
 import eci.server.ItemModule.repository.newRoute.RouteOrderingRepository;
@@ -11,6 +16,9 @@ import eci.server.ItemModule.repository.newRoute.RouteProductRepository;
 import eci.server.ItemModule.service.file.FileService;
 
 import eci.server.ProjectModule.dto.*;
+import eci.server.ProjectModule.dto.clientOrg.ClientOrganizationListDto;
+import eci.server.ProjectModule.dto.clientOrg.ClientOrganizationReadCondition;
+
 import eci.server.ProjectModule.dto.project.ProjectMemberRequest;
 import eci.server.ProjectModule.entity.project.Project;
 import eci.server.ProjectModule.entity.projectAttachment.ProjectAttachment;
@@ -30,6 +38,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Service
@@ -122,6 +131,7 @@ public class ProjectService {
     }
 
     @Transactional
+
     public ProjectTempCreateUpdateResponse update(Long id, ProjectUpdateRequest req) {
 
         Project project =  projectRepository.findById(id).orElseThrow(ProjectNotFoundException::new);
@@ -179,19 +189,17 @@ public class ProjectService {
         );
     }
 
-    /**
-     * pagecontroller 용
-     * @param pageRequest
-     * @param req
-     * @return
-     */
+
+
     public Page<ProjectDashboardDto> readDashboard(
 
             Pageable pageRequest,
             ProjectMemberRequest req
 
     ){
-     //System.out.println(memberRepository.findById(req.getMemberId()).get().getUsername());
+        System.out.println("project serviceeeeeeeeeeeeeeeee에 들어온거ㅑㅇ야야야야");
+        System.out.println(memberRepository.findById(req.getMemberId()).get().getUsername());
+
         Page<Project> projectList = projectRepository.
                 findByMember(
                         memberRepository.findById(req.getMemberId())
