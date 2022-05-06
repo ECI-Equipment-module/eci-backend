@@ -93,7 +93,7 @@
 //
 //                partNumbers,
 //
-//                //routeDtoList,
+//                routeDtoList,
 //
 //                (char)(newRouteDto.getRevisedCnt().intValue()),
 ////                ((Character)newRouteDto.getRevisedCnt()),
@@ -146,7 +146,7 @@
 //
 //                partnumbers,
 //
-//                //routeDtoList,
+//                routeDtoList,
 //
 //                '0',
 //                typeList.toString(),
