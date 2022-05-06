@@ -169,9 +169,9 @@ public class ProjectService {
 
 
     // read one project
-    public ProjectListDto.ProjectDto read(Long id){
+    public ProjectDto read(Long id){
         Project targetProject = projectRepository.findById(id).orElseThrow(ProjectNotFoundException::new);
-        return ProjectListDto.ProjectDto.toDto(
+        return ProjectDto.toDto(
                 targetProject,
                 routeOrderingRepository,
                 routeProductRepository
