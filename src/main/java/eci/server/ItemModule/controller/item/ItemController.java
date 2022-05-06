@@ -81,19 +81,19 @@ public class ItemController {
         );
     }
 
-    /**
-     * 특정 아이템 조회
-     *
-     * @return 200 (success)
-     */
-    @CrossOrigin(origins = "https://localhost:3000")
-    @GetMapping("/todos")
-    @ResponseStatus(HttpStatus.OK)
-    public Response todos() {
-        return Response.success(
-                itemService.readTodo()
-        );
-    }
+//    /**
+//     * 특정 아이템 조회
+//     *
+//     * @return 200 (success)
+//     */
+//    @CrossOrigin(origins = "https://localhost:3000")
+//    @GetMapping("/todos")
+//    @ResponseStatus(HttpStatus.OK)
+//    public Response todos() {
+//        return Response.success(
+//                itemService.readTodo()
+//        );
+//    }
 
 
     /**
