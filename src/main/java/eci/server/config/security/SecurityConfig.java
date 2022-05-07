@@ -44,7 +44,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 .antMatchers(HttpMethod.POST, "/sign-in", "/sign-up", "/refresh-token").permitAll()
-                .antMatchers(HttpMethod.GET, "/**").permitAll()
+
                 .antMatchers(HttpMethod.GET, "/test").permitAll()
                 .antMatchers(HttpMethod.GET, "/route/**").permitAll()
                 .antMatchers(HttpMethod.DELETE, "/members/{id}/**").access("@memberGuard.check(#id)")
@@ -68,13 +68,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.PUT, "/rejectRoute/{id}").access("@newRouteGuard.check(#id)")
 
                 .antMatchers(HttpMethod.GET, "/project").authenticated()
+                .antMatchers(HttpMethod.GET, "/project/page").authenticated()
                 .antMatchers(HttpMethod.POST, "/project").authenticated()
                 .antMatchers(HttpMethod.POST, "/project/temp").authenticated()
                 .antMatchers(HttpMethod.PUT, "/project/{id}").access("@projectGuard.check(#id)")
                 .antMatchers(HttpMethod.DELETE, "/project/{id}").access("@projectGuard.check(#id)")
 
                 .antMatchers(HttpMethod.GET, "/dashboard/project/page").authenticated()
-
+                .antMatchers(HttpMethod.GET, "/**").permitAll()//맨 밑으로 수정
                 .anyRequest().hasAnyRole("ADMIN")
                 .and()
                 .exceptionHandling().authenticationEntryPoint(new CustomAuthenticationEntryPoint())

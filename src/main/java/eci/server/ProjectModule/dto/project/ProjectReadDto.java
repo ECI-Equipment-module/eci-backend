@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @Data
 @AllArgsConstructor
 /**
- * 대쉬보드 읽어올 때는
+ *
  */
 public class ProjectReadDto {
     private Long id;
@@ -27,7 +27,10 @@ public class ProjectReadDto {
     private String itemName;
     private Integer itemNumber;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
     private LocalDate startPeriod;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
     private LocalDate overPeriod;
 
     private Boolean tempsave;

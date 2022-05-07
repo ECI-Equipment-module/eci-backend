@@ -7,6 +7,7 @@ import eci.server.ItemModule.repository.member.MemberRepository;
 import eci.server.ProjectModule.entity.project.Project;
 import eci.server.ProjectModule.entity.projectAttachment.ProjectAttachment;
 import eci.server.ProjectModule.exception.*;
+import eci.server.ProjectModule.repository.carType.CarTypeRepository;
 import eci.server.ProjectModule.repository.clientOrg.ClientOrganizationRepository;
 import eci.server.ProjectModule.repository.produceOrg.ProduceOrganizationRepository;
 import eci.server.ProjectModule.repository.projectLevel.ProjectLevelRepository;
@@ -64,7 +65,7 @@ public class ProjectCreateRequest {
     @NotNull(message = "생산사를 입력해주세요.")
     private Long produceOrganizationId;
 
-    private String carType; //양산 아니면 없어도 됨
+    private Long carType; //양산 아니면 없어도 됨
 
     public static Project toEntity(
             ProjectCreateRequest req,
@@ -73,13 +74,14 @@ public class ProjectCreateRequest {
             ProjectTypeRepository projectTypeRepository,
             ProjectLevelRepository projectLevelRepository,
             ProduceOrganizationRepository produceOrganizationRepository,
-            ClientOrganizationRepository clientOrganizationRepository
+            ClientOrganizationRepository clientOrganizationRepository,
+            CarTypeRepository carTypeRepository
             ) {
 
         //양산 개발의 아이디가 1 (Long)
         if (req.projectTypeId.equals(1L)) {
             //TODO 프로젝트 타입이 양산개발이라면 필수 속성은 고객사 / 차종 은 null 이 되면 안됨 검사
-            if (req.clientOrganizationId == null || req.carType.isEmpty())
+            if (req.clientOrganizationId == null || req.carType== null)
                 throw new MassProductionSaveException();
 
         } else if ( //필수 속성 중 저장 안된 부분 있나 체크
@@ -147,7 +149,8 @@ public class ProjectCreateRequest {
                     // 예외 만들기
 
 
-                    req.carType
+                    carTypeRepository.findById(req.carType)
+                            .orElseThrow(CarTypeNotFoundException::new)
             );
 
         } else {
@@ -197,7 +200,8 @@ public class ProjectCreateRequest {
                             toList()
                     ),
 
-                    req.carType
+                    carTypeRepository.findById(req.carType)
+                            .orElseThrow(CarTypeNotFoundException::new)
             );
         }
     }

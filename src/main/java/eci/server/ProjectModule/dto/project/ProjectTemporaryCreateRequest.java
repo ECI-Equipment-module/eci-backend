@@ -7,6 +7,7 @@ import eci.server.ItemModule.repository.member.MemberRepository;
 import eci.server.ProjectModule.entity.project.Project;
 import eci.server.ProjectModule.entity.projectAttachment.ProjectAttachment;
 import eci.server.ProjectModule.exception.*;
+import eci.server.ProjectModule.repository.carType.CarTypeRepository;
 import eci.server.ProjectModule.repository.clientOrg.ClientOrganizationRepository;
 import eci.server.ProjectModule.repository.produceOrg.ProduceOrganizationRepository;
 import eci.server.ProjectModule.repository.projectLevel.ProjectLevelRepository;
@@ -56,7 +57,7 @@ public class ProjectTemporaryCreateRequest  {
 
         private Long produceOrganizationId;
 
-        private String carType;
+        private Long carType;
 
         public static Project toEntity(
                 ProjectTemporaryCreateRequest req,
@@ -65,7 +66,8 @@ public class ProjectTemporaryCreateRequest  {
                 ProjectTypeRepository projectTypeRepository,
                 ProjectLevelRepository projectLevelRepository,
                 ProduceOrganizationRepository produceOrganizationRepository,
-                ClientOrganizationRepository clientOrganizationRepository
+                ClientOrganizationRepository clientOrganizationRepository,
+                CarTypeRepository carTypeRepository
         ) {
             Integer year = Calendar.getInstance().get(Calendar.YEAR);
 
@@ -77,6 +79,8 @@ public class ProjectTemporaryCreateRequest  {
             Long projectLevelId = req.projectLevelId==null?99999L:req.projectLevelId;
             Long produceOrgId = req.produceOrganizationId==null?99999L:req.produceOrganizationId;
             Long clientOrgId = req.clientOrganizationId==null?99999L:req.clientOrganizationId;
+            Long carTypeId = req.carType==null?99999L:req.carType;
+
 
             return new Project(
                     req.name.isBlank()?" default ":req.name,
@@ -103,7 +107,6 @@ public class ProjectTemporaryCreateRequest  {
                             req.getMemberId()
                     ).orElseThrow(MemberNotFoundException::new),
 
-
                     true,
 
                     projectTypeRepository.findById(projectTypeId)
@@ -126,9 +129,15 @@ public class ProjectTemporaryCreateRequest  {
                             )
                     ).collect(
                             toList()
-                    ), //Project 생성자에 들이밀기
+                    ),
 
-                    req.carType.toString().isBlank()?"":req.carType
+                    //Project 생성자에 들이밀기
+
+                    carTypeRepository.findById(req.carType)
+                            .orElseThrow(ClientOrganizationNotFoundException::new)
+
+//                    req.carType.toString().isBlank()?"":req.carType
+
             );
         }
     }

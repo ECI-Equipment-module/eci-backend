@@ -8,10 +8,8 @@ import eci.server.ItemModule.exception.item.ItemNotFoundException;
 import eci.server.ItemModule.repository.item.ItemRepository;
 import eci.server.ProjectModule.dto.project.ProjectUpdateRequest;
 import eci.server.ProjectModule.entity.projectAttachment.ProjectAttachment;
-import eci.server.ProjectModule.exception.ClientOrganizationNotFoundException;
-import eci.server.ProjectModule.exception.ProduceOrganizationNotFoundException;
-import eci.server.ProjectModule.exception.ProjectLevelNotFoundException;
-import eci.server.ProjectModule.exception.ProjectTypeNotFoundException;
+import eci.server.ProjectModule.exception.*;
+import eci.server.ProjectModule.repository.carType.CarTypeRepository;
 import eci.server.ProjectModule.repository.clientOrg.ClientOrganizationRepository;
 import eci.server.ProjectModule.repository.produceOrg.ProduceOrganizationRepository;
 import eci.server.ProjectModule.repository.projectLevel.ProjectLevelRepository;
@@ -40,9 +38,11 @@ import static java.util.stream.Collectors.toList;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Project extends EntityDate {
     @Id
+
 //  @GeneratedValue(strategy = GenerationType.IDENTITY)
    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQUENCE2")
    @SequenceGenerator(name="SEQUENCE2", sequenceName="SEQUENCE2", allocationSize=1)
+
     private Long id;
 
     @Column(nullable = false)
@@ -99,8 +99,10 @@ public class Project extends EntityDate {
     private ClientOrganization clientOrganization;
 
     //차종
-    @Column
-    private String carType;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "carType_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private CarType carType;
 
     @OneToMany(
             mappedBy = "project",
@@ -130,7 +132,7 @@ public class Project extends EntityDate {
             ClientOrganization clientOrganizations,
             List<ProjectAttachment> projectAttachments,
 
-            String carType
+            CarType carType
 
     ) {
         this.name = name;
@@ -192,7 +194,7 @@ public class Project extends EntityDate {
 
             ClientOrganization clientOrganizations,
 
-            String carType
+            CarType carType
 
     ){
         this.name = name;
@@ -237,7 +239,8 @@ public class Project extends EntityDate {
             ProjectTypeRepository projectTypeRepository,
             ProjectLevelRepository projectLevelRepository,
             ProduceOrganizationRepository produceOrganizationRepository,
-            ClientOrganizationRepository clientOrganizationRepository
+            ClientOrganizationRepository clientOrganizationRepository,
+            CarTypeRepository carTypeRepository
     )
 
     {
@@ -285,9 +288,10 @@ public class Project extends EntityDate {
                                 .orElseThrow(ProduceOrganizationNotFoundException::new);
 
         this.carType =
-                req.getCarType().isBlank()?
+                req.getCarType() == null?
                         this.carType:
-                        req.getCarType();
+                        carTypeRepository.findById(req.getCarType())
+                                .orElseThrow(CarTypeNotFoundException::new);
 
 
         ProjectAttachmentUpdatedResult resultAttachment =

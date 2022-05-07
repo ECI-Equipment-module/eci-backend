@@ -2,6 +2,7 @@ package eci.server.ProjectModule.dto.project;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import eci.server.ItemModule.dto.item.ItemProjectDto;
+import eci.server.ProjectModule.dto.carType.CarTypeDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,13 +17,17 @@ public class ProjectSimpleDto {
     private Long id;
     private String projectNumber;
     private String name;
-    private String carType;
+    private CarTypeDto carType;
 
     private ItemProjectDto itemProjectDto;
 
     //제품 타입, 제품명, 제품 번호
     private Character revision;
+
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
     private LocalDate startPeriod;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
     private LocalDate overPeriod;
 
     private Boolean tempsave;
@@ -35,6 +40,8 @@ public class ProjectSimpleDto {
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime createdAt;
+
+    private String lifecycle;
 
     private Boolean readonly;
 

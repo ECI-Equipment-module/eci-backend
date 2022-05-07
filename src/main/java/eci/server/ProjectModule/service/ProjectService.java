@@ -3,6 +3,7 @@ package eci.server.ProjectModule.service;
 import eci.server.DashBoardModule.dto.ProjectDashboardDto;
 import eci.server.ItemModule.dto.item.ItemProjectDashboardDto;
 
+import eci.server.ItemModule.dto.item.ItemProjectDto;
 import eci.server.ItemModule.entity.newRoute.RouteOrdering;
 
 import eci.server.ItemModule.exception.member.MemberNotFoundException;
@@ -13,12 +14,14 @@ import eci.server.ItemModule.repository.newRoute.RouteOrderingRepository;
 import eci.server.ItemModule.repository.newRoute.RouteProductRepository;
 import eci.server.ItemModule.service.file.FileService;
 
+import eci.server.ProjectModule.dto.carType.CarTypeDto;
 import eci.server.ProjectModule.dto.project.*;
 import eci.server.ProjectModule.entity.project.Project;
 import eci.server.ProjectModule.entity.projectAttachment.ProjectAttachment;
 import eci.server.ProjectModule.exception.ProjectNotFoundException;
 import eci.server.ProjectModule.exception.ProjectUpdateImpossibleException;
 
+import eci.server.ProjectModule.repository.carType.CarTypeRepository;
 import eci.server.ProjectModule.repository.clientOrg.ClientOrganizationRepository;
 import eci.server.ProjectModule.repository.produceOrg.ProduceOrganizationRepository;
 import eci.server.ProjectModule.repository.project.ProjectRepository;
@@ -32,6 +35,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Service
@@ -49,6 +53,7 @@ public class ProjectService {
     private final FileService fileService;
     private final RouteOrderingRepository routeOrderingRepository;
     private final RouteProductRepository routeProductRepository;
+    private final CarTypeRepository carTypeRepository;
 
 //    public ProjectListDto readDashboardAll(ProjectReadCondition cond) {
 //        return ProjectListDto.toDto(
@@ -74,7 +79,8 @@ public class ProjectService {
                         projectTypeRepository,
                         projectLevelRepository,
                         produceOrganizationRepository,
-                        clientOrganizationRepository
+                        clientOrganizationRepository,
+                        carTypeRepository
                 )
         );
         if(!(req.getTag().size()==0)) {
@@ -97,7 +103,8 @@ public class ProjectService {
                         projectTypeRepository,
                         projectLevelRepository,
                         produceOrganizationRepository,
-                        clientOrganizationRepository
+                        clientOrganizationRepository,
+                        carTypeRepository
                 )
         );
         if(!(req.getTag().size()==0)) {
@@ -152,7 +159,8 @@ public class ProjectService {
                 projectTypeRepository,
                 projectLevelRepository,
                 produceOrganizationRepository,
-                clientOrganizationRepository
+                clientOrganizationRepository,
+                carTypeRepository
         );
 
 
@@ -193,6 +201,63 @@ public class ProjectService {
         );
     }
 
+    //로젝트 리스트에서 찾아노는 경우
+    public Page<ProjectSimpleDto> readPageAll
+    (
+            Pageable pageRequest,
+            ProjectMemberRequest req
+    ){
+        Page<Project> projectList = projectRepository.findAll(pageRequest);
+        Page<ProjectSimpleDto> pagingList = projectList.map(
+                project -> new ProjectSimpleDto(
+
+                        project.getId(),
+                        project.getProjectNumber(),
+                        project.getName(),
+                        CarTypeDto.toDto(project.getCarType()),
+
+                        ItemProjectDto.toDto(project.getItem()),
+
+                        project.getRevision(),
+                        project.getStartPeriod(),
+                        project.getOverPeriod(),
+
+                        project.getTempsave(),
+
+                        //tag가 개발
+                        project.getProjectAttachments().stream().filter(
+                                        a -> a.getTag().equals("DEVELOP")
+                                ).collect(Collectors.toList())
+                                .stream().map(
+                                        ProjectAttachment::getAttachmentaddress
+                                ).collect(Collectors.toList()),
+
+                        //tag가 디자인
+                        project.getProjectAttachments().stream().filter(
+                                        a -> a.getTag().equals("DESIGN")
+                                ).collect(Collectors.toList())
+                                .stream().map(
+                                        ProjectAttachment::getAttachmentaddress
+                                ).collect(Collectors.toList()),
+
+
+                        project.getCreatedAt(),
+
+                        //project.getLifecycle(), //프로젝트의 라이프사이클
+
+                        routeOrderingRepository.findByItem(project.getItem()).get(
+                                routeOrderingRepository.findByItem(project.getItem()).size()-1
+                        ).getLifecycleStatus(),
+                        //아이템의 라이프 사이클
+
+                        req.getMemberId().equals(project.getMember().getId())
+                        //현재 로그인 된 플젝 작성멤버랑 같으면 readonly==true
+
+                )
+        );
+        return pagingList;
+    }
+
     public Page<ProjectDashboardDto> readDashboard(
 
             Pageable pageRequest,
@@ -219,7 +284,8 @@ public class ProjectService {
                         project.getId(),
                         project.getProjectNumber(),
                         project.getName(),
-                        project.getCarType(),
+
+                        CarTypeDto.toDto(project.getCarType()),
 
                         ItemProjectDashboardDto.toDto(project.getItem()),
 
