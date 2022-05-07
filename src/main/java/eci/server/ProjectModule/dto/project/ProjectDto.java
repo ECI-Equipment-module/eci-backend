@@ -29,6 +29,7 @@ public class ProjectDto {
     private Long id;
     private String name;
     private String projectNumber;
+
     private String clientItemNumber;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")

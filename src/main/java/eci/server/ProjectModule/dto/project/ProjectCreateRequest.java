@@ -69,6 +69,7 @@ public class ProjectCreateRequest {
 
     private String clientItemNumber;
 
+
     public static Project toEntity(
             ProjectCreateRequest req,
             MemberRepository memberRepository,

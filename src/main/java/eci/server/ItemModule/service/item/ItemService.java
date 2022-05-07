@@ -39,7 +39,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.annotation.Resource;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -434,26 +433,17 @@ public class ItemService {
 
     }
 
-
-    //    public ItemProjectDto linkNeededItem() {
-    @Transactional
     public List<UnlinkedItemDto> linkNeededItem() {
 
         //0) 현재 로그인 된 유저
         Member member1 = memberRepository.findById(authHelper.extractMemberId()).orElseThrow(MemberNotFoundException::new);
 
         //1) 현재 진행 중인 라우트 프로덕트 카드들
-
-        List<RouteProduct> routeProductList = new ArrayList<>();
-        List<RouteProduct> routeProductListbefore = routeProductRepository.findAll();
-
-        for(RouteProduct routeProduct : routeProductListbefore){
-            RouteOrdering routeOrdering = routeProduct.getRouteOrdering();
-            Integer present = routeOrdering.getPresent();
-            if(routeProduct.getSequence()-present==0){
-                routeProductList.add(routeProduct);
-            }
-        }
+        List<RouteProduct> routeProductList = routeProductRepository.findAll().stream().filter(
+                rp -> rp.getSequence().equals(
+                        rp.getRouteOrdering().getPresent()
+                )
+        ).collect(Collectors.toList());
 
         //2) 라우트 프로덕트들 중 나에게 할당된 카드들 & 단계가 프로젝트와 Item(제품) Link(설계자) 인 것
         List<RouteProduct> myRouteProductList = new ArrayList<>();
