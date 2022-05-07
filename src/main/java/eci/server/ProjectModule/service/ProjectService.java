@@ -294,7 +294,11 @@ public class ProjectService {
 
                         project.getTempsave(),
 
-                        project.getLifecycle(),
+                        routeOrderingRepository.findByItem(project.getItem())
+                                .get(
+                                        routeOrderingRepository.findByItem(project.getItem()).size()-1
+                                ).getLifecycleStatus()
+                        ,
 
                         //현재 phase의 이름
 
