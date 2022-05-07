@@ -13,12 +13,14 @@ import eci.server.ItemModule.repository.newRoute.RouteOrderingRepository;
 import eci.server.ItemModule.repository.newRoute.RouteProductRepository;
 import eci.server.ItemModule.service.file.FileService;
 
+import eci.server.ProjectModule.dto.carType.CarTypeDto;
 import eci.server.ProjectModule.dto.project.*;
 import eci.server.ProjectModule.entity.project.Project;
 import eci.server.ProjectModule.entity.projectAttachment.ProjectAttachment;
 import eci.server.ProjectModule.exception.ProjectNotFoundException;
 import eci.server.ProjectModule.exception.ProjectUpdateImpossibleException;
 
+import eci.server.ProjectModule.repository.carType.CarTypeRepository;
 import eci.server.ProjectModule.repository.clientOrg.ClientOrganizationRepository;
 import eci.server.ProjectModule.repository.produceOrg.ProduceOrganizationRepository;
 import eci.server.ProjectModule.repository.project.ProjectRepository;
@@ -49,6 +51,7 @@ public class ProjectService {
     private final FileService fileService;
     private final RouteOrderingRepository routeOrderingRepository;
     private final RouteProductRepository routeProductRepository;
+    private final CarTypeRepository carTypeRepository;
 
 //    public ProjectListDto readDashboardAll(ProjectReadCondition cond) {
 //        return ProjectListDto.toDto(
@@ -74,7 +77,8 @@ public class ProjectService {
                         projectTypeRepository,
                         projectLevelRepository,
                         produceOrganizationRepository,
-                        clientOrganizationRepository
+                        clientOrganizationRepository,
+                        carTypeRepository
                 )
         );
         if(!(req.getTag().size()==0)) {
@@ -97,7 +101,8 @@ public class ProjectService {
                         projectTypeRepository,
                         projectLevelRepository,
                         produceOrganizationRepository,
-                        clientOrganizationRepository
+                        clientOrganizationRepository,
+                        carTypeRepository
                 )
         );
         if(!(req.getTag().size()==0)) {
@@ -152,7 +157,8 @@ public class ProjectService {
                 projectTypeRepository,
                 projectLevelRepository,
                 produceOrganizationRepository,
-                clientOrganizationRepository
+                clientOrganizationRepository,
+                carTypeRepository
         );
 
 
@@ -219,7 +225,8 @@ public class ProjectService {
                         project.getId(),
                         project.getProjectNumber(),
                         project.getName(),
-                        project.getCarType(),
+
+                        CarTypeDto.toDto(project.getCarType()),
 
                         ItemProjectDashboardDto.toDto(project.getItem()),
 

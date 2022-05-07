@@ -2,6 +2,7 @@ package eci.server.ProjectModule.dto.project;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import eci.server.ItemModule.dto.item.ItemProjectDto;
+import eci.server.ProjectModule.dto.carType.CarTypeDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,7 +17,7 @@ public class ProjectSimpleDto {
     private Long id;
     private String projectNumber;
     private String name;
-    private String carType;
+    private CarTypeDto carType;
 
     private ItemProjectDto itemProjectDto;
 

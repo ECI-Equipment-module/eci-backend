@@ -6,11 +6,13 @@ import eci.server.ItemModule.dto.newRoute.RouteOrderingDto;
 import eci.server.ItemModule.exception.route.RouteNotFoundException;
 import eci.server.ItemModule.repository.newRoute.RouteOrderingRepository;
 import eci.server.ItemModule.repository.newRoute.RouteProductRepository;
+import eci.server.ProjectModule.dto.carType.CarTypeDto;
 import eci.server.ProjectModule.dto.clientOrg.ClientOrganizationDto;
 import eci.server.ProjectModule.dto.produceOrg.ProduceOrganizationDto;
 import eci.server.ProjectModule.dto.projectAttachmentDto.ProjectAttachmentDto;
 import eci.server.ProjectModule.dto.projectLevel.ProjectLevelDto;
 import eci.server.ProjectModule.dto.projectType.ProjectTypeDto;
+import eci.server.ProjectModule.entity.project.CarType;
 import eci.server.ProjectModule.entity.project.Project;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -36,7 +38,7 @@ public class ProjectDto {
     private ProjectLevelDto projectLevel;
     private ProduceOrganizationDto produceOrganization;
     private ClientOrganizationDto clientOrganization;
-    private String carType;
+    private CarTypeDto carType;
     private List<ProjectAttachmentDto> projectAttachments;
 
     //private List<RouteOrderingDto> routeDtoList;
@@ -70,7 +72,9 @@ public class ProjectDto {
                 ProjectLevelDto.toDto(project.getProjectLevel()),
                 ProduceOrganizationDto.toDto(project.getProduceOrganization()),
                 ClientOrganizationDto.toDto(project.getClientOrganization()),
-                project.getCarType(),
+
+                CarTypeDto.toDto(project.getCarType()),
+
                 project.getProjectAttachments().
                         stream().
                         map(i -> ProjectAttachmentDto.toDto(i))

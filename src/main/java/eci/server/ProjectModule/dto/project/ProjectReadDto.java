@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @Data
 @AllArgsConstructor
 /**
- * 대쉬보드 읽어올 때는
+ *
  */
 public class ProjectReadDto {
     private Long id;

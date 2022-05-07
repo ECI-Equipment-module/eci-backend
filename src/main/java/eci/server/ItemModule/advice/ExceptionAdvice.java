@@ -15,6 +15,7 @@ import eci.server.ItemModule.exception.member.sign.*;
 import eci.server.ItemModule.exception.route.MemberNotAssignedException;
 import eci.server.ItemModule.exception.route.RejectImpossibleException;
 import eci.server.ItemModule.exception.route.UpdateImpossibleException;
+import eci.server.ProjectModule.exception.CarTypeNotFoundException;
 import eci.server.ProjectModule.exception.ProjectNotLinkedException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -227,6 +228,13 @@ public class ExceptionAdvice {
     public Response ProjectNotLinkedException(ProjectNotLinkedException e) {
         log.info("e = {}", e.getMessage());
         return Response.failure(400, "아이템과 링크된 프로젝트가 존재하지 않습니다.");
+    }
+
+    @ExceptionHandler(CarTypeNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Response CarTypeNotFoundException(CarTypeNotFoundException e) {
+        log.info("e = {}", e.getMessage());
+        return Response.failure(400, "차종이 존재하지 않습니다.");
     }
 
 }

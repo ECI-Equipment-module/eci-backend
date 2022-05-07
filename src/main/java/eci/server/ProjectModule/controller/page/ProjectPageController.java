@@ -1,6 +1,7 @@
 package eci.server.ProjectModule.controller.page;
 
 import eci.server.ItemModule.dto.item.ItemProjectDto;
+import eci.server.ProjectModule.dto.carType.CarTypeDto;
 import eci.server.ProjectModule.dto.project.ProjectMemberRequest;
 import eci.server.ProjectModule.dto.project.ProjectSimpleDto;
 import eci.server.ProjectModule.entity.project.Project;
@@ -50,7 +51,7 @@ public class ProjectPageController {
                         project.getId(),
                         project.getProjectNumber(),
                         project.getName(),
-                        project.getCarType(),
+                        CarTypeDto.toDto(project.getCarType()),
 
                         ItemProjectDto.toDto(project.getItem()),
 
