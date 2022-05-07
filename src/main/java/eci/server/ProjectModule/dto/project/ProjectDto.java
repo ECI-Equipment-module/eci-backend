@@ -1,5 +1,6 @@
 package eci.server.ProjectModule.dto.project;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import eci.server.ItemModule.dto.item.ItemProjectDto;
 import eci.server.ItemModule.dto.member.MemberDto;
 import eci.server.ItemModule.dto.newRoute.RouteOrderingDto;
@@ -28,7 +29,11 @@ public class ProjectDto {
     private Long id;
     private String name;
     private String projectNumber;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
     private LocalDate startPeriod;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
     private LocalDate overPeriod;
     private ItemProjectDto item;
     private MemberDto member;

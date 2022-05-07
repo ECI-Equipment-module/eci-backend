@@ -22,7 +22,10 @@ public class ProjectDashboardDto {
     //제품명, 제품 번호
     private ItemProjectDashboardDto itemProjectDashboardDto;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
     private LocalDate startPeriod;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
     private LocalDate overPeriod;
 
     private Boolean tempsave;
