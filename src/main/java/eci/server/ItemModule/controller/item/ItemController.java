@@ -81,19 +81,6 @@ public class ItemController {
         );
     }
 
-//    /**
-//     * 특정 아이템 조회
-//     *
-//     * @return 200 (success)
-//     */
-//    @CrossOrigin(origins = "https://localhost:3000")
-//    @GetMapping("/todos")
-//    @ResponseStatus(HttpStatus.OK)
-//    public Response todos() {
-//        return Response.success(
-//                itemService.readTodo()
-//        );
-//    }
 
 
     /**
@@ -159,6 +146,36 @@ public class ItemController {
             return image;
 
         }
+    }
+
+
+//    /**
+//     * 특정 아이템 조회
+//     *
+//     * @return 200 (success)
+//     */
+//    @CrossOrigin(origins = "https://localhost:3000")
+//    @GetMapping("/todos")
+//    @ResponseStatus(HttpStatus.OK)
+//    public Response todos() {
+//        return Response.success(
+//                itemService.readTodo()
+//        );
+//    }
+
+
+    /**
+     * 링크되지 않은 아이템들, 나에게 기다리고 있는 아이템들
+     *
+     * @return 200 (success)
+     */
+    @CrossOrigin(origins = "https://localhost:3000")
+    @GetMapping("/link-needed")
+    @ResponseStatus(HttpStatus.OK)
+    public Response linkNeeded() {
+        return Response.success(
+                itemService.linkNeededItem()
+        );
     }
 
 }

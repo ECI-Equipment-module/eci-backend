@@ -58,7 +58,6 @@ public class ReadItemDto {
 
     public static ReadItemDto toDto(
             ItemDto itemDto,
-            List<RouteOrderingDto> routeDtoList,
             RouteOrderingDto routeOrderingDto,
             RouteProductDto routeProductDto,
             List<String> partNumbers,
