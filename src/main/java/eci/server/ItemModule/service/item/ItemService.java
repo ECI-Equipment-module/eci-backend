@@ -233,120 +233,6 @@ public class ItemService {
         }
     }
 
-    public ItemTodoResponseList readTodo() {
-        List<ItemTodoResponse> IN_PROGRESS = new ArrayList<>();
-        List<ItemTodoResponse> NEED_REVISE = new ArrayList<>();
-        List<ItemTodoResponse> REJECTED = new ArrayList<>();
-        List<ItemTodoResponse> WAITING_APPROVAL = new ArrayList<>();
-        //0) 현재 로그인 된 유저
-        Member member1 = memberRepository.findById(authHelper.extractMemberId()).orElseThrow(MemberNotFoundException::new);
-
-        //1-1 tempsave용 ) 내가 작성자인 모든 아이템들을 데려오기
-        List<Item> myItemList = itemRepository.findByMember(member1);
-
-        //1-2) 내가 reviewer_id, approver_id로 지정된 라우트들 찾기
-
-        //1-2-1) 모든 아이템들 리스트
-        List<Item> allItemList = itemRepository.findAll();
-
-        //1-2-2) 모든 아이템들의 최종 라우트 추출
-        List<RouteOrdering> liveRouteList = new ArrayList<>();
-        for(Item i : allItemList) {
-            //아이템의 모든 라우트
-            List<RouteOrdering> itemsAllRoute =
-                    routeOrderingRepository.findByItem(i);
-            //만약 아이템의 모든 라우트 리스트가 하나이상 존재하면 맨 마지막 라우트만이 유효하므로 그 마지막 아이를 데려온다
-            if(itemsAllRoute.size()>0) {
-                liveRouteList.add(
-                        itemsAllRoute.get(itemsAllRoute.size() - 1)
-                );
-            }
-        }
-
-        //1-1-1 ) 내가 작성한 아이템 중 임시저장된 아이템 담기
-        List<Item> tempsaveList = new ArrayList<>();
-        for(Item item : myItemList){
-            if(item.getTempsave()==true){
-                tempsaveList.add(item);
-            }
-        }
-        //1-2-3) Rejected 아이템 담기
-        // 살아있는 라우트 중, present인 라우트 프로덕트의
-        // rejcted=true고 member이 member1의 아이디와 같다면
-        List<Item> rejectedList = new ArrayList<>();
-        // 살아있는 라우트 중, present인 라우트 프로덕트의 type
-        // 이 review나 approve이고, 그 멤버가 나라면 나에게 할당된 것
-        List<Item> waitingList = new ArrayList<>();
-        for(RouteOrdering i : liveRouteList) {
-            List<RouteProduct> routeProductList = routeProductRepository.findAllByRouteOrdering(i);
-            RouteProduct targetRouteProduct = routeProductList.get(i.getPresent());
-
-            if(targetRouteProduct.isRejected()){//present아이가 reject이고
-                for(RouteProductMember routeProductMember : targetRouteProduct.getMembers()){
-                    //rejected된 product 작성자에 내가 있다면 rejct에 담기
-                    if(routeProductMember.getMember().getId().equals(member1.getId())){
-                        rejectedList.add(
-                                i.getItem()
-                        );
-                    }
-                }
-            }
-
-            if(
-                    targetRouteProduct.getType().equals("approve") ||
-            targetRouteProduct.getType().equals("review")
-            ){
-                for(RouteProductMember routeProductMember : targetRouteProduct.getMembers()){
-                    //rejected된 product 작성자에 내가 있다면 rejct에 담기
-                    if(routeProductMember.getMember().getId().equals(member1.getId())){
-                        waitingList.add(
-                                i.getItem()
-                        );
-                    }
-                }
-            }
-
-
-        }
-
-        //2-1) tempsave 추가
-            if(tempsaveList.size()>0) {
-                for (Item i : tempsaveList) {
-
-                    ItemTodoResponse itemTodoResponse =
-                            new ItemTodoResponse(i.getId(), i.getName(), i.getType(), i.getItemNumber());
-
-                    IN_PROGRESS.add(itemTodoResponse);
-                }
-        }
-        //2-2) rejected 추가
-        if(rejectedList.size()>0) {
-            for (Item i : rejectedList) {
-
-                ItemTodoResponse itemTodoResponse =
-                        new ItemTodoResponse(i.getId(), i.getName(), i.getType(), i.getItemNumber());
-
-                REJECTED.add(itemTodoResponse);
-            }
-        }
-
-        //2-3 ) need review 추가
-        if(waitingList.size()>0) {
-            for (Item i : waitingList) {
-
-                ItemTodoResponse itemTodoResponse =
-                        new ItemTodoResponse(i.getId(), i.getName(), i.getType(), i.getItemNumber());
-
-                REJECTED.add(itemTodoResponse);
-            }
-        }
-
-        //3) 이쁜 response 형태로 담아주기 - ItemTodoResponse
-
-        return new ItemTodoResponseList(IN_PROGRESS, NEED_REVISE, REJECTED, WAITING_APPROVAL);
-
-    }
-
     @Transactional
     public void delete(Long id) {
 
@@ -425,5 +311,236 @@ public class ItemService {
                 )
         );
     }
+
+
+    public ItemTodoResponseList readTodo() {
+        List<ItemTodoResponse> IN_PROGRESS = new ArrayList<>();
+        List<ItemTodoResponse> NEED_REVISE = new ArrayList<>();
+        List<ItemTodoResponse> REJECTED = new ArrayList<>();
+        List<ItemTodoResponse> WAITING_APPROVAL = new ArrayList<>();
+        //0) 현재 로그인 된 유저
+        Member member1 = memberRepository.findById(authHelper.extractMemberId()).orElseThrow(MemberNotFoundException::new);
+
+        //1-1 tempsave용 ) 내가 작성자인 모든 아이템들을 데려오기
+        List<Item> myItemList = itemRepository.findByMember(member1);
+
+        //1-2) 내가 reviewer_id, approver_id로 지정된 라우트들 찾기
+
+        //1-2-1) 모든 아이템들 리스트
+        List<Item> allItemList = itemRepository.findAll();
+
+        //1-2-2) 모든 아이템들의 최종 라우트 추출
+        List<RouteOrdering> liveRouteList = new ArrayList<>();
+        for(Item i : allItemList) {
+            //아이템의 모든 라우트
+            List<RouteOrdering> itemsAllRoute =
+                    routeOrderingRepository.findByItem(i);
+            //만약 아이템의 모든 라우트 리스트가 하나이상 존재하면 맨 마지막 라우트만이 유효하므로 그 마지막 아이를 데려온다
+            if(itemsAllRoute.size()>0) {
+                liveRouteList.add(
+                        itemsAllRoute.get(itemsAllRoute.size() - 1)
+                );
+            }
+        }
+
+        //1-1-1 ) 내가 작성한 아이템 중 임시저장된 아이템 담기
+        List<Item> tempsaveList = new ArrayList<>();
+        for(Item item : myItemList){
+            if(item.getTempsave()==true){
+                tempsaveList.add(item);
+            }
+        }
+        //1-2-3) Rejected 아이템 담기
+        // 살아있는 라우트 중, present인 라우트 프로덕트의
+        // rejcted=true고 member이 member1의 아이디와 같다면
+        List<Item> rejectedList = new ArrayList<>();
+        // 살아있는 라우트 중, present인 라우트 프로덕트의 type
+        // 이 review나 approve이고, 그 멤버가 나라면 나에게 할당된 것
+        List<Item> waitingList = new ArrayList<>();
+        for(RouteOrdering i : liveRouteList) {
+            List<RouteProduct> routeProductList = routeProductRepository.findAllByRouteOrdering(i);
+            RouteProduct targetRouteProduct = routeProductList.get(i.getPresent());
+
+            if(targetRouteProduct.isRejected()){//present아이가 reject이고
+                for(RouteProductMember routeProductMember : targetRouteProduct.getMembers()){
+                    //rejected된 product 작성자에 내가 있다면 rejct에 담기
+                    if(routeProductMember.getMember().getId().equals(member1.getId())){
+                        rejectedList.add(
+                                i.getItem()
+                        );
+                    }
+                }
+            }
+
+            if(
+                    targetRouteProduct.getType().equals("approve") ||
+                            targetRouteProduct.getType().equals("review")
+            ){
+                for(RouteProductMember routeProductMember : targetRouteProduct.getMembers()){
+                    //rejected된 product 작성자에 내가 있다면 rejct에 담기
+                    if(routeProductMember.getMember().getId().equals(member1.getId())){
+                        waitingList.add(
+                                i.getItem()
+                        );
+                    }
+                }
+            }
+
+
+        }
+
+        //2-1) tempsave 추가
+        if(tempsaveList.size()>0) {
+            for (Item i : tempsaveList) {
+
+                ItemTodoResponse itemTodoResponse =
+                        new ItemTodoResponse(i.getId(), i.getName(), i.getType(), i.getItemNumber());
+
+                IN_PROGRESS.add(itemTodoResponse);
+            }
+        }
+        //2-2) rejected 추가
+        if(rejectedList.size()>0) {
+            for (Item i : rejectedList) {
+
+                ItemTodoResponse itemTodoResponse =
+                        new ItemTodoResponse(i.getId(), i.getName(), i.getType(), i.getItemNumber());
+
+                REJECTED.add(itemTodoResponse);
+            }
+        }
+
+        //2-3 ) need review 추가
+        if(waitingList.size()>0) {
+            for (Item i : waitingList) {
+
+                ItemTodoResponse itemTodoResponse =
+                        new ItemTodoResponse(i.getId(), i.getName(), i.getType(), i.getItemNumber());
+
+                REJECTED.add(itemTodoResponse);
+            }
+        }
+
+        //3) 이쁜 response 형태로 담아주기 - ItemTodoResponse
+
+        return new ItemTodoResponseList(IN_PROGRESS, NEED_REVISE, REJECTED, WAITING_APPROVAL);
+
+    }
+
+//
+//    public ItemTodoResponseList readTodo() {
+//        List<ItemTodoResponse> IN_PROGRESS = new ArrayList<>();
+//        List<ItemTodoResponse> NEED_REVISE = new ArrayList<>();
+//        List<ItemTodoResponse> REJECTED = new ArrayList<>();
+//        List<ItemTodoResponse> WAITING_APPROVAL = new ArrayList<>();
+//        //0) 현재 로그인 된 유저
+//        Member member1 = memberRepository.findById(authHelper.extractMemberId()).orElseThrow(MemberNotFoundException::new);
+//
+//        //1-1 tempsave용 ) 내가 작성자인 모든 아이템들을 데려오기
+//        List<Item> myItemList = itemRepository.findByMember(member1);
+//
+//        //1-2) 내가 reviewer_id, approver_id로 지정된 라우트들 찾기
+//
+//        //1-2-1) 모든 아이템들 리스트
+//        List<Item> allItemList = itemRepository.findAll();
+//
+//        //1-2-2) 모든 아이템들의 최종 라우트 추출
+//        List<RouteOrdering> liveRouteList = new ArrayList<>();
+//        for(Item i : allItemList) {
+//            //아이템의 모든 라우트
+//            List<RouteOrdering> itemsAllRoute =
+//                    routeOrderingRepository.findByItem(i);
+//            //만약 아이템의 모든 라우트 리스트가 하나이상 존재하면 맨 마지막 라우트만이 유효하므로 그 마지막 아이를 데려온다
+//            if(itemsAllRoute.size()>0) {
+//                liveRouteList.add(
+//                        itemsAllRoute.get(itemsAllRoute.size() - 1)
+//                );
+//            }
+//        }
+//
+//        //1-1-1 ) 내가 작성한 아이템 중 임시저장된 아이템 담기
+//        List<Item> tempsaveList = new ArrayList<>();
+//        for(Item item : myItemList){
+//            if(item.getTempsave()==true){
+//                tempsaveList.add(item);
+//            }
+//        }
+//        //1-2-3) Rejected 아이템 담기
+//        // 살아있는 라우트 중, present인 라우트 프로덕트의
+//        // rejcted=true고 member이 member1의 아이디와 같다면
+//        List<Item> rejectedList = new ArrayList<>();
+//        // 살아있는 라우트 중, present인 라우트 프로덕트의 type
+//        // 이 review나 approve이고, 그 멤버가 나라면 나에게 할당된 것
+//        List<Item> waitingList = new ArrayList<>();
+//        for(RouteOrdering i : liveRouteList) {
+//            List<RouteProduct> routeProductList = routeProductRepository.findAllByRouteOrdering(i);
+//            RouteProduct targetRouteProduct = routeProductList.get(i.getPresent());
+//
+//            if(targetRouteProduct.isRejected()){//present아이가 reject이고
+//                for(RouteProductMember routeProductMember : targetRouteProduct.getMembers()){
+//                    //rejected된 product 작성자에 내가 있다면 rejct에 담기
+//                    if(routeProductMember.getMember().getId().equals(member1.getId())){
+//                        rejectedList.add(
+//                                i.getItem()
+//                        );
+//                    }
+//                }
+//            }
+//
+//            if(
+//                    targetRouteProduct.getType().equals("approve") ||
+//                            targetRouteProduct.getType().equals("review")
+//            ){
+//                for(RouteProductMember routeProductMember : targetRouteProduct.getMembers()){
+//                    //rejected된 product 작성자에 내가 있다면 rejct에 담기
+//                    if(routeProductMember.getMember().getId().equals(member1.getId())){
+//                        waitingList.add(
+//                                i.getItem()
+//                        );
+//                    }
+//                }
+//            }
+//
+//
+//        }
+//
+//        //2-1) tempsave 추가
+//        if(tempsaveList.size()>0) {
+//            for (Item i : tempsaveList) {
+//
+//                ItemTodoResponse itemTodoResponse =
+//                        new ItemTodoResponse(i.getId(), i.getName(), i.getType(), i.getItemNumber());
+//
+//                IN_PROGRESS.add(itemTodoResponse);
+//            }
+//        }
+//        //2-2) rejected 추가
+//        if(rejectedList.size()>0) {
+//            for (Item i : rejectedList) {
+//
+//                ItemTodoResponse itemTodoResponse =
+//                        new ItemTodoResponse(i.getId(), i.getName(), i.getType(), i.getItemNumber());
+//
+//                REJECTED.add(itemTodoResponse);
+//            }
+//        }
+//
+//        //2-3 ) need review 추가
+//        if(waitingList.size()>0) {
+//            for (Item i : waitingList) {
+//
+//                ItemTodoResponse itemTodoResponse =
+//                        new ItemTodoResponse(i.getId(), i.getName(), i.getType(), i.getItemNumber());
+//
+//                REJECTED.add(itemTodoResponse);
+//            }
+//        }
+//
+//        //3) 이쁜 response 형태로 담아주기 - ItemTodoResponse
+//
+//        return new ItemTodoResponseList(IN_PROGRESS, NEED_REVISE, REJECTED, WAITING_APPROVAL);
+//
+//    }
+
 
 }
