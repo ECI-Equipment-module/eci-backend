@@ -433,8 +433,6 @@ public class ItemService {
 
     }
 
-
-    //    public ItemProjectDto linkNeededItem() {
     public List<UnlinkedItemDto> linkNeededItem() {
 
         //0) 현재 로그인 된 유저

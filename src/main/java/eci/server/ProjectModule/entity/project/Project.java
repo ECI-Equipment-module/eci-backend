@@ -78,6 +78,9 @@ public class Project extends EntityDate {
     @Column(nullable = false)
     private String lifecycle;
 
+    @Column
+    private String clientItemNumber;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "projectType_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
@@ -114,9 +117,12 @@ public class Project extends EntityDate {
     @Column
     private char revision;
 
+
+
     public Project(
             String name,
             String projectNumber,
+            String clientItemNumber,
 
             LocalDate startPeriod,
             LocalDate overPeriod,
@@ -158,6 +164,8 @@ public class Project extends EntityDate {
         this.revision = 65;
         this.lifecycle = "WORKING";
 
+        this.clientItemNumber = clientItemNumber;
+
     }
 
 
@@ -180,6 +188,7 @@ public class Project extends EntityDate {
     public Project(
             String name,
             String projectNumber,
+            String clientItemNumber,
 
             LocalDate startPeriod,
             LocalDate overPeriod,
@@ -218,6 +227,8 @@ public class Project extends EntityDate {
         this.revision = 65;
         this.lifecycle = "WORKING";
 
+        this.clientItemNumber = clientItemNumber;
+
     }
 
     /**
@@ -245,7 +256,7 @@ public class Project extends EntityDate {
 
     {
 
-        this.name = req.getName().isBlank() ? " " : req.getName();
+        this.name = req.getName().isBlank() ? this.name : req.getName();
 
         this.projectType =
                 req.getProjectTypeId() ==null?
@@ -307,6 +318,9 @@ public class Project extends EntityDate {
         FileUpdatedResult fileUpdatedResult = new FileUpdatedResult(
                 resultAttachment//, updatedAddedProjectAttachmentList
         );
+
+        this.clientItemNumber = req.getClientItemNumber().isBlank() ?
+                this.clientItemNumber : req.getClientItemNumber();
 
 
         return fileUpdatedResult;

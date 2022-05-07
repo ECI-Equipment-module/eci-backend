@@ -94,7 +94,7 @@ public class RouteProduct extends EntityDate {
     /**
      * routeproduct 가 속하는 route 하나
      */
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "routeOrdering_id", nullable = false)
     //@OnDelete(action = OnDeleteAction.CASCADE)
     private RouteOrdering routeOrdering;

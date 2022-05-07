@@ -36,6 +36,8 @@ public class ProjectTemporaryCreateRequest  {
 
         private Long projectTypeId;
 
+        private String clientItemNumber;
+
         private String startPeriod;
 
         private String overPeriod;
@@ -87,6 +89,8 @@ public class ProjectTemporaryCreateRequest  {
                     //프로젝트 number은 양산이면 M-현재년도-REQ.NUM / 선형이면 N-~
                     //해당 형식은 스크럼 회의 후 변경
                     "M-"+year.toString()+"-"+"저장 시 생성",
+
+                    req.clientItemNumber,
 
                     req.startPeriod.toString().isBlank()? LocalDate.parse("1900-01-01") :
                             LocalDate.parse(req.startPeriod, DateTimeFormatter.ISO_DATE),

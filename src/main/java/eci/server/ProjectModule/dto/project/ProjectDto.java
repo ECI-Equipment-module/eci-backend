@@ -30,6 +30,8 @@ public class ProjectDto {
     private String name;
     private String projectNumber;
 
+    private String clientItemNumber;
+
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
     private LocalDate startPeriod;
 
@@ -68,6 +70,8 @@ public class ProjectDto {
                 project.getId(),
                 project.getName(),
                 project.getProjectNumber(),
+                project.getClientItemNumber(),
+
                 project.getStartPeriod(),
                 project.getOverPeriod(),
                 ItemProjectDto.toDto(project.getItem()),
