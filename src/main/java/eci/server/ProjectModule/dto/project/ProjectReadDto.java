@@ -33,7 +33,7 @@ public class ProjectReadDto {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
     private LocalDate overPeriod;
 
-    private Boolean tempSave;
+    private Boolean tempsave;
 
     private String lifecycle;
 

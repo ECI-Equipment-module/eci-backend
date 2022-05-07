@@ -73,12 +73,12 @@ public class Project extends EntityDate {
     private Member member;
 
     @Column(nullable = false)
-    private Boolean tempSave;
+    private Boolean tempsave;
 
     @Column(nullable = false)
     private String lifecycle;
 
-    @Column(nullable = false)
+    @Column
     private String clientItemNumber;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -117,6 +117,8 @@ public class Project extends EntityDate {
     @Column
     private char revision;
 
+
+
     public Project(
             String name,
             String projectNumber,
@@ -146,7 +148,7 @@ public class Project extends EntityDate {
         this.projectNumber = projectNumber;
 
         this.member = member;
-        this.tempSave = tempsave;
+        this.tempsave = tempsave;
         this.startPeriod = startPeriod;
         this.overPeriod = overPeriod;
 
@@ -175,7 +177,7 @@ public class Project extends EntityDate {
      * @param overPeriod
      * @param item
      * @param member
-     * @param tempSave
+     * @param tempsave
      * @param projectType
      * @param projectLevel
      * @param produceOrganization
@@ -193,7 +195,7 @@ public class Project extends EntityDate {
 
             Item item,
             Member member,
-            Boolean tempSave,
+            Boolean tempsave,
 
             ProjectType projectType,
             ProjectLevel projectLevel,
@@ -211,7 +213,7 @@ public class Project extends EntityDate {
         this.projectNumber = projectNumber;
 
         this.member = member;
-        this.tempSave = tempSave;
+        this.tempsave = tempsave;
         this.startPeriod = startPeriod;
         this.overPeriod = overPeriod;
 

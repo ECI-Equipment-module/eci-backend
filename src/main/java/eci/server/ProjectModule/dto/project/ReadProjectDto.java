@@ -69,7 +69,7 @@
 //
 //
 //        return new eci.server.ItemModule.dto.item.ReadItemDto(
-//                itemDto.isTempsave(),//true면 임시저장 상태, false면 찐 저장 상태
+//                itemDto.istempsave(),//true면 임시저장 상태, false면 찐 저장 상태
 //
 //                itemDto.getId(),
 //                itemDto.getName(),
@@ -123,7 +123,7 @@
 //        }
 //
 //        return new eci.server.ItemModule.dto.item.ReadItemDto(
-//                itemDto.isTempsave(),//true면 임시저장 상태, false면 찐 저장 상태
+//                itemDto.istempsave(),//true면 임시저장 상태, false면 찐 저장 상태
 //
 //                itemDto.getId(),
 //                itemDto.getName(),

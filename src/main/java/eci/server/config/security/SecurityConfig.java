@@ -75,6 +75,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.DELETE, "/project/{id}").access("@projectGuard.check(#id)")
 
                 .antMatchers(HttpMethod.GET, "/dashboard/project/page").authenticated()
+
                 .antMatchers(HttpMethod.GET, "/**").permitAll()//맨 밑으로 수정
                 .anyRequest().hasAnyRole("ADMIN")
                 .and()
