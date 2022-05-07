@@ -12,7 +12,6 @@ import eci.server.ProjectModule.dto.produceOrg.ProduceOrganizationDto;
 import eci.server.ProjectModule.dto.projectAttachmentDto.ProjectAttachmentDto;
 import eci.server.ProjectModule.dto.projectLevel.ProjectLevelDto;
 import eci.server.ProjectModule.dto.projectType.ProjectTypeDto;
-import eci.server.ProjectModule.entity.project.CarType;
 import eci.server.ProjectModule.entity.project.Project;
 import lombok.AllArgsConstructor;
 import lombok.Data;
