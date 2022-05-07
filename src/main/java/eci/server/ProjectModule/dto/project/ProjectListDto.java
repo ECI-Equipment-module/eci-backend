@@ -10,7 +10,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 public class ProjectListDto{
-        private Long totalElements;
+    private Long totalElements;
     private Integer totalPages;
     private boolean hasNext;
 
