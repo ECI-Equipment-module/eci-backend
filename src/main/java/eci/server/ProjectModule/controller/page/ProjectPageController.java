@@ -1,6 +1,8 @@
 package eci.server.ProjectModule.controller.page;
 
 import eci.server.ItemModule.dto.item.ItemProjectDto;
+import eci.server.ItemModule.entity.newRoute.RouteOrdering;
+import eci.server.ItemModule.repository.newRoute.RouteOrderingRepository;
 import eci.server.ProjectModule.dto.carType.CarTypeDto;
 import eci.server.ProjectModule.dto.project.ProjectMemberRequest;
 import eci.server.ProjectModule.dto.project.ProjectSimpleDto;
@@ -31,6 +33,7 @@ public class ProjectPageController {
      */
     @Autowired
     ProjectRepository projectRepository;
+    RouteOrderingRepository routeOrderingRepository;
     @CrossOrigin(origins = "https://localhost:3000")
     @GetMapping("/project/page")
     @AssignMemberId
@@ -79,6 +82,11 @@ public class ProjectPageController {
 
 
                         project.getCreatedAt(),
+
+                        //project.getLifecycle(), //프로젝트의 라이프사이클
+
+                        routeOrderingRepository.findByItem(project.getItem()).get(-1).getLifecycleStatus(),
+                        //아이템의 라이프 사이클
 
                         req.getMemberId().equals(project.getMember().getId())
                         //현재 로그인 된 플젝 작성멤버랑 같으면 readonly==true

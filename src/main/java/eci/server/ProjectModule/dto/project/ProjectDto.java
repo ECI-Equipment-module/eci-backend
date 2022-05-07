@@ -35,6 +35,7 @@ public class ProjectDto {
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
     private LocalDate overPeriod;
+
     private ItemProjectDto item;
     private MemberDto member;
     private Boolean tempsave;
