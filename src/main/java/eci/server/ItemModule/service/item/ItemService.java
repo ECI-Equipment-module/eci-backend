@@ -39,9 +39,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -464,18 +462,15 @@ public class ItemService {
         }
 
         //3) 프로젝트 링크 안된 애만 담기
-        List<UnlinkedItemDto> unlinkedItemList = new ArrayList<>();
+        HashSet<UnlinkedItemDto> unlinkedItemList = new HashSet<>();
 
         for (RouteProduct routeProduct : myRouteProductList){
             if(projectRepository.findByItem(routeProduct.getRouteOrdering().getItem()).size()==0){
 
-                List<AttachmentDto> attachmentDtoList = Optional.ofNullable(AttachmentDto.toDtoList(
+                List<Attachment> attachmentList =
                                         attachmentRepository.findByItem(
                                                 routeProduct.getRouteOrdering().getItem()
-                                        )
-                                )
-                        )
-                        .orElseThrow(AttachmentNotFoundException::new);
+                                        );
 
                 RouteOrdering routeOrdering = routeOrderingRepository.findByItem(
                         routeProduct.getRouteOrdering().getItem()
@@ -485,22 +480,31 @@ public class ItemService {
                         ).size()-1
                 );
 
+                ItemDto itemDto = ItemDto.toDto(
+                        routeProduct.getRouteOrdering().getItem()
+                );
+
                 unlinkedItemList.add(
                         UnlinkedItemDto.toDto(
-                                ItemDto.toDto(
-                                        routeProduct.getRouteOrdering().getItem()
-                                ),
-
+                                itemDto
+                                ,
                                 routeOrdering.getLifecycleStatus()
                                 ,
-                                attachmentDtoList
+                                attachmentList
 
                         )
                 );
             }
         }
 
-        return unlinkedItemList;
+        List<UnlinkedItemDto> setToListUnlinked  = new ArrayList<>();
+
+        for(UnlinkedItemDto unlinkedItemDto : unlinkedItemList){
+            setToListUnlinked.add(unlinkedItemDto);
+        }
+
+        return setToListUnlinked;
+
     }
 
 
