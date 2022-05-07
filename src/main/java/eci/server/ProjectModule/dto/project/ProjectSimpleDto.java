@@ -23,6 +23,8 @@ public class ProjectSimpleDto {
 
     //제품 타입, 제품명, 제품 번호
     private Character revision;
+
+
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
     private LocalDate startPeriod;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
