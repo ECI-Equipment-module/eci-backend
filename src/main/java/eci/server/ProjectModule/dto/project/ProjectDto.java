@@ -29,6 +29,7 @@ public class ProjectDto {
     private Long id;
     private String name;
     private String projectNumber;
+    private String clientItemNumber;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
     private LocalDate startPeriod;
@@ -68,11 +69,13 @@ public class ProjectDto {
                 project.getId(),
                 project.getName(),
                 project.getProjectNumber(),
+                project.getClientItemNumber(),
+
                 project.getStartPeriod(),
                 project.getOverPeriod(),
                 ItemProjectDto.toDto(project.getItem()),
                 MemberDto.toDto(project.getMember()),
-                project.getTempsave(),
+                project.getTempSave(),
                 ProjectTypeDto.toDto(project.getProjectType()),
                 ProjectLevelDto.toDto(project.getProjectLevel()),
                 ProduceOrganizationDto.toDto(project.getProduceOrganization()),

@@ -39,9 +39,9 @@ import static java.util.stream.Collectors.toList;
 public class Project extends EntityDate {
     @Id
 
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-//   @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQUENCE2")
-//   @SequenceGenerator(name="SEQUENCE2", sequenceName="SEQUENCE2", allocationSize=1)
+//  @GeneratedValue(strategy = GenerationType.IDENTITY)
+   @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQUENCE2")
+   @SequenceGenerator(name="SEQUENCE2", sequenceName="SEQUENCE2", allocationSize=1)
 
     private Long id;
 
@@ -73,10 +73,13 @@ public class Project extends EntityDate {
     private Member member;
 
     @Column(nullable = false)
-    private Boolean tempsave;
+    private Boolean tempSave;
 
     @Column(nullable = false)
     private String lifecycle;
+
+    @Column(nullable = false)
+    private String clientItemNumber;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "projectType_id", nullable = false)
@@ -117,6 +120,7 @@ public class Project extends EntityDate {
     public Project(
             String name,
             String projectNumber,
+            String clientItemNumber,
 
             LocalDate startPeriod,
             LocalDate overPeriod,
@@ -142,7 +146,7 @@ public class Project extends EntityDate {
         this.projectNumber = projectNumber;
 
         this.member = member;
-        this.tempsave = tempsave;
+        this.tempSave = tempsave;
         this.startPeriod = startPeriod;
         this.overPeriod = overPeriod;
 
@@ -158,6 +162,8 @@ public class Project extends EntityDate {
         this.revision = 65;
         this.lifecycle = "WORKING";
 
+        this.clientItemNumber = clientItemNumber;
+
     }
 
 
@@ -169,7 +175,7 @@ public class Project extends EntityDate {
      * @param overPeriod
      * @param item
      * @param member
-     * @param tempsave
+     * @param tempSave
      * @param projectType
      * @param projectLevel
      * @param produceOrganization
@@ -180,13 +186,14 @@ public class Project extends EntityDate {
     public Project(
             String name,
             String projectNumber,
+            String clientItemNumber,
 
             LocalDate startPeriod,
             LocalDate overPeriod,
 
             Item item,
             Member member,
-            Boolean tempsave,
+            Boolean tempSave,
 
             ProjectType projectType,
             ProjectLevel projectLevel,
@@ -204,7 +211,7 @@ public class Project extends EntityDate {
         this.projectNumber = projectNumber;
 
         this.member = member;
-        this.tempsave = tempsave;
+        this.tempSave = tempSave;
         this.startPeriod = startPeriod;
         this.overPeriod = overPeriod;
 
@@ -217,6 +224,8 @@ public class Project extends EntityDate {
 
         this.revision = 65;
         this.lifecycle = "WORKING";
+
+        this.clientItemNumber = clientItemNumber;
 
     }
 
@@ -245,7 +254,7 @@ public class Project extends EntityDate {
 
     {
 
-        this.name = req.getName().isBlank() ? " " : req.getName();
+        this.name = req.getName().isBlank() ? this.name : req.getName();
 
         this.projectType =
                 req.getProjectTypeId() ==null?
@@ -307,6 +316,9 @@ public class Project extends EntityDate {
         FileUpdatedResult fileUpdatedResult = new FileUpdatedResult(
                 resultAttachment//, updatedAddedProjectAttachmentList
         );
+
+        this.clientItemNumber = req.getClientItemNumber().isBlank() ?
+                this.clientItemNumber : req.getClientItemNumber();
 
 
         return fileUpdatedResult;

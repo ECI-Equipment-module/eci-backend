@@ -14,6 +14,7 @@ import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+import org.springframework.stereotype.Component;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -26,6 +27,7 @@ import static java.util.stream.Collectors.toList;
  * 라우트프로덕트를 리스트로 가짐으로써
  * 순서를 정의해준다.
  */
+@Component
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

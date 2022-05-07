@@ -30,7 +30,7 @@ public class ProjectSimpleDto {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
     private LocalDate overPeriod;
 
-    private Boolean tempsave;
+    private Boolean tempSave;
 
     //태그가 개발 사양서
     private List<String> developAttachmentName;

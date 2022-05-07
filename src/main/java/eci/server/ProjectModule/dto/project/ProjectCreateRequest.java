@@ -67,6 +67,8 @@ public class ProjectCreateRequest {
 
     private Long carType; //양산 아니면 없어도 됨
 
+    private String clientItemNumber;
+
     public static Project toEntity(
             ProjectCreateRequest req,
             MemberRepository memberRepository,
@@ -121,6 +123,8 @@ public class ProjectCreateRequest {
 
                     finalProjNum,
 
+                    req.clientItemNumber,
+
                     LocalDate.parse(req.startPeriod, DateTimeFormatter.ISO_DATE),
                     LocalDate.parse(req.overPeriod, DateTimeFormatter.ISO_DATE),
 
@@ -162,6 +166,9 @@ public class ProjectCreateRequest {
 
 
                     finalProjNum,
+
+                    req.clientItemNumber,
+
 
                     LocalDate.parse(req.startPeriod, DateTimeFormatter.ISO_DATE),
                     LocalDate.parse(req.overPeriod, DateTimeFormatter.ISO_DATE),

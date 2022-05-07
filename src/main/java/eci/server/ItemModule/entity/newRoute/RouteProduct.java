@@ -28,9 +28,9 @@ import static java.util.stream.Collectors.toList;
 public class RouteProduct extends EntityDate {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    @GeneratedValue(strategy= GenerationType.SEQUENCE, generator="SEQUENCE1")
-//    @SequenceGenerator(name="SEQUENCE1", sequenceName="SEQUENCE1", allocationSize=1)
+//    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy= GenerationType.SEQUENCE, generator="SEQUENCE1")
+    @SequenceGenerator(name="SEQUENCE1", sequenceName="SEQUENCE1", allocationSize=1)
     private Long id;
 
     /**
@@ -94,7 +94,7 @@ public class RouteProduct extends EntityDate {
     /**
      * routeproduct 가 속하는 route 하나
      */
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "routeOrdering_id", nullable = false)
     //@OnDelete(action = OnDeleteAction.CASCADE)
     private RouteOrdering routeOrdering;

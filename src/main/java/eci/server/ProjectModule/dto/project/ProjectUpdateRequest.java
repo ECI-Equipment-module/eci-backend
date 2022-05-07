@@ -21,6 +21,8 @@ public class ProjectUpdateRequest {
 
     private Long projectTypeId;
 
+    private String clientItemNumber;
+
     private String startPeriod;
 
     private String overPeriod;
