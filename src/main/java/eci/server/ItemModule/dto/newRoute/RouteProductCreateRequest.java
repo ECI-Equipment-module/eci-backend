@@ -36,9 +36,9 @@ public class RouteProductCreateRequest {
         List<RouteProduct> willBeSavedRouteProductList
                 = new ArrayList<>();
 
-        List routeProductName = List.of((routePreset.itemRouteName[routeTypeIdx]));
-        List routeProductType = List.of((routePreset.itemRouteType[routeTypeIdx]));
-        List routeProductTypeModule = List.of((routePreset.itemRouteTypeModule[routeTypeIdx]));
+        List<String> routeProductName = List.of((routePreset.itemRouteName[routeTypeIdx]));
+        List<String> routeProductType = List.of((routePreset.itemRouteType[routeTypeIdx]));
+        List<String> routeProductTypeModule = List.of((routePreset.itemRouteTypeModule[routeTypeIdx]));
 
         //만들어져야 하는 객체는 타입 길이에서 complete 뺀 만큼
         Integer neededRouteProductCnt = routeProductType.size()-1;
@@ -90,46 +90,53 @@ public class RouteProductCreateRequest {
         int seq = 0;
 
         // 2) 나머지 routeProduct는 돌려서 생성
-        List<RouteProduct> restRouteProducts =
 
-                req.getMemberIds().stream().map(
-                        i ->
-                                //TODO : MEMBER가 똑같아지면 에러사항!
-        new RouteProduct(
-                req.getMemberIds().indexOf(i)+1, //request이후의 sequence 이므로 1부터 시작
+        List<RouteProduct> restRouteProducts = new ArrayList<>();
 
-                 req.getMemberIds().indexOf(i)+1,
+        Integer index = 0;
 
-                (String) routeProductName.get(req.getMemberIds().indexOf(i)+1),
+        for(List list : req.getMemberIds()){
 
-                routeTypeRepository.findByName((String) routeProductType.get(req.getMemberIds().indexOf(i)+1)).
-                        stream().filter(
-                                m-> m.getModule().equals(
-                                        routeProductTypeModule.get(req.getMemberIds().indexOf(i)+1)
-                                )
-                        ).collect(toList()).get(0),
 
-                "default",
-                false,
-                false,
-                true,
-                false,
-                req.getMemberIds().get(req.getMemberIds().indexOf(i)) //memberIds에서는 0부터 시작(request member 포함x)
-                        .stream().map(
-                        m->
-                                memberRepository.findById(m).
-                                        orElseThrow(MemberNotFoundException::new)
-                ).collect(
-                        toList()
-                ),
-                routeOrdering
-        )
-        ).collect(toList());
+            Integer finalIndex = index;
+            RouteProduct routeProduct = new RouteProduct(
+                    index+1,
+                    index+1,
+                    (String) routeProductName.get(index+1),
+
+                    routeTypeRepository.findByName((String) routeProductType.get(index+1)).
+                            stream().filter(
+                                    m-> m.getModule().equals(
+                                            routeProductTypeModule.get(finalIndex+1)
+                                    )
+                            ).collect(toList()).get(0),
+
+
+                    "default",
+                    false,
+                    false,
+                    true,
+                    false,
+                    req.getMemberIds().get(index) //memberIds에서는 0부터 시작(request member 포함x)
+                            .stream().map(
+                                    m->
+                                            memberRepository.findById(m).
+                                                    orElseThrow(MemberNotFoundException::new)
+                            ).collect(
+                                    toList()
+                            ),
+                    routeOrdering
+
+            );
+
+            restRouteProducts.add(routeProduct);
+
+            index+=1;
+        }
 
         willBeSavedRouteProductList.add(requestRouteProduct);
-        for(RouteProduct restRouteProduct : restRouteProducts) {
-            willBeSavedRouteProductList.add(restRouteProduct);
-        }
+
+        willBeSavedRouteProductList.addAll(restRouteProducts);
 
         return willBeSavedRouteProductList;
 
