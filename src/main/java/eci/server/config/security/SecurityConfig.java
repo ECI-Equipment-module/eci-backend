@@ -67,17 +67,22 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.PUT, "/approveRoute/{id}").access("@newRouteGuard.check(#id)")
                 .antMatchers(HttpMethod.PUT, "/rejectRoute/{id}").access("@newRouteGuard.check(#id)")
 
-                .antMatchers(HttpMethod.GET, "/project").authenticated()
-                .antMatchers(HttpMethod.GET, "/project/page").authenticated()
                 .antMatchers(HttpMethod.POST, "/project").authenticated()
                 .antMatchers(HttpMethod.POST, "/project/temp").authenticated()
                 .antMatchers(HttpMethod.PUT, "/project/{id}").access("@projectGuard.check(#id)")
                 .antMatchers(HttpMethod.DELETE, "/project/{id}").access("@projectGuard.check(#id)")
 
+
+                .antMatchers(HttpMethod.GET, "/project").authenticated()
+                .antMatchers(HttpMethod.GET, "/project/page").authenticated()
                 .antMatchers(HttpMethod.GET, "/dashboard/project/page").authenticated()
 
-                .antMatchers(HttpMethod.GET, "/**").permitAll()//맨 밑으로 수정
-                .anyRequest().hasAnyRole("ADMIN")
+                .antMatchers(HttpMethod.GET, "/dashboard/project/todo").authenticated()
+
+                .antMatchers(HttpMethod.GET, "/**").permitAll()//위에 명시된 get 말고는 다 허용, 맨 밑으로 위치 변경
+
+                .anyRequest().hasAnyRole("ADMIN")//멤버의 역할이 관리자인 경우에는 모든 것을 허용
+
                 .and()
                 .exceptionHandling().authenticationEntryPoint(new CustomAuthenticationEntryPoint())
                 .and()//인증되지 않은 사용자의 접근이 거부

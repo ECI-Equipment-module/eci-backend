@@ -1,6 +1,6 @@
 package eci.server.ProjectModule.service;
 
-import eci.server.DashBoardModule.dto.ProjectDashboardDto;
+import eci.server.DashBoardModule.dto.myProject.ProjectDashboardDto;
 import eci.server.ItemModule.dto.item.ItemProjectDashboardDto;
 
 import eci.server.ItemModule.dto.item.ItemProjectDto;

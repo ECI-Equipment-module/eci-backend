@@ -1,6 +1,6 @@
 package eci.server.DashBoardModule.page;
 
-import eci.server.DashBoardModule.dto.ProjectDashboardDto;
+import eci.server.DashBoardModule.dto.myProject.ProjectDashboardDto;
 import eci.server.ProjectModule.dto.project.ProjectMemberRequest;
 import eci.server.ProjectModule.service.ProjectService;
 import eci.server.aop.AssignMemberId;

@@ -1,4 +1,4 @@
-package eci.server.ProjectModule.dto.projectTodo;
+package eci.server.DashBoardModule.dto.projectTodo;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -11,5 +11,5 @@ public class ProjectTodoResponse {
     Long projectId;
     String projectName;
     String projectType;
-    Integer projectNumber;
+    String projectNumber;
 }

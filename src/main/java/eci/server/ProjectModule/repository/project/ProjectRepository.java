@@ -17,6 +17,8 @@ public interface ProjectRepository  extends JpaRepository<Project, Long>, Custom
 
     List<Project> findByItem(Item item);
 
+    List<Project> findByMember(Member member);
+
 
 
 }

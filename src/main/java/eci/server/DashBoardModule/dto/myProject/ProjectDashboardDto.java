@@ -1,4 +1,4 @@
-package eci.server.DashBoardModule.dto;
+package eci.server.DashBoardModule.dto.myProject;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import eci.server.ItemModule.dto.item.ItemProjectDashboardDto;

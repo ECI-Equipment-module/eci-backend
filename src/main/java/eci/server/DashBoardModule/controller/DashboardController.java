@@ -1,5 +1,6 @@
 package eci.server.DashBoardModule.controller;
 
+import eci.server.DashBoardModule.service.DashboardService;
 import eci.server.ItemModule.dto.item.ItemTemporaryCreateRequest;
 import eci.server.aop.AssignMemberId;
 import eci.server.ItemModule.dto.item.ItemCreateRequest;
@@ -22,21 +23,49 @@ import javax.validation.Valid;
 
 public class DashboardController {
 
-    private final ItemService itemService;
+    private final DashboardService dashboardService;
 
     /**
-     * 특정 아이템 조회
+     * project to-do api
      *
      * @return 200 (success)
      */
     @CrossOrigin(origins = "https://localhost:3000")
-    @GetMapping("/todos")
+    @GetMapping("/dashboard/project/todo")
     @ResponseStatus(HttpStatus.OK)
-    public Response todos() {
+    public Response projectTodo() {
         return Response.success(
-                itemService.readTodo()
+                dashboardService.readProjectTodo()
         );
     }
 
+
+//    /**
+//     * item to-do api
+//     *
+//     * @return 200 (success)
+//     */
+//    @CrossOrigin(origins = "https://localhost:3000")
+//    @GetMapping("/dashboard/item/to-do")
+//    @ResponseStatus(HttpStatus.OK)
+//    public Response itemTodo() {
+//        return Response.success(
+//                dashboardService.readItemTodo()
+//        );
+//    }
+
+//    /**
+//     * BOM to-do api
+//     *
+//     * @return 200 (success)
+//     */
+//    @CrossOrigin(origins = "https://localhost:3000")
+//    @GetMapping("/dashboard/bom/todo")
+//    @ResponseStatus(HttpStatus.OK)
+//    public Response bomTodo() {
+//        return Response.success(
+//                dashboardService.readBomTodo()
+//        );
+//    }
 
 }
