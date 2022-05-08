@@ -1,7 +1,8 @@
 package eci.server.ItemModule.service.item;
 
-import eci.server.ItemModule.dto.itemTodo.ItemTodoResponse;
-import eci.server.ItemModule.dto.itemTodo.ItemTodoResponseList;
+import eci.server.DashBoardModule.dto.itemTodo.ItemTodoResponse;
+import eci.server.DashBoardModule.dto.itemTodo.ItemTodoResponseList;
+import eci.server.ItemModule.exception.member.auth.AuthenticationEntryPointException;
 import eci.server.ItemModule.repository.newRoute.RouteOrderingRepository;
 
 import eci.server.ProjectModule.repository.project.ProjectRepository;
@@ -325,7 +326,8 @@ public class ItemService {
         List<ItemTodoResponse> REJECTED = new ArrayList<>();
         List<ItemTodoResponse> WAITING_APPROVAL = new ArrayList<>();
         //0) 현재 로그인 된 유저
-        Member member1 = memberRepository.findById(authHelper.extractMemberId()).orElseThrow(MemberNotFoundException::new);
+        Member member1 = memberRepository.findById(authHelper.extractMemberId()).orElseThrow(
+                AuthenticationEntryPointException::new);
 
         //1-1 tempsave용 ) 내가 작성자인 모든 아이템들을 데려오기
         List<Item> myItemList = itemRepository.findByMember(member1);
@@ -436,7 +438,9 @@ public class ItemService {
     public List<UnlinkedItemDto> linkNeededItem() {
 
         //0) 현재 로그인 된 유저
-        Member member1 = memberRepository.findById(authHelper.extractMemberId()).orElseThrow(MemberNotFoundException::new);
+        Member member1 = memberRepository.findById(authHelper.extractMemberId()).orElseThrow(
+                AuthenticationEntryPointException::new
+        );
 
         //1) 현재 진행 중인 라우트 프로덕트 카드들
         List<RouteProduct> routeProductList = routeProductRepository.findAll().stream().filter(
