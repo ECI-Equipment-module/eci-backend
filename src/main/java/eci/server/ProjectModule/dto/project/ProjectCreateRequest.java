@@ -202,7 +202,9 @@ public class ProjectCreateRequest {
                             i -> new ProjectAttachment(
                                     i.getOriginalFilename(),
                                     req.getTag().get(req.attachments.indexOf(i)),
-                                    req.getAttachmentComment().get(req.attachments.indexOf(i))
+                                    req.getAttachmentComment().
+                                            get(req.attachments.indexOf(i)).isBlank()?"":
+                                            req.getAttachmentComment().get(req.attachments.indexOf(i))
                             )
                     ).collect(
                             toList()

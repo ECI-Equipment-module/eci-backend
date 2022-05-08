@@ -40,8 +40,8 @@ public class ItemCreateRequest {
     private String type;
 
     @Null
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQUENCE1")
-    @SequenceGenerator(name = "SEQUENCE1", sequenceName = "SEQUENCE1", allocationSize = 1)
+//    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQUENCE1")
+//    @SequenceGenerator(name = "SEQUENCE1", sequenceName = "SEQUENCE1", allocationSize = 1)
     private Integer itemNumber;
 
     @NotNull(message = "너비를 입력해주세요.")
