@@ -1,5 +1,4 @@
 package eci.server.DashBoardModule.dto.itemTodo;
-
 import eci.server.ItemModule.entity.item.Item;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -14,7 +13,6 @@ public class ItemTodoResponse {
     String itemType;
     Integer itemNumber;
 
-
     public static ItemTodoResponse toDto(
             Item item
     ) {
@@ -28,6 +26,5 @@ public class ItemTodoResponse {
 
         );
     }
-
 
 }

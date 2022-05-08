@@ -38,6 +38,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
+
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -143,6 +144,7 @@ public class DashboardService {
         List<ItemTodoResponse> NEW_PROJECT = new ArrayList<>(unlinkedItemTodoResponses);
 
         return new ProjectTodoResponseList(TEMP_SAVE, NEW_PROJECT);
+
     }
 
 
