@@ -83,19 +83,84 @@ public class ProjectTemporaryCreateRequest  {
             Long clientOrgId = req.clientOrganizationId==null?99999L:req.clientOrganizationId;
             Long carTypeId = req.carType==null?99999L:req.carType;
 
+            if(req.getTag().size()>0) {
+                return new Project(
+                        req.name.isBlank() ? " default " : req.name,
+                        //프로젝트 number은 양산이면 M-현재년도-REQ.NUM / 선형이면 N-~
+                        //해당 형식은 스크럼 회의 후 변경
+                        "M-" + year.toString() + "-" + "저장 시 생성",
+
+                        req.clientItemNumber,
+
+                        req.startPeriod.toString().isBlank() ? LocalDate.parse("1900-01-01") :
+                                LocalDate.parse(req.startPeriod, DateTimeFormatter.ISO_DATE),
+
+                        req.overPeriod.toString().isBlank() ? LocalDate.parse("1900-01-01") :
+                                LocalDate.parse(req.overPeriod, DateTimeFormatter.ISO_DATE),
+
+                        //아이템, 프로젝트 타입 등 객체를
+                        // 지정하지 않았으면 어쩌지? 임시 객체들을 만들어둬야 하나
+                        //-> 그리고 찐 저장 시 해당 객체들이면 제대로 된 객체 지정 경고방식?
+                        //TODO 임시아이템 아이디는 ? 일단은 99999로 => 찐 db에선 1로 임시 객체 생성
+
+                        itemRepository.findById(itemId)
+                                .orElseThrow(ItemNotFoundException::new),
+
+                        //로그인 된 유저 바로 주입
+                        memberRepository.findById(
+                                req.getMemberId()
+                        ).orElseThrow(MemberNotFoundException::new),
+
+                        true,
+
+                        projectTypeRepository.findById(projectTypeId)
+                                .orElseThrow(ProjectTypeNotFoundException::new),
+
+                        projectLevelRepository.findById(projectLevelId)
+                                .orElseThrow(ProjectLevelNotFoundException::new),
+
+                        produceOrganizationRepository.findById(produceOrgId)
+                                .orElseThrow(ProduceOrganizationNotFoundException::new),
+
+                        clientOrganizationRepository.findById(clientOrgId)
+                                .orElseThrow(ClientOrganizationNotFoundException::new),
+
+                        req.attachments.stream().map(
+                                i -> new ProjectAttachment(
+                                        i.getOriginalFilename(),
+                                        req.getTag().get(req.attachments.indexOf(i)),
+                                        req.getAttachmentComment().get(req.attachments.indexOf(i))
+                                )
+                        ).collect(
+                                toList()
+                        ),
+
+                        //Project 생성자에 들이밀기
+
+                        carTypeRepository.findById(req.carType)
+                                .orElseThrow(ClientOrganizationNotFoundException::new)
+
+//                    req.carType.toString().isBlank()?"":req.carType
+
+                );
+            }
+
+            /**
+             * attachment 없을 시
+             */
 
             return new Project(
-                    req.name.isBlank()?" default ":req.name,
+                    req.name.isBlank() ? " default " : req.name,
                     //프로젝트 number은 양산이면 M-현재년도-REQ.NUM / 선형이면 N-~
                     //해당 형식은 스크럼 회의 후 변경
-                    "M-"+year.toString()+"-"+"저장 시 생성",
+                    "M-" + year.toString() + "-" + "저장 시 생성",
 
                     req.clientItemNumber,
 
-                    req.startPeriod.toString().isBlank()? LocalDate.parse("1900-01-01") :
+                    req.startPeriod.toString().isBlank() ? LocalDate.parse("1900-01-01") :
                             LocalDate.parse(req.startPeriod, DateTimeFormatter.ISO_DATE),
 
-                    req.overPeriod.toString().isBlank()? LocalDate.parse("1900-01-01") :
+                    req.overPeriod.toString().isBlank() ? LocalDate.parse("1900-01-01") :
                             LocalDate.parse(req.overPeriod, DateTimeFormatter.ISO_DATE),
 
                     //아이템, 프로젝트 타입 등 객체를
@@ -124,16 +189,6 @@ public class ProjectTemporaryCreateRequest  {
 
                     clientOrganizationRepository.findById(clientOrgId)
                             .orElseThrow(ClientOrganizationNotFoundException::new),
-
-                    req.attachments.stream().map(
-                            i -> new ProjectAttachment(
-                                    i.getOriginalFilename(),
-                                    req.getTag().get(req.attachments.indexOf(i)),
-                                    req.getAttachmentComment().get(req.attachments.indexOf(i))
-                            )
-                    ).collect(
-                            toList()
-                    ),
 
                     //Project 생성자에 들이밀기
 

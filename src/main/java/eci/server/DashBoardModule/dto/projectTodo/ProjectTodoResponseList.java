@@ -1,6 +1,7 @@
 package eci.server.DashBoardModule.dto.projectTodo;
 
-import lombok.AllArgsConstructor;
+import eci.server.DashBoardModule.dto.itemTodo.ItemTodoResponse;
+.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -11,6 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 public class ProjectTodoResponseList {
     List<ProjectTodoResponse> SaveAsDraft;
-    List<ProjectTodoResponse> NewProject1;
-    List<ProjectTodoResponse> NewProject2;
+
+    List<ItemTodoResponse> NewProject;
+
 }
