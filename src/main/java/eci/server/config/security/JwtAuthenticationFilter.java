@@ -74,10 +74,13 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
     private void setAuthentication(String token) {
         String userId = tokenService.extractAccessTokenSubject(token);
         if(userId == null){
+
             throw new AccessExpiredException();
 
         }
 
+        // 토큰에서 빼 온 유저의 아이디 값으로 UserDetails 빼오고, Authentication 토큰 만드는 것
+        // 따라서 나는 authentication 토큰을 만드는
         CustomUserDetails userDetails = userDetailsService.loadUserByUsername(userId);
         SecurityContextHolder.getContext().setAuthentication(
                 new CustomAuthenticationToken(

@@ -7,9 +7,9 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ProjectTodoResponse {
-    Long projectId;
-    String projectName;
-    String projectType;
-    String projectNumber;
+public class TodoResponse {
+    Long id;
+    String name;
+    String type;
+    String number;
 }

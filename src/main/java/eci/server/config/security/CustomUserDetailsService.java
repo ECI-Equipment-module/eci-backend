@@ -1,6 +1,8 @@
 package eci.server.config.security;
 
 import eci.server.ItemModule.entity.member.Member;
+import eci.server.ItemModule.entity.member.MemberRole;
+import eci.server.ItemModule.entity.member.Role;
 import eci.server.ItemModule.repository.member.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -34,9 +36,9 @@ public class CustomUserDetailsService implements UserDetailsService {
                 .orElseGet(() -> new Member(null, null, null, null, null ,List.of(), null));
         return new CustomUserDetails(
                 String.valueOf(member.getId()),
-                member.getRoles().stream().map(memberRole -> memberRole.getRole())
-                        .map(role -> role.getRoleType())
-                        .map(roleType -> roleType.toString())
+                member.getRoles().stream().map(MemberRole::getRole)
+                        .map(Role::getRoleType)
+                        .map(Enum::toString)
                         //권한 등급은 String 인식, Enum 타입 RoleType을 String 변환
                         .map(SimpleGrantedAuthority::new).collect(Collectors.toSet())
                 //권한 등급을 GrantedAuthority 인터페이스로 받음
