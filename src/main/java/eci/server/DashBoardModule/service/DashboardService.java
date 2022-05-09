@@ -125,16 +125,8 @@ public class DashboardService {
             //3) 프로젝트 링크 안된 애만 담기
             HashSet<TodoResponse> unlinkedItemTodoResponses = new HashSet<>();
 
-            List<Project> finalProjects = new ArrayList<>();
-
             for (RouteProduct routeProduct : myRouteProductList){
-                List<Project> projects = projectRepository.findByItem(routeProduct.getRouteOrdering().getItem());
-                for(Project project : projects){
-                    if(!project.getTempsave()){
-                        finalProjects.add(project);
-                    }
-                }
-                if(finalProjects.size()==0){
+                if(projectRepository.findByItem(routeProduct.getRouteOrdering().getItem()).size()==0){
 
                     Item targetItem = routeProduct.getRouteOrdering().getItem();
 
