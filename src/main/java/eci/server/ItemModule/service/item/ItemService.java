@@ -107,7 +107,6 @@ public class ItemService {
 
     @Transactional
     public ItemCreateResponse create(ItemCreateRequest req) {
-        //req.getAttachments().get(0).getContentType();
 
         Item item = itemRepository.save(
                 ItemCreateRequest.toEntity(
