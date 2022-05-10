@@ -81,10 +81,12 @@ public class ItemTemporaryCreateRequest {
             MaterialRepository materialRepository,
             ManufactureRepository manufactureRepository) {
 
+
         return new Item(
                 req.name.isBlank() ? "이름을 입력해주세요" : req.name,
                 req.type.isBlank() ? String.valueOf(ItemType.NONE) : req.type,
-                ItemType.valueOf(req.type).label()*1000000+(int)(Math.random()*1000),
+                ItemType.valueOf(req.type.isBlank()? "NONE":req.type)
+                        .label()*1000000+(int)(Math.random()*1000),
                 req.width.isBlank() ? "너비를 입력해주세요" : req.width,
                 req.height.isBlank() ? "높이를 입력해주세요" : req.height,
                 req.weight.isBlank() ? "무게를 입력해주세요" : req.weight,
@@ -96,11 +98,14 @@ public class ItemTemporaryCreateRequest {
                 true, //inProgress = true
                 false, // 임시
 
+
                 colorRepository.findById(
-                        req.getColorId()
+                        req.getColorId()==null?99999L:req.getColorId()
                 ).orElseThrow(ColorNotFoundException::new),
 
-                req.thumbnail.stream().map(
+                req.thumbnail==null?
+                        new ArrayList<>():
+                                req.thumbnail.stream().map(
                         i -> new Image(
                                 i.getOriginalFilename()
                         )
@@ -108,7 +113,10 @@ public class ItemTemporaryCreateRequest {
                         toList()
                 ),
 
-                req.attachments.stream().map(
+                req.attachments==null?
+                        new ArrayList<>()
+                        :
+                        req.attachments.stream().map(
                         i -> new Attachment(
                                 i.getOriginalFilename(),
                                 req.getTag().get(req.attachments.indexOf(i)),
@@ -118,7 +126,9 @@ public class ItemTemporaryCreateRequest {
                         toList()
                 ),
 
-                req.materials.stream().map(
+                req.materials==null?
+                        new ArrayList<>()
+                        :req.materials.stream().map(
                         i ->
                                 materialRepository.
                                         findById(i).orElseThrow(MaterialNotFoundException::new)
@@ -126,6 +136,9 @@ public class ItemTemporaryCreateRequest {
                         toList()
                 ),
 
+                req.manufactures==null?
+                        new ArrayList<>()
+                        :
                 req.manufactures.stream().map(
                         i ->
                                 manufactureRepository.
@@ -134,7 +147,7 @@ public class ItemTemporaryCreateRequest {
                         toList()
                 ),
 
-                req.partnumbers
+                req.partnumbers.size()==0?new ArrayList<>():req.partnumbers
         );
     }
 }

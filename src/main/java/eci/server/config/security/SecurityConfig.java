@@ -85,7 +85,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()//인증되지 않은 사용자의 접근이 거부
                 .exceptionHandling().accessDeniedHandler(new CustomAccessDeniedHandler())
                 .and()//인증된 사용자가 권한 부족 등의 사유로 인해 접근이 거부
-
                 //UsernamePasswordAuthenticationFilter 필터 이전에 JwtAuthentication 필터를 적용해라
                 .addFilterBefore(new JwtAuthenticationFilter(tokenService, userDetailsService), UsernamePasswordAuthenticationFilter.class);
 
