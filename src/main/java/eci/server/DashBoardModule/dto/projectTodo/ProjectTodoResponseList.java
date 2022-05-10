@@ -11,6 +11,8 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ProjectTodoResponseList {
-    List<ProjectTodoResponse> SaveAsDraft;
-    List<ItemTodoResponse> NewProject;
+
+    List<TodoResponse> todoList1;
+    List<TodoResponse> todoList2;
+
 }

@@ -23,10 +23,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         web.ignoring().antMatchers(HttpMethod.OPTIONS, "/**");
         super.configure(web);
     }
-//    @Override
-//    public void configure(WebSecurity web) throws Exception {
-//        super.configure(web);
-//    }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -40,7 +36,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .httpBasic().disable()
                 .formLogin().disable()
                 .authorizeRequests()
-                //.requestMatchers(CorsUtils::isPreFlightRequest).permitAll()//added
+
                 .and()
                 .authorizeRequests()
                 .antMatchers(HttpMethod.POST, "/sign-in", "/sign-up", "/refresh-token").permitAll()
@@ -84,10 +80,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .anyRequest().hasAnyRole("ADMIN")//멤버의 역할이 관리자인 경우에는 모든 것을 허용
 
                 .and()
+                //컨트롤러 계층 도달 전 수행
                 .exceptionHandling().authenticationEntryPoint(new CustomAuthenticationEntryPoint())
                 .and()//인증되지 않은 사용자의 접근이 거부
                 .exceptionHandling().accessDeniedHandler(new CustomAccessDeniedHandler())
                 .and()//인증된 사용자가 권한 부족 등의 사유로 인해 접근이 거부
+                //UsernamePasswordAuthenticationFilter 필터 이전에 JwtAuthentication 필터를 적용해라
                 .addFilterBefore(new JwtAuthenticationFilter(tokenService, userDetailsService), UsernamePasswordAuthenticationFilter.class);
 
         http.headers().frameOptions().sameOrigin();

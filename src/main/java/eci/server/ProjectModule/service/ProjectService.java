@@ -93,7 +93,6 @@ public class ProjectService {
 
     @Transactional
     public ProjectCreateUpdateResponse create(ProjectCreateRequest req) {
-        req.getAttachments().get(0).getContentType();
 
         Project project = projectRepository.save(
                 ProjectCreateRequest.toEntity(

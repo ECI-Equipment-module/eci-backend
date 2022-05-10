@@ -1,11 +1,9 @@
 package eci.server.DashBoardModule.service;
 
-import eci.server.DashBoardModule.dto.itemTodo.ItemTodoResponse;
-import eci.server.DashBoardModule.dto.itemTodo.ItemTodoResponseList;
-import eci.server.DashBoardModule.dto.projectTodo.ProjectTodoResponse;
+import eci.server.DashBoardModule.dto.ToDoDoubleList;
+import eci.server.DashBoardModule.dto.ToDoSingle;
 import eci.server.DashBoardModule.dto.projectTodo.ProjectTodoResponseList;
-import eci.server.ItemModule.dto.item.ItemDto;
-import eci.server.ItemModule.dto.item.UnlinkedItemDto;
+import eci.server.DashBoardModule.dto.projectTodo.TodoResponse;
 import eci.server.ItemModule.dto.manufacture.ReadPartNumberService;
 import eci.server.ItemModule.entity.item.Attachment;
 import eci.server.ItemModule.entity.item.Item;
@@ -64,9 +62,9 @@ public class DashboardService {
     private final RoutePreset routePreset;
 
     //project to-do api
-    public ProjectTodoResponseList readProjectTodo() {
+    public ToDoDoubleList readProjectTodo() {
 
-        List<ProjectTodoResponse> TEMP_SAVE = new ArrayList<>();
+        List<TodoResponse> TEMP_SAVE = new ArrayList<>();
 
         //0) 현재 로그인 된 유저
         Member member1 = memberRepository.findById(authHelper.extractMemberId()).orElseThrow(
@@ -89,9 +87,9 @@ public class DashboardService {
 
         if (tempSavedProjectList.size() > 0) {
             for (Project p : tempSavedProjectList) {
-                ProjectTodoResponse
+                TodoResponse
                         projectTodoResponse =
-                        new ProjectTodoResponse(
+                        new TodoResponse(
                                 p.getId(),
                                 p.getName(),
                                 p.getProjectType().getName(),
@@ -125,7 +123,7 @@ public class DashboardService {
             }
 
             //3) 프로젝트 링크 안된 애만 담기
-            HashSet<ItemTodoResponse> unlinkedItemTodoResponses = new HashSet<>();
+            HashSet<TodoResponse> unlinkedItemTodoResponses = new HashSet<>();
 
             for (RouteProduct routeProduct : myRouteProductList){
                 if(projectRepository.findByItem(routeProduct.getRouteOrdering().getItem()).size()==0){
@@ -133,16 +131,27 @@ public class DashboardService {
                     Item targetItem = routeProduct.getRouteOrdering().getItem();
 
                     unlinkedItemTodoResponses.add(
-                            ItemTodoResponse.toDto(
-                                    targetItem
+                            new TodoResponse(
+                                    targetItem.getId(),
+                                    targetItem.getName(),
+                                    targetItem.getType(),
+                                    targetItem.getItemNumber().toString()
                             )
                     );
                 }
             }
 
-        List<ItemTodoResponse> NEW_PROJECT = new ArrayList<>(unlinkedItemTodoResponses);
+        List<TodoResponse> NEW_PROJECT = new ArrayList<>(unlinkedItemTodoResponses);
 
-        return new ProjectTodoResponseList(TEMP_SAVE, NEW_PROJECT);
+        ToDoSingle tempSave= new ToDoSingle("Save as Draft", TEMP_SAVE);
+        ToDoSingle newProject= new ToDoSingle("New Project", NEW_PROJECT);
+
+//        ToDoDoubleList toDoDoubleList = new ToDoDoubleList();
+        List<ToDoSingle> toDoDoubleList = new ArrayList<ToDoSingle>();
+        toDoDoubleList.add(tempSave);
+        toDoDoubleList.add(newProject);
+
+        return new ToDoDoubleList(toDoDoubleList);
 
     }
 

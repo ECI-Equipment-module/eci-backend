@@ -19,7 +19,6 @@ import eci.server.ItemModule.entity.newRoute.RouteProduct;
 import eci.server.ItemModule.entity.newRoute.RouteProductMember;
 import eci.server.ItemModule.exception.item.AttachmentNotFoundException;
 import eci.server.ItemModule.exception.item.ItemUpdateImpossibleException;
-import eci.server.ItemModule.exception.member.MemberNotFoundException;
 import eci.server.ItemModule.exception.route.RouteNotFoundException;
 import eci.server.ItemModule.repository.color.ColorRepository;
 import eci.server.ItemModule.repository.item.AttachmentRepository;
@@ -108,7 +107,6 @@ public class ItemService {
 
     @Transactional
     public ItemCreateResponse create(ItemCreateRequest req) {
-        req.getAttachments().get(0).getContentType();
 
         Item item = itemRepository.save(
                 ItemCreateRequest.toEntity(

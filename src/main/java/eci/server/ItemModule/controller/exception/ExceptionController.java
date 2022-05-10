@@ -48,9 +48,4 @@ public class ExceptionController {
         throw new AccessDeniedException();
     }
 
-//    @GetMapping("/exception/refresh-expired")
-//    public void refreshExpired(HttpServletRequest req) {
-//        throw new RefreshExpiredException();
-//        }
-
     }

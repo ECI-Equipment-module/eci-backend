@@ -111,7 +111,12 @@ public class ProjectCreateRequest {
         }
 
         Long clientOrgId = 100000L;
-        clientOrgId = req.clientOrganizationId == null ? 100000L : req.clientOrganizationId;
+        clientOrgId = req.clientOrganizationId == null ? 100000L :
+                //null이 아니라면
+                req.clientOrganizationId == 99999L?
+                        100000L
+                :
+                    req.clientOrganizationId;
 
 
 
