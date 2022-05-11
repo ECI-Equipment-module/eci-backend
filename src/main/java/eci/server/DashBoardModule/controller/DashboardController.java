@@ -39,6 +39,20 @@ public class DashboardController {
         );
     }
 
+    /**
+     * project total status
+     *
+     * @return 200 (success)
+     */
+    @CrossOrigin(origins = "https://localhost:3000")
+    @GetMapping("/dashboard/project/total")
+    @ResponseStatus(HttpStatus.OK)
+    public Response projectTotal() {
+        return Response.success(
+                dashboardService.readProjectTotal()
+        );
+    }
+
 
 //    /**
 //     * item to-do api

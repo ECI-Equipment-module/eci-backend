@@ -207,6 +207,11 @@ public class ProjectService {
             ProjectMemberRequest req
     ){
         Page<Project> projectList = projectRepository.findAll(pageRequest);
+
+//        for(Project project : projectList){
+//
+//        }
+
         Page<ProjectSimpleDto> pagingList = projectList.map(
                 project -> new ProjectSimpleDto(
 

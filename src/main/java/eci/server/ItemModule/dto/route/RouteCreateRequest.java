@@ -31,7 +31,7 @@ public class RouteCreateRequest {
     @Null//workflow에 맞는 사진
     private String workflowPhase;
 
-    @Null//in_progress, Reject, waiting approval, Complete
+    @Null//WORKING COMPLETE RELEASE PENDING DROP
     private String lifecycleStatus;
     @Null
     private Integer revisedCnt;
@@ -75,7 +75,7 @@ public class RouteCreateRequest {
                 req.type,
                 req.workflow,
                 "IN_PROGRESS", //workflow 설정하면 그것에 맞는 이미지 파일 돌려주기
-                "DEVELOP",
+                "WORKING",
                 0+65, //revisedCnt+65  (0)A (1)B C D
                 memberRepository.findById(req.memberId).orElseThrow(MemberNotFoundException::new),
                 req.applicant_comment,
