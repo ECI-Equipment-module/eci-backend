@@ -164,6 +164,11 @@ public class RouteOrdering extends EntityDate {
         return req;
     }
 
+
+    public void updateToComplete() {
+       this.lifecycleStatus="COMPLETE";
+    }
+
     public List<RouteProduct> rejectUpdate(
 
             Long id,

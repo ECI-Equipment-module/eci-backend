@@ -9,10 +9,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class TotalProject {
     private Integer total;
-    private Double working;
-    private Double complete;
-    private Double release;
-    private Double pending;
-    private Double drop;
+
+    private double working;
+    private double complete;
+    private double release;
+    private double pending;
+    private double drop;
+
 }
 

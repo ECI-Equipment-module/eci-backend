@@ -65,6 +65,7 @@ public class DashboardService {
         );
 
         List<Project> myProjectList = projectRepository.findByMember(member1);
+
         int totalNumber;
         int working = 0 ;
         int complete = 0 ;
@@ -115,22 +116,19 @@ public class DashboardService {
             }
 
         totalNumber = working + complete + release + pending + drop;
-        working = working/totalNumber;
-        complete = complete/totalNumber;
-        release = release/totalNumber;
-        pending = pending/totalNumber;
-        drop = drop/totalNumber;
+
 
         return new TotalProject(
                 totalNumber,
-                (double)working,
-                (double)complete,
-                (double)release,
-                (double)pending,
-                (double)drop
+                (double)working/totalNumber,
+                (double)complete/totalNumber,
+                (double)release/totalNumber,
+                (double)pending/totalNumber,
+                (double)drop/totalNumber
         );
 
     }
+
 
 
     //project to-do api
