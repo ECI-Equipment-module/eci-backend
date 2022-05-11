@@ -2,17 +2,14 @@ package eci.server.DashBoardModule.service;
 
 import eci.server.DashBoardModule.dto.ToDoDoubleList;
 import eci.server.DashBoardModule.dto.ToDoSingle;
-import eci.server.DashBoardModule.dto.projectTodo.ProjectTodoResponseList;
+import eci.server.DashBoardModule.dto.myProject.TotalProject;
 import eci.server.DashBoardModule.dto.projectTodo.TodoResponse;
 import eci.server.ItemModule.dto.manufacture.ReadPartNumberService;
-import eci.server.ItemModule.entity.item.Attachment;
 import eci.server.ItemModule.entity.item.Item;
 import eci.server.ItemModule.entity.member.Member;
-import eci.server.ItemModule.entity.newRoute.RouteOrdering;
 import eci.server.ItemModule.entity.newRoute.RoutePreset;
 import eci.server.ItemModule.entity.newRoute.RouteProduct;
 import eci.server.ItemModule.entity.newRoute.RouteProductMember;
-import eci.server.ItemModule.exception.member.MemberNotFoundException;
 import eci.server.ItemModule.exception.member.auth.AuthenticationEntryPointException;
 import eci.server.ItemModule.repository.color.ColorRepository;
 import eci.server.ItemModule.repository.item.AttachmentRepository;
@@ -61,6 +58,81 @@ public class DashboardService {
 
     private final RoutePreset routePreset;
 
+    public TotalProject readProjectTotal(){
+        //0) 현재 로그인 된 유저
+        Member member1 = memberRepository.findById(authHelper.extractMemberId()).orElseThrow(
+                AuthenticationEntryPointException::new
+        );
+
+        List<Project> myProjectList = projectRepository.findByMember(member1);
+        int totalNumber;
+        int working = 0 ;
+        int complete = 0 ;
+        int release = 0 ;
+        int pending = 0 ;
+        int drop = 0 ;
+
+
+        for(Project project : myProjectList){
+            if(!project.getTempsave()){
+                if(
+                        routeOrderingRepository.findByItem(project.getItem()).get(
+                                routeOrderingRepository.findByItem(project.getItem()).size()-1
+                ).getLifecycleStatus().equals("WORKING")
+                ){
+                    working+=1;
+                }
+                else if (
+                        routeOrderingRepository.findByItem(project.getItem()).get(
+                                routeOrderingRepository.findByItem(project.getItem()).size()-1
+                        ).getLifecycleStatus().equals("COMPLETE")
+                ){
+                    complete+=1;
+                }
+                else if (
+                        routeOrderingRepository.findByItem(project.getItem()).get(
+                                routeOrderingRepository.findByItem(project.getItem()).size()-1
+                        ).getLifecycleStatus().equals("RELEASE")
+                ){
+                    release+=1;
+                }
+                else if (
+                        routeOrderingRepository.findByItem(project.getItem()).get(
+                                routeOrderingRepository.findByItem(project.getItem()).size()-1
+                        ).getLifecycleStatus().equals("PENDING")
+                ){
+                    pending+=1;
+                }
+                else if (
+                        routeOrderingRepository.findByItem(project.getItem()).get(
+                                routeOrderingRepository.findByItem(project.getItem()).size()-1
+                        ).getLifecycleStatus().equals("DROP")
+                ){
+                    drop+=1;
+                }
+        }
+
+            }
+
+        totalNumber = working + complete + release + pending + drop;
+        working = working/totalNumber;
+        complete = complete/totalNumber;
+        release = release/totalNumber;
+        pending = pending/totalNumber;
+        drop = drop/totalNumber;
+
+        return new TotalProject(
+                totalNumber,
+                (double)working,
+                (double)complete,
+                (double)release,
+                (double)pending,
+                (double)drop
+        );
+
+    }
+
+
     //project to-do api
     public ToDoDoubleList readProjectTodo() {
 
@@ -80,7 +152,7 @@ public class DashboardService {
         for (Project project : myProjectList) {
             if (project.getTempsave()) {
                 tempSavedProjectList.add(project);
-                myProjectList.remove(tempSavedProjectList);
+                myProjectList.remove(project);
                 //임시저장 진행 중인 것
             }
         }
@@ -146,7 +218,6 @@ public class DashboardService {
         ToDoSingle tempSave= new ToDoSingle("Save as Draft", TEMP_SAVE);
         ToDoSingle newProject= new ToDoSingle("New Project", NEW_PROJECT);
 
-//        ToDoDoubleList toDoDoubleList = new ToDoDoubleList();
         List<ToDoSingle> toDoDoubleList = new ArrayList<ToDoSingle>();
         toDoDoubleList.add(tempSave);
         toDoDoubleList.add(newProject);

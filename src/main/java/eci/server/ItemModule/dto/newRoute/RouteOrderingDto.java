@@ -43,7 +43,7 @@ public class RouteOrderingDto {
                         c.getId(),
                         c.getType(),
                         c.getLifecycleStatus(),
-                        c.getLifecycleStatus().equals("Release")?//release와 같다면 workflow는 complete
+                        c.getLifecycleStatus().equals("RELEASE")?//release와 같다면 workflow는 complete
                                 "Complete" : "In Progress",
                         c.getRevisedCnt() + 65,
                         c.getPresent(),
@@ -75,8 +75,8 @@ public class RouteOrderingDto {
                 Route.getId(),
                 Route.getType(),
                 Route.getLifecycleStatus(),
-                Route.getLifecycleStatus().equals("Complete")?
-                        "COMPLETE":"IN_PROGRESS",
+                Route.getLifecycleStatus().equals("COMPLETE")?
+                        "COMPLETE":"WORKING",
                 Route.getRevisedCnt(),
                 Route.getPresent(),
                 Route.getCreatedAt(),
