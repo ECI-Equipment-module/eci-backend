@@ -114,8 +114,7 @@ public class DashboardService {
         }
 
             }
-        System.out.println(complete);
-        System.out.println(working);
+
         totalNumber = working + complete + release + pending + drop;
 
 
@@ -129,6 +128,7 @@ public class DashboardService {
         );
 
     }
+
 
 
     //project to-do api
