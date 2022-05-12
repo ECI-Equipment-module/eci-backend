@@ -48,6 +48,10 @@ public class ItemPageController {
                 ).collect(Collectors.toList());
 
         Page<Item> itemList = new PageImpl<>(itemList1);
+        for(Item item : itemList){
+            System.out.println("100002가 있음 안됨");
+            System.out.println(item.getId());
+        }
 
 
         return itemList.map(
