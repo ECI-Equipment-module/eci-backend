@@ -7,6 +7,7 @@ import eci.server.ItemModule.repository.item.ItemRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -16,6 +17,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.transaction.Transactional;
+import java.util.Iterator;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Transactional
@@ -36,13 +39,18 @@ public class ItemPageController {
                                       })
                                               Pageable pageRequest) {
 
-        Page<Item> itemList = (Page<Item>) itemRepository.findAll(pageRequest).stream().filter(
-                i->i.getTempsave().equals(false)
-        ).collect(Collectors.toList());
+        Page<Item> itemListBefore = itemRepository.findAll(pageRequest);
+
+        //terator<Item> it = itemList.iterator();
+        List<Item> itemList1 =
+                itemListBefore.stream().filter(
+                        i->i.getTempsave().equals(false)
+                ).collect(Collectors.toList());
+
+        Page<Item> itemList = new PageImpl<>(itemList1);
 
 
-
-        Page<ItemSimpleDto> pagingList = itemList.map(
+        return itemList.map(
                 item -> new ItemSimpleDto(
 
                         item.getId(),
@@ -63,8 +71,6 @@ public class ItemPageController {
 
                 )
         );
-
-        return pagingList;
     }
 
 }
