@@ -169,7 +169,7 @@ public class Project extends EntityDate {
         this.projectAttachments = new ArrayList<>();
         addProjectAttachments(projectAttachments);
 
-        this.revision = 65;
+        this.revision = (char)65;
         this.lifecycle = "WORKING";
 
         this.clientItemNumber = clientItemNumber;
@@ -237,7 +237,7 @@ public class Project extends EntityDate {
         this.carType = carType;
 
 
-        this.revision = 65;
+        this.revision = (char)65;
         this.lifecycle = "WORKING";
 
         this.clientItemNumber = clientItemNumber;
@@ -343,7 +343,7 @@ public class Project extends EntityDate {
         SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date now = new Date();
 
-        added.stream().forEach(i -> {
+        added.forEach(i -> {
             projectAttachments.add(i);
             i.initProject(this);
 
@@ -368,7 +368,7 @@ public class Project extends EntityDate {
      * @param deleted
      */
     private void deleteProjectAttachments(List<ProjectAttachment> deleted) {
-        deleted.stream().
+        deleted.
                 forEach(di ->
                         this.projectAttachments.remove(di)
                 );
