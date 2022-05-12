@@ -162,10 +162,10 @@ public class ProjectTemporaryCreateRequest  {
 
                     req.clientItemNumber,
 
-                    req.startPeriod.toString().isBlank() ? LocalDate.parse("1900-01-01") :
+                    req.startPeriod.toString().isBlank() ? LocalDate.parse(LocalDate.now().format(formatter)) :
                             LocalDate.parse(req.startPeriod, DateTimeFormatter.ISO_DATE),
 
-                    req.overPeriod.toString().isBlank() ? LocalDate.parse("1900-01-01") :
+                    req.overPeriod.toString().isBlank() ? LocalDate.parse(LocalDate.now().format(formatter)) :
                             LocalDate.parse(req.overPeriod, DateTimeFormatter.ISO_DATE),
 
                     //아이템, 프로젝트 타입 등 객체를
