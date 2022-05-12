@@ -234,10 +234,9 @@ public class Project extends EntityDate {
     /**
      * 추가할 attachments
      *
-     * @param added
      */
     private void addProjectAttachments(List<ProjectAttachment> added) {
-        added.stream().forEach(i -> {
+        added.forEach(i -> {
             projectAttachments.add(i);
             i.initProject(this);
         });
@@ -380,9 +379,9 @@ public class Project extends EntityDate {
 
     private List<ProjectAttachment> convertProjectAttachmentIdsToProjectAttachments(List<Long> attachmentIds) {
         return attachmentIds.stream()
-                .map(id -> convertProjectAttachmentIdToProjectAttachment(id))
-                .filter(i -> i.isPresent())
-                .map(i -> i.get())
+                .map(this::convertProjectAttachmentIdToProjectAttachment)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
                 .collect(toList());
     }
 

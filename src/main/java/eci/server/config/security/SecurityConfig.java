@@ -72,8 +72,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET, "/project").authenticated()
                 .antMatchers(HttpMethod.GET, "/project/page").authenticated()
                 .antMatchers(HttpMethod.GET, "/dashboard/project/page").authenticated()
-
                 .antMatchers(HttpMethod.GET, "/dashboard/project/todo").authenticated()
+                .antMatchers(HttpMethod.GET, "/dashboard/project/total").authenticated()
 
                 .antMatchers(HttpMethod.GET, "/**").permitAll()//위에 명시된 get 말고는 다 허용, 맨 밑으로 위치 변경
 

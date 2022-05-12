@@ -30,6 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -132,6 +133,7 @@ public class DashboardService {
 
 
     //project to-do api
+
     public ToDoDoubleList readProjectTodo() {
 
         List<TodoResponse> TEMP_SAVE = new ArrayList<>();
@@ -143,6 +145,7 @@ public class DashboardService {
 
         //1-1 temp save 용 ) 내가 작성자인 모든 프로젝트들 데려오기
         List<Project> myProjectList = projectRepository.findByMember(member1);
+        Iterator<Project> myProjectListItr = myProjectList.iterator();
 
         //1-2 temp-save 가 true 인 것만 담는 리스트
         List<Project> tempSavedProjectList = new ArrayList<>();
@@ -150,8 +153,22 @@ public class DashboardService {
         for (Project project : myProjectList) {
             if (project.getTempsave()) {
                 tempSavedProjectList.add(project);
-                myProjectList.remove(project);
                 //임시저장 진행 중인 것
+            }
+        }
+
+        //만약 이게 waiting approve 로 빠진다면 담아주는 리스트만 변경하면 된다.
+        for (Project project : myProjectList) {
+            if (!project.getTempsave()
+                // 임시저장 되지 않은 애들 중에 아직 approve 받지 않은 것들
+               ) {
+                if(!(routeProductRepository.findAllByProject(project).size()==0)){
+                    if(!(routeProductRepository.findAllByProject(project).get(
+                            routeProductRepository.findAllByProject(project).size()-1
+                    ).isPassed())){
+                        tempSavedProjectList.add(project);
+                    }
+                }
             }
         }
 

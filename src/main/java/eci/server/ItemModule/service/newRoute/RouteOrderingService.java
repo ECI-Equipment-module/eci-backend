@@ -144,12 +144,10 @@ public class RouteOrderingService {
             routeProductRepository.delete(routeProduct);
         }
 
-        List<RouteProductDto> allProductList =
-                RouteProductDto.toProductDtoList(
-                        routeProductRepository.findAllByRouteOrdering(routeOrdering)
-                );
         // 기존 + 새 라우트프로덕트까지 해서 돌려주기
-        return allProductList;
+        return RouteProductDto.toProductDtoList(
+                routeProductRepository.findAllByRouteOrdering(routeOrdering)
+        );
     }
 
     @Transactional
@@ -171,13 +169,15 @@ public class RouteOrderingService {
         if(presentRouteProductCandidate.size()==routeOrdering.getPresent()){
             //만약 present가 끝까지 닿았으면 현재 complete 된 상황!
             routeOrdering.updateToComplete();
+            throw new UpdateImpossibleException();
 
         }
         else {
             RouteProduct targetRoutProduct = presentRouteProductCandidate.get(routeOrdering.getPresent());
 
             // TODO : 함수로 따로 빼기 availableAccept("route_name)
-            //route_name에 따른 조건을 각각 설정해서 해당 조건 부합할 때만 accept 가능하게, 아니면 exception 날리게 설정
+            //route_name에 따른 조건을 각각 설정해서 해당 조건 부합할 때만 accept 가능하게,
+            // 아니면 exception 날리게 설정
             if (targetRoutProduct.getRoute_name().equals("프로젝트와 Item(제품) Link(설계자)")) {
 
                 //아이템에 링크된 맨 마지막 (최신) 프로젝트 데려오기
