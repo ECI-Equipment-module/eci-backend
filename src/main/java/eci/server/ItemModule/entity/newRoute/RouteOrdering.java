@@ -249,7 +249,7 @@ public class RouteOrdering extends EntityDate {
                     false,
                     routeProductList.get(rejectedIndex)
                             .getMembers().stream().map(
-                            m -> m.getMember()
+                                    RouteProductMember::getMember
                     )
                             .collect(toList()),
                     routeProductList.get(rejectedIndex).getRouteOrdering()
@@ -311,9 +311,7 @@ public class RouteOrdering extends EntityDate {
         //거절된 애 추가 중
         addedRouteProductList.add(rejectedRouteProduct);
 
-        for(RouteProduct routeProduct : duplicateList){
-            addedRouteProductList.add(routeProduct);
-        }
+        addedRouteProductList.addAll(duplicateList);
 
         System.out.println("추가적으로 생길 애들 길이");
         System.out.println(addedRouteProductList.size());

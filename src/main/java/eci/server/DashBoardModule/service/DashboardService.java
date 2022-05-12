@@ -156,21 +156,21 @@ public class DashboardService {
                 //임시저장 진행 중인 것
             }
         }
-
-        //만약 이게 waiting approve 로 빠진다면 담아주는 리스트만 변경하면 된다.
-        for (Project project : myProjectList) {
-            if (!project.getTempsave()
-                // 임시저장 되지 않은 애들 중에 아직 approve 받지 않은 것들
-               ) {
-                if(!(routeProductRepository.findAllByProject(project).size()==0)){
-                    if(!(routeProductRepository.findAllByProject(project).get(
-                            routeProductRepository.findAllByProject(project).size()-1
-                    ).isPassed())){
-                        tempSavedProjectList.add(project);
-                    }
-                }
-            }
-        }
+// temp save 로직을 변경해서 아래 코드 필요 없어짐
+//        //만약 이게 waiting approve 로 빠진다면 담아주는 리스트만 변경하면 된다.
+//        for (Project project : myProjectList) {
+//            if (!project.getTempsave()
+//                // 임시저장 되지 않은 애들 중에 아직 approve 받지 않은 것들
+//               ) {
+//                if(!(routeProductRepository.findAllByProject(project).size()==0)){
+//                    if(!(routeProductRepository.findAllByProject(project).get(
+//                            routeProductRepository.findAllByProject(project).size()-1
+//                    ).isPassed())){
+//                        tempSavedProjectList.add(project);
+//                    }
+//                }
+//            }
+//        }
 
         if (tempSavedProjectList.size() > 0) {
             for (Project p : tempSavedProjectList) {

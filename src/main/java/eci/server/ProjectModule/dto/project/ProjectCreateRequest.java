@@ -142,7 +142,7 @@ public class ProjectCreateRequest {
                     ).orElseThrow(MemberNotFoundException::new),
 
 
-                    false,
+                    true, //05-12 수정사항 반영
 
                     projectTypeRepository.findById(req.projectTypeId)
                             .orElseThrow(ProjectTypeNotFoundException::new),
@@ -187,7 +187,7 @@ public class ProjectCreateRequest {
                     ).orElseThrow(MemberNotFoundException::new),
 
 
-                    false,
+                    true, //05-12 수정사항 반영
 
                     projectTypeRepository.findById(req.projectTypeId)
                             .orElseThrow(ProjectTypeNotFoundException::new),
