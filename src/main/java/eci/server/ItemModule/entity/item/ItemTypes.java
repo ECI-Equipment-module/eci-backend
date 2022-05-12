@@ -1,12 +1,5 @@
 package eci.server.ItemModule.entity.item;
 
-
-import eci.server.ItemModule.entity.newRoute.RouteType;
-
-import eci.server.ItemModule.entity.member.RoleType;
-import eci.server.ItemModule.entity.newRoute.RouteOrdering;
-import eci.server.ItemModule.entity.route.Route;
-
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

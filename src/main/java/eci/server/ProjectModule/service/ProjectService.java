@@ -206,7 +206,7 @@ public class ProjectService {
             Pageable pageRequest,
             ProjectMemberRequest req
     ){
-        Page<Project> projectList = projectRepository.findAll(pageRequest);
+        Page<Project> projectList = projectRepository.findAll(pageRequest);//에러
 
 //        for(Project project : projectList){
 //
