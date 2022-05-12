@@ -170,8 +170,7 @@ public class ProjectTemporaryCreateRequest  {
                     //-> 그리고 찐 저장 시 해당 객체들이면 제대로 된 객체 지정 경고방식?
                     //TODO 임시아이템 아이디는 ? 일단은 99999로 => 찐 db에선 1로 임시 객체 생성
 
-                    req.itemId==null?itemRepository.findById(99999L).orElseThrow(ItemNotFoundException::new):
-                            itemRepository.findById(itemId).orElseThrow(ItemNotFoundException::new),
+                   itemRepository.findById(itemId).orElseThrow(ItemNotFoundException::new),
 
                     //로그인 된 유저 바로 주입
                     memberRepository.findById(
