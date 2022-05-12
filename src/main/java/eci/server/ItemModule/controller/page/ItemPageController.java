@@ -41,17 +41,12 @@ public class ItemPageController {
 
         Page<Item> itemListBefore = itemRepository.findAll(pageRequest);
 
-        //terator<Item> it = itemList.iterator();
         List<Item> itemList1 =
                 itemListBefore.stream().filter(
                         i->i.getTempsave().equals(false)
                 ).collect(Collectors.toList());
 
         Page<Item> itemList = new PageImpl<>(itemList1);
-        for(Item item : itemList){
-            System.out.println("100002가 있음 안됨");
-            System.out.println(item.getId());
-        }
 
 
         return itemList.map(
