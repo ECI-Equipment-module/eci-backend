@@ -1,4 +1,4 @@
-package eci.server.ItemModule.advice;
+package eci.server.advice;
 
 import eci.server.ItemModule.dto.response.Response;
 import eci.server.ItemModule.exception.file.FileUploadFailureException;
@@ -16,6 +16,7 @@ import eci.server.ItemModule.exception.route.MemberNotAssignedException;
 import eci.server.ItemModule.exception.route.RejectImpossibleException;
 import eci.server.ItemModule.exception.route.UpdateImpossibleException;
 import eci.server.ProjectModule.exception.CarTypeNotFoundException;
+import eci.server.ProjectModule.exception.IdNotAppropriateException;
 import eci.server.ProjectModule.exception.ProjectNotLinkedException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -236,5 +237,13 @@ public class ExceptionAdvice {
         log.info("e = {}", e.getMessage());
         return Response.failure(400, "차종이 존재하지 않습니다.");
     }
+
+    @ExceptionHandler(IdNotAppropriateException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Response IdNotAppropriateException(IdNotAppropriateException e) {
+        log.info("e = {}", e.getMessage());
+        return Response.failure(400, "올바른 아이디 값이 아닙니다.");
+    }
+
 
 }

@@ -72,6 +72,8 @@ public class ProjectTemporaryCreateRequest  {
                 ClientOrganizationRepository clientOrganizationRepository,
                 CarTypeRepository carTypeRepository
         ) {
+            
+
             Integer year = Calendar.getInstance().get(Calendar.YEAR);
 
             //객체 findById 하는 애들이 빈칸이면
@@ -207,7 +209,7 @@ public class ProjectTemporaryCreateRequest  {
                     //Project 생성자에 들이밀기
 
                     carTypeRepository.findById(carTypeId)
-                            .orElseThrow(ClientOrganizationNotFoundException::new)
+                            .orElseThrow(CarTypeNotFoundException::new)
 
 //                    req.carType.toString().isBlank()?"":req.carType
 

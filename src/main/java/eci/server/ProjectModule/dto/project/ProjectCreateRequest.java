@@ -81,6 +81,14 @@ public class ProjectCreateRequest {
             CarTypeRepository carTypeRepository
             ) {
 
+        if(req.projectLevelId==99999L ||
+        req.clientOrganizationId == 99999L ||
+        req.produceOrganizationId ==99999L ||
+        req.getItemId()==99999L
+        ){
+
+        }
+
         //양산 개발의 아이디가 1 (Long)
         if (req.projectTypeId.equals(1L)) {
             //TODO 프로젝트 타입이 양산개발이라면 필수 속성은 고객사 / 차종 은 null 이 되면 안됨 검사

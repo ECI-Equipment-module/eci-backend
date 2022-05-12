@@ -1,6 +1,7 @@
 package eci.server.ItemModule.controller.page;
 
 import eci.server.ItemModule.dto.item.ItemSimpleDto;
+import eci.server.ItemModule.entity.item.Attachment;
 import eci.server.ItemModule.entity.item.Item;
 import eci.server.ItemModule.repository.item.ItemRepository;
 import lombok.RequiredArgsConstructor;
@@ -35,7 +36,11 @@ public class ItemPageController {
                                       })
                                               Pageable pageRequest) {
 
-        Page<Item> itemList = itemRepository.findAll(pageRequest);
+        Page<Item> itemList = (Page<Item>) itemRepository.findAll(pageRequest).stream().filter(
+                i->i.getTempsave().equals(false)
+        ).collect(Collectors.toList());
+
+
 
         Page<ItemSimpleDto> pagingList = itemList.map(
                 item -> new ItemSimpleDto(
@@ -52,7 +57,7 @@ public class ItemPageController {
                         item.getColor().getColor(),
                         item.getThumbnail().get(0).getImageaddress(),
                         item.getAttachments().stream().map(
-                                a -> a.getAttachmentaddress()
+                                Attachment::getAttachmentaddress
                         ).collect(Collectors.toList()),
                         item.getCreatedAt()
 
