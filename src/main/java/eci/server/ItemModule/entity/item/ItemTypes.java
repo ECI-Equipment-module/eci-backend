@@ -1,12 +1,5 @@
 package eci.server.ItemModule.entity.item;
 
-
-import eci.server.ItemModule.entity.newRoute.RouteType;
-
-import eci.server.ItemModule.entity.member.RoleType;
-import eci.server.ItemModule.entity.newRoute.RouteOrdering;
-import eci.server.ItemModule.entity.route.Route;
-
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -26,7 +19,7 @@ public class ItemTypes {
 
     @Id
 
- //  @GeneratedValue(strategy = GenerationType.IDENTITY)
+ //   @GeneratedValue(strategy = GenerationType.IDENTITY)
    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQUENCE1")
    @SequenceGenerator(name="SEQUENCE1", sequenceName="SEQUENCE1", allocationSize=1)
 

@@ -4,6 +4,7 @@ import eci.server.DashBoardModule.dto.myProject.ProjectDashboardDto;
 import eci.server.ItemModule.dto.item.ItemProjectDashboardDto;
 
 import eci.server.ItemModule.dto.item.ItemProjectDto;
+import eci.server.ItemModule.entity.item.Item;
 import eci.server.ItemModule.entity.newRoute.RouteOrdering;
 
 import eci.server.ItemModule.exception.member.MemberNotFoundException;
@@ -29,6 +30,7 @@ import eci.server.ProjectModule.repository.projectLevel.ProjectLevelRepository;
 import eci.server.ProjectModule.repository.projectType.ProjectTypeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -206,11 +208,14 @@ public class ProjectService {
             Pageable pageRequest,
             ProjectMemberRequest req
     ){
-        Page<Project> projectList = projectRepository.findAll(pageRequest);
+        Page<Project> projectListBefore = projectRepository.findAll(pageRequest);//에러
 
-//        for(Project project : projectList){
-//
-//        }
+        List<Project> projectListList =
+                projectListBefore.stream().filter(
+                        i->i.getTempsave().equals(false)
+                ).collect(Collectors.toList());
+
+        Page<Project> projectList = new PageImpl<>(projectListList);
 
         Page<ProjectSimpleDto> pagingList = projectList.map(
                 project -> new ProjectSimpleDto(

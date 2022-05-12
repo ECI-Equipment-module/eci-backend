@@ -19,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.Null;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -71,6 +72,8 @@ public class ProjectTemporaryCreateRequest  {
                 ClientOrganizationRepository clientOrganizationRepository,
                 CarTypeRepository carTypeRepository
         ) {
+            
+
             Integer year = Calendar.getInstance().get(Calendar.YEAR);
 
             //객체 findById 하는 애들이 빈칸이면
@@ -82,6 +85,8 @@ public class ProjectTemporaryCreateRequest  {
             Long produceOrgId = req.produceOrganizationId==null?99999L:req.produceOrganizationId;
             Long clientOrgId = req.clientOrganizationId==null?99999L:req.clientOrganizationId;
             Long carTypeId = req.carType==null?99999L:req.carType;
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            //System.out.println(LocalDate.now().format(formatter));
 
             if(req.getTag().size()>0) {
                 return new Project(
@@ -92,10 +97,10 @@ public class ProjectTemporaryCreateRequest  {
 
                         req.clientItemNumber,
 
-                        req.startPeriod.toString().isBlank() ? LocalDate.parse("1900-01-01") :
+                        req.startPeriod.toString().isBlank() ? LocalDate.parse(LocalDate.now().format(formatter)) :
                                 LocalDate.parse(req.startPeriod, DateTimeFormatter.ISO_DATE),
 
-                        req.overPeriod.toString().isBlank() ? LocalDate.parse("1900-01-01") :
+                        req.overPeriod.toString().isBlank() ? LocalDate.parse(LocalDate.now().format(formatter)) :
                                 LocalDate.parse(req.overPeriod, DateTimeFormatter.ISO_DATE),
 
                         //아이템, 프로젝트 타입 등 객체를
@@ -159,10 +164,10 @@ public class ProjectTemporaryCreateRequest  {
 
                     req.clientItemNumber,
 
-                    req.startPeriod.toString().isBlank() ? LocalDate.parse("1900-01-01") :
+                    req.startPeriod.toString().isBlank() ? LocalDate.parse(LocalDate.now().format(formatter)) :
                             LocalDate.parse(req.startPeriod, DateTimeFormatter.ISO_DATE),
 
-                    req.overPeriod.toString().isBlank() ? LocalDate.parse("1900-01-01") :
+                    req.overPeriod.toString().isBlank() ? LocalDate.parse(LocalDate.now().format(formatter)) :
                             LocalDate.parse(req.overPeriod, DateTimeFormatter.ISO_DATE),
 
                     //아이템, 프로젝트 타입 등 객체를
@@ -170,8 +175,7 @@ public class ProjectTemporaryCreateRequest  {
                     //-> 그리고 찐 저장 시 해당 객체들이면 제대로 된 객체 지정 경고방식?
                     //TODO 임시아이템 아이디는 ? 일단은 99999로 => 찐 db에선 1로 임시 객체 생성
 
-                    itemRepository.findById(itemId)
-                            .orElseThrow(ItemNotFoundException::new),
+                   itemRepository.findById(itemId).orElseThrow(ItemNotFoundException::new),
 
                     //로그인 된 유저 바로 주입
                     memberRepository.findById(
@@ -181,13 +185,22 @@ public class ProjectTemporaryCreateRequest  {
                     true,
                     false,
 
-                    projectTypeRepository.findById(projectTypeId)
+                    req.projectTypeId==null?projectTypeRepository.findById(99999L)
+                            .orElseThrow(ProjectTypeNotFoundException::new)
+                            :projectTypeRepository.findById(projectTypeId)
                             .orElseThrow(ProjectTypeNotFoundException::new),
 
-                    projectLevelRepository.findById(projectLevelId)
+                    req.projectLevelId==null?
+                            projectLevelRepository.findById(99999L)
+                                    .orElseThrow(ProjectLevelNotFoundException::new):
+                            projectLevelRepository.findById(projectLevelId)
                             .orElseThrow(ProjectLevelNotFoundException::new),
 
-                    produceOrganizationRepository.findById(produceOrgId)
+                    req.produceOrganizationId==null?
+                            produceOrganizationRepository.findById(99999L)
+                                    .orElseThrow(ProduceOrganizationNotFoundException::new)
+                            :
+                            produceOrganizationRepository.findById(produceOrgId)
                             .orElseThrow(ProduceOrganizationNotFoundException::new),
 
                     clientOrganizationRepository.findById(clientOrgId)
@@ -195,8 +208,8 @@ public class ProjectTemporaryCreateRequest  {
 
                     //Project 생성자에 들이밀기
 
-                    carTypeRepository.findById(req.carType)
-                            .orElseThrow(ClientOrganizationNotFoundException::new)
+                    carTypeRepository.findById(carTypeId)
+                            .orElseThrow(CarTypeNotFoundException::new)
 
 //                    req.carType.toString().isBlank()?"":req.carType
 

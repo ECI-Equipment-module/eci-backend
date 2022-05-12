@@ -37,56 +37,26 @@ out/
 .vscode/
 
 ### jwt 암호
-<<<<<<< HEAD
 
-=======
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-=======
-
->>>>>>> c70f16eab3f2a48a8503ae9c3994e85054cfafb6
->>>>>>> 2478d557f1572cc48483d4cd4ece8afe736c7b7f
->>>>>>> 90002839b992be427ae0f3cbad4476b4f45af2b7
-application-secret.yml
 application.yml
 
 ### img 파일
 /src/test/resources/static/*
-<<<<<<< HEAD
-application-secret.yml
 
-=======
-
-<<<<<<< HEAD
-=======
-application-secret.yml
-
-###프론트엔드 모의 서버
 frontend/*
 
->>>>>>> 2478d557f1572cc48483d4cd4ece8afe736c7b7f
->>>>>>> 90002839b992be427ae0f3cbad4476b4f45af2b7
 ## qclass
 build/generated
 src/main/generated
 
-<<<<<<< HEAD
+
 src/main/resources/*
 src/test/*
 src/main/promedia/*
+src/main/prodmedia/image/*
 
-#프론트엔드 폴더
-frontend/*
-
-=======
-<<<<<<< HEAD
 #아래는 배포시
 src/main/resources
-src/test/*
-#프론트엔드 폴더
-frontend/*
-=======
+
 src/test
->>>>>>> 2478d557f1572cc48483d4cd4ece8afe736c7b7f
->>>>>>> 90002839b992be427ae0f3cbad4476b4f45af2b7
+
