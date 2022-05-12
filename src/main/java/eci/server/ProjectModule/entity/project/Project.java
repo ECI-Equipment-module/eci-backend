@@ -76,6 +76,9 @@ public class Project extends EntityDate {
     private Boolean tempsave;
 
     @Column(nullable = false)
+    private Boolean readonly; //05-12반영
+
+    @Column(nullable = false)
     private String lifecycle;
 
     @Column
@@ -129,7 +132,9 @@ public class Project extends EntityDate {
 
             Item item,
             Member member,
+
             Boolean tempsave,
+            Boolean readonly,
 
             ProjectType projectType,
             ProjectLevel projectLevel,
@@ -148,7 +153,10 @@ public class Project extends EntityDate {
         this.projectNumber = projectNumber;
 
         this.member = member;
+
         this.tempsave = tempsave;
+        this.readonly = readonly;
+
         this.startPeriod = startPeriod;
         this.overPeriod = overPeriod;
 
@@ -195,7 +203,9 @@ public class Project extends EntityDate {
 
             Item item,
             Member member,
+
             Boolean tempsave,
+            Boolean readonly,
 
             ProjectType projectType,
             ProjectLevel projectLevel,
@@ -213,7 +223,10 @@ public class Project extends EntityDate {
         this.projectNumber = projectNumber;
 
         this.member = member;
+
         this.tempsave = tempsave;
+        this.readonly = readonly;
+
         this.startPeriod = startPeriod;
         this.overPeriod = overPeriod;
 
@@ -231,13 +244,13 @@ public class Project extends EntityDate {
 
     }
 
+
     /**
      * 추가할 attachments
      *
-     * @param added
      */
     private void addProjectAttachments(List<ProjectAttachment> added) {
-        added.stream().forEach(i -> {
+        added.forEach(i -> {
             projectAttachments.add(i);
             i.initProject(this);
         });
@@ -380,9 +393,9 @@ public class Project extends EntityDate {
 
     private List<ProjectAttachment> convertProjectAttachmentIdsToProjectAttachments(List<Long> attachmentIds) {
         return attachmentIds.stream()
-                .map(id -> convertProjectAttachmentIdToProjectAttachment(id))
-                .filter(i -> i.isPresent())
-                .map(i -> i.get())
+                .map(this::convertProjectAttachmentIdToProjectAttachment)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
                 .collect(toList());
     }
 
@@ -413,5 +426,10 @@ public class Project extends EntityDate {
     @AllArgsConstructor
     public static class FileUpdatedResult {
         private ProjectAttachmentUpdatedResult attachmentUpdatedResult;
+    }
+
+    public void finalSaveProject(){
+        //라우트까지 만들어져야 temp save 가 비로소 true
+        this.tempsave = false;
     }
 }

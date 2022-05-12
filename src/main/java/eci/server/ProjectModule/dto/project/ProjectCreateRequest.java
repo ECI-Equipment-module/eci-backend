@@ -142,7 +142,8 @@ public class ProjectCreateRequest {
                     ).orElseThrow(MemberNotFoundException::new),
 
 
-                    false,
+                    true, //05-12 수정사항 반영
+                    true, //readonly default - false, create 하면 true
 
                     projectTypeRepository.findById(req.projectTypeId)
                             .orElseThrow(ProjectTypeNotFoundException::new),
@@ -187,7 +188,9 @@ public class ProjectCreateRequest {
                     ).orElseThrow(MemberNotFoundException::new),
 
 
-                    false,
+                    true, //05-12 수정사항 반영
+                    true, //저장 시엔 readonly = true
+
 
                     projectTypeRepository.findById(req.projectTypeId)
                             .orElseThrow(ProjectTypeNotFoundException::new),

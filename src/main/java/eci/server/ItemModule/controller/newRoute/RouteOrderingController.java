@@ -64,7 +64,7 @@ public class RouteOrderingController {
             @PathVariable Long id,
             @Valid @ModelAttribute RouteOrderingUpdateRequest req) {
 
-        RouteUpdateResponse routeUpdateResponse = newRouteService.update(id, req);
+        RouteUpdateResponse routeUpdateResponse = newRouteService.approveUpdate(id, req);
 
         return Response.success(
                 routeUpdateResponse
