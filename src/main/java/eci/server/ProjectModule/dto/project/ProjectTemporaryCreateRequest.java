@@ -19,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.Null;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -82,6 +83,8 @@ public class ProjectTemporaryCreateRequest  {
             Long produceOrgId = req.produceOrganizationId==null?99999L:req.produceOrganizationId;
             Long clientOrgId = req.clientOrganizationId==null?99999L:req.clientOrganizationId;
             Long carTypeId = req.carType==null?99999L:req.carType;
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            //System.out.println(LocalDate.now().format(formatter));
 
             if(req.getTag().size()>0) {
                 return new Project(
@@ -92,10 +95,10 @@ public class ProjectTemporaryCreateRequest  {
 
                         req.clientItemNumber,
 
-                        req.startPeriod.toString().isBlank() ? LocalDate.parse("1900-01-01") :
+                        req.startPeriod.toString().isBlank() ? LocalDate.parse(LocalDate.now().format(formatter)) :
                                 LocalDate.parse(req.startPeriod, DateTimeFormatter.ISO_DATE),
 
-                        req.overPeriod.toString().isBlank() ? LocalDate.parse("1900-01-01") :
+                        req.overPeriod.toString().isBlank() ? LocalDate.parse(LocalDate.now().format(formatter)) :
                                 LocalDate.parse(req.overPeriod, DateTimeFormatter.ISO_DATE),
 
                         //아이템, 프로젝트 타입 등 객체를
