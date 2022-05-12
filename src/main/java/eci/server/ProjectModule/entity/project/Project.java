@@ -76,6 +76,9 @@ public class Project extends EntityDate {
     private Boolean tempsave;
 
     @Column(nullable = false)
+    private Boolean readonly; //05-12반영
+
+    @Column(nullable = false)
     private String lifecycle;
 
     @Column
@@ -129,7 +132,9 @@ public class Project extends EntityDate {
 
             Item item,
             Member member,
+
             Boolean tempsave,
+            Boolean readonly,
 
             ProjectType projectType,
             ProjectLevel projectLevel,
@@ -148,7 +153,10 @@ public class Project extends EntityDate {
         this.projectNumber = projectNumber;
 
         this.member = member;
+
         this.tempsave = tempsave;
+        this.readonly = readonly;
+
         this.startPeriod = startPeriod;
         this.overPeriod = overPeriod;
 
@@ -195,7 +203,9 @@ public class Project extends EntityDate {
 
             Item item,
             Member member,
+
             Boolean tempsave,
+            Boolean readonly,
 
             ProjectType projectType,
             ProjectLevel projectLevel,
@@ -213,7 +223,10 @@ public class Project extends EntityDate {
         this.projectNumber = projectNumber;
 
         this.member = member;
+
         this.tempsave = tempsave;
+        this.readonly = readonly;
+
         this.startPeriod = startPeriod;
         this.overPeriod = overPeriod;
 
@@ -230,6 +243,7 @@ public class Project extends EntityDate {
         this.clientItemNumber = clientItemNumber;
 
     }
+
 
     /**
      * 추가할 attachments

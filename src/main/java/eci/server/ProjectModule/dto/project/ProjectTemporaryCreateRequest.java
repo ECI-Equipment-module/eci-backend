@@ -113,6 +113,8 @@ public class ProjectTemporaryCreateRequest  {
 
                         true,
 
+                        false, //임시저장은 readonly false //05-12 수정사항반영
+
                         projectTypeRepository.findById(projectTypeId)
                                 .orElseThrow(ProjectTypeNotFoundException::new),
 
@@ -177,6 +179,7 @@ public class ProjectTemporaryCreateRequest  {
                     ).orElseThrow(MemberNotFoundException::new),
 
                     true,
+                    false,
 
                     projectTypeRepository.findById(projectTypeId)
                             .orElseThrow(ProjectTypeNotFoundException::new),
