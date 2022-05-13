@@ -54,7 +54,12 @@ spring:
 
 upload:
    image:
-     location: src/main/prodmedia/image/
+     location : src/main/prodmedia/image/
+   design-info :
+     location : src/main/prodmedia/attach-info/
+   design-attach:
+     location: src/main/prodmedia/design-attach/
+     location
        #C:/Users/DONGYUN/Desktop/spring/server3/prodmedia/image/
 #  upload:
 #    image:
