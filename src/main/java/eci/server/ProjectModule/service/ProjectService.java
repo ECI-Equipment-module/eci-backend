@@ -15,6 +15,7 @@ import eci.server.ItemModule.repository.newRoute.RouteOrderingRepository;
 import eci.server.ItemModule.repository.newRoute.RouteProductRepository;
 import eci.server.ItemModule.service.file.FileService;
 
+import eci.server.ItemModule.service.file.LocalFileService;
 import eci.server.ProjectModule.dto.carType.CarTypeDto;
 import eci.server.ProjectModule.dto.project.*;
 import eci.server.ProjectModule.entity.project.Project;
@@ -369,7 +370,7 @@ public class ProjectService {
     }
 
     private void deleteProjectAttachments(List<ProjectAttachment> projectAttachments) {
-        projectAttachments.stream().forEach(i -> fileService.delete(i.getUniqueName()));
+        projectAttachments.forEach(i -> fileService.delete(i.getUniqueName()));
     }
 
 
