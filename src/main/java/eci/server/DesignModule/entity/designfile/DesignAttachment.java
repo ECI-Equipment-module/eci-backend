@@ -1,7 +1,6 @@
 package eci.server.DesignModule.entity.designfile;
 
 import eci.server.DesignModule.entity.design.Design;
-import eci.server.ItemModule.entity.item.Item;
 import eci.server.ItemModule.entitycommon.EntityDate;
 import eci.server.ItemModule.exception.image.UnsupportedImageFormatException;
 import lombok.AccessLevel;
