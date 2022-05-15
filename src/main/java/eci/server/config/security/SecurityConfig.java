@@ -67,13 +67,21 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.POST, "/project/temp").authenticated()
                 .antMatchers(HttpMethod.PUT, "/project/{id}").access("@projectGuard.check(#id)")
                 .antMatchers(HttpMethod.DELETE, "/project/{id}").access("@projectGuard.check(#id)")
-
-
                 .antMatchers(HttpMethod.GET, "/project").authenticated()
                 .antMatchers(HttpMethod.GET, "/project/page").authenticated()
+
+                .antMatchers(HttpMethod.POST, "/design").authenticated()
+                .antMatchers(HttpMethod.POST, "/design/temp").authenticated()
+                .antMatchers(HttpMethod.PUT, "/design/{id}").access("@designGuard.check(#id)")
+
+                .antMatchers(HttpMethod.GET, "/dashboard/design/todo").authenticated()
+
                 .antMatchers(HttpMethod.GET, "/dashboard/project/page").authenticated()
                 .antMatchers(HttpMethod.GET, "/dashboard/project/todo").authenticated()
                 .antMatchers(HttpMethod.GET, "/dashboard/project/total").authenticated()
+
+                .antMatchers(HttpMethod.POST, "/design-file/**").authenticated()
+                .antMatchers(HttpMethod.POST,"/webjars/**").permitAll()
 
                 .antMatchers(HttpMethod.GET, "/**").permitAll()//위에 명시된 get 말고는 다 허용, 맨 밑으로 위치 변경
 

@@ -19,4 +19,6 @@ public interface ItemRepository extends JpaRepository<Item, Long>,  CustomItemRe
 
     Page<Item> findAll(Pageable pageable);
 
+    Item findByItemNumber(Integer integer);
+
 }

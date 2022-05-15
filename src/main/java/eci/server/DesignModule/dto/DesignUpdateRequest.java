@@ -16,12 +16,10 @@ public class DesignUpdateRequest {
 
     private String name;
 
-    // 로그인 된 멤버 자동 주입
-    @Null
-    private Long memberId;
-
     private Long projectId;
 
+    @Null
+    private Long memberId;
 
     /**
      * 추가된 파일을 첨부
