@@ -13,19 +13,17 @@ import java.util.concurrent.TimeUnit;
 public class ChatRoomDto {
 
     private String roomId;
-    private String name;
     private Set<WebSocketSession> sessions = new HashSet<>();
 
     @Builder
-    public ChatRoomDto(String roomId, String name) {
+    public ChatRoomDto(String roomId) {
         this.roomId = roomId;
-        this.name = name;
     }
     public void handleActions(WebSocketSession session, ChatMessage chatMessage, ChatService chatService) {
 
         if (chatMessage.getType().equals(ChatMessage.MessageType.ENTER)) {
             sessions.add(session);
-            chatMessage.setMessage(chatMessage.getSender() + "님이 디자인 파일 검사 결과를 요청했습니다.");
+            chatMessage.setMessage("디자인 파일 검사 결과를 요청했습니다.");
             sendMessage(chatMessage, chatService);
         }
 
@@ -40,7 +38,11 @@ public class ChatRoomDto {
 
     public void handleActions2(WebSocketSession session, ChatMessage chatMessage, ChatService chatService) {
 
-        List<Integer> itemNumbers = chatMessage.getItemNumber();
+        List<Integer> itemNumbers = new ArrayList<>() ;
+
+        itemNumbers.add(1);
+        itemNumbers.add(2);
+
         List<ItemNum> itemNumList = new ArrayList<>();
         ItemNum itemNum = new ItemNum();
 
