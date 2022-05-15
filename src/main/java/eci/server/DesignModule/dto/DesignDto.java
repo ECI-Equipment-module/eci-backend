@@ -19,7 +19,7 @@ import static java.util.stream.Collectors.toList;
 @AllArgsConstructor
 public class DesignDto {
     private Long id;
-    private String name;
+
     private ItemProjectDto item;
     private MemberDto member;
     private Boolean tempsave;
@@ -35,17 +35,16 @@ public class DesignDto {
     ) {
         List<RouteOrderingDto> routeDtoList = Optional.ofNullable(
                 RouteOrderingDto.toDtoList(
-                        routeOrderingRepository.findByItem(design.getProject().getItem()),
+                        routeOrderingRepository.findByItem(design.getItem()),
                         routeProductRepository,
                         routeOrderingRepository
                 )
         ).orElseThrow(RouteNotFoundException::new);
 
         return new DesignDto(
-                design.getId(),
-                design.getName(),
 
-                ItemProjectDto.toDto(design.getProject().getItem()),
+                design.getId(),
+                ItemProjectDto.toDto(design.getItem()),
                 MemberDto.toDto(design.getMember()),
                 design.getTempsave(),
 
@@ -57,8 +56,8 @@ public class DesignDto {
                 //routeDtoList
 
                 //가장 최신의 라우트 오더링 중 최신의 라우트 오더링 아이디
-                routeOrderingRepository.findByItem(design.getProject().getItem()).
-                        get(routeOrderingRepository.findByItem(design.getProject().getItem()).size() - 1)
+                routeOrderingRepository.findByItem(design.getItem()).
+                        get(routeOrderingRepository.findByItem(design.getItem()).size() - 1)
                         .getId()
 
 

@@ -8,4 +8,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class DesignCreateUpdateResponse {
         private Long id;
+        private Long routeId;
 }

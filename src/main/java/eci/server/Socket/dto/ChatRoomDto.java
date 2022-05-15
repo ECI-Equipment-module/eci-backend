@@ -1,6 +1,5 @@
 package eci.server.Socket.dto;
 
-import eci.server.ItemModule.repository.item.ItemRepository;
 import eci.server.Socket.service.ChatService;
 import lombok.Builder;
 import lombok.Getter;

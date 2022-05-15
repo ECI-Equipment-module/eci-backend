@@ -76,7 +76,7 @@ public class DesignService {
                 DesignTempCreateRequest.toEntity(
                         req,
                         memberRepository,
-                        projectRepository
+                        itemRepository
                 )
         );
         if (!(req.getTag().size() == 0)) {
@@ -94,17 +94,17 @@ public class DesignService {
                 DesignCreateRequest.toEntity(
                         req,
                         memberRepository,
-                        projectRepository
+                        itemRepository
                 )
         );
         if (!(req.getTag().size() == 0)) {
             uploadAttachments(design.getDesignAttachments(), req.getAttachments());
         }
-        List<RouteOrdering> routeOrdering = routeOrderingRepository.findByItem(design.getProject().getItem());
+        List<RouteOrdering> routeOrdering = routeOrderingRepository.findByItem(design.getItem());
         //프로젝트에 딸린 라우트
-        Long routeId = routeOrderingRepository.findByItem(design.getProject().getItem()).get(routeOrdering.size() - 1).getId();
+        Long routeId = routeOrderingRepository.findByItem(design.getItem()).get(routeOrdering.size() - 1).getId();
 
-        return new DesignCreateUpdateResponse(design.getId());
+        return new DesignCreateUpdateResponse(design.getId(), routeId);
     }
 
     private void uploadAttachments(List<DesignAttachment> attachments, List<MultipartFile> filedAttachments) {
@@ -145,7 +145,7 @@ public class DesignService {
 
         Design.FileUpdatedResult result = design.update(
                 req,
-                projectRepository
+                itemRepository
         );
 
 

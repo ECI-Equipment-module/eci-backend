@@ -35,15 +35,13 @@ import static java.util.stream.Collectors.toList;
 @AllArgsConstructor
 public class DesignCreateRequest {
 
-    @NotNull(message = "디자인 이름을 입력해주세요.")
-    private String name;
 
     // 로그인 된 멤버 자동 주입
     @Null
     private Long memberId;
 
-    @NotNull(message = "디자인과 연결된 프로젝트 아이디를 입력해주세요.")
-    private Long projectId;
+    @NotNull(message = "디자인과 연결된 아이템 아이디를 입력해주세요.")
+    private Long itemId;
 
     private List<MultipartFile> attachments = new ArrayList<>();
 
@@ -56,16 +54,15 @@ public class DesignCreateRequest {
     public static Design toEntity(
             DesignCreateRequest req,
             MemberRepository memberRepository,
-            ProjectRepository projectRepository
+            ItemRepository itemRepository
     ) {
 
 
         if (req.tag.size() == 0) { //Project에 Attachment 존재하지 않을 시에 생성자
             return new Design(
-                    req.name,
 
-                    projectRepository.findById(req.getProjectId())
-                            .orElseThrow(ProjectNotFoundException::new),
+                    itemRepository.findById(req.getItemId())
+                            .orElseThrow(ItemNotFoundException::new),
 
                     memberRepository.findById(
                             req.getMemberId()
@@ -78,10 +75,8 @@ public class DesignCreateRequest {
         } else {
 
             return new Design(
-                    req.name,
-
-                    projectRepository.findById(req.getProjectId())
-                            .orElseThrow(ProjectNotFoundException::new),
+                    itemRepository.findById(req.getItemId())
+                            .orElseThrow(ItemNotFoundException::new),
 
                     memberRepository.findById(
                             req.getMemberId()
