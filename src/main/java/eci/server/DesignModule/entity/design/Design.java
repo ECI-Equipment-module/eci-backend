@@ -86,6 +86,29 @@ public class Design extends EntityDate {
         this.readonly = readonly;
     }
 
+    public Design(
+            String name,
+            Project project,
+
+            Member member,
+
+            Boolean tempsave,
+            Boolean readonly
+
+    ) {
+        this.name = name;
+
+        this.project = project;
+
+        this.member = member;
+
+        this.tempsave = tempsave;
+        this.readonly = readonly;
+
+
+    }
+
+
 
     public Design(
             String name,
@@ -95,7 +118,7 @@ public class Design extends EntityDate {
 
             Boolean tempsave,
             Boolean readonly,
-            List<ProjectAttachment> projectAttachments
+            List<DesignAttachment> projectAttachments
 
 
     ) {

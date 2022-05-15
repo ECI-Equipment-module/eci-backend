@@ -16,13 +16,18 @@ spring:
     serialization:
       fail-on-empty-beans: false
 
-  devtools:
-    livereload:
-      enabled: true
-    restart:
-      enabled: false
-  freemarker:
-    cache: false
+#  thymeleaf:
+#    prefix:
+#      classpath: /templates/
+#    suffix: .html
+#    enabled: false
+#  devtools:
+#    livereload:
+#      enabled: true
+#    restart:
+#      enabled: false
+#  freemarker:
+#    cache: false
 
   main:
     allow-bean-definition-overriding: true
@@ -69,6 +74,7 @@ upload:
      location: src/main/prodmedia/attach-info/
    design-attach:
      location: src/main/prodmedia/design-attach/
+
 
 #  upload:
 #    image:
