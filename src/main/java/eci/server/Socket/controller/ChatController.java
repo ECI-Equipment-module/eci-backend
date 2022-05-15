@@ -14,7 +14,7 @@ import java.util.List;
 public class ChatController {
 
     private final ChatService chatService;
-
+    @CrossOrigin(origins = "https://localhost:3000")
     @PostMapping
     @AssignMemberId
     //아무것도 없이 방만 생성 가능
@@ -22,7 +22,7 @@ public class ChatController {
     ) {
         return chatService.createRoom();
     }
-
+    @CrossOrigin(origins = "https://localhost:3000")
     @GetMapping
     public List<ChatRoomDto> findAllRoom() {
         return chatService.findAllRoom();
