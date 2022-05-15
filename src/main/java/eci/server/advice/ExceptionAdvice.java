@@ -1,5 +1,7 @@
 package eci.server.advice;
 
+import eci.server.DesignModule.exception.DesignNotFoundException;
+import eci.server.DesignModule.exception.DesignUpdateImpossibleException;
 import eci.server.ItemModule.dto.response.Response;
 import eci.server.ItemModule.exception.file.FileUploadFailureException;
 import eci.server.ItemModule.exception.item.ItemCreateNotEmptyException;
@@ -245,5 +247,17 @@ public class ExceptionAdvice {
         return Response.failure(400, "올바른 아이디 값이 아닙니다.");
     }
 
+    @ExceptionHandler(DesignNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Response DesignNotFoundException(DesignNotFoundException e) {
+        log.info("e = {}", e.getMessage());
+        return Response.failure(404, "해당하는 디자인이 없습니다.");
+    }
 
+    @ExceptionHandler(DesignUpdateImpossibleException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Response DesignUpdateImpossibleException(DesignUpdateImpossibleException e) {
+        log.info("e = {}", e.getMessage());
+        return Response.failure(404, "디자인을 수정할 수 없습니다.");
+    }
 }

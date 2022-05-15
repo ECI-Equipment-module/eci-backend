@@ -39,25 +39,13 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class DashboardService {
 
-    private final ItemRepository itemRepository;
     private final MemberRepository memberRepository;
-    private final ColorRepository colorRepository;
-    private final MaterialRepository materialRepository;
-    private final ManufactureRepository manufactureRepository;
-    private final AttachmentRepository attachmentRepository;
     private final RouteOrderingRepository routeOrderingRepository;
     private final RouteProductRepository routeProductRepository;
 
     private final ProjectRepository projectRepository;
 
-    private final ReadPartNumberService readPartNumber;
-
-    private final FileService fileService;
-    private final LocalFileService localFileService;
-
     private final AuthHelper authHelper;
-
-    private final RoutePreset routePreset;
 
     public TotalProject readProjectTotal(){
         //0) 현재 로그인 된 유저

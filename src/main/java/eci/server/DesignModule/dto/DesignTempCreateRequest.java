@@ -6,7 +6,7 @@ import eci.server.ItemModule.exception.item.ItemNotFoundException;
 import eci.server.ItemModule.exception.member.sign.MemberNotFoundException;
 import eci.server.ItemModule.repository.item.ItemRepository;
 import eci.server.ItemModule.repository.member.MemberRepository;
-import eci.server.ProjectModule.dto.project.ProjectCreateRequest;
+import eci.server.ProjectModule.dto.project.ProjectTemporaryCreateRequest;
 import eci.server.ProjectModule.entity.project.Project;
 import eci.server.ProjectModule.entity.projectAttachment.ProjectAttachment;
 import eci.server.ProjectModule.exception.*;
@@ -21,90 +21,96 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
 
 import static java.util.stream.Collectors.toList;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class DesignCreateRequest {
+public class DesignTempCreateRequest {
 
-    @NotNull(message = "디자인 이름을 입력해주세요.")
     private String name;
 
-    // 로그인 된 멤버 자동 주입
+    private Long projectId;
+
     @Null
     private Long memberId;
 
-    @NotNull(message = "디자인과 연결된 프로젝트 아이디를 입력해주세요.")
-    private Long projectId;
-
     private List<MultipartFile> attachments = new ArrayList<>();
-
-    //attachment tags
     private List<String> tag = new ArrayList<>();
-
     private List<String> attachmentComment = new ArrayList<>();
 
 
     public static Design toEntity(
-            DesignCreateRequest req,
+            DesignTempCreateRequest req,
             MemberRepository memberRepository,
             ProjectRepository projectRepository
     ) {
 
 
-        if (req.tag.size() == 0) { //Project에 Attachment 존재하지 않을 시에 생성자
-            return new Design(
-                    req.name,
+        Long projectId = req.projectId==null?99999L:req.projectId;
 
-                    projectRepository.findById(req.getProjectId())
+        if(req.getTag().size()>0) {
+            return new Design(
+                    req.name.isBlank() ? " default " : req.name,
+                    //프로젝트 number은 양산이면 M-현재년도-REQ.NUM / 선형이면 N-~
+                    //해당 형식은 스크럼 회의 후 변경
+
+                    projectRepository.findById(projectId)
                             .orElseThrow(ProjectNotFoundException::new),
 
+                    //로그인 된 유저 바로 주입
                     memberRepository.findById(
                             req.getMemberId()
                     ).orElseThrow(MemberNotFoundException::new),
 
-                    true, //05-12 수정사항 반영 - 라우트까지 작성되어야 false
-                    true//readonly default - false, create 하면 true
-            );
+                    true,
 
-        } else {
-
-            return new Design(
-                    req.name,
-
-                    projectRepository.findById(req.getProjectId())
-                            .orElseThrow(ProjectNotFoundException::new),
-
-                    memberRepository.findById(
-                            req.getMemberId()
-                    ).orElseThrow(MemberNotFoundException::new),
-
-                    true, //05-12 수정사항 반영 - 라우트까지 작성되어야 false
-                    true, //readonly default - false, create 하면 true
+                    false, //임시저장은 readonly false //05-12 수정사항반영
 
                     req.attachments.stream().map(
                             i -> new DesignAttachment(
                                     i.getOriginalFilename(),
                                     req.getTag().get(req.attachments.indexOf(i)),
-                                    req.getAttachmentComment().isEmpty()?
-                                            "":
-                                            req.getAttachmentComment().
-                                                    get(req.attachments.indexOf(i)).
-                                                    isBlank()?"":
-                                                    req.getAttachmentComment().get(req.attachments.indexOf(i))
+                                    req.getAttachmentComment().get(req.attachments.indexOf(i))
                             )
                     ).collect(
                             toList()
                     )
+
+                    //Project 생성자에 들이밀기
+
             );
         }
+
+        /**
+         * attachment 없을 시
+         */
+
+        return new Design(
+                req.name.isBlank() ? " default " : req.name,
+                //프로젝트 number은 양산이면 M-현재년도-REQ.NUM / 선형이면 N-~
+                //해당 형식은 스크럼 회의 후 변경
+
+                projectRepository.findById(projectId)
+                        .orElseThrow(ProjectNotFoundException::new),
+
+                //로그인 된 유저 바로 주입
+                memberRepository.findById(
+                        req.getMemberId()
+                ).orElseThrow(MemberNotFoundException::new),
+
+                true,
+                false
+
+        );
     }
 }
+
+

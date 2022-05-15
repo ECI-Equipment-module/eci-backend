@@ -1,12 +1,14 @@
-package eci.server.DesignModule.dto;
+package eci.server.Socket.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class DesignCreateResponse {
-        private Long id;
-        private String name;
+public class ItemNumList {
+    List<ItemNum> itemNumList;
 }

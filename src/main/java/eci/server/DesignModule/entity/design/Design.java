@@ -86,6 +86,29 @@ public class Design extends EntityDate {
         this.readonly = readonly;
     }
 
+    public Design(
+            String name,
+            Project project,
+
+            Member member,
+
+            Boolean tempsave,
+            Boolean readonly
+
+    ) {
+        this.name = name;
+
+        this.project = project;
+
+        this.member = member;
+
+        this.tempsave = tempsave;
+        this.readonly = readonly;
+
+
+    }
+
+
 
     public Design(
             String name,
@@ -95,7 +118,7 @@ public class Design extends EntityDate {
 
             Boolean tempsave,
             Boolean readonly,
-            List<ProjectAttachment> projectAttachments
+            List<DesignAttachment> projectAttachments
 
 
     ) {
@@ -129,7 +152,6 @@ public class Design extends EntityDate {
     public FileUpdatedResult update(
             DesignUpdateRequest req,
             ProjectRepository projectRepository
-
     )
 
     {
@@ -149,7 +171,7 @@ public class Design extends EntityDate {
                 );
 
         addUpdatedDesignAttachments(req, resultAttachment.getAddedAttachments());
-        //addProjectAttachments(resultAttachment.getAddedAttachments());
+
         deleteDesignAttachments(resultAttachment.getDeletedAttachments());
 
         FileUpdatedResult fileUpdatedResult = new FileUpdatedResult(
@@ -168,7 +190,11 @@ public class Design extends EntityDate {
             designAttachments.add(i);
             i.initDesign(this);
 
-            i.setAttach_comment(req.getAddedAttachmentComment().get((added.indexOf(i))));
+            i.setAttach_comment(req.getAddedAttachmentComment().
+                    get(
+                            (added.indexOf(i))
+                    )
+            );
             i.setTag(req.getAddedTag().get((added.indexOf(i))));
             i.setAttachmentaddress(
                     "src/main/prodmedia/image/" +
