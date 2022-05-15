@@ -152,7 +152,6 @@ public class Design extends EntityDate {
     public FileUpdatedResult update(
             DesignUpdateRequest req,
             ProjectRepository projectRepository
-
     )
 
     {
@@ -172,7 +171,7 @@ public class Design extends EntityDate {
                 );
 
         addUpdatedDesignAttachments(req, resultAttachment.getAddedAttachments());
-        //addProjectAttachments(resultAttachment.getAddedAttachments());
+
         deleteDesignAttachments(resultAttachment.getDeletedAttachments());
 
         FileUpdatedResult fileUpdatedResult = new FileUpdatedResult(
@@ -191,7 +190,11 @@ public class Design extends EntityDate {
             designAttachments.add(i);
             i.initDesign(this);
 
-            i.setAttach_comment(req.getAddedAttachmentComment().get((added.indexOf(i))));
+            i.setAttach_comment(req.getAddedAttachmentComment().
+                    get(
+                            (added.indexOf(i))
+                    )
+            );
             i.setTag(req.getAddedTag().get((added.indexOf(i))));
             i.setAttachmentaddress(
                     "src/main/prodmedia/image/" +
