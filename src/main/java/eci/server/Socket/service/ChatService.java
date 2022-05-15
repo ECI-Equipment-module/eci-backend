@@ -33,11 +33,10 @@ public class ChatService {
         return chatRooms.get(roomId);
     }
 
-    public ChatRoomDto createRoom(String name) {
+    public ChatRoomDto createRoom() {
         String randomId = UUID.randomUUID().toString();
         ChatRoomDto chatRoom = ChatRoomDto.builder()
                 .roomId(randomId)
-                .name(name)
                 .build();
         chatRooms.put(randomId, chatRoom);
 
