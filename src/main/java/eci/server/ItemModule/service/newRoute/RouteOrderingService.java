@@ -1,5 +1,8 @@
 package eci.server.ItemModule.service.newRoute;
 
+import eci.server.DesignModule.entity.design.Design;
+import eci.server.DesignModule.exception.DesignNotLinkedException;
+import eci.server.DesignModule.repository.DesignRepository;
 import eci.server.ItemModule.dto.newRoute.*;
 import eci.server.ItemModule.dto.route.*;
 import eci.server.ItemModule.entity.newRoute.RouteOrdering;
@@ -34,6 +37,7 @@ public class RouteOrderingService {
     private final RouteProductRepository routeProductRepository;
     private final MemberRepository memberRepository;
     private final ItemRepository itemRepository;
+    private final DesignRepository designRepository;
 
     private final RouteOrderingRepository routeOrderingRepository;
     private final RoutePreset routePreset;
@@ -197,6 +201,29 @@ public class RouteOrderingService {
                 }
             }
 
+            /////////////////////////////////////////////////////////////////////////////////
+
+            else if (targetRoutProduct.getRoute_name().equals("기구Design생성[설계자]")) {
+                //05-12 추가사항 : 이 라우트를 제작해줄 때야 비로소 프로젝트는 temp save = false 가 되는 것
+
+                //아이템에 링크된 맨 마지막 (최신) 디자인 데려오기
+                if (designRepository.findByItem(routeOrdering.getItem()).size() == 0) {
+                    throw new DesignNotLinkedException();
+                } else {
+                    Design linkedDesign =
+                            designRepository.findByItem(routeOrdering.getItem())
+                                    .get(
+                                            designRepository.findByItem(routeOrdering.getItem()).size() - 1
+                                    );
+                    //그 프로젝트를 라우트 프로덕트에 set 해주기
+                    targetRoutProduct.setDesign(linkedDesign);
+                    // 해당 design 의 임시저장을 false
+                    linkedDesign.finalSaveDesign();
+                }
+            }
+            /////////////////////////////////////////////////////////////////////////////////////
+
+            //////////////////////////////////////////////////////////
             RouteOrderingUpdateRequest newRouteUpdateRequest =
                     routeOrdering
                             .update(

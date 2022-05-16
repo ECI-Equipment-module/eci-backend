@@ -1,5 +1,6 @@
 package eci.server.ItemModule.entity.newRoute;
 
+import eci.server.DesignModule.entity.design.Design;
 import eci.server.ItemModule.dto.newRoute.RouteProductUpdateRequest;
 import eci.server.ItemModule.entity.member.Member;
 import eci.server.ItemModule.entitycommon.EntityDate;
@@ -108,6 +109,14 @@ public class RouteProduct extends EntityDate {
     private Project project;
 
     /**
+     * null 가능, 디자인에서 라우트 생성 시 지정
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "design_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private Design design;
+
+    /**
      * 라우트 프로덕트 생성자 (reject 시 재 생산용)
      */
     public RouteProduct(
@@ -208,5 +217,9 @@ public class RouteProduct extends EntityDate {
 
     public void setProject(Project project) {
         this.project = project;
+    }
+
+    public void setDesign(Design design) {
+        this.design = design;
     }
 }
