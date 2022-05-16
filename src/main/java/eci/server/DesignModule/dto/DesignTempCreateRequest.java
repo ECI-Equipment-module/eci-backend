@@ -6,26 +6,16 @@ import eci.server.ItemModule.exception.item.ItemNotFoundException;
 import eci.server.ItemModule.exception.member.sign.MemberNotFoundException;
 import eci.server.ItemModule.repository.item.ItemRepository;
 import eci.server.ItemModule.repository.member.MemberRepository;
-import eci.server.ProjectModule.dto.project.ProjectTemporaryCreateRequest;
-import eci.server.ProjectModule.entity.project.Project;
-import eci.server.ProjectModule.entity.projectAttachment.ProjectAttachment;
 import eci.server.ProjectModule.exception.*;
-import eci.server.ProjectModule.repository.carType.CarTypeRepository;
-import eci.server.ProjectModule.repository.clientOrg.ClientOrganizationRepository;
-import eci.server.ProjectModule.repository.produceOrg.ProduceOrganizationRepository;
 import eci.server.ProjectModule.repository.project.ProjectRepository;
-import eci.server.ProjectModule.repository.projectLevel.ProjectLevelRepository;
-import eci.server.ProjectModule.repository.projectType.ProjectTypeRepository;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.Null;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
@@ -35,9 +25,7 @@ import static java.util.stream.Collectors.toList;
 @AllArgsConstructor
 public class DesignTempCreateRequest {
 
-    private String name;
-
-    private Long projectId;
+    private Long itemId;
 
     @Null
     private Long memberId;
@@ -50,20 +38,16 @@ public class DesignTempCreateRequest {
     public static Design toEntity(
             DesignTempCreateRequest req,
             MemberRepository memberRepository,
-            ProjectRepository projectRepository
+            ItemRepository itemRepository
     ) {
 
 
-        Long projectId = req.projectId==null?99999L:req.projectId;
+        Long itemId = req.itemId==null?99999L:req.itemId;
 
         if(req.getTag().size()>0) {
             return new Design(
-                    req.name.isBlank() ? " default " : req.name,
-                    //프로젝트 number은 양산이면 M-현재년도-REQ.NUM / 선형이면 N-~
-                    //해당 형식은 스크럼 회의 후 변경
-
-                    projectRepository.findById(projectId)
-                            .orElseThrow(ProjectNotFoundException::new),
+                    itemRepository.findById(itemId)
+                            .orElseThrow(ItemNotFoundException::new),
 
                     //로그인 된 유저 바로 주입
                     memberRepository.findById(
@@ -94,11 +78,8 @@ public class DesignTempCreateRequest {
          */
 
         return new Design(
-                req.name.isBlank() ? " default " : req.name,
-                //프로젝트 number은 양산이면 M-현재년도-REQ.NUM / 선형이면 N-~
-                //해당 형식은 스크럼 회의 후 변경
 
-                projectRepository.findById(projectId)
+                itemRepository.findById(itemId)
                         .orElseThrow(ProjectNotFoundException::new),
 
                 //로그인 된 유저 바로 주입

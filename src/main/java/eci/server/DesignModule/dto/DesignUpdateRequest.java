@@ -14,9 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 public class DesignUpdateRequest {
 
-    private String name;
-
-    private Long projectId;
+    private Long itemId;
 
     @Null
     private Long memberId;

@@ -29,8 +29,16 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
             log.info("payload {}", payload);
             ChatMessage chatMessage = objectMapper.readValue(payload, ChatMessage.class);
             ChatRoomDto room = chatService.findRoomById(chatMessage.getRoomId());
-            room.handleActions(session, chatMessage, chatService);
-            room.loading(chatService);
-            room.handleActions2(session, chatMessage, chatService);
+            room.handleTempActions(session, chatMessage, chatService);
+
+        }
+
+        protected void handleTextMessage2(WebSocketSession session, TextMessage message) throws Exception {
+            String payload = message.getPayload();
+            log.info("payload {}", payload);
+            ChatMessage chatMessage = objectMapper.readValue(payload, ChatMessage.class);
+            ChatRoomDto room = chatService.findRoomById(chatMessage.getRoomId());
+            room.handleTemp2Actions(session, chatMessage, chatService);
+
         }
     }

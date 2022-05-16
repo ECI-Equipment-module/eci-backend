@@ -44,12 +44,9 @@ public class Design extends EntityDate {
     @SequenceGenerator(name="SEQUENCE2", sequenceName="SEQUENCE2", allocationSize=1)
     private Long id;
 
-    @Column(nullable = false)
-    private String name;
-
     @OneToOne
-    @JoinColumn(name = "project_id")
-    private Project project;
+    @JoinColumn(name = "item_id")
+    private Item item;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(
@@ -73,22 +70,22 @@ public class Design extends EntityDate {
 
 
     public Design(
-            String name,
-            Project project,
+
+            Item item,
             Member member,
             boolean tempsave,
             boolean readonly
     ){
-        this.name = name;
-        this.project =project;
+
+        this.item =item;
         this.member = member;
         this.tempsave = tempsave;
         this.readonly = readonly;
     }
 
     public Design(
-            String name,
-            Project project,
+
+            Item item,
 
             Member member,
 
@@ -96,10 +93,7 @@ public class Design extends EntityDate {
             Boolean readonly
 
     ) {
-        this.name = name;
-
-        this.project = project;
-
+        this.item = item;
         this.member = member;
 
         this.tempsave = tempsave;
@@ -111,8 +105,7 @@ public class Design extends EntityDate {
 
 
     public Design(
-            String name,
-            Project project,
+            Item item,
 
             Member member,
 
@@ -122,10 +115,8 @@ public class Design extends EntityDate {
 
 
     ) {
-        this.name = name;
 
-        this.project = project;
-
+        this.item = item;
         this.member = member;
 
         this.tempsave = tempsave;
@@ -151,16 +142,14 @@ public class Design extends EntityDate {
 
     public FileUpdatedResult update(
             DesignUpdateRequest req,
-            ProjectRepository projectRepository
+            ItemRepository itemRepository
     )
 
+
     {
-
-        this.name = req.getName().isBlank() ? this.name : req.getName();
-
-        this.project =
-                projectRepository.findById(req.getProjectId())
-                        .orElseThrow(ProjectNotFoundException::new);
+            this.item=
+                itemRepository.findById(req.getItemId())
+                        .orElseThrow(ItemNotFoundException::new);
 
 
         DesignAttachmentUpdatedResult resultAttachment =
@@ -170,10 +159,12 @@ public class Design extends EntityDate {
                         req.getDeletedAttachments()
                 );
 
-        addUpdatedDesignAttachments(req, resultAttachment.getAddedAttachments());
-
-        deleteDesignAttachments(resultAttachment.getDeletedAttachments());
-
+        if(req.getAddedTag().size()>0) {
+            addUpdatedDesignAttachments(req, resultAttachment.getAddedAttachments());
+        }
+        if(req.getAddedTag().size()>0) {
+            deleteDesignAttachments(resultAttachment.getDeletedAttachments());
+        }
         FileUpdatedResult fileUpdatedResult = new FileUpdatedResult(
                 resultAttachment//, updatedAddedProjectAttachmentList
         );
