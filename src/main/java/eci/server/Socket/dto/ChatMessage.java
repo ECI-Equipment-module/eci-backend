@@ -2,6 +2,8 @@ package eci.server.Socket.dto;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.json.JSONObject;
+import org.springframework.http.ResponseEntity;
 
 @Getter
 @Setter
