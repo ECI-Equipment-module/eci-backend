@@ -97,7 +97,7 @@ public class DesignController {
         return Response.success();
     }
 
-
+    @CrossOrigin(origins = "https://localhost:3000")
     @GetMapping("/design/{id}")
     @ResponseStatus(HttpStatus.OK)
     public Response read(@PathVariable Long id) {

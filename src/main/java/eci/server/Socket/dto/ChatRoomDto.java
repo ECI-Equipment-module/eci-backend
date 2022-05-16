@@ -31,11 +31,6 @@ public class ChatRoomDto {
 
             sendMessage(chatMessage, chatService);
         }
-
-    }
-
-    public void handleTemp2Actions(WebSocketSession session, ChatMessage chatMessage, ChatService chatService) throws ParseException {
-
         if (chatMessage.getType().equals(ChatMessage.MessageType.ENTER2)) {
             sessions.add(session);
 
@@ -46,7 +41,10 @@ public class ChatRoomDto {
             sendMessage(chatMessage, chatService);
         }
 
+
     }
+
+
 
     public <T> void sendMessage(T message, ChatService chatService) {
         sessions.parallelStream().forEach(session -> chatService.sendMessage(session, message));
