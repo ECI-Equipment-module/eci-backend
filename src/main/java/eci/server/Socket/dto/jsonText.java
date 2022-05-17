@@ -10,9 +10,6 @@ import java.text.ParseException;
 public class jsonText {
 
     public static String MatchjsonTest() throws ParseException {
-
-
-
         String jsonStr = "{" +
                 "\"item\" : {" +
                 "\"top\": true," +
@@ -100,7 +97,7 @@ public class jsonText {
                 "} ," + //아이템 끝
 
                 "\"cad\" : {" +
-                "\"top\": false," +
+                "\"top\": true," +
                 "\"match\": true," +
                 "\"number\": 1000001," +
                 "\"name\": tmpItem," +
@@ -182,11 +179,12 @@ public class jsonText {
                 "} " + //1-2
 
                 "]"  + //cad 칠드런 끝
-                "}" + //cad end
+                "} ," + //cad end
                 "\"unmatched\" : 0" +
                 "}" ;
 
-                //    JSONObject
+
+        //    JSONObject
         JSONObject jsonObj = new JSONObject(jsonStr);
     return  jsonObj.toString();
     }
@@ -280,7 +278,7 @@ public class jsonText {
                 "} ," + //아이템 끝
 
                 "\"cad\" : {" +
-                "\"top\": false," +
+                "\"top\": true," +
                 "\"match\": true," +
                 "\"number\": 1000001," +
                 "\"name\": tmpItem," +
