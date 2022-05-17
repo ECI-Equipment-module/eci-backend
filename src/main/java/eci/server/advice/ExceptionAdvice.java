@@ -1,6 +1,7 @@
 package eci.server.advice;
 
 import eci.server.DesignModule.exception.DesignNotFoundException;
+import eci.server.DesignModule.exception.DesignNotLinkedException;
 import eci.server.DesignModule.exception.DesignUpdateImpossibleException;
 import eci.server.ItemModule.dto.response.Response;
 import eci.server.ItemModule.exception.file.FileUploadFailureException;
@@ -259,5 +260,12 @@ public class ExceptionAdvice {
     public Response DesignUpdateImpossibleException(DesignUpdateImpossibleException e) {
         log.info("e = {}", e.getMessage());
         return Response.failure(404, "디자인을 수정할 수 없습니다.");
+    }
+
+    @ExceptionHandler(DesignNotLinkedException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Response DesignNotLinkedException(DesignNotLinkedException e) {
+        log.info("e = {}", e.getMessage());
+        return Response.failure(400, "아이템과 링크된 디자인이 존재하지 않습니다.");
     }
 }

@@ -10,7 +10,6 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class DesignReadDto {
     private Long id;
-    private String name;
 
     private String itemName;
     private Integer itemNumber;

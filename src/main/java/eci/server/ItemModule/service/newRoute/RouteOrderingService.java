@@ -1,7 +1,11 @@
 package eci.server.ItemModule.service.newRoute;
 
+import eci.server.DesignModule.entity.design.Design;
+import eci.server.DesignModule.exception.DesignNotLinkedException;
+import eci.server.DesignModule.repository.DesignRepository;
 import eci.server.ItemModule.dto.newRoute.*;
 import eci.server.ItemModule.dto.route.*;
+import eci.server.ItemModule.entity.item.ItemType;
 import eci.server.ItemModule.entity.newRoute.RouteOrdering;
 import eci.server.ItemModule.entity.newRoute.RoutePreset;
 import eci.server.ItemModule.entity.newRoute.RouteProduct;
@@ -34,6 +38,7 @@ public class RouteOrderingService {
     private final RouteProductRepository routeProductRepository;
     private final MemberRepository memberRepository;
     private final ItemRepository itemRepository;
+    private final DesignRepository designRepository;
 
     private final RouteOrderingRepository routeOrderingRepository;
     private final RoutePreset routePreset;
@@ -122,11 +127,13 @@ public class RouteOrderingService {
 
         // 처음으로 복제된 애는 거부대상 아이의 복제품 => 얘의 set reject=true로 변경
         addedProducts.get(0).setRejected(true);
-        Integer range = addedProducts.get(0).getSequence()+1;
-        //show=false인 애들 삭제할건데 검사범위는 거부대상아이 전의
 
-//        // present는 현재 만들어진 애로 설정
-//        newRoute.setPresent(addedProducts.get(0).getSequence());
+        //0517 : show=false인 애들 삭제할건데 검사범위는 끝까지 (라우트 프로덕트 기존 길이의)
+        int range = List.of((routePreset.
+                itemRouteName[ItemType.valueOf(
+                        addedProducts.get(0).getRouteOrdering().getItem().getType()).label()]))
+                .size();//addedProducts.get(0).getSequence()+1;
+
 
         List<RouteProduct> deletedList =
         //isShow 가 false 인 것은 삭제 처리
@@ -197,6 +204,29 @@ public class RouteOrderingService {
                 }
             }
 
+            /////////////////////////////////////////////////////////////////////////////////
+
+            else if (targetRoutProduct.getRoute_name().equals("기구Design생성[설계자]")) {
+                //05-12 추가사항 : 이 라우트를 제작해줄 때야 비로소 프로젝트는 temp save = false 가 되는 것
+
+                //아이템에 링크된 맨 마지막 (최신) 디자인 데려오기
+                if (designRepository.findByItem(routeOrdering.getItem()).size() == 0) {
+                    throw new DesignNotLinkedException();
+                } else {
+                    Design linkedDesign =
+                            designRepository.findByItem(routeOrdering.getItem())
+                                    .get(
+                                            designRepository.findByItem(routeOrdering.getItem()).size() - 1
+                                    );
+                    //그 프로젝트를 라우트 프로덕트에 set 해주기
+                    targetRoutProduct.setDesign(linkedDesign);
+                    // 해당 design 의 임시저장을 false
+                    linkedDesign.finalSaveDesign();
+                }
+            }
+            /////////////////////////////////////////////////////////////////////////////////////
+
+            //////////////////////////////////////////////////////////
             RouteOrderingUpdateRequest newRouteUpdateRequest =
                     routeOrdering
                             .update(
