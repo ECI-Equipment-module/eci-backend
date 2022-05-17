@@ -5,6 +5,7 @@ import eci.server.DesignModule.exception.DesignNotLinkedException;
 import eci.server.DesignModule.repository.DesignRepository;
 import eci.server.ItemModule.dto.newRoute.*;
 import eci.server.ItemModule.dto.route.*;
+import eci.server.ItemModule.entity.item.ItemType;
 import eci.server.ItemModule.entity.newRoute.RouteOrdering;
 import eci.server.ItemModule.entity.newRoute.RoutePreset;
 import eci.server.ItemModule.entity.newRoute.RouteProduct;
@@ -126,11 +127,13 @@ public class RouteOrderingService {
 
         // 처음으로 복제된 애는 거부대상 아이의 복제품 => 얘의 set reject=true로 변경
         addedProducts.get(0).setRejected(true);
-        Integer range = addedProducts.get(0).getSequence()+1;
-        //show=false인 애들 삭제할건데 검사범위는 거부대상아이 전의
 
-//        // present는 현재 만들어진 애로 설정
-//        newRoute.setPresent(addedProducts.get(0).getSequence());
+        //0517 : show=false인 애들 삭제할건데 검사범위는 끝까지 (라우트 프로덕트 기존 길이의)
+        int range = List.of((routePreset.
+                itemRouteName[ItemType.valueOf(
+                        addedProducts.get(0).getRouteOrdering().getItem().getType()).label()]))
+                .size();//addedProducts.get(0).getSequence()+1;
+
 
         List<RouteProduct> deletedList =
         //isShow 가 false 인 것은 삭제 처리

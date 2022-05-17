@@ -183,7 +183,7 @@ public class RouteOrdering extends EntityDate {
          */
         List<RouteProduct> routeProductList =
                 routeProductRepository.findAllByRouteOrdering(this);
-
+        System.out.println("현재느으ㅡㅡㅡㅡㅡㅡㅡㅡ은"+this.present+"번 째 여어어어어어");
         if(rejectedIndex > this.present || routeProductList.get(rejectedIndex).isDisabled()){
             throw new RejectImpossibleException();
         }
@@ -225,14 +225,15 @@ public class RouteOrdering extends EntityDate {
          */
         routeProductList.get(rejectedIndex).setRejected(true);
         routeProductList.get(rejectedIndex).setDisabled(true);
-        routeProductList.get(this.present).setComment(rejectedComment);
+        routeProductList.get(this.present-1).setComment(rejectedComment);
+        routeProductList.get(this.present).setShow(false);
         /**
          * 거부된 라우트 하나 먼저 복제
          *         // 특히 리젝트 된 아이 복제 대상애는 rejected= 1 로 설정해주고,
          *         // comment들 싹 다 초기화해주고
          */
 
-        Integer seq = this.present+1;
+        Integer seq = this.present;
         RouteProduct rejectedRouteProduct =
                 new RouteProduct(
                     seq,
@@ -244,7 +245,7 @@ public class RouteOrdering extends EntityDate {
                     routeProductList.get(rejectedIndex).getType(),
                     "default",
                     false,
-                    false,
+                    true,
                     true,
                     false,
                     routeProductList.get(rejectedIndex)
@@ -252,7 +253,9 @@ public class RouteOrdering extends EntityDate {
                                     RouteProductMember::getMember
                     )
                             .collect(toList()),
-                    routeProductList.get(rejectedIndex).getRouteOrdering()
+                    routeProductList.get(rejectedIndex).getRouteOrdering(),
+                        routeProductList.get(rejectedIndex).getProject(),
+                        routeProductList.get(rejectedIndex).getDesign()
                 );
 
         /**
@@ -315,6 +318,8 @@ public class RouteOrdering extends EntityDate {
 
         System.out.println("추가적으로 생길 애들 길이");
         System.out.println(addedRouteProductList.size());
+
+
 
         return addedRouteProductList;
     }

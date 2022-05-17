@@ -12,6 +12,7 @@ import eci.server.ItemModule.entity.member.Member;
 import eci.server.ItemModule.entity.newRoute.RoutePreset;
 import eci.server.ItemModule.entity.newRoute.RouteProduct;
 import eci.server.ItemModule.entity.newRoute.RouteProductMember;
+import eci.server.ItemModule.exception.RouteProductNotFoundException;
 import eci.server.ItemModule.exception.member.auth.AuthenticationEntryPointException;
 import eci.server.ItemModule.repository.color.ColorRepository;
 import eci.server.ItemModule.repository.item.AttachmentRepository;
@@ -358,12 +359,29 @@ public class DashboardService {
         //5) REVIEW
         //현재 라우트 프로덕트들 중  이름이 기구Design Review[설계팀장] 고,
         // 라우트프로덕트-멤버가 나로 지정
+
+        List<RouteProduct> myDesignReviewRouteProductList = new ArrayList<>();
+
+        for (RouteProduct routeProduct : routeProductList) {
+            for (RouteProductMember routeProductMember : routeProduct.getMembers()) {
+                if (routeProductMember.getMember().getId().equals(member1.getId()) &&
+                        routeProduct.getRoute_name().equals("기구Design Review")) {
+                    myDesignReviewRouteProductList.add(routeProduct);
+                    break;
+                }
+
+            }
+        }
+
         HashSet<TodoResponse> needReviewDesignTodoResponses = new HashSet<>();
 /////이거 맞는지 모르겠다 검토 필요
-        for (RouteProduct routeProduct : myRouteProductList){ //myRoute-> 내꺼 + 현재
-            if(routeProduct.getRoute_name().equals("기구Design Review[설계팀장]")){
+        for (RouteProduct routeProduct : myDesignReviewRouteProductList){ //myRoute-> 내꺼 + 현재
 
-                Design targetDesign = routeProduct.getDesign();
+            //현재 라우트보다 하나 이전 라우트프로덕트의 디자인만 존재함, 그 디자인을 가져와야한다.
+                RouteProduct targetRouteProduct = routeProductRepository.findById(routeProduct.getId()-1)
+                        .orElseThrow(RouteProductNotFoundException::new);
+
+                Design targetDesign = targetRouteProduct.getDesign();
 
                 needReviewDesignTodoResponses.add(
                         new TodoResponse(
@@ -374,7 +392,7 @@ public class DashboardService {
                         )
                 );
             }
-        }
+
 
         List<TodoResponse> NEED_REVIEW = new ArrayList<>(needReviewDesignTodoResponses);
 

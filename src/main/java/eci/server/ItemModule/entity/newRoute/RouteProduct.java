@@ -157,6 +157,46 @@ public class RouteProduct extends EntityDate {
         this.routeOrdering = newRoute;
     }
 
+    public RouteProduct(
+            Integer sequence,
+
+            Integer origin_seq,
+
+            String name,
+            RouteType type,
+            String comments,
+            boolean passed,
+            boolean rejected,
+            boolean show,
+            boolean disabled,
+            List<Member> member,
+            RouteOrdering newRoute,
+            Project project,
+            Design design) {
+        this.sequence = sequence;
+
+        this.origin_seq = origin_seq;
+
+
+        this.route_name = name;
+
+        this.type = type;
+        this.comments = comments;
+        this.passed = passed;
+        this.rejected = rejected;
+        this.route_show = show;
+        this.disabled = disabled;
+        this.members =
+                member.stream().map(
+                                r -> new RouteProductMember(
+                                        this, r)
+                        )
+                        .collect(toList());
+        this.routeOrdering = newRoute;
+        this.project = project;
+        this.design = design;
+    }
+
     /**
      * 라우트 프로덕트 승인 시 업데이트
      * @param id
