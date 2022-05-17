@@ -11,9 +11,11 @@ public class jsonText {
 
     public static String MatchjsonTest() throws ParseException {
 
+
+
         String jsonStr = "{" +
                 "\"item\" : {" +
-                "\"match\": 0," +
+                "\"match\": true," +
                 "\"number\": 1000001," +
                 "\"name\": tmpItem," +
                 "\"quantity\": 2," +
@@ -25,8 +27,8 @@ public class jsonText {
                 "\"children\": [" +
 
                 "{" +
-                "\"item\" : {" +
-                "\"match\": 0," +
+// "\"item\" : {" +
+                "\"match\": true," +
                 "\"number\": 1000001-1," +
                 "\"name\": tmpItem12," +
                 "\"quantity\": 34," +
@@ -38,8 +40,8 @@ public class jsonText {
                 "\"children\": [" +
 
                 "{" +
-                "\"item\" : {" +
-                "\"match\": 0," +
+// "\"item\" : {" +
+                "\"match\": true," +
                 "\"number\": 1000001-1-1," +
                 "\"name\": tmpItem121," +
                 "\"quantity\": 3434," +
@@ -50,12 +52,12 @@ public class jsonText {
                 "\"pdf\": \"src/main/prodmedia/image/2022-05-12/3e109555-c1bf-49a8-8ae0-ef76f336e6c1.JPG\"," +
                 "\"children\": [" +
 
-                "]"  + "}" +
+                "]"  + // "}" +
                 "} ," + //1-1-1
 
                 "{" +
-                "\"item\" : {" +
-                "\"match\": 0," +
+// "\"item\" : {" +
+                "\"match\": true," +
                 "\"number\": 1000001-1-2," +
                 "\"name\": tmpItem1212," +
                 "\"quantity\": 3434435," +
@@ -66,16 +68,16 @@ public class jsonText {
                 "\"pdf\": \"src/main/prodmedia/image/2022-05-12/3e109555-c1bf-49a8-8ae0-ef76f336e6c1.JPG\"," +
                 "\"children\": [" +
 
-                "]"  + "}" +
+                "]"  +// "}" +
                 "} " + //1-1-2
 
 
-                "]"  + "}" +
+                "]"  +// "}" +
                 "} ," + //1-1
 
                 "{" +
-                "\"item\" : {" +
-                "\"match\": 0," +
+// "\"item\" : {" +
+                "\"match\": true," +
                 "\"number\": 1000001-2," +
                 "\"name\": tmpItem22," +
                 "\"quantity\": 222," +
@@ -86,14 +88,14 @@ public class jsonText {
                 "\"pdf\": \"src/main/prodmedia/image/2022-05-12/3e109555-c1bf-49a8-8ae0-ef76f336e6c1.JPG\"," +
                 "\"children\": [" +
 
-                "]"  + "}" +
+                "]"  + //"}" +
                 "} " + //1-2
 
                 "]"  + //아이템 칠드런 끝
                 "} ," + //아이템 끝
 
                 "\"cad\" : {" +
-                "\"match\": 0," +
+                "\"match\": true," +
                 "\"number\": 1000001," +
                 "\"name\": tmpItem," +
                 "\"quantity\": 2," +
@@ -105,8 +107,8 @@ public class jsonText {
                 "\"children\": [" +
 
                 "{" +
-                "\"cad\" : {" +
-                "\"match\": 0," +
+// "\"item\" : {" +
+                "\"match\": true," +
                 "\"number\": 1000001-1," +
                 "\"name\": tmpItem12," +
                 "\"quantity\": 34," +
@@ -118,8 +120,8 @@ public class jsonText {
                 "\"children\": [" +
 
                 "{" +
-                "\"cad\" : {" +
-                "\"match\": 0," +
+// "\"item\" : {" +
+                "\"match\": true," +
                 "\"number\": 1000001-1-1," +
                 "\"name\": tmpItem121," +
                 "\"quantity\": 3434," +
@@ -130,12 +132,12 @@ public class jsonText {
                 "\"pdf\": \"src/main/prodmedia/image/2022-05-12/3e109555-c1bf-49a8-8ae0-ef76f336e6c1.JPG\"," +
                 "\"children\": [" +
 
-                "]"  + "}" +
+                "]"  + // "}" +
                 "} ," + //1-1-1
 
                 "{" +
-                "\"cad\" : {" +
-                "\"match\": 0," +
+// "\"item\" : {" +
+                "\"match\": true," +
                 "\"number\": 1000001-1-2," +
                 "\"name\": tmpItem1212," +
                 "\"quantity\": 3434435," +
@@ -146,16 +148,16 @@ public class jsonText {
                 "\"pdf\": \"src/main/prodmedia/image/2022-05-12/3e109555-c1bf-49a8-8ae0-ef76f336e6c1.JPG\"," +
                 "\"children\": [" +
 
-                "]"  + "}" +
+                "]"  +// "}" +
                 "} " + //1-1-2
 
 
-                "]"  + "}" +
+                "]"  +// "}" +
                 "} ," + //1-1
 
                 "{" +
-                "\"cad\" : {" +
-                "\"match\": 0," +
+// "\"item\" : {" +
+                "\"match\": true," +
                 "\"number\": 1000001-2," +
                 "\"name\": tmpItem22," +
                 "\"quantity\": 222," +
@@ -166,26 +168,19 @@ public class jsonText {
                 "\"pdf\": \"src/main/prodmedia/image/2022-05-12/3e109555-c1bf-49a8-8ae0-ef76f336e6c1.JPG\"," +
                 "\"children\": [" +
 
-                "]"  + "}" +
+                "]"  + //"}" +
                 "} " + //1-2
 
                 "]"  + //cad 칠드런 끝
-                "} ," + //cad 끝
+                "}" +
+                "}" ;//cad 끝
 
-                "\"unmatched\": 0 ," +
-                "\"type\": \"TopAssy\" " +
-
-                "}"; //전체객체끝
-
-
-
-        //    JSONObject
+                //    JSONObject
         JSONObject jsonObj = new JSONObject(jsonStr);
     return  jsonObj.toString();
     }
 
     public static String UnMatchjsonTest() throws ParseException {
-
         String jsonStr = "{" +
                 "\"item\" : {" +
                 "\"match\": true," +
@@ -200,7 +195,7 @@ public class jsonText {
                 "\"children\": [" +
 
                 "{" +
-                "\"item\" : {" +
+// "\"item\" : {" +
                 "\"match\": false," +
                 "\"number\": 1000001-1," +
                 "\"name\": tmpItem12," +
@@ -213,7 +208,7 @@ public class jsonText {
                 "\"children\": [" +
 
                 "{" +
-                "\"item\" : {" +
+// "\"item\" : {" +
                 "\"match\": true," +
                 "\"number\": 1000001-1-1," +
                 "\"name\": tmpItem121," +
@@ -225,11 +220,11 @@ public class jsonText {
                 "\"pdf\": \"src/main/prodmedia/image/2022-05-12/3e109555-c1bf-49a8-8ae0-ef76f336e6c1.JPG\"," +
                 "\"children\": [" +
 
-                "]"  + "}" +
+                "]"  + // "}" +
                 "} ," + //1-1-1
 
                 "{" +
-                "\"item\" : {" +
+// "\"item\" : {" +
                 "\"match\": false," +
                 "\"number\": 1000001-1-2," +
                 "\"name\": tmpItem1212," +
@@ -241,15 +236,15 @@ public class jsonText {
                 "\"pdf\": \"src/main/prodmedia/image/2022-05-12/3e109555-c1bf-49a8-8ae0-ef76f336e6c1.JPG\"," +
                 "\"children\": [" +
 
-                "]"  + "}" +
+                "]"  + // "}" +
                 "} " + //1-1-2
 
 
-                "]"  + "}" +
+                "]"  + // "}" +
                 "} ," + //1-1
 
                 "{" +
-                "\"item\" : {" +
+// "\"item\" : {" +
                 "\"match\": true," +
                 "\"number\": 1000001-2," +
                 "\"name\": tmpItem22," +
@@ -261,7 +256,7 @@ public class jsonText {
                 "\"pdf\": \"src/main/prodmedia/image/2022-05-12/3e109555-c1bf-49a8-8ae0-ef76f336e6c1.JPG\"," +
                 "\"children\": [" +
 
-                "]"  + "}" +
+                "]"  + //"}" +
                 "} " + //1-2
 
                 "]"  + //아이템 칠드런 끝
@@ -280,7 +275,7 @@ public class jsonText {
                 "\"children\": [" +
 
                 "{" +
-                "\"cad\" : {" +
+// "\"item\" : {" +
                 "\"match\": false," +
                 "\"number\": 1000001-1," +
                 "\"name\": tmpItem12," +
@@ -293,7 +288,7 @@ public class jsonText {
                 "\"children\": [" +
 
                 "{" +
-                "\"cad\" : {" +
+// "\"item\" : {" +
                 "\"match\": true," +
                 "\"number\": 1000001-1-1," +
                 "\"name\": tmpItem121," +
@@ -305,11 +300,11 @@ public class jsonText {
                 "\"pdf\": \"src/main/prodmedia/image/2022-05-12/3e109555-c1bf-49a8-8ae0-ef76f336e6c1.JPG\"," +
                 "\"children\": [" +
 
-                "]"  + "}" +
+                "]"  + // "}" +
                 "} ," + //1-1-1
 
                 "{" +
-                "\"cad\" : {" +
+// "\"item\" : {" +
                 "\"match\": false," +
                 "\"number\": 1000001-1-2," +
                 "\"name\": tmpItem1212," +
@@ -321,15 +316,15 @@ public class jsonText {
                 "\"pdf\": \"src/main/prodmedia/image/2022-05-12/3e109555-c1bf-49a8-8ae0-ef76f336e6c1.JPG\"," +
                 "\"children\": [" +
 
-                "]"  + "}" +
+                "]"  + // "}" +
                 "} " + //1-1-2
 
 
-                "]"  + "}" +
+                "]"  + // "}" +
                 "} ," + //1-1
 
                 "{" +
-                "\"cad\" : {" +
+// "\"item\" : {" +
                 "\"match\": true," +
                 "\"number\": 1000001-2," +
                 "\"name\": tmpItem22," +
@@ -341,18 +336,12 @@ public class jsonText {
                 "\"pdf\": \"src/main/prodmedia/image/2022-05-12/3e109555-c1bf-49a8-8ae0-ef76f336e6c1.JPG\"," +
                 "\"children\": [" +
 
-                "]"  + "}" +
+                "]"  + //"}" +
                 "} " + //1-2
 
                 "]"  + //cad 칠드런 끝
-                "} ," + //cad 끝
-
-                "\"unmatched\": 2 ," +
-                "\"type\": \"TopAssy\" " +
-
-                "}"; //전체객체끝
-
-
+                "}" +
+                "}" ; //cad 끝
 
         //    JSONObject
         JSONObject jsonObj = new JSONObject(jsonStr);
