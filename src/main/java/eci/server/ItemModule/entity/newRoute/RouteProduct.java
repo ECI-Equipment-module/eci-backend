@@ -1,5 +1,6 @@
 package eci.server.ItemModule.entity.newRoute;
 
+import eci.server.DesignModule.entity.design.Design;
 import eci.server.ItemModule.dto.newRoute.RouteProductUpdateRequest;
 import eci.server.ItemModule.entity.member.Member;
 import eci.server.ItemModule.entitycommon.EntityDate;
@@ -28,7 +29,7 @@ import static java.util.stream.Collectors.toList;
 public class RouteProduct extends EntityDate {
 
     @Id
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
+ //   @GeneratedValue(strategy = GenerationType.IDENTITY)
     @GeneratedValue(strategy= GenerationType.SEQUENCE, generator="SEQUENCE1")
     @SequenceGenerator(name="SEQUENCE1", sequenceName="SEQUENCE1", allocationSize=1)
     private Long id;
@@ -108,6 +109,14 @@ public class RouteProduct extends EntityDate {
     private Project project;
 
     /**
+     * null 가능, 디자인에서 라우트 생성 시 지정
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "design_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private Design design;
+
+    /**
      * 라우트 프로덕트 생성자 (reject 시 재 생산용)
      */
     public RouteProduct(
@@ -146,6 +155,46 @@ public class RouteProduct extends EntityDate {
                 )
                 .collect(toList());
         this.routeOrdering = newRoute;
+    }
+
+    public RouteProduct(
+            Integer sequence,
+
+            Integer origin_seq,
+
+            String name,
+            RouteType type,
+            String comments,
+            boolean passed,
+            boolean rejected,
+            boolean show,
+            boolean disabled,
+            List<Member> member,
+            RouteOrdering newRoute,
+            Project project,
+            Design design) {
+        this.sequence = sequence;
+
+        this.origin_seq = origin_seq;
+
+
+        this.route_name = name;
+
+        this.type = type;
+        this.comments = comments;
+        this.passed = passed;
+        this.rejected = rejected;
+        this.route_show = show;
+        this.disabled = disabled;
+        this.members =
+                member.stream().map(
+                                r -> new RouteProductMember(
+                                        this, r)
+                        )
+                        .collect(toList());
+        this.routeOrdering = newRoute;
+        this.project = project;
+        this.design = design;
     }
 
     /**
@@ -208,5 +257,9 @@ public class RouteProduct extends EntityDate {
 
     public void setProject(Project project) {
         this.project = project;
+    }
+
+    public void setDesign(Design design) {
+        this.design = design;
     }
 }
