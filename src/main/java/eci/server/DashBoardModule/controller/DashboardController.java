@@ -54,6 +54,20 @@ public class DashboardController {
     }
 
     /**
+     * design to-do api
+     *
+     * @return 200 (success)
+     */
+    @CrossOrigin(origins = "https://localhost:3000")
+    @GetMapping("/dashboard/bom/todo")
+    @ResponseStatus(HttpStatus.OK)
+    public Response bomTodo() {
+        return Response.success(
+                dashboardService.readBomTodo()
+        );
+    }
+
+    /**
      * project total status
      *
      * @return 200 (success)
