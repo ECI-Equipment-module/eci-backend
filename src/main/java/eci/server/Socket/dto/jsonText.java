@@ -1,9 +1,5 @@
 package eci.server.Socket.dto;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import org.json.JSONObject;
-import org.apache.tomcat.util.json.JSONParser;
-//import org.json.simple.parser.JSONParser;
 
 import java.text.ParseException;
 
