@@ -10,11 +10,9 @@ import java.text.ParseException;
 public class jsonText {
 
     public static String MatchjsonTest() throws ParseException {
-
-
-
         String jsonStr = "{" +
                 "\"item\" : {" +
+                "\"top\": true," +
                 "\"match\": true," +
                 "\"number\": 1000001," +
                 "\"name\": tmpItem," +
@@ -28,6 +26,7 @@ public class jsonText {
 
                 "{" +
 // "\"item\" : {" +
+                "\"top\": false," +
                 "\"match\": true," +
                 "\"number\": 1000001-1," +
                 "\"name\": tmpItem12," +
@@ -41,6 +40,7 @@ public class jsonText {
 
                 "{" +
 // "\"item\" : {" +
+                "\"top\": false," +
                 "\"match\": true," +
                 "\"number\": 1000001-1-1," +
                 "\"name\": tmpItem121," +
@@ -57,6 +57,7 @@ public class jsonText {
 
                 "{" +
 // "\"item\" : {" +
+                "\"top\": false," +
                 "\"match\": true," +
                 "\"number\": 1000001-1-2," +
                 "\"name\": tmpItem1212," +
@@ -77,6 +78,7 @@ public class jsonText {
 
                 "{" +
 // "\"item\" : {" +
+                "\"top\": false," +
                 "\"match\": true," +
                 "\"number\": 1000001-2," +
                 "\"name\": tmpItem22," +
@@ -95,6 +97,7 @@ public class jsonText {
                 "} ," + //아이템 끝
 
                 "\"cad\" : {" +
+                "\"top\": true," +
                 "\"match\": true," +
                 "\"number\": 1000001," +
                 "\"name\": tmpItem," +
@@ -108,6 +111,7 @@ public class jsonText {
 
                 "{" +
 // "\"item\" : {" +
+                "\"top\": false," +
                 "\"match\": true," +
                 "\"number\": 1000001-1," +
                 "\"name\": tmpItem12," +
@@ -121,6 +125,7 @@ public class jsonText {
 
                 "{" +
 // "\"item\" : {" +
+                "\"top\": false," +
                 "\"match\": true," +
                 "\"number\": 1000001-1-1," +
                 "\"name\": tmpItem121," +
@@ -137,6 +142,7 @@ public class jsonText {
 
                 "{" +
 // "\"item\" : {" +
+                "\"top\": false," +
                 "\"match\": true," +
                 "\"number\": 1000001-1-2," +
                 "\"name\": tmpItem1212," +
@@ -157,6 +163,7 @@ public class jsonText {
 
                 "{" +
 // "\"item\" : {" +
+                "\"top\": false," +
                 "\"match\": true," +
                 "\"number\": 1000001-2," +
                 "\"name\": tmpItem22," +
@@ -172,17 +179,21 @@ public class jsonText {
                 "} " + //1-2
 
                 "]"  + //cad 칠드런 끝
-                "}" +
-                "}" ;//cad 끝
+                "} ," + //cad end
+                "\"unmatched\" : 0" +
+                "}" ;
 
-                //    JSONObject
+
+        //    JSONObject
         JSONObject jsonObj = new JSONObject(jsonStr);
-    return  jsonObj.toString();
+        return  jsonObj.toString();
     }
 
     public static String UnMatchjsonTest() throws ParseException {
         String jsonStr = "{" +
+
                 "\"item\" : {" +
+                "\"top\": true," +
                 "\"match\": true," +
                 "\"number\": 1000001," +
                 "\"name\": tmpItem," +
@@ -196,6 +207,7 @@ public class jsonText {
 
                 "{" +
 // "\"item\" : {" +
+                "\"top\": false," +
                 "\"match\": false," +
                 "\"number\": 1000001-1," +
                 "\"name\": tmpItem12," +
@@ -209,6 +221,7 @@ public class jsonText {
 
                 "{" +
 // "\"item\" : {" +
+                "\"top\": false," +
                 "\"match\": true," +
                 "\"number\": 1000001-1-1," +
                 "\"name\": tmpItem121," +
@@ -225,6 +238,7 @@ public class jsonText {
 
                 "{" +
 // "\"item\" : {" +
+                "\"top\": false," +
                 "\"match\": false," +
                 "\"number\": 1000001-1-2," +
                 "\"name\": tmpItem1212," +
@@ -245,6 +259,7 @@ public class jsonText {
 
                 "{" +
 // "\"item\" : {" +
+                "\"top\": false," +
                 "\"match\": true," +
                 "\"number\": 1000001-2," +
                 "\"name\": tmpItem22," +
@@ -263,6 +278,7 @@ public class jsonText {
                 "} ," + //아이템 끝
 
                 "\"cad\" : {" +
+                "\"top\": true," +
                 "\"match\": true," +
                 "\"number\": 1000001," +
                 "\"name\": tmpItem," +
@@ -276,6 +292,7 @@ public class jsonText {
 
                 "{" +
 // "\"item\" : {" +
+                "\"top\": false," +
                 "\"match\": false," +
                 "\"number\": 1000001-1," +
                 "\"name\": tmpItem12," +
@@ -289,6 +306,7 @@ public class jsonText {
 
                 "{" +
 // "\"item\" : {" +
+                "\"top\": false," +
                 "\"match\": true," +
                 "\"number\": 1000001-1-1," +
                 "\"name\": tmpItem121," +
@@ -305,6 +323,7 @@ public class jsonText {
 
                 "{" +
 // "\"item\" : {" +
+                "\"top\": false," +
                 "\"match\": false," +
                 "\"number\": 1000001-1-2," +
                 "\"name\": tmpItem1212," +
@@ -324,7 +343,8 @@ public class jsonText {
                 "} ," + //1-1
 
                 "{" +
-// "\"item\" : {" +
+// "\"item\" : {"
+                "\"top\": false," +
                 "\"match\": true," +
                 "\"number\": 1000001-2," +
                 "\"name\": tmpItem22," +
@@ -340,8 +360,9 @@ public class jsonText {
                 "} " + //1-2
 
                 "]"  + //cad 칠드런 끝
-                "}" +
-                "}" ; //cad 끝
+                "} ," + //cad 끝
+                "\"unmatched\" : 2" +
+                "}" ;
 
         //    JSONObject
         JSONObject jsonObj = new JSONObject(jsonStr);
