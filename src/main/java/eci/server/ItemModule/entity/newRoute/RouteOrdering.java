@@ -202,8 +202,8 @@ public class RouteOrdering extends EntityDate {
          * 거절 전의 아이 + 거절주체인 차례 아이도 passed = true로 해주기
          * (수행 된거니깐)
          */
+        routeProductList.get(this.present-2).setPassed(true);
         routeProductList.get(this.present-1).setPassed(true);
-        routeProductList.get(this.present).setPassed(true);
 
         /**
          * 기존 애들 중에서 passed가 false인 애들의 show는 false로 변경해주기
@@ -226,7 +226,7 @@ public class RouteOrdering extends EntityDate {
         routeProductList.get(rejectedIndex).setRejected(true);
         routeProductList.get(rejectedIndex).setDisabled(true);
         routeProductList.get(this.present-1).setComment(rejectedComment);
-        routeProductList.get(this.present).setShow(false);
+        //routeProductList.get(this.present).setShow(false);
         /**
          * 거부된 라우트 하나 먼저 복제
          *         // 특히 리젝트 된 아이 복제 대상애는 rejected= 1 로 설정해주고,
