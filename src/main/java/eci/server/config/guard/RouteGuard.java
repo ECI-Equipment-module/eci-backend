@@ -2,7 +2,6 @@ package eci.server.config.guard;
 
 
 import eci.server.ItemModule.entity.member.RoleType;
-import eci.server.ItemModule.entity.route.Route;
 import eci.server.ItemModule.repository.route.RouteRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

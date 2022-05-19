@@ -4,7 +4,7 @@ import eci.server.DesignModule.entity.design.Design;
 import eci.server.ItemModule.dto.newRoute.RouteProductUpdateRequest;
 import eci.server.ItemModule.entity.member.Member;
 import eci.server.ItemModule.entitycommon.EntityDate;
-import eci.server.ItemModule.exception.RouteProductNotFoundException;
+import eci.server.ItemModule.exception.route.RouteProductNotFoundException;
 import eci.server.ItemModule.repository.newRoute.RouteProductRepository;
 
 import eci.server.ProjectModule.entity.project.Project;
