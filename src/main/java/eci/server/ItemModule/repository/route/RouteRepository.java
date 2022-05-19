@@ -1,7 +1,6 @@
 package eci.server.ItemModule.repository.route;
 
 import eci.server.ItemModule.entity.member.Member;
-import eci.server.ItemModule.entity.route.Route;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

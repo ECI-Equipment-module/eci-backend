@@ -1,16 +1,9 @@
 package eci.server.ItemModule.dto.item;
 
-import eci.server.ItemModule.dto.member.MemberDto;
-import eci.server.ItemModule.dto.route.RouteDto;
 import eci.server.ItemModule.entity.item.Attachment;
-import eci.server.ItemModule.entity.item.Image;
-import eci.server.ItemModule.entity.route.Route;
-import eci.server.ItemModule.helper.NestedConvertHelper;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;

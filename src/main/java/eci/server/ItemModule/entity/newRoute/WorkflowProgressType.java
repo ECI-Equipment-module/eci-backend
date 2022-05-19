@@ -1,4 +1,4 @@
-package eci.server.ItemModule.entity.route;
+package eci.server.ItemModule.entity.newRoute;
 
 public enum WorkflowProgressType {
     IN_PROGRESS,
