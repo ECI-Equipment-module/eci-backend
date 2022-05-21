@@ -511,60 +511,12 @@ public class ItemService {
 
     }
 
-
-    public ToDoDoubleList readNewProject() {
-
-        List<TodoResponse> TEMP_SAVE = new ArrayList<>();
+    public List<ItemProjectCreateDto> linkNeededItemsForProject() {
 
         //0) 현재 로그인 된 유저
         Member member1 = memberRepository.findById(authHelper.extractMemberId()).orElseThrow(
                 AuthenticationEntryPointException::new
         );
-
-        //1-1 temp save 용 ) 내가 작성자인 모든 프로젝트들 데려오기
-        List<Project> myProjectList = projectRepository.findByMember(member1);
-        Iterator<Project> myProjectListItr = myProjectList.iterator();
-
-        //1-2 temp-save 가 true 인 것만 담는 리스트
-        List<Project> tempSavedProjectList = new ArrayList<>();
-
-        for (Project project : myProjectList) {
-            if (project.getTempsave()) {
-                tempSavedProjectList.add(project);
-                //임시저장 진행 중인 것
-            }
-        }
-// temp save 로직을 변경해서 아래 코드 필요 없어짐
-//        //만약 이게 waiting approve 로 빠진다면 담아주는 리스트만 변경하면 된다.
-//        for (Project project : myProjectList) {
-//            if (!project.getTempsave()
-//                // 임시저장 되지 않은 애들 중에 아직 approve 받지 않은 것들
-//               ) {
-//                if(!(routeProductRepository.findAllByProject(project).size()==0)){
-//                    if(!(routeProductRepository.findAllByProject(project).get(
-//                            routeProductRepository.findAllByProject(project).size()-1
-//                    ).isPassed())){
-//                        tempSavedProjectList.add(project);
-//                    }
-//                }
-//            }
-//        }
-
-        if (tempSavedProjectList.size() > 0) {
-            for (Project p : tempSavedProjectList) {
-                TodoResponse
-                        projectTodoResponse =
-                        new TodoResponse(
-                                p.getId(),
-                                p.getName(),
-                                p.getProjectType().getName(),
-                                p.getProjectNumber()
-                        );
-                TEMP_SAVE.add(projectTodoResponse);
-            }
-        }
-
-        //new project -> 아이템 목록
 
         //1) 현재 진행 중인 라우트 프로덕트 카드들
         List<RouteProduct> routeProductList = routeProductRepository.findAll().stream().filter(
@@ -588,36 +540,48 @@ public class ItemService {
         }
 
         //3) 프로젝트 링크 안된 애만 담기
-        HashSet<TodoResponse> unlinkedItemTodoResponses = new HashSet<>();
+        HashSet<ItemProjectCreateDto> unlinkedItemList = new HashSet<>();
 
-        for (RouteProduct routeProduct : myRouteProductList) {
-            if (projectRepository.findByItem(routeProduct.getRouteOrdering().getItem()).size() == 0) {
+        for (RouteProduct routeProduct : myRouteProductList){
+            if(projectRepository.findByItem(routeProduct.getRouteOrdering().getItem()).size()==0){
+
+                List<Attachment> attachmentList =
+                        attachmentRepository.findByItem(
+                                routeProduct.getRouteOrdering().getItem()
+                        );
+
+                RouteOrdering routeOrdering = routeOrderingRepository.findByItem(
+                        routeProduct.getRouteOrdering().getItem()
+                ).get(
+                        routeOrderingRepository.findByItem(
+                                routeProduct.getRouteOrdering().getItem()
+                        ).size()-1
+                );
+
+                ItemDto itemDto = ItemDto.toDto(
+                        routeProduct.getRouteOrdering().getItem()
+                );
 
                 Item targetItem = routeProduct.getRouteOrdering().getItem();
 
-                unlinkedItemTodoResponses.add(
-                        new TodoResponse(
-                                targetItem.getId(),
-                                targetItem.getName(),
-                                targetItem.getType(),
-                                targetItem.getItemNumber().toString()
+                unlinkedItemList.add(
+                        ItemProjectCreateDto.toDto(
+                                targetItem,
+                                routeOrderingRepository
+
                         )
                 );
             }
         }
 
-        List<TodoResponse> NEW_PROJECT = new ArrayList<>(unlinkedItemTodoResponses);
+        List<ItemProjectCreateDto> setToListUnlinked  = new ArrayList<>();
 
-        ToDoSingle tempSave = new ToDoSingle("Save as Draft", TEMP_SAVE);
-        ToDoSingle newProject = new ToDoSingle("New Project", NEW_PROJECT);
+        for(ItemProjectCreateDto unlinkedItemDto : unlinkedItemList){
+            setToListUnlinked.add(unlinkedItemDto);
+        }
 
-        List<ToDoSingle> toDoDoubleList = new ArrayList<ToDoSingle>();
-        toDoDoubleList.add(tempSave);
-        toDoDoubleList.add(newProject);
-
-        return new ToDoDoubleList(toDoDoubleList);
+        return setToListUnlinked;
 
     }
-
 
 }
