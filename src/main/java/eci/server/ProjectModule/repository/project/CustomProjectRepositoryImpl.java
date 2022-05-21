@@ -61,9 +61,8 @@ public class CustomProjectRepositoryImpl extends QuerydslRepositorySupport imple
                                 item.name,
                                 item.itemNumber,
 
-
-                                project.startPeriod,
-                                project.overPeriod,
+                                project.protoStartPeriod,
+                                project.protoOverPeriod,
 
                                 project.tempsave,
 

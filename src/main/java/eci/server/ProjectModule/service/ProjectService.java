@@ -230,8 +230,8 @@ public class ProjectService {
                         ItemProjectDto.toDto(project.getItem()),
 
                         project.getRevision(),
-                        project.getStartPeriod(),
-                        project.getOverPeriod(),
+                        project.getProtoStartPeriod(),
+                        project.getProtoOverPeriod(),
 
                         project.getTempsave(),
 
