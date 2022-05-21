@@ -83,6 +83,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.POST, "/design-file/**").authenticated()
                 .antMatchers(HttpMethod.POST,"/webjars/**").permitAll()
 
+                .antMatchers(HttpMethod.GET, "/item-candidates").authenticated()
+
                 .antMatchers(HttpMethod.GET, "/**").permitAll()//위에 명시된 get 말고는 다 허용, 맨 밑으로 위치 변경
 
                 .anyRequest().hasAnyRole("ADMIN")//멤버의 역할이 관리자인 경우에는 모든 것을 허용
