@@ -14,10 +14,11 @@ import lombok.Data;
 public class ItemProjectCreateDto {
 
     private Long id;
+
     private String name;
     private String type;
     private Integer itemNumber;
-    private int revision;
+    private Integer revision;
     private String status;
 
 

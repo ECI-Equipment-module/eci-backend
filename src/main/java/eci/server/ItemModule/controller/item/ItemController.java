@@ -1,10 +1,8 @@
 package eci.server.ItemModule.controller.item;
 
-import eci.server.ItemModule.dto.item.ItemTemporaryCreateRequest;
+import eci.server.ItemModule.dto.item.*;
+import eci.server.ProjectModule.dto.carType.CarTypeReadCondition;
 import eci.server.aop.AssignMemberId;
-import eci.server.ItemModule.dto.item.ItemCreateRequest;
-import eci.server.ItemModule.dto.item.ItemReadCondition;
-import eci.server.ItemModule.dto.item.ItemUpdateRequest;
 import eci.server.ItemModule.dto.response.Response;
 import eci.server.ItemModule.service.item.ItemService;
 import lombok.RequiredArgsConstructor;
@@ -122,13 +120,13 @@ public class ItemController {
      * @param cond
      * @return
      */
-
-    @CrossOrigin(origins = "https://localhost:3000")
-    @GetMapping("/items")
-    @ResponseStatus(HttpStatus.OK)
-    public Response readAll(@Valid ItemReadCondition cond) {
-        return Response.success(itemService.readAll(cond));
-    }
+//
+//    @CrossOrigin(origins = "https://localhost:3000")
+//    @GetMapping("/items")
+//    @ResponseStatus(HttpStatus.OK)
+//    public Response readAll(@Valid ItemReadCondition cond) {
+//        return Response.success(itemService.readAll(cond));
+//    }
 
     /**
      * 특정 사진 조회
@@ -163,6 +161,20 @@ public class ItemController {
         );
     }
 
+//    /**
+//     * 링크되지 않은 아이템들, 나에게 기다리고 있는 아이템들
+//     *
+//     * @return 200 (success)
+//     */
+//    @CrossOrigin(origins = "https://localhost:3000")
+//    @GetMapping("/item-candidates")
+//    @ResponseStatus(HttpStatus.OK)
+//    public Response linkNeededItemForProject() {
+//        return Response.success(
+//                itemService.linkNeededItemsForProject()
+//        );
+//    }
+
     /**
      * 링크되지 않은 아이템들, 나에게 기다리고 있는 아이템들
      *
@@ -171,9 +183,12 @@ public class ItemController {
     @CrossOrigin(origins = "https://localhost:3000")
     @GetMapping("/item-candidates")
     @ResponseStatus(HttpStatus.OK)
-    public Response linkNeededItemForProject() {
+    public Response linkNeededItemForProject(
+            @Valid ItemProjectCreateReadCondition cond
+    ) {
         return Response.success(
-                itemService.linkNeededItemsForProject()
+                itemService.readItemCandidatesAll(cond)
         );
     }
+
 }
