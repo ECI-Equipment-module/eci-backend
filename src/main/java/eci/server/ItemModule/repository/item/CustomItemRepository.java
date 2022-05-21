@@ -1,7 +1,6 @@
 package eci.server.ItemModule.repository.item;
 
-import eci.server.ItemModule.dto.item.ItemReadCondition;
-import eci.server.ItemModule.dto.item.ItemSimpleDto;
+import eci.server.ItemModule.dto.item.*;
 import org.springframework.data.domain.Page;
 
 /**
@@ -12,5 +11,6 @@ import org.springframework.data.domain.Page;
  * 페이징 결과에 대한 각종 정보 확인
  */
 public interface CustomItemRepository {
-    Page<ItemSimpleDto> findAllByCondition(ItemReadCondition cond);
+    Page<ItemProjectCreateDto> findAllByCondition(ItemProjectCreateReadCondition cond);
+
 }

@@ -8,7 +8,10 @@ import eci.server.DashBoardModule.dto.projectTodo.TodoResponse;
 import eci.server.ItemModule.exception.member.auth.AuthenticationEntryPointException;
 import eci.server.ItemModule.repository.newRoute.RouteOrderingRepository;
 
+import eci.server.ProjectModule.dto.carType.CarTypeListDto;
+import eci.server.ProjectModule.dto.carType.CarTypeReadCondition;
 import eci.server.ProjectModule.entity.project.Project;
+import eci.server.ProjectModule.repository.carType.CarTypeRepository;
 import eci.server.ProjectModule.repository.project.ProjectRepository;
 import eci.server.config.guard.AuthHelper;
 import eci.server.ItemModule.dto.item.*;
@@ -301,11 +304,11 @@ public class ItemService {
         return new ItemUpdateResponse(id);
     }
 
-    public ItemListDto readAll(ItemReadCondition cond) {
-        return ItemListDto.toDto(
-                itemRepository.findAllByCondition(cond)
-        );
-    }
+//    public ItemListDto readAll(ItemReadCondition cond) {
+//        return ItemListDto.toDto(
+//                itemRepository.findAllByCondition(cond)
+//        );
+//    }
 
     /**
      * 파일
@@ -583,6 +586,12 @@ public class ItemService {
 
         return setToListUnlinked;
 
+    }
+
+    public ItemProjectCreateDtoList readItemCandidatesAll(ItemProjectCreateReadCondition cond) {
+        return ItemProjectCreateDtoList.toDto(
+                itemRepository.findAllByCondition(cond)
+        );
     }
 
 }
