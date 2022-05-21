@@ -33,10 +33,28 @@ public class ProjectDto {
     private String clientItemNumber;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
-    private LocalDate startPeriod;
+    private LocalDate protoStartPeriod;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
-    private LocalDate overPeriod;
+    private LocalDate protoOverPeriod;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
+    private LocalDate p1StartPeriod;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
+    private LocalDate p1OverPeriod;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
+    private LocalDate p2StartPeriod;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
+    private LocalDate p2OverPeriod;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
+    private LocalDate sopStartPeriod;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
+    private LocalDate sopOverPeriod;
 
     private ItemProjectDto item;
     private MemberDto member;
@@ -72,8 +90,18 @@ public class ProjectDto {
                 project.getProjectNumber(),
                 project.getClientItemNumber(),
 
-                project.getStartPeriod(),
-                project.getOverPeriod(),
+                project.getProtoStartPeriod(),
+                project.getProtoOverPeriod(),
+
+                project.getP1StartPeriod(),
+                project.getP1OverPeriod(),
+
+                project.getP2StartPeriod(),
+                project.getP2OverPeriod(),
+
+                project.getSopStartPeriod(),
+                project.getSopOverPeriod(),
+
                 ItemProjectDto.toDto(project.getItem()),
                 MemberDto.toDto(project.getMember()),
                 project.getTempsave(),

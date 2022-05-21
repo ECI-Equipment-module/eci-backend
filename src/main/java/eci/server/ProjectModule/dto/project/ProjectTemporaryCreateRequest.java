@@ -17,6 +17,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -39,9 +40,21 @@ public class ProjectTemporaryCreateRequest  {
 
         private String clientItemNumber;
 
-        private String startPeriod;
+        private String protoStartPeriod;
 
-        private String overPeriod;
+        private String protoOverPeriod;
+
+        private String p1StartPeriod;
+
+        private String p1OverPeriod;
+
+        private String p2StartPeriod;
+
+        private String p2OverPeriod;
+
+        private String sopStartPeriod;
+
+        private String sopOverPeriod;
 
         // 로그인 된 멤버 자동 주입
         @Null
@@ -97,11 +110,30 @@ public class ProjectTemporaryCreateRequest  {
 
                         req.clientItemNumber,
 
-                        req.startPeriod.toString().isBlank() ? LocalDate.parse(LocalDate.now().format(formatter)) :
-                                LocalDate.parse(req.startPeriod, DateTimeFormatter.ISO_DATE),
+                        req.protoStartPeriod.toString().isBlank() ? LocalDate.parse(LocalDate.now().format(formatter)) :
+                                LocalDate.parse(req.protoStartPeriod, DateTimeFormatter.ISO_DATE),
 
-                        req.overPeriod.toString().isBlank() ? LocalDate.parse(LocalDate.now().format(formatter)) :
-                                LocalDate.parse(req.overPeriod, DateTimeFormatter.ISO_DATE),
+                        req.protoOverPeriod.toString().isBlank() ? LocalDate.parse(LocalDate.now().format(formatter)) :
+                                LocalDate.parse(req.protoOverPeriod, DateTimeFormatter.ISO_DATE),
+
+                        req.p1StartPeriod.toString().isBlank() ? LocalDate.parse(LocalDate.now().format(formatter)) :
+                                LocalDate.parse(req.p1StartPeriod, DateTimeFormatter.ISO_DATE),
+
+                        req.p1OverPeriod.toString().isBlank() ? LocalDate.parse(LocalDate.now().format(formatter)) :
+                                LocalDate.parse(req.p1OverPeriod, DateTimeFormatter.ISO_DATE),
+
+                        req.p2StartPeriod.toString().isBlank() ? LocalDate.parse(LocalDate.now().format(formatter)) :
+                                LocalDate.parse(req.p2StartPeriod, DateTimeFormatter.ISO_DATE),
+
+                        req.p2OverPeriod.toString().isBlank() ? LocalDate.parse(LocalDate.now().format(formatter)) :
+                                LocalDate.parse(req.p2OverPeriod, DateTimeFormatter.ISO_DATE),
+
+                        req.sopStartPeriod.toString().isBlank() ? LocalDate.parse(LocalDate.now().format(formatter)) :
+                                LocalDate.parse(req.sopStartPeriod, DateTimeFormatter.ISO_DATE),
+
+                        req.sopOverPeriod.toString().isBlank() ? LocalDate.parse(LocalDate.now().format(formatter)) :
+                                LocalDate.parse(req.sopOverPeriod, DateTimeFormatter.ISO_DATE),
+
 
                         //아이템, 프로젝트 타입 등 객체를
                         // 지정하지 않았으면 어쩌지? 임시 객체들을 만들어둬야 하나
@@ -164,11 +196,31 @@ public class ProjectTemporaryCreateRequest  {
 
                     req.clientItemNumber,
 
-                    req.startPeriod.toString().isBlank() ? LocalDate.parse(LocalDate.now().format(formatter)) :
-                            LocalDate.parse(req.startPeriod, DateTimeFormatter.ISO_DATE),
 
-                    req.overPeriod.toString().isBlank() ? LocalDate.parse(LocalDate.now().format(formatter)) :
-                            LocalDate.parse(req.overPeriod, DateTimeFormatter.ISO_DATE),
+                    req.protoStartPeriod.toString().isBlank() ? LocalDate.parse(LocalDate.now().format(formatter)) :
+                            LocalDate.parse(req.protoStartPeriod, DateTimeFormatter.ISO_DATE),
+
+                    req.protoOverPeriod.toString().isBlank() ? LocalDate.parse(LocalDate.now().format(formatter)) :
+                            LocalDate.parse(req.protoOverPeriod, DateTimeFormatter.ISO_DATE),
+
+                    req.p1StartPeriod.toString().isBlank() ? LocalDate.parse(LocalDate.now().format(formatter)) :
+                            LocalDate.parse(req.p1StartPeriod, DateTimeFormatter.ISO_DATE),
+
+                    req.p1OverPeriod.toString().isBlank() ? LocalDate.parse(LocalDate.now().format(formatter)) :
+                            LocalDate.parse(req.p1OverPeriod, DateTimeFormatter.ISO_DATE),
+
+                    req.p2StartPeriod.toString().isBlank() ? LocalDate.parse(LocalDate.now().format(formatter)) :
+                            LocalDate.parse(req.p2StartPeriod, DateTimeFormatter.ISO_DATE),
+
+                    req.p2OverPeriod.toString().isBlank() ? LocalDate.parse(LocalDate.now().format(formatter)) :
+                            LocalDate.parse(req.p2OverPeriod, DateTimeFormatter.ISO_DATE),
+
+                    req.sopStartPeriod.toString().isBlank() ? LocalDate.parse(LocalDate.now().format(formatter)) :
+                            LocalDate.parse(req.sopStartPeriod, DateTimeFormatter.ISO_DATE),
+
+                    req.sopOverPeriod.toString().isBlank() ? LocalDate.parse(LocalDate.now().format(formatter)) :
+                            LocalDate.parse(req.sopOverPeriod, DateTimeFormatter.ISO_DATE),
+
 
                     //아이템, 프로젝트 타입 등 객체를
                     // 지정하지 않았으면 어쩌지? 임시 객체들을 만들어둬야 하나

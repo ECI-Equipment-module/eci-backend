@@ -38,11 +38,30 @@ public class ProjectCreateRequest {
     private Long projectTypeId;
 
     @NotNull(message = "시작 시기를 입력해주세요.")
-    private String startPeriod;
+    private String protoStartPeriod;
 
     @NotNull(message = "종료 시기를 입력해주세요.")
-    private String overPeriod;
+    private String protoOverPeriod;
 
+
+    @NotNull(message = "시작 시기를 입력해주세요.")
+    private String p1StartPeriod;
+
+    @NotNull(message = "종료 시기를 입력해주세요.")
+    private String p1OverPeriod;
+
+
+    @NotNull(message = "시작 시기를 입력해주세요.")
+    private String p2StartPeriod;
+
+    @NotNull(message = "종료 시기를 입력해주세요.")
+    private String p2OverPeriod;
+
+    @NotNull(message = "시작 시기를 입력해주세요.")
+    private String sopStartPeriod;
+
+    @NotNull(message = "종료 시기를 입력해주세요.")
+    private String sopOverPeriod;
     // 로그인 된 멤버 자동 주입
     @Null
     private Long memberId;
@@ -139,8 +158,17 @@ public class ProjectCreateRequest {
 
                     req.clientItemNumber,
 
-                    LocalDate.parse(req.startPeriod, DateTimeFormatter.ISO_DATE),
-                    LocalDate.parse(req.overPeriod, DateTimeFormatter.ISO_DATE),
+                    LocalDate.parse(req.protoStartPeriod, DateTimeFormatter.ISO_DATE),
+                    LocalDate.parse(req.protoOverPeriod, DateTimeFormatter.ISO_DATE),
+
+                    LocalDate.parse(req.p1StartPeriod, DateTimeFormatter.ISO_DATE),
+                    LocalDate.parse(req.p1OverPeriod, DateTimeFormatter.ISO_DATE),
+
+                    LocalDate.parse(req.p2StartPeriod, DateTimeFormatter.ISO_DATE),
+                    LocalDate.parse(req.p2OverPeriod, DateTimeFormatter.ISO_DATE),
+
+                    LocalDate.parse(req.sopStartPeriod, DateTimeFormatter.ISO_DATE),
+                    LocalDate.parse(req.sopOverPeriod, DateTimeFormatter.ISO_DATE),
 
                     itemRepository.findById(req.itemId)
                             .orElseThrow(ItemNotFoundException::new),
@@ -185,8 +213,17 @@ public class ProjectCreateRequest {
                     req.clientItemNumber,
 
 
-                    LocalDate.parse(req.startPeriod, DateTimeFormatter.ISO_DATE),
-                    LocalDate.parse(req.overPeriod, DateTimeFormatter.ISO_DATE),
+                    LocalDate.parse(req.protoStartPeriod, DateTimeFormatter.ISO_DATE),
+                    LocalDate.parse(req.protoOverPeriod, DateTimeFormatter.ISO_DATE),
+
+                    LocalDate.parse(req.p1StartPeriod, DateTimeFormatter.ISO_DATE),
+                    LocalDate.parse(req.p1OverPeriod, DateTimeFormatter.ISO_DATE),
+
+                    LocalDate.parse(req.p2StartPeriod, DateTimeFormatter.ISO_DATE),
+                    LocalDate.parse(req.p2OverPeriod, DateTimeFormatter.ISO_DATE),
+
+                    LocalDate.parse(req.sopStartPeriod, DateTimeFormatter.ISO_DATE),
+                    LocalDate.parse(req.sopOverPeriod, DateTimeFormatter.ISO_DATE),
 
                     itemRepository.findById(req.itemId)
                             .orElseThrow(ItemNotFoundException::new),

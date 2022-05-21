@@ -55,11 +55,32 @@ public class Project extends EntityDate {
     //@DateTimeFormat(pattern = "yyyy-MM-dd") -> request로 받아올 때 이와 같이 받아오기
     //@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
     @Column(nullable = false)
-    private LocalDate startPeriod;
+    private LocalDate protoStartPeriod;
 
     //@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
     @Column(nullable = false)
-    private LocalDate overPeriod;
+    private LocalDate protoOverPeriod;
+
+    @Column(nullable = false)
+    private LocalDate p1StartPeriod;
+
+    //@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
+    @Column(nullable = false)
+    private LocalDate p1OverPeriod;
+
+    @Column(nullable = false)
+    private LocalDate p2StartPeriod;
+
+    //@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
+    @Column(nullable = false)
+    private LocalDate p2OverPeriod;
+
+    @Column(nullable = false)
+    private LocalDate sopStartPeriod;
+
+    //@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
+    @Column(nullable = false)
+    private LocalDate sopOverPeriod;
 
     @OneToOne
     @JoinColumn(name = "item_id")
@@ -127,8 +148,17 @@ public class Project extends EntityDate {
             String projectNumber,
             String clientItemNumber,
 
-            LocalDate startPeriod,
-            LocalDate overPeriod,
+            LocalDate protoStartPeriod,
+            LocalDate protoOverPeriod,
+
+            LocalDate p1StartPeriod,
+            LocalDate p1OverPeriod,
+
+            LocalDate p2StartPeriod,
+            LocalDate p2OverPeriod,
+
+            LocalDate sopStartPeriod,
+            LocalDate sopOverPeriod,
 
             Item item,
             Member member,
@@ -157,8 +187,17 @@ public class Project extends EntityDate {
         this.tempsave = tempsave;
         this.readonly = readonly;
 
-        this.startPeriod = startPeriod;
-        this.overPeriod = overPeriod;
+        this.protoStartPeriod = protoStartPeriod;
+        this.protoOverPeriod = protoOverPeriod;
+
+        this.p1StartPeriod = p1StartPeriod;
+        this.p1OverPeriod = p1OverPeriod;
+
+        this.p2StartPeriod = p2StartPeriod;
+        this.p2OverPeriod = p2OverPeriod;
+
+        this.sopStartPeriod = sopStartPeriod;
+        this.sopOverPeriod = sopOverPeriod;
 
         this.produceOrganization = produceOrganization;
         this.clientOrganization = clientOrganizations;
@@ -181,11 +220,19 @@ public class Project extends EntityDate {
      * Project에 Attachment 존재하지 않을 시에 생성자입니다.
      * @param name
      * @param projectNumber
-     * @param startPeriod
-     * @param overPeriod
+     * @param clientItemNumber
+     * @param protoStartPeriod
+     * @param protoOverPeriod
+     * @param p1StartPeriod
+     * @param p1OverPeriod
+     * @param p2StartPeriod
+     * @param p2OverPeriod
+     * @param sopStartPeriod
+     * @param sopOverPeriod
      * @param item
      * @param member
      * @param tempsave
+     * @param readonly
      * @param projectType
      * @param projectLevel
      * @param produceOrganization
@@ -198,8 +245,17 @@ public class Project extends EntityDate {
             String projectNumber,
             String clientItemNumber,
 
-            LocalDate startPeriod,
-            LocalDate overPeriod,
+            LocalDate protoStartPeriod,
+            LocalDate protoOverPeriod,
+
+            LocalDate p1StartPeriod,
+            LocalDate p1OverPeriod,
+
+            LocalDate p2StartPeriod,
+            LocalDate p2OverPeriod,
+
+            LocalDate sopStartPeriod,
+            LocalDate sopOverPeriod,
 
             Item item,
             Member member,
@@ -227,8 +283,18 @@ public class Project extends EntityDate {
         this.tempsave = tempsave;
         this.readonly = readonly;
 
-        this.startPeriod = startPeriod;
-        this.overPeriod = overPeriod;
+        this.protoStartPeriod = protoStartPeriod;
+        this.protoOverPeriod = protoOverPeriod;
+
+        this.p1StartPeriod = p1StartPeriod;
+        this.p1OverPeriod = p1OverPeriod;
+
+        this.p2StartPeriod = p2StartPeriod;
+        this.p2OverPeriod = p2OverPeriod;
+
+        this.sopStartPeriod = sopStartPeriod;
+        this.sopOverPeriod = sopOverPeriod;
+
 
         this.produceOrganization = produceOrganization;
         this.clientOrganization = clientOrganizations;
@@ -277,14 +343,44 @@ public class Project extends EntityDate {
                         projectTypeRepository.findById(req.getProjectTypeId())
                 .orElseThrow(ProjectTypeNotFoundException::new);
 
-        this.startPeriod =
+        this.protoStartPeriod =
                 req.getStartPeriod().isBlank()?
-                        this.startPeriod:
+                        this.protoStartPeriod:
                         LocalDate.parse(req.getStartPeriod(), DateTimeFormatter.ISO_DATE);
 
-        this.overPeriod =
+        this.protoOverPeriod =
                 req.getOverPeriod().isBlank()?
-                        this.overPeriod:
+                        this.protoOverPeriod:
+                        LocalDate.parse(req.getOverPeriod(), DateTimeFormatter.ISO_DATE);
+
+        this.p1StartPeriod =
+                req.getStartPeriod().isBlank()?
+                        this.p1StartPeriod:
+                        LocalDate.parse(req.getStartPeriod(), DateTimeFormatter.ISO_DATE);
+
+        this.p1OverPeriod =
+                req.getOverPeriod().isBlank()?
+                        this.p1OverPeriod:
+                        LocalDate.parse(req.getOverPeriod(), DateTimeFormatter.ISO_DATE);
+
+        this.p2StartPeriod =
+                req.getStartPeriod().isBlank()?
+                        this.p2StartPeriod:
+                        LocalDate.parse(req.getStartPeriod(), DateTimeFormatter.ISO_DATE);
+
+        this.p2OverPeriod =
+                req.getOverPeriod().isBlank()?
+                        this.protoOverPeriod:
+                        LocalDate.parse(req.getOverPeriod(), DateTimeFormatter.ISO_DATE);
+
+        this.sopStartPeriod =
+                req.getStartPeriod().isBlank()?
+                        this.sopStartPeriod:
+                        LocalDate.parse(req.getStartPeriod(), DateTimeFormatter.ISO_DATE);
+
+        this.sopOverPeriod =
+                req.getOverPeriod().isBlank()?
+                        this.sopOverPeriod:
                         LocalDate.parse(req.getOverPeriod(), DateTimeFormatter.ISO_DATE);
 
         this.item =
