@@ -17,26 +17,29 @@ public class ProjectDashboardDto {
     private Long id;
     private String projectNumber;
     private String name;
-    private CarTypeDto carType;
+    private String projectType;
+
+    private String produceOrganization;
+    private String clientOrganization;
+    private String carType;
 
     //제품명, 제품 번호
     private ItemProjectDashboardDto itemProjectDashboardDto;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
-    private LocalDate startPeriod;
-
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
-    private LocalDate overPeriod;
+//    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
+//    private LocalDate startPeriod;
+//
+//    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
+//    private LocalDate overPeriod;
 
     private Boolean tempsave;
 
-    private String lifecycle;
 
     //phase
     private String phase;
 
     //status
-    private Double status;
+    private String status;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime createdAt;
