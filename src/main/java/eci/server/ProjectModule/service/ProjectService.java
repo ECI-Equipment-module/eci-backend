@@ -297,6 +297,7 @@ public class ProjectService {
                         project.getName(),
 
                         project.getProjectType().getName(),
+                        project.getProjectLevel().getName(),
 
                         ProduceOrganizationDto.toDto(project.getProduceOrganization()).getName(),
                         ClientOrganizationDto.toDto(project.getClientOrganization()).getName(),

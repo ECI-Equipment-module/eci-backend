@@ -18,6 +18,7 @@ public class ProjectDashboardDto {
     private String projectNumber;
     private String name;
     private String projectType;
+    private String projectLevel;
 
     private String produceOrganization;
     private String clientOrganization;
