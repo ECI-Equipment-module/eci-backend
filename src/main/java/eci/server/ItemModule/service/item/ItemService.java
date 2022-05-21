@@ -540,6 +540,7 @@ public class ItemService {
         }
 
         //3) 프로젝트 링크 안된 애만 담기
+
         HashSet<ItemProjectCreateDto> unlinkedItemList = new HashSet<>();
 
         for (RouteProduct routeProduct : myRouteProductList){
