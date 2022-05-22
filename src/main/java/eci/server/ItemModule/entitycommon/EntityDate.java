@@ -19,7 +19,7 @@ public abstract class EntityDate {
     private LocalDateTime createdAt;
 
     @LastModifiedDate
-    @Column(nullable = false, updatable = false)
+    @Column(nullable = false)
     private LocalDateTime modifiedAt;
 
 }

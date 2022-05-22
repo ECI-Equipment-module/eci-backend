@@ -135,6 +135,7 @@ public class ProjectDto {
                         get(routeOrderingRepository.findByItem(project.getItem()).size() - 1)
                         .getId(),
 
+                //05-22추가
                 project.getCreatedAt(),
                 MemberDto.toDto(project.getMember()),
 
