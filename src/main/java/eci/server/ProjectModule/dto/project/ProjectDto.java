@@ -118,8 +118,8 @@ public class ProjectDto {
                 project.getTempsave(),
                 ProjectTypeDto.toDto(project.getProjectType()),
                 ProjectLevelDto.toDto(project.getProjectLevel()),
-                ProduceOrganizationDto.toDto(project.getProduceOrganization()),
-                ClientOrganizationDto.toDto(project.getClientOrganization()),
+                project.getProduceOrganization()==null?null:ProduceOrganizationDto.toDto(project.getProduceOrganization()),
+                project.getClientOrganization()==null?null:ClientOrganizationDto.toDto(project.getClientOrganization()),
 
                 CarTypeDto.toDto(project.getCarType()),
 
