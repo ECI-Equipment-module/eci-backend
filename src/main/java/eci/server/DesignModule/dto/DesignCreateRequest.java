@@ -57,8 +57,7 @@ public class DesignCreateRequest {
             ItemRepository itemRepository
     ) {
 
-
-        if (req.tag.size() == 0) { //Project에 Attachment 존재하지 않을 시에 생성자
+        if (req.getTag().size() == 0) { //Project에 Attachment 존재하지 않을 시에 생성자
             return new Design(
 
                     itemRepository.findById(req.getItemId())
@@ -72,7 +71,7 @@ public class DesignCreateRequest {
                     true//readonly default - false, create 하면 true
             );
 
-        } else {
+        }
 
             return new Design(
                     itemRepository.findById(req.getItemId())
@@ -101,5 +100,5 @@ public class DesignCreateRequest {
                     )
             );
         }
-    }
+
 }
