@@ -7,7 +7,9 @@ import eci.server.ItemModule.entity.material.ItemMaterial;
 import eci.server.ItemModule.entity.material.Material;
 import eci.server.ItemModule.entity.member.Member;
 import eci.server.ItemModule.exception.item.ColorNotFoundException;
+import eci.server.ItemModule.exception.member.sign.MemberNotFoundException;
 import eci.server.ItemModule.repository.color.ColorRepository;
+import eci.server.ItemModule.repository.member.MemberRepository;
 import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -61,6 +63,12 @@ public class Item extends EntityDate {
             nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Member member;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(
+            name = "modifier_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private Member modifier;
 
     @OneToMany(
             mappedBy = "item",
@@ -274,7 +282,8 @@ public class Item extends EntityDate {
      */
     public FileUpdatedResult update(
             ItemUpdateRequest req,
-            ColorRepository colorRepository
+            ColorRepository colorRepository,
+            MemberRepository memberRepository
     ) {
         //TODO update할 때 사용자가 기존 값 없애고 보낼 수도 있자나 => fix needed
         //isBlank 랑 isNull로 판단해서 기존 값 / req 값 채워넣기
@@ -307,6 +316,13 @@ public class Item extends EntityDate {
         deleteAttachments(resultAttachment.getDeletedAttachments());
 
         FileUpdatedResult fileUpdatedResult = new FileUpdatedResult(resultAttachment,resultImage);
+
+        this.modifier =
+                memberRepository.findById(
+                        req.getModifierId()
+                ).orElseThrow(MemberNotFoundException::new);//05 -22 생성자 추가
+
+
 
         return fileUpdatedResult;
     }

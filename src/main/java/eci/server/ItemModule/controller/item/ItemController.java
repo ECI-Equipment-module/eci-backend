@@ -5,6 +5,7 @@ import eci.server.ProjectModule.dto.carType.CarTypeReadCondition;
 import eci.server.aop.AssignMemberId;
 import eci.server.ItemModule.dto.response.Response;
 import eci.server.ItemModule.service.item.ItemService;
+import eci.server.aop.AssignModifierId;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -107,6 +108,7 @@ public class ItemController {
     @CrossOrigin(origins = "https://localhost:3000")
     @PutMapping("/items/{id}")
     @ResponseStatus(HttpStatus.OK)
+    @AssignModifierId
     public Response update(
             @PathVariable Long id,
             @Valid @ModelAttribute ItemUpdateRequest req) {

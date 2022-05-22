@@ -7,6 +7,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Null;
 import javax.validation.constraints.PositiveOrZero;
 import java.util.ArrayList;
 import java.util.List;
@@ -62,6 +63,8 @@ public class ItemUpdateRequest {
      */
     private List<Long> deletedAttachments = new ArrayList<>();
 
+    @Null
+    private Long modifierId; //05-22
 }
 
 

@@ -283,7 +283,7 @@ public class ItemService {
             throw new ItemUpdateImpossibleException();
         }
 
-        Item.FileUpdatedResult result = item.update(req, colorRepository);
+        Item.FileUpdatedResult result = item.update(req, colorRepository,memberRepository);
 
         uploadImages(
                 result.getImageUpdatedResult().getAddedImages(),
