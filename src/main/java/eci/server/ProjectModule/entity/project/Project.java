@@ -54,32 +54,32 @@ public class Project extends EntityDate {
 
     //@DateTimeFormat(pattern = "yyyy-MM-dd") -> request로 받아올 때 이와 같이 받아오기
     //@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
-    @Column(nullable = false)
+    @Column
     private LocalDate protoStartPeriod;
 
     //@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
-    @Column(nullable = false)
+    @Column
     private LocalDate protoOverPeriod;
 
-    @Column(nullable = false)
+    @Column
     private LocalDate p1StartPeriod;
 
     //@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
-    @Column(nullable = false)
+    @Column
     private LocalDate p1OverPeriod;
 
-    @Column(nullable = false)
+    @Column
     private LocalDate p2StartPeriod;
 
     //@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
-    @Column(nullable = false)
+    @Column
     private LocalDate p2OverPeriod;
 
-    @Column(nullable = false)
+    @Column
     private LocalDate sopStartPeriod;
 
     //@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
-    @Column(nullable = false)
+    @Column
     private LocalDate sopOverPeriod;
 
     @OneToOne
@@ -116,7 +116,7 @@ public class Project extends EntityDate {
     private ProjectLevel projectLevel;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "produceOrganization_id", nullable = false)
+    @JoinColumn(name = "produceOrganization_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private ProduceOrganization produceOrganization;
 
