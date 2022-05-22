@@ -10,6 +10,7 @@ import eci.server.ProjectModule.dto.project.ProjectTemporaryCreateRequest;
 import eci.server.ProjectModule.dto.project.ProjectUpdateRequest;
 import eci.server.ProjectModule.service.ProjectService;
 import eci.server.aop.AssignMemberId;
+import eci.server.aop.AssignModifierId;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -80,6 +81,7 @@ public class DesignController {
     @CrossOrigin(origins = "https://localhost:3000")
     @PutMapping("/design/{id}")
     @ResponseStatus(HttpStatus.OK)
+    @AssignModifierId
     public Response update(
             @PathVariable Long id,
             @Valid @ModelAttribute DesignUpdateRequest req) {

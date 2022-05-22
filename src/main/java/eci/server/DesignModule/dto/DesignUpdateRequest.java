@@ -19,6 +19,9 @@ public class DesignUpdateRequest {
     @Null
     private Long memberId;
 
+    @Null
+    private Long modifierId; //05-22
+
     /**
      * 추가된 파일을 첨부
      */
