@@ -1,5 +1,6 @@
 package eci.server.ItemModule.dto.item;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import eci.server.ItemModule.dto.color.ColorDto;
 import eci.server.ItemModule.dto.manufacture.ManufactureSimpleDto;
@@ -7,12 +8,14 @@ import eci.server.ItemModule.dto.material.MaterialSimpleDto;
 import eci.server.ItemModule.dto.member.MemberDto;
 import eci.server.ItemModule.dto.newRoute.RouteOrderingDto;
 import eci.server.ItemModule.dto.newRoute.RouteProductDto;
+import eci.server.ItemModule.entity.item.Item;
 import eci.server.ItemModule.entity.item.ItemType;
 import eci.server.ItemModule.entity.newRoute.RoutePreset;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,9 +57,20 @@ public class ReadItemDto {
 
     private Long routeId;
 
+    //05-22 추가
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd hh:mm:ss.SSS", timezone = "Asia/Seoul")
+    private LocalDateTime createdAt;
+    private MemberDto creator;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd hh:mm:ss.SSS", timezone = "Asia/Seoul")
+    private LocalDateTime modifiedAt;
+    private MemberDto modifier;
+
+
 
 
     public static ReadItemDto toDto(
+            Item item,
             ItemDto itemDto,
             RouteOrderingDto routeOrderingDto,
             RouteProductDto routeProductDto,
@@ -67,17 +81,17 @@ public class ReadItemDto {
 
 
         return new ReadItemDto(
-                itemDto.isTempsave(),//true면 임시저장 상태, false면 찐 저장 상태
+                item.getTempsave(),//true면 임시저장 상태, false면 찐 저장 상태
 
-                itemDto.getId(),
-                itemDto.getName(),
-                itemDto.getType(),
+                item.getId(),
+                item.getName(),
+                item.getType(),
 
-                itemDto.getItemNumber(),
+                item.getItemNumber(),
 
-                itemDto.getWidth(),
-                itemDto.getHeight(),
-                itemDto.getWeight(),
+                item.getWidth(),
+                item.getHeight(),
+                item.getWeight(),
                 itemDto.getMember(),
 
                 itemDto.getThumbnail(),
@@ -100,13 +114,21 @@ public class ReadItemDto {
 
                 routeOrderingDto.getLifecycleStatus(),//develop이나 release 중 하나
 
-                routeOrderingDto.getId()
+                routeOrderingDto.getId(),
+
+                item.getCreatedAt(),
+                MemberDto.toDto(item.getMember()),
+
+                item.getModifier()==null?null:item.getModifiedAt(),
+                item.getModifier()==null?null:MemberDto.toDto(item.getModifier())
+
 
         );
     }
 
 
     public static ReadItemDto noRoutetoDto(
+            Item item,
             ItemDto itemDto,
             List<RouteOrderingDto> routeDtoList,
             List<String> partnumbers,
@@ -151,7 +173,14 @@ public class ReadItemDto {
                 itemDto.getRevision(),
                 typeList.toString(),
                 "LIFECYCLE_NONE",
-                0L
+                0L,
+
+                item.getCreatedAt(),
+                MemberDto.toDto(item.getMember()),
+
+                item.getModifier()==null?null:item.getModifiedAt(),
+                item.getModifier()==null?null:MemberDto.toDto(item.getModifier())
+
 
         );
     }

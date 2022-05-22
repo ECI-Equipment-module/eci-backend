@@ -200,6 +200,7 @@ public class ItemService {
         if (routeDtoList.size() > 0) {
             //아이템에 딸린 routeDto가 존재할 때
             ReadItemDto readItemDto = ReadItemDto.toDto(
+                    targetItem,
                     ItemDto.toDto(targetItem),
 //                    routeDtoList,
                     //최신 라우트
@@ -228,6 +229,7 @@ public class ItemService {
         } else {
             //route 가 존재하지 않을 시
             ReadItemDto readItemDto = ReadItemDto.noRoutetoDto(
+                    itemRepository.findById(id).orElseThrow(ItemNotFoundException::new),
                     ItemDto.toDto(
                             itemRepository.findById(id).orElseThrow(ItemNotFoundException::new)
                     ),
