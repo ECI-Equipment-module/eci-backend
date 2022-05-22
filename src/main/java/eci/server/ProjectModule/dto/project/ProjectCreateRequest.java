@@ -37,30 +37,20 @@ public class ProjectCreateRequest {
     @NotNull(message = "프로젝트 타입을 입력해주세요.")
     private Long projectTypeId;
 
-    @NotNull(message = "시작 시기를 입력해주세요.")
     private String protoStartPeriod;
 
-    @NotNull(message = "종료 시기를 입력해주세요.")
     private String protoOverPeriod;
 
-
-    @NotNull(message = "시작 시기를 입력해주세요.")
     private String p1StartPeriod;
 
-    @NotNull(message = "종료 시기를 입력해주세요.")
     private String p1OverPeriod;
 
-
-    @NotNull(message = "시작 시기를 입력해주세요.")
     private String p2StartPeriod;
 
-    @NotNull(message = "종료 시기를 입력해주세요.")
     private String p2OverPeriod;
 
-    @NotNull(message = "시작 시기를 입력해주세요.")
     private String sopStartPeriod;
 
-    @NotNull(message = "종료 시기를 입력해주세요.")
     private String sopOverPeriod;
     // 로그인 된 멤버 자동 주입
     @Null
@@ -81,10 +71,11 @@ public class ProjectCreateRequest {
 
     private Long clientOrganizationId; //양산 아니면 없어도 됨
 
-    @NotNull(message = "생산사를 입력해주세요.")
+    //@NotNull(message = "생산사를 입력해주세요.")
     private Long produceOrganizationId;
 
-    private Long carType; //양산 아니면 없어도 됨
+    @NotNull(message = "차종을 입력해주세요.")
+    private Long carType;
 
     private String clientItemNumber;
 
@@ -100,29 +91,31 @@ public class ProjectCreateRequest {
             CarTypeRepository carTypeRepository
             ) {
 
+
+
         if(req.projectLevelId==99999L ||
-        req.clientOrganizationId == 99999L ||
-        req.produceOrganizationId ==99999L ||
+        req.carType == 99999L ||
+        req.projectTypeId ==99999L ||
         req.getItemId()==99999L
         ){
                 //TODO : id에러 던지기 - 다음 브랜치에서
         }
 
-        //양산 개발의 아이디가 1 (Long)
-        if (req.projectTypeId.equals(1L)) {
-            //TODO 프로젝트 타입이 양산개발이라면 필수 속성은 고객사 / 차종 은 null 이 되면 안됨 검사
-            if (req.clientOrganizationId == null || req.carType== null)
-                throw new MassProductionSaveException();
-
-        } else if ( //필수 속성 중 저장 안된 부분 있나 체크
-            //TODO 필수 속성 부분 체크 needed
-                req.projectTypeId.toString().isBlank() ||
-                        req.projectLevelId.toString().isBlank() ||
-                        req.name.isBlank() || req.itemId.toString().isBlank()
-        ) {
-
-            throw new ProjectCreateNotEmptyException();
-        }
+//        //양산 개발의 아이디가 1 (Long)
+//        if (req.projectTypeId.equals(1L)) {
+//            //TODO 프로젝트 타입이 양산개발이라면 필수 속성은 고객사 / 차종 은 null 이 되면 안됨 검사
+//            if (req.clientOrganizationId == null || req.carType== null)
+//                throw new MassProductionSaveException();
+//
+//        } else if ( //필수 속성 중 저장 안된 부분 있나 체크
+//            //TODO 필수 속성 부분 체크 needed
+//                req.projectTypeId.toString().isBlank() ||
+//                        req.projectLevelId.toString().isBlank() ||
+//                        req.name.isBlank() || req.itemId.toString().isBlank()
+//        ) {
+//
+//            throw new ProjectCreateNotEmptyException();
+//        }
 
         Integer year = Calendar.getInstance().get(Calendar.YEAR);
 
@@ -137,13 +130,13 @@ public class ProjectCreateRequest {
             finalProjNum = "N-" + year.toString() + "-" + projectNum;
         }
 
-        Long clientOrgId = 100000L;
-        clientOrgId = req.clientOrganizationId == null ? 100000L :
-                //null이 아니라면
-                req.clientOrganizationId == 99999L?
-                        100000L
-                :
-                    req.clientOrganizationId;
+//        Long clientOrgId = 100000L;
+//        clientOrgId = req.clientOrganizationId == null ? 100000L :
+//                //null이 아니라면
+//                req.clientOrganizationId == 99999L?
+//                        100000L
+//                :
+//                    req.clientOrganizationId;
 
 
 
@@ -156,19 +149,19 @@ public class ProjectCreateRequest {
 
                     finalProjNum,
 
-                    req.clientItemNumber,
+                    req.clientItemNumber.isEmpty()?null:req.clientItemNumber,
 
-                    LocalDate.parse(req.protoStartPeriod, DateTimeFormatter.ISO_DATE),
-                    LocalDate.parse(req.protoOverPeriod, DateTimeFormatter.ISO_DATE),
+                    req.protoStartPeriod.isEmpty()?null:LocalDate.parse(req.protoStartPeriod, DateTimeFormatter.ISO_DATE),
+                    req.protoOverPeriod.isEmpty()?null:LocalDate.parse(req.protoOverPeriod, DateTimeFormatter.ISO_DATE),
 
-                    LocalDate.parse(req.p1StartPeriod, DateTimeFormatter.ISO_DATE),
-                    LocalDate.parse(req.p1OverPeriod, DateTimeFormatter.ISO_DATE),
+                    req.p1StartPeriod.isEmpty()?null:LocalDate.parse(req.p1StartPeriod, DateTimeFormatter.ISO_DATE),
+                    req.p1OverPeriod.isEmpty()?null:LocalDate.parse(req.p1OverPeriod, DateTimeFormatter.ISO_DATE),
 
-                    LocalDate.parse(req.p2StartPeriod, DateTimeFormatter.ISO_DATE),
-                    LocalDate.parse(req.p2OverPeriod, DateTimeFormatter.ISO_DATE),
+                    req.p2StartPeriod.isEmpty()?null:LocalDate.parse(req.p2StartPeriod, DateTimeFormatter.ISO_DATE),
+                    req.p2OverPeriod.isEmpty()?null:LocalDate.parse(req.p2OverPeriod, DateTimeFormatter.ISO_DATE),
 
-                    LocalDate.parse(req.sopStartPeriod, DateTimeFormatter.ISO_DATE),
-                    LocalDate.parse(req.sopOverPeriod, DateTimeFormatter.ISO_DATE),
+                    req.sopStartPeriod.isEmpty()?null:LocalDate.parse(req.sopStartPeriod, DateTimeFormatter.ISO_DATE),
+                    req.sopOverPeriod.isEmpty()?null:LocalDate.parse(req.sopOverPeriod, DateTimeFormatter.ISO_DATE),
 
                     itemRepository.findById(req.itemId)
                             .orElseThrow(ItemNotFoundException::new),
@@ -187,11 +180,12 @@ public class ProjectCreateRequest {
                     projectLevelRepository.findById(req.projectLevelId)
                             .orElseThrow(ProjectLevelNotFoundException::new),
                     // 예외 만들기
-                    produceOrganizationRepository.findById(req.produceOrganizationId)
+                    req.produceOrganizationId==null?null:
+                            produceOrganizationRepository.findById(req.produceOrganizationId)
                             .orElseThrow(ProduceOrganizationNotFoundException::new),
                     // 예외 만들기
-
-                    clientOrganizationRepository.findById(clientOrgId)
+                    req.getClientOrganizationId()==null?null:
+                            clientOrganizationRepository.findById(req.getClientOrganizationId())
                             .orElseThrow(ClientOrganizationNotFoundException::new),
                     // 예외 만들기
 
@@ -212,18 +206,17 @@ public class ProjectCreateRequest {
 
                     req.clientItemNumber,
 
+                    req.protoStartPeriod.isEmpty()?null:LocalDate.parse(req.protoStartPeriod, DateTimeFormatter.ISO_DATE),
+                    req.protoOverPeriod.isEmpty()?null:LocalDate.parse(req.protoOverPeriod, DateTimeFormatter.ISO_DATE),
 
-                    LocalDate.parse(req.protoStartPeriod, DateTimeFormatter.ISO_DATE),
-                    LocalDate.parse(req.protoOverPeriod, DateTimeFormatter.ISO_DATE),
+                    req.p1StartPeriod.isEmpty()?null:LocalDate.parse(req.p1StartPeriod, DateTimeFormatter.ISO_DATE),
+                    req.p1OverPeriod.isEmpty()?null:LocalDate.parse(req.p1OverPeriod, DateTimeFormatter.ISO_DATE),
 
-                    LocalDate.parse(req.p1StartPeriod, DateTimeFormatter.ISO_DATE),
-                    LocalDate.parse(req.p1OverPeriod, DateTimeFormatter.ISO_DATE),
+                    req.p2StartPeriod.isEmpty()?null:LocalDate.parse(req.p2StartPeriod, DateTimeFormatter.ISO_DATE),
+                    req.p2OverPeriod.isEmpty()?null:LocalDate.parse(req.p2OverPeriod, DateTimeFormatter.ISO_DATE),
 
-                    LocalDate.parse(req.p2StartPeriod, DateTimeFormatter.ISO_DATE),
-                    LocalDate.parse(req.p2OverPeriod, DateTimeFormatter.ISO_DATE),
-
-                    LocalDate.parse(req.sopStartPeriod, DateTimeFormatter.ISO_DATE),
-                    LocalDate.parse(req.sopOverPeriod, DateTimeFormatter.ISO_DATE),
+                    req.sopStartPeriod.isEmpty()?null:LocalDate.parse(req.sopStartPeriod, DateTimeFormatter.ISO_DATE),
+                    req.sopOverPeriod.isEmpty()?null:LocalDate.parse(req.sopOverPeriod, DateTimeFormatter.ISO_DATE),
 
                     itemRepository.findById(req.itemId)
                             .orElseThrow(ItemNotFoundException::new),
@@ -243,11 +236,13 @@ public class ProjectCreateRequest {
                     projectLevelRepository.findById(req.projectLevelId)
                             .orElseThrow(ProjectLevelNotFoundException::new),
                     // 예외 만들기
+                    req.produceOrganizationId==null?null:
                     produceOrganizationRepository.findById(req.produceOrganizationId)
                             .orElseThrow(ProduceOrganizationNotFoundException::new),
                     // 예외 만들기
 
-                    clientOrganizationRepository.findById(clientOrgId)
+                    req.getClientOrganizationId()==null?null:
+                            clientOrganizationRepository.findById(req.getClientOrganizationId())
                             .orElseThrow(ClientOrganizationNotFoundException::new),
                     // 예외 만들기
 
