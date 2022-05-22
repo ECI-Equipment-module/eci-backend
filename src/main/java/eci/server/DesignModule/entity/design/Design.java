@@ -111,7 +111,7 @@ public class Design extends EntityDate {
 
             Boolean tempsave,
             Boolean readonly,
-            List<DesignAttachment> projectAttachments
+            List<DesignAttachment> designAttachments
 
 
     ) {
@@ -133,7 +133,7 @@ public class Design extends EntityDate {
      *
      */
     private void addDesignAttachments(List<DesignAttachment> added) {
-        added.forEach(i -> {
+        added.stream().forEach(i -> {
             designAttachments.add(i);
             i.initDesign(this);
         });
