@@ -31,6 +31,9 @@ public class ProjectUpdateRequest {
     @Null
     private Long memberId;
 
+    @Null
+    private Long modifierId; //05-22
+
     private Long itemId;
 
     private Long projectLevelId;

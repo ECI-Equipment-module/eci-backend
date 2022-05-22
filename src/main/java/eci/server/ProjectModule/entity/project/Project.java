@@ -5,7 +5,9 @@ import eci.server.ItemModule.entity.entitycommon.EntityDate;
 import eci.server.ItemModule.entity.item.*;
 import eci.server.ItemModule.entity.member.Member;
 import eci.server.ItemModule.exception.item.ItemNotFoundException;
+import eci.server.ItemModule.exception.member.sign.MemberNotFoundException;
 import eci.server.ItemModule.repository.item.ItemRepository;
+import eci.server.ItemModule.repository.member.MemberRepository;
 import eci.server.ProjectModule.dto.project.ProjectUpdateRequest;
 import eci.server.ProjectModule.entity.projectAttachment.ProjectAttachment;
 import eci.server.ProjectModule.exception.*;
@@ -93,6 +95,12 @@ public class Project extends EntityDate {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Member member;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(
+            name = "modifier_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private Member modifier;
+
     @Column(nullable = false)
     private Boolean tempsave;
 
@@ -141,8 +149,6 @@ public class Project extends EntityDate {
     @Column
     private char revision;
 
-
-
     public Project(
             String name,
             String projectNumber,
@@ -183,6 +189,7 @@ public class Project extends EntityDate {
         this.projectNumber = projectNumber;
 
         this.member = member;
+        //생성 시에는 수정자 저장하지 않을 것이다.
 
         this.tempsave = tempsave;
         this.readonly = readonly;
@@ -330,7 +337,8 @@ public class Project extends EntityDate {
             ProjectLevelRepository projectLevelRepository,
             ProduceOrganizationRepository produceOrganizationRepository,
             ClientOrganizationRepository clientOrganizationRepository,
-            CarTypeRepository carTypeRepository
+            CarTypeRepository carTypeRepository,
+            MemberRepository memberRepository
     )
 
     {
@@ -428,8 +436,13 @@ public class Project extends EntityDate {
                 resultAttachment//, updatedAddedProjectAttachmentList
         );
 
-        this.clientItemNumber = req.getClientItemNumber().isBlank() ?
-                this.clientItemNumber : req.getClientItemNumber();
+        this.clientItemNumber = req.getClientItemNumber()==null ?
+                null : req.getClientItemNumber();
+
+        this.modifier =
+                memberRepository.findById(
+                        req.getModifierId()
+                ).orElseThrow(MemberNotFoundException::new);//05 -22 생성자 추가
 
 
         return fileUpdatedResult;
