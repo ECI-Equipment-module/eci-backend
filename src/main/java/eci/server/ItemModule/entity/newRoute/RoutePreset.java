@@ -8,6 +8,9 @@ import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 @Component
 @RequiredArgsConstructor
 @AllArgsConstructor
@@ -103,7 +106,13 @@ public class RoutePreset {
 
     };
 
-    ///////////////////////////////////////////////////////////////////////////////////
+    /**
+     * 리뷰 대상인 타입 아이디
+     */
+    public String[] reviewRouteList = {"4", "5", "6", "12"};
+    public ArrayList<String> reviewRouteArrList = new ArrayList<>(Arrays.asList(reviewRouteList));
+
+
 
     public String[][] projectRouteName = {
 

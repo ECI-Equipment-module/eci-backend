@@ -1,4 +1,4 @@
-package eci.server.ItemModule.dto.newRoute;
+package eci.server.ItemModule.dto.newRoute.routeProduct;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import eci.server.ItemModule.dto.member.MemberDto;

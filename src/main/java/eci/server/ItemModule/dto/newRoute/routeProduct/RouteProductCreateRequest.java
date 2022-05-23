@@ -1,5 +1,6 @@
-package eci.server.ItemModule.dto.newRoute;
+package eci.server.ItemModule.dto.newRoute.routeProduct;
 
+import eci.server.ItemModule.dto.newRoute.routeOrdering.RouteOrderingCreateRequest;
 import eci.server.ItemModule.entity.item.ItemType;
 import eci.server.ItemModule.entity.member.Member;
 import eci.server.ItemModule.entity.newRoute.RouteOrdering;

@@ -2,9 +2,7 @@ package eci.server.ItemModule.dto.item;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import eci.server.ItemModule.dto.member.MemberDto;
-import eci.server.ItemModule.dto.newRoute.RouteOrderingDto;
 import eci.server.ItemModule.entity.item.Attachment;
-import eci.server.ProjectModule.entity.projectAttachment.ProjectAttachment;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

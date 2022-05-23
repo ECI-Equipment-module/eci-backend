@@ -1,12 +1,10 @@
-package eci.server.ItemModule.dto.newRoute;
-
+package eci.server.ItemModule.dto.newRoute.routeOrdering;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.Lob;
-import javax.validation.constraints.NotNull;
 
 @Data
 @NoArgsConstructor
@@ -19,12 +17,7 @@ import javax.validation.constraints.NotNull;
  *
  * update request => newRouteUpdateRequest(newRoute.getPresent()+1)
  */
-public class RouteOrderingRejectRequest {
-
-    @NotNull(message = "거절될 sequence 를 입력해주세요")
-    private Integer rejectedSequence;
-
-    @NotNull(message = "거부 코멘트를 입력해주세요")
+public class RouteOrderingUpdateRequest {
     @Lob
     private String comment;
 

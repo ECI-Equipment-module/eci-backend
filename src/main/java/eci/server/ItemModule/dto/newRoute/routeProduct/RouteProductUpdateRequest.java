@@ -1,4 +1,4 @@
-package eci.server.ItemModule.dto.newRoute;
+package eci.server.ItemModule.dto.newRoute.routeProduct;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

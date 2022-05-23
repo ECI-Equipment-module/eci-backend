@@ -1,7 +1,7 @@
 package eci.server.ItemModule.entity.newRoute;
 
 import eci.server.DesignModule.entity.design.Design;
-import eci.server.ItemModule.dto.newRoute.RouteProductUpdateRequest;
+import eci.server.ItemModule.dto.newRoute.routeProduct.RouteProductUpdateRequest;
 import eci.server.ItemModule.entity.member.Member;
 import eci.server.ItemModule.entitycommon.EntityDate;
 import eci.server.ItemModule.exception.route.RouteProductNotFoundException;

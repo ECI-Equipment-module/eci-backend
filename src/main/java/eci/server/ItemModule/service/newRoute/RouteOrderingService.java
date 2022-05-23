@@ -3,11 +3,13 @@ package eci.server.ItemModule.service.newRoute;
 import eci.server.DesignModule.entity.design.Design;
 import eci.server.DesignModule.exception.DesignNotLinkedException;
 import eci.server.DesignModule.repository.DesignRepository;
-import eci.server.ItemModule.dto.newRoute.*;
-import eci.server.ItemModule.entity.item.ItemType;
+import eci.server.ItemModule.dto.newRoute.routeOrdering.*;
+import eci.server.ItemModule.dto.newRoute.routeProduct.RouteProductCreateRequest;
+import eci.server.ItemModule.dto.newRoute.routeProduct.RouteProductDto;
 import eci.server.ItemModule.entity.newRoute.RouteOrdering;
 import eci.server.ItemModule.entity.newRoute.RoutePreset;
 import eci.server.ItemModule.entity.newRoute.RouteProduct;
+import eci.server.ItemModule.exception.route.RejectImpossibleException;
 import eci.server.ItemModule.exception.route.RouteNotFoundException;
 import eci.server.ItemModule.exception.route.UpdateImpossibleException;
 import eci.server.ItemModule.repository.item.ItemRepository;
@@ -24,7 +26,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -85,13 +89,13 @@ public class RouteOrderingService {
 
                 );
 
-        for(RouteProduct routeProduct : routeProductList ){
+        for (RouteProduct routeProduct : routeProductList) {
 
             RouteProduct routeProduct1 =
                     routeProductRepository.save(routeProduct);
             System.out.println(routeProduct1.getRoute_name());
-                    System.out.println(routeProduct1.getMembers().get(0).getMember());
-                    System.out.println(routeProduct1.getMembers().get(0).getRouteProduct());
+            System.out.println(routeProduct1.getMembers().get(0).getMember());
+            System.out.println(routeProduct1.getMembers().get(0).getRouteProduct());
         }
 
         return new RouteOrderingCreateResponse(newRoute.getId());
@@ -119,7 +123,7 @@ public class RouteOrderingService {
         List<RouteProduct> addedProducts = new ArrayList<>();
 
         // 새로 만들어진 애들 저장
-        for(RouteProduct routeProduct:rejectUpdatedRouteProductList){
+        for (RouteProduct routeProduct : rejectUpdatedRouteProductList) {
             addedProducts.add(routeProductRepository.save(routeProduct));
         }
 
@@ -135,10 +139,10 @@ public class RouteOrderingService {
 
 
         List<RouteProduct> deletedList =
-        //isShow 가 false 인 것은 삭제 처리
+                //isShow 가 false 인 것은 삭제 처리
                 routeProductRepository.findAllByRouteOrdering(routeOrdering)
                         .subList(
-                                routeOrdering.getPresent()-1,
+                                routeOrdering.getPresent() - 1,
                                 routeProductRepository.findAllByRouteOrdering(routeOrdering).size()
                         )
                         .stream().filter(
@@ -149,7 +153,7 @@ public class RouteOrderingService {
                         );
 
         //본격 삭제 진행
-        for(RouteProduct routeProduct : deletedList){
+        for (RouteProduct routeProduct : deletedList) {
             routeProductRepository.delete(routeProduct);
         }
 
@@ -171,17 +175,16 @@ public class RouteOrderingService {
                 .findAllByRouteOrdering(routeOrdering);
 
         //현재 진행중인 라우트프로덕트
-        if(routeOrdering.getLifecycleStatus().equals("COMPLETE")){
+        if (routeOrdering.getLifecycleStatus().equals("COMPLETE")) {
             throw new UpdateImpossibleException();
         }
 
-        if(presentRouteProductCandidate.size()==routeOrdering.getPresent()){
+        if (presentRouteProductCandidate.size() == routeOrdering.getPresent()) {
             //만약 present 가 끝까지 닿았으면 현재 complete 된 상황!
             routeOrdering.updateToComplete();
             //throw new UpdateImpossibleException();
 
-        }
-        else {
+        } else {
             RouteProduct targetRoutProduct = presentRouteProductCandidate.get(routeOrdering.getPresent());
 
             // TODO : 함수로 따로 빼기 availableAccept("route_name)
@@ -221,7 +224,7 @@ public class RouteOrderingService {
                                             designRepository.findByItem(routeOrdering.getItem()).size() - 1
                                     );
                     //만약 지금 rejected 가 true였다면 , 이제 새로 다시 넣어주는 것이니깐 rejected풀어주기
-                    if(targetRoutProduct.isRejected()){
+                    if (targetRoutProduct.isRejected()) {
                         targetRoutProduct.setRejected(false);
                     }
                     //그 프로젝트를 라우트 프로덕트에 set 해주기
@@ -239,6 +242,85 @@ public class RouteOrderingService {
                             );
         }
         return new RouteUpdateResponse(id);
+    }
+
+    /**
+     * 라우트 오더링 아이디 전달, 거절 가능한 라우트 프로덕트 아이디 돌려주기
+     *0523
+     * @param id
+     * @return
+     */
+    @Transactional
+    public RouteRejectPossibleResponse rejectPossible(Long id) {
+
+        RouteOrdering routeOrdering = routeOrderingRepository
+                .findById(id)
+                .orElseThrow(RouteNotFoundException::new);
+
+        //라우트 오더링의 라우트 리스트
+        List<RouteProduct> presentRouteProductCandidate = routeProductRepository
+                .findAllByRouteOrdering(routeOrdering);
+
+        //라우트 리스트 처음부터 거절 주체 전까지
+        List<RouteProduct> routeProductRejectCandidates =
+                presentRouteProductCandidate.subList(0, routeOrdering.getPresent() + 1);
+
+        //CASE1 ) 거절 주체가 되는 라우트
+        RouteProduct targetRoutProduct = presentRouteProductCandidate.get(routeOrdering.getPresent());
+
+        // 거절 가능애들 담을 아이디 리스트
+        List<Long> rejectPossibleIdList = new ArrayList<>();
+
+        //CASE1 ) 만약 이전에 있는 것 모두 거절가능하다면
+//        for(RouteProduct routeProduct : routeProductRejectCandidates){
+//                if()
+//            }
+
+        //CASE2 )
+        // 리뷰만 거절 가능하므로 리뷰인지 검증 (타입 -4,5,6,12)
+        // => 거절 가능타입 검증
+        // => DISABLE 아닌지 검증
+        // =>
+        if (routePreset.reviewRouteArrList.contains(targetRoutProduct.getId().toString())) {
+            //만약 리뷰타입의 라우트라면
+            Long rejectPossibleTypeId = null;
+
+
+
+            switch (targetRoutProduct.getId().toString()) {
+                case "4":         // 아이템 리뷰인 경우
+                    rejectPossibleTypeId = 1L;
+                    break;
+                case "5":            // 플젝 리뷰
+                    rejectPossibleTypeId = 2L;
+                    break;
+                case "6":            // 디자인 리뷰
+                    rejectPossibleTypeId = 3L;
+                    break;
+                case "12":            // 봄 리뷰
+                    rejectPossibleTypeId = 11L;
+                    break;
+                default:        // 모두 해당이 안되는 경우
+                    //에러 던지기
+                    rejectPossibleTypeId = 0L;
+                    break;
+            }
+
+            for (RouteProduct routeProduct : routeProductRejectCandidates) {
+
+                if (Objects.equals(routeProduct.getType().getId(), rejectPossibleTypeId)
+                        && !(routeProduct.isDisabled())) {
+                    rejectPossibleIdList.add(routeProduct.getId());
+                }
+
+            }
+
+        }
+
+        if(rejectPossibleIdList.size()==0){
+            throw new RejectImpossibleException();
+        }
+        return new RouteRejectPossibleResponse(rejectPossibleIdList);
     }
 
 }

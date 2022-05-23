@@ -1,8 +1,7 @@
-package eci.server.ItemModule.dto.newRoute;
+package eci.server.ItemModule.dto.newRoute.routeOrdering;
 
 import eci.server.ItemModule.entity.item.Item;
 import eci.server.ItemModule.entity.item.ItemType;
-import eci.server.ItemModule.entity.newRoute.RouteType;
 import eci.server.ItemModule.entity.newRoute.RouteOrdering;
 import eci.server.ItemModule.entity.newRoute.RoutePreset;
 import eci.server.ItemModule.exception.item.ItemNotFoundException;
