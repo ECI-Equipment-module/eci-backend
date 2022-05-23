@@ -230,9 +230,7 @@ public class RouteOrderingService {
                     linkedDesign.finalSaveDesign();
                 }
             }
-            /////////////////////////////////////////////////////////////////////////////////////
 
-            //////////////////////////////////////////////////////////
             RouteOrderingUpdateRequest newRouteUpdateRequest =
                     routeOrdering
                             .update(

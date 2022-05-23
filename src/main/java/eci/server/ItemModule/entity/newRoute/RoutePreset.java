@@ -66,10 +66,12 @@ public class RoutePreset {
             {"REQUEST", "REVIEW", "COMPLETE"},
             //type 1
 
-            {"REQUEST", "CREATE", "REVIEW", "COMPLETE"},
+            {"REQUEST", "REVIEW", "CREATE", "REVIEW", "COMPLETE"},
             //type 2
 
-            {"REQUEST", "CREATE","REVIEW", "CREATE", "REVIEW", "COMPLETE"},
+            {"REQUEST", "REVIEW", "CREATE","REVIEW", "CREATE", "REVIEW", "COMPLETE"},
+
+            //type 3
 
             {"REQUEST", "CREATE", "CREATE", "REVIEW", "CREATE", "REVIEW", "COMPLETE"}
 
