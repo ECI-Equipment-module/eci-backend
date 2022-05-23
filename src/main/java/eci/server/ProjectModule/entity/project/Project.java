@@ -428,9 +428,14 @@ public class Project extends EntityDate {
                         req.getAddedAttachments(),
                         req.getDeletedAttachments()
                 );
-        addUpdatedProjectAttachments(req, resultAttachment.getAddedAttachments());
-        //addProjectAttachments(resultAttachment.getAddedAttachments());
-        deleteProjectAttachments(resultAttachment.getDeletedAttachments());
+        if(req.getAddedTag().size()>0) {
+            addUpdatedProjectAttachments(req, resultAttachment.getAddedAttachments());
+            //addProjectAttachments(resultAttachment.getAddedAttachments());
+        }
+
+        if(req.getDeletedAttachments().size()>0) {
+            deleteProjectAttachments(resultAttachment.getDeletedAttachments());
+        }
 
         FileUpdatedResult fileUpdatedResult = new FileUpdatedResult(
                 resultAttachment//, updatedAddedProjectAttachmentList

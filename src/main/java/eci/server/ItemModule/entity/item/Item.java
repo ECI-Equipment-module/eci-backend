@@ -4,11 +4,18 @@ import eci.server.ItemModule.dto.item.ItemUpdateRequest;
 
 import eci.server.ItemModule.entity.entitycommon.EntityDate;
 import eci.server.ItemModule.entity.material.ItemMaterial;
+import eci.server.ItemModule.entity.material.ItemMaterialId;
 import eci.server.ItemModule.entity.material.Material;
 import eci.server.ItemModule.entity.member.Member;
 import eci.server.ItemModule.exception.item.ColorNotFoundException;
+import eci.server.ItemModule.exception.item.ManufactureNotFoundException;
+import eci.server.ItemModule.exception.item.MaterialNotFoundException;
 import eci.server.ItemModule.exception.member.sign.MemberNotFoundException;
 import eci.server.ItemModule.repository.color.ColorRepository;
+import eci.server.ItemModule.repository.item.ItemManufactureRepository;
+import eci.server.ItemModule.repository.item.ItemMaterialRepository;
+import eci.server.ItemModule.repository.manufacture.ManufactureRepository;
+import eci.server.ItemModule.repository.material.MaterialRepository;
 import eci.server.ItemModule.repository.member.MemberRepository;
 import lombok.*;
 import org.hibernate.annotations.OnDelete;
@@ -21,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static java.util.stream.Collectors.toList;
 
@@ -283,8 +291,14 @@ public class Item extends EntityDate {
     public FileUpdatedResult update(
             ItemUpdateRequest req,
             ColorRepository colorRepository,
-            MemberRepository memberRepository
+            MemberRepository memberRepository,
+            MaterialRepository materialRepository,
+            ManufactureRepository manufactureRepository,
+            ItemManufactureRepository itemManufactureRepository,
+            ItemMaterialRepository itemMaterialRepository
     ) {
+        AtomicInteger k = new AtomicInteger();
+
         //TODO update할 때 사용자가 기존 값 없애고 보낼 수도 있자나 => fix needed
         //isBlank 랑 isNull로 판단해서 기존 값 / req 값 채워넣기
         this.name = req.getName();
@@ -293,8 +307,71 @@ public class Item extends EntityDate {
         this.height = req.getHeight();
         this.weight = req.getWeight();
 
-        this.color = colorRepository.findById(Long.valueOf(req.getColorId()))
+        this.color = req.getColorId()==null?null:colorRepository.findById(Long.valueOf(req.getColorId()))
                 .orElseThrow(ColorNotFoundException::new);
+//
+//        if (req.getMaterials().size()>0) {
+//
+////            for(ItemMaterial itemMaterial : this.materials){
+////                ItemMaterial clearedItemMaterial =
+////                        itemMaterialRepository.findByItemAndMaterial(
+////                        itemMaterial.getItem(), itemMaterial.getMaterial()
+////                );
+////                itemMaterialRepository.delete(clearedItemMaterial);
+////            }
+//
+//            this.materials.clear();
+//
+//            this.materials.addAll(
+//                    req.getMaterials().stream().map(
+//                                    i ->
+//                                            materialRepository.
+//                                                    findById(i).orElseThrow(MaterialNotFoundException::new)
+//                            ).collect(
+//                                    toList()
+//                            )
+//                            .stream().map(
+//                                    r -> new ItemMaterial(
+//                                            this, r)
+//                            )
+//                            .collect(toList())
+//            );
+//        }
+//
+//
+//        if(req.getManufactures().size()>0){
+//
+////            for(ItemManufacture itemManufacture : this.manufactures){
+////                ItemManufacture clearedItemManufacture =
+////                        itemManufactureRepository.findByItemAndManufacture(
+////                                itemManufacture.getItem(), itemManufacture.getManufacture()
+////                        );
+////                itemManufactureRepository.delete(clearedItemManufacture);
+////            }
+//
+//            this.manufactures.clear();
+//
+//
+//            this.manufactures.addAll(
+//                    req.getManufactures().stream().map(
+//                                    i ->
+//                                            manufactureRepository.
+//                                                    findById(i).orElseThrow(ManufactureNotFoundException::new)
+//                            ).collect(
+//                                    toList()
+//                            ).stream().map(
+//
+//                                    //다대다 관계를 만드는 구간
+//                                    r -> new ItemManufacture(
+//                                            this, r, req.getPartnumbers().
+//                                            get(k.getAndIncrement())
+//                                    )
+//                            )
+//                            .collect(toList())
+//                    );
+//        }
+
+
 
         ImageUpdatedResult resultImage =
                 findImageUpdatedResult(

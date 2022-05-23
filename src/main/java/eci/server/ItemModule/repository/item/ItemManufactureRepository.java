@@ -10,6 +10,7 @@ import java.util.Optional;
 
 public interface ItemManufactureRepository extends JpaRepository<ItemManufacture, Long>{
 
-    ItemManufacture findByItemAndManufacture(Optional<Item> item, Optional<Manufacture> manufacture);
+    ItemManufacture findByItemAndManufacture(Item item, Manufacture manufacture);
     List<ItemManufacture> findByItem(Item item);
+    List<ItemManufacture> findByManufacture(Manufacture manufacture);
 }
