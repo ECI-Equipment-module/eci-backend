@@ -29,7 +29,8 @@ public class RoutePreset {
                 "Item(외주구매품 단순)신청 Request(설계자)",
                     "Item(원재료) Request Review(설계팀장)", //05-23 추가
                     "기구Design생성[설계자]",
-                    "기구Design Review[설계팀장]", "Item(외주구매품 단순) Complete"
+                    "기구Design Review[설계팀장]",
+                    "Item(외주구매품 단순) Complete"
 
             },
             //type 2 - 외주구매품(단순)
@@ -38,7 +39,9 @@ public class RoutePreset {
                     "Item(원재료) Request Review(설계팀장)", //05-23 추가
                     "기구Design생성[설계자]",
                     "기구Design Review[설계팀장]",
-                    "개발BOM생성[설계자]", "개발BOM Review[설계팀장]", "Item(제품)및 Project Complete"
+                    "개발BOM생성[설계자]",
+                    "개발BOM Review[설계팀장]",
+                    "Item(제품)및 Project Complete"
 
 
             },
@@ -88,10 +91,10 @@ public class RoutePreset {
             {"ITEM", "ITEM", "ITEM", "ITEM"},
             //type 1
 
-            {"ITEM", "DESIGN", "DESIGN", "ITEM"},
+            {"ITEM", "ITEM", "DESIGN", "DESIGN", "ITEM"},
             //type2
 
-            {"ITEM", "DESIGN", "DESIGN", "BOM", "BOM", "ITEM"},
+            {"ITEM", "ITEM", "DESIGN", "DESIGN", "BOM", "BOM", "ITEM"},
             //type3
 
             {"ITEM", "PROJECT", "DESIGN", "DESIGN", "BOM", "BOM", "ITEM" }
