@@ -78,7 +78,7 @@ public class RouteOrderingController {
      * @param id (라우트오더링)
      * @return
      */
-    @GetMapping("/route/reject/{id}")
+    @GetMapping("/route/reject-possible/{id}")
     @ResponseStatus(HttpStatus.OK)
     public Response possibleRejectRouteProductId(@PathVariable Long id) {
         return Response.success(

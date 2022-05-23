@@ -281,21 +281,22 @@ public class RouteOrderingService {
         // => 거절 가능타입 검증
         // => DISABLE 아닌지 검증
         // =>
-        if (routePreset.reviewRouteArrList.contains(targetRoutProduct.getId().toString())) {
+        if (routePreset.reviewRouteArrList.contains(targetRoutProduct.getType().getId().toString())) {
             //만약 리뷰타입의 라우트라면
             Long rejectPossibleTypeId = null;
 
 
 
-            switch (targetRoutProduct.getId().toString()) {
+            switch (targetRoutProduct.getType().getId().toString()) {
+
                 case "4":         // 아이템 리뷰인 경우
                     rejectPossibleTypeId = 1L;
                     break;
-                case "5":            // 플젝 리뷰
-                    rejectPossibleTypeId = 2L;
+                case "6":            // 플젝 리뷰
+                    rejectPossibleTypeId = 9L;
                     break;
-                case "6":            // 디자인 리뷰
-                    rejectPossibleTypeId = 3L;
+                case "5":            // 디자인 리뷰
+                    rejectPossibleTypeId = 13L;
                     break;
                 case "12":            // 봄 리뷰
                     rejectPossibleTypeId = 11L;
@@ -305,9 +306,12 @@ public class RouteOrderingService {
                     rejectPossibleTypeId = 0L;
                     break;
             }
+            System.out.println("지금 리뷰 대상의 아이디  / 타입 아이디  ");
+            System.out.println(targetRoutProduct.getId().toString());
+            System.out.println(targetRoutProduct.getType().getId().toString());
 
             for (RouteProduct routeProduct : routeProductRejectCandidates) {
-
+                    System.out.println(routeProduct.getType().getId());
                 if (Objects.equals(routeProduct.getType().getId(), rejectPossibleTypeId)
                         && !(routeProduct.isDisabled())) {
                     rejectPossibleIdList.add(routeProduct.getId());
