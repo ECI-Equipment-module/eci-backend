@@ -6,7 +6,9 @@ import eci.server.ItemModule.entity.entitycommon.EntityDate;
 import eci.server.ItemModule.entity.item.Item;
 import eci.server.ItemModule.entity.member.Member;
 import eci.server.ItemModule.exception.item.ItemNotFoundException;
+import eci.server.ItemModule.exception.member.sign.MemberNotFoundException;
 import eci.server.ItemModule.repository.item.ItemRepository;
+import eci.server.ItemModule.repository.member.MemberRepository;
 import eci.server.ProjectModule.dto.project.ProjectUpdateRequest;
 import eci.server.ProjectModule.entity.project.*;
 import eci.server.ProjectModule.entity.projectAttachment.ProjectAttachment;
@@ -54,6 +56,12 @@ public class Design extends EntityDate {
             nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Member member;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(
+            name = "modifier_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private Member modifier;
 
     @Column(nullable = false)
     private Boolean tempsave;
@@ -142,7 +150,8 @@ public class Design extends EntityDate {
 
     public FileUpdatedResult update(
             DesignUpdateRequest req,
-            ItemRepository itemRepository
+            ItemRepository itemRepository,
+            MemberRepository memberRepository
     )
 
 
@@ -168,6 +177,12 @@ public class Design extends EntityDate {
         FileUpdatedResult fileUpdatedResult = new FileUpdatedResult(
                 resultAttachment//, updatedAddedProjectAttachmentList
         );
+
+        this.modifier =
+                memberRepository.findById(
+                        req.getModifierId()
+                ).orElseThrow(MemberNotFoundException::new);//05 -22 생성자 추가
+
 
 
         return fileUpdatedResult;

@@ -28,7 +28,6 @@ public class Member extends EntityDate { // 5
     @Column(name = "member_id")
     private Long id;
 
-
     @Column(nullable = false, length = 30, unique = true)
     private String email;
 
@@ -68,7 +67,7 @@ public class Member extends EntityDate { // 5
             List<Role> roles,
             ProfileImage profileImage
     ) {
-        System.out.println("");
+
         this.email = email;
         this.password = password;
         this.username = username;

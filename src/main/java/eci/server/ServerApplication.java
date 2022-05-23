@@ -7,9 +7,9 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-@EnableJpaAuditing
+
 @SpringBootApplication
-//@SpringBootApplication(scanBasePackages = {"eci.server.ItemModule.entity.item"})
+@EnableJpaAuditing
 public class ServerApplication{
 
 	public static void main(String[] args) {

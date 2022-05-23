@@ -145,7 +145,8 @@ public class DesignService {
 
         Design.FileUpdatedResult result = design.update(
                 req,
-                itemRepository
+                itemRepository,
+                memberRepository
         );
 
 

@@ -18,6 +18,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -70,6 +71,16 @@ public class ProjectDto {
 
     private Long routeId;
 
+    //05-22 추가
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd hh:mm:ss.SSS", timezone = "Asia/Seoul")
+    private LocalDateTime createdAt;
+    private MemberDto creator;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd hh:mm:ss.SSS", timezone = "Asia/Seoul")
+    private LocalDateTime modifiedAt;
+    private MemberDto modifier;
+
+
 
     public static ProjectDto toDto(
             Project project,
@@ -107,8 +118,8 @@ public class ProjectDto {
                 project.getTempsave(),
                 ProjectTypeDto.toDto(project.getProjectType()),
                 ProjectLevelDto.toDto(project.getProjectLevel()),
-                ProduceOrganizationDto.toDto(project.getProduceOrganization()),
-                ClientOrganizationDto.toDto(project.getClientOrganization()),
+                project.getProduceOrganization()==null?null:ProduceOrganizationDto.toDto(project.getProduceOrganization()),
+                project.getClientOrganization()==null?null:ClientOrganizationDto.toDto(project.getClientOrganization()),
 
                 CarTypeDto.toDto(project.getCarType()),
 
@@ -122,7 +133,14 @@ public class ProjectDto {
                 //가장 최신의 라우트 오더링 중 최신의 라우트 오더링 아이디
                 routeOrderingRepository.findByItem(project.getItem()).
                         get(routeOrderingRepository.findByItem(project.getItem()).size() - 1)
-                        .getId()
+                        .getId(),
+
+                //05-22추가
+                project.getCreatedAt(),
+                MemberDto.toDto(project.getMember()),
+
+                project.getModifier()==null?null:project.getModifiedAt(),
+                project.getModifier()==null?null:MemberDto.toDto(project.getModifier())
 
 
         );

@@ -7,6 +7,7 @@ import eci.server.ProjectModule.dto.project.ProjectTemporaryCreateRequest;
 import eci.server.ProjectModule.dto.project.ProjectUpdateRequest;
 import eci.server.ProjectModule.service.ProjectService;
 import eci.server.aop.AssignMemberId;
+import eci.server.aop.AssignModifierId;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -81,6 +82,7 @@ public class ProjectController {
     @CrossOrigin(origins = "https://localhost:3000")
     @PutMapping("/project/{id}")
     @ResponseStatus(HttpStatus.OK)
+    @AssignModifierId //수정자 추가
     public Response update(
             @PathVariable Long id,
             @Valid @ModelAttribute ProjectUpdateRequest req) {
