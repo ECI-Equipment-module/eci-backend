@@ -17,6 +17,7 @@ import eci.server.ItemModule.exception.member.auth.AuthenticationEntryPointExcep
 import eci.server.ItemModule.exception.member.sign.*;
 import eci.server.ItemModule.exception.route.MemberNotAssignedException;
 import eci.server.ItemModule.exception.route.RejectImpossibleException;
+import eci.server.ItemModule.exception.route.RouteNotFoundException;
 import eci.server.ItemModule.exception.route.UpdateImpossibleException;
 import eci.server.ProjectModule.exception.CarTypeNotFoundException;
 import eci.server.ProjectModule.exception.IdNotAppropriateException;
@@ -268,4 +269,12 @@ public class ExceptionAdvice {
         log.info("e = {}", e.getMessage());
         return Response.failure(400, "아이템과 링크된 디자인이 존재하지 않습니다.");
     }
+
+    @ExceptionHandler(RouteNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Response RouteNotFoundException(RouteNotFoundException e) {
+        log.info("e = {}", e.getMessage());
+        return Response.failure(400, "존재하지 않는 라우트입니다.");
+    }
+
 }
