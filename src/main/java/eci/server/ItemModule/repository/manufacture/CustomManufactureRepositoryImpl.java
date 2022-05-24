@@ -26,7 +26,7 @@ public class CustomManufactureRepositoryImpl extends QuerydslRepositorySupport i
 
     private final JPAQueryFactory jpaQueryFactory;
 
-    public CustomManufactureRepositoryImpl(JPAQueryFactory jpaQueryFactory) { // 4
+    public CustomManufactureRepositoryImpl(JPAQueryFactory jpaQueryFactory) {
         super(Manufacture.class);
         this.jpaQueryFactory = jpaQueryFactory;
     }
@@ -39,7 +39,7 @@ public class CustomManufactureRepositoryImpl extends QuerydslRepositorySupport i
     }
 
 
-    private List<ManufactureSimpleDto> fetchAll(Predicate predicate, Pageable pageable) { // 6
+    private List<ManufactureSimpleDto> fetchAll(Predicate predicate, Pageable pageable) {
         return getQuerydsl().applyPagination(
                 pageable,
                 jpaQueryFactory
@@ -55,7 +55,7 @@ public class CustomManufactureRepositoryImpl extends QuerydslRepositorySupport i
         ).fetch();
     }
 
-    private Long fetchCount(Predicate predicate) { // 7
+    private Long fetchCount(Predicate predicate) {
         return jpaQueryFactory.select(
                         manufacture.count()
                 ).from(manufacture).

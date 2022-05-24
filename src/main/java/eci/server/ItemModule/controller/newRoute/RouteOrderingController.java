@@ -1,8 +1,7 @@
 package eci.server.ItemModule.controller.newRoute;
 
 
-import eci.server.ItemModule.dto.newRoute.*;
-import eci.server.ItemModule.dto.newRoute.projectRoute.ProjectRouteOrderingCreateRequest;
+import eci.server.ItemModule.dto.newRoute.routeOrdering.*;
 import eci.server.ItemModule.dto.response.Response;
 import eci.server.ItemModule.service.newRoute.RouteOrderingService;
 import eci.server.aop.AssignMemberId;
@@ -38,16 +37,6 @@ public class RouteOrderingController {
         );
     }
 
-//    @PostMapping("/route/project")
-//    @ResponseStatus(HttpStatus.CREATED)
-//    @AssignMemberId
-//    public Response createRoutes(
-//            @Valid ProjectRouteOrderingCreateRequest req) {
-//
-//        return Response.success(
-//                newRouteService.createProjectRoute(req)
-//        );
-//    }
 
     @GetMapping("/route/{id}")
     @ResponseStatus(HttpStatus.OK)
@@ -84,6 +73,17 @@ public class RouteOrderingController {
         }
     }
 
-
+    /**
+     * 현시점에서 거절가능한 라우트프로덕트 아이디
+     * @param id (라우트오더링)
+     * @return
+     */
+    @GetMapping("/route/reject-possible/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public Response possibleRejectRouteProductId(@PathVariable Long id) {
+        return Response.success(
+                newRouteService.rejectPossible(id)
+        );
+    }
 
 }

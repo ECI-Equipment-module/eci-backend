@@ -36,7 +36,6 @@ public class CustomItemRepositoryImpl extends QuerydslRepositorySupport implemen
 
     public CustomItemRepositoryImpl(JPAQueryFactory jpaQueryFactory) { // 4
         super(Item.class);
-
         this.jpaQueryFactory = jpaQueryFactory;
 
     }
@@ -49,22 +48,12 @@ public class CustomItemRepositoryImpl extends QuerydslRepositorySupport implemen
      * @return Page
      */
     @Override
-    public Page<ItemProjectCreateDto> findAllByCondition(ItemProjectCreateReadCondition cond) { // 5
+    public Page<ItemProjectCreateDto> findAllByCondition(ItemProjectCreateReadCondition cond) {
         Pageable pageable = PageRequest.of(cond.getPage(), cond.getSize());
         Predicate predicate = createPredicate(cond);
         System.out.println(fetchAll(predicate, pageable).toString());
         return new PageImpl<>(fetchAll(predicate, pageable), pageable, fetchCount(predicate));
     }
-
-//    EntityManager em;
-//    JPAQueryFactory jpaQueryFactory1 = new JPAQueryFactory(em);
-//    JPAQuery<String> query = jpaQueryFactory1.select(
-//            itemMaterial.material.name
-//    ).from(itemMaterial.material)
-//            .where(
-//                    item.id.eq(itemMaterial.item.id)
-//            );
-
 
 
     private List<AttachmentSimpleDto> attachmentSimpleDtos(NumberPath<Long> itemId){

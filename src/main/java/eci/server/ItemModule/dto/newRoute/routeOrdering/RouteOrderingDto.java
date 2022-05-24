@@ -1,7 +1,8 @@
-package eci.server.ItemModule.dto.newRoute;
+package eci.server.ItemModule.dto.newRoute.routeOrdering;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import eci.server.ItemModule.dto.newRoute.routeProduct.RouteProductDto;
 import eci.server.ItemModule.entity.newRoute.RouteOrdering;
 import eci.server.ItemModule.repository.newRoute.RouteOrderingRepository;
 import eci.server.ItemModule.repository.newRoute.RouteProductRepository;
@@ -10,6 +11,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
@@ -30,6 +32,9 @@ public class RouteOrderingDto {
     private LocalDateTime createdAt;
     private List<RouteProductDto> routeProductList;
 
+    //05-24 추가
+    private RouteRejectPossibleResponse response;
+
 
     public static List <RouteOrderingDto> toDtoList(
             List <RouteOrdering> NewRoutes,
@@ -37,6 +42,8 @@ public class RouteOrderingDto {
             RouteOrderingRepository routeOrderingRepository
     ) {
 
+        List<SeqAndName> tmpList = new ArrayList<>();
+        RouteRejectPossibleResponse tmpRouteRejectPossibleResponse = new RouteRejectPossibleResponse(tmpList);
 
         List<RouteOrderingDto> newRouteDtos = NewRoutes.stream().map(
                 c -> new RouteOrderingDto(
@@ -52,7 +59,10 @@ public class RouteOrderingDto {
                                 routeProductRepository.findAllByRouteOrdering(
                                         routeOrderingRepository.findById(c.getId()).orElseThrow()
                         )
-                        )
+                        ),
+
+                        tmpRouteRejectPossibleResponse
+
 
 //                        routeProductRepository.findAllByRouteOrdering(
 //                                routeOrderingRepository.findById(c.getId()).orElseThrow()
@@ -68,7 +78,8 @@ public class RouteOrderingDto {
     public static RouteOrderingDto toDto(
             RouteOrdering Route,
             RouteProductRepository routeProductRepository,
-            RouteOrderingRepository routeOrderingRepository
+            RouteOrderingRepository routeOrderingRepository,
+            RouteRejectPossibleResponse routeRejectPossibleResponse
     ) {
 
         return new RouteOrderingDto(
@@ -80,6 +91,7 @@ public class RouteOrderingDto {
                 Route.getRevisedCnt(),
                 Route.getPresent(),
                 Route.getCreatedAt(),
+
                 RouteProductDto.toProductDtoList(
                         routeProductRepository.findAllByRouteOrdering(
                         routeOrderingRepository.findById(
@@ -87,7 +99,9 @@ public class RouteOrderingDto {
                         )
                                 .orElseThrow()
         )
-                )
+                ),
+
+                routeRejectPossibleResponse
 
         );
     }

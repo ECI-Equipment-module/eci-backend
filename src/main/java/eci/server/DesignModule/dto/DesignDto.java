@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import eci.server.DesignModule.entity.design.Design;
 import eci.server.ItemModule.dto.item.ItemProjectDto;
 import eci.server.ItemModule.dto.member.MemberDto;
-import eci.server.ItemModule.dto.newRoute.RouteOrderingDto;
+import eci.server.ItemModule.dto.newRoute.routeOrdering.RouteOrderingDto;
 import eci.server.ItemModule.exception.route.RouteNotFoundException;
 import eci.server.ItemModule.repository.newRoute.RouteOrderingRepository;
 import eci.server.ItemModule.repository.newRoute.RouteProductRepository;

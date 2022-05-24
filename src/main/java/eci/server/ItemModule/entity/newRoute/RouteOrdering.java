@@ -1,6 +1,6 @@
 package eci.server.ItemModule.entity.newRoute;
 
-import eci.server.ItemModule.dto.newRoute.RouteOrderingUpdateRequest;
+import eci.server.ItemModule.dto.newRoute.routeOrdering.RouteOrderingUpdateRequest;
 import eci.server.ItemModule.entity.item.Item;
 import eci.server.ItemModule.entitycommon.EntityDate;
 import eci.server.ItemModule.exception.route.RejectImpossibleException;
@@ -136,7 +136,7 @@ public class RouteOrdering extends EntityDate {
         routeProductList.get(this.present-1).setPassed(true);
 
 
-        if(this.present<=routeProductList.size()-1) {
+        if(this.present<routeProductList.size()-1) {//05-24 <= => < 로 수정
             //지금 들어온 코멘트는 현재 애 다음에
             routeProductList.get(this.present).setComment(req.getComment());
         }else{
@@ -183,12 +183,12 @@ public class RouteOrdering extends EntityDate {
          */
         List<RouteProduct> routeProductList =
                 routeProductRepository.findAllByRouteOrdering(this);
-        System.out.println("현재느으ㅡㅡㅡㅡㅡㅡㅡㅡ은"+this.present+"번 째 여어어어어어");
+
         if(rejectedIndex > this.present || routeProductList.get(rejectedIndex).isDisabled()){
             throw new RejectImpossibleException();
         }
 
-        if(this.present<routeProductList.size()-1) {
+        if(this.present<=routeProductList.size()-1) { //05-23 type 1 오류의 원인이었습니다.
             this.present = this.present + 1;
         }
 
@@ -202,8 +202,10 @@ public class RouteOrdering extends EntityDate {
          * 거절 전의 아이 + 거절주체인 차례 아이도 passed = true로 해주기
          * (수행 된거니깐)
          */
-        routeProductList.get(this.present-2).setPassed(true);
-        routeProductList.get(this.present-1).setPassed(true);
+
+            routeProductList.get(this.present - 2).setPassed(true);//05-23 없애고비
+            routeProductList.get(this.present - 1).setPassed(true);
+
 
         /**
          * 기존 애들 중에서 passed가 false인 애들의 show는 false로 변경해주기

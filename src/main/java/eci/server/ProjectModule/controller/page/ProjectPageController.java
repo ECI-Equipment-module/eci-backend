@@ -1,5 +1,6 @@
 package eci.server.ProjectModule.controller.page;
 
+import eci.server.DashBoardModule.dto.myProject.ProjectDashboardDto;
 import eci.server.ItemModule.repository.newRoute.RouteOrderingRepository;
 import eci.server.ProjectModule.dto.project.ProjectMemberRequest;
 import eci.server.ProjectModule.dto.project.ProjectSimpleDto;
@@ -33,21 +34,21 @@ public class ProjectPageController {
     @CrossOrigin(origins = "https://localhost:3000")
     @GetMapping("/project/page")
     @AssignMemberId
-    public Page<ProjectSimpleDto> pagingProject(@PageableDefault(size=5)
+    public Page<ProjectDashboardDto> pagingProject(@PageableDefault(size=5)
                                                 @SortDefault.SortDefaults({
                                                         @SortDefault(
                                                                 sort = "createdAt",
                                                                 direction = Sort.Direction.DESC)
                                                 })
                                                         Pageable pageRequest,
-                                                ProjectMemberRequest req) {
+                                                   ProjectMemberRequest req) {
 
 
 
-        Page<ProjectSimpleDto> projectSimpleDtos = projectService.readPageAll(pageRequest, req);
+        Page<ProjectDashboardDto> projectDashboardDtos = projectService.readPageAll(pageRequest, req);
 
 
-        return projectSimpleDtos;
+        return projectDashboardDtos;
     }
 
 }
