@@ -136,7 +136,7 @@ public class RouteOrdering extends EntityDate {
         routeProductList.get(this.present-1).setPassed(true);
 
 
-        if(this.present<=routeProductList.size()-1) {
+        if(this.present<routeProductList.size()-1) {//05-24 <= => < 로 수정
             //지금 들어온 코멘트는 현재 애 다음에
             routeProductList.get(this.present).setComment(req.getComment());
         }else{

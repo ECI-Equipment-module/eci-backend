@@ -48,11 +48,16 @@ public class RouteOrderingService {
     private final RouteTypeRepository routeTypeRepository;
 
     public RouteOrderingDto read(Long id) {
+
+        RouteRejectPossibleResponse routeRejectPossibleResponse = rejectPossible(id);
+
         return RouteOrderingDto.toDto(
                 routeOrderingRepository.findById(id).orElseThrow(RouteNotFoundException::new),
                 routeProductRepository,
-                routeOrderingRepository
+                routeOrderingRepository,
+                routeRejectPossibleResponse
         );
+
     }
 
     public List<RouteOrderingDto> readAll(RouteOrderingReadCondition cond) {
@@ -257,13 +262,19 @@ public class RouteOrderingService {
                 .findById(id)
                 .orElseThrow(RouteNotFoundException::new);
 
+
         //라우트 오더링의 라우트 리스트
         List<RouteProduct> presentRouteProductCandidate = routeProductRepository
                 .findAllByRouteOrdering(routeOrdering);
 
+        if (routeOrdering.getPresent()==presentRouteProductCandidate.size()){
+            List<Long> tmpList = new ArrayList<>();
+            return new RouteRejectPossibleResponse(tmpList);
+        }
+
         //라우트 리스트 처음부터 거절 주체 전까지
         List<RouteProduct> routeProductRejectCandidates =
-                presentRouteProductCandidate.subList(0, routeOrdering.getPresent() + 1);
+                presentRouteProductCandidate.subList(0, routeOrdering.getPresent());
 
         //CASE1 ) 거절 주체가 되는 라우트
         RouteProduct targetRoutProduct = presentRouteProductCandidate.get(routeOrdering.getPresent());
@@ -306,9 +317,6 @@ public class RouteOrderingService {
                     rejectPossibleTypeId = 0L;
                     break;
             }
-            System.out.println("지금 리뷰 대상의 아이디  / 타입 아이디  ");
-            System.out.println(targetRoutProduct.getId().toString());
-            System.out.println(targetRoutProduct.getType().getId().toString());
 
             for (RouteProduct routeProduct : routeProductRejectCandidates) {
                     System.out.println(routeProduct.getType().getId());
@@ -321,9 +329,10 @@ public class RouteOrderingService {
 
         }
 
-        if(rejectPossibleIdList.size()==0){
-            throw new RejectImpossibleException();
-        }
+//        if(rejectPossibleIdList.size()==0){
+//            throw new RejectImpossibleException();
+//        } // 05-24 : get에 얘를 포함하면서부턴, 리뷰가 아닌 라우트 프로덕트들에게도 이 서비스가 적용 예정
+        // => 따라서 이 예외처리 제외시켜줌
         return new RouteRejectPossibleResponse(rejectPossibleIdList);
     }
 

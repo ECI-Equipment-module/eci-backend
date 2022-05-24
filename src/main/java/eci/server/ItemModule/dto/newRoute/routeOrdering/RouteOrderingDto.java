@@ -11,6 +11,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
@@ -31,6 +32,9 @@ public class RouteOrderingDto {
     private LocalDateTime createdAt;
     private List<RouteProductDto> routeProductList;
 
+    //05-24 추가
+    private RouteRejectPossibleResponse response;
+
 
     public static List <RouteOrderingDto> toDtoList(
             List <RouteOrdering> NewRoutes,
@@ -38,6 +42,8 @@ public class RouteOrderingDto {
             RouteOrderingRepository routeOrderingRepository
     ) {
 
+        List<Long> tmpList = new ArrayList<>();
+        RouteRejectPossibleResponse tmpRouteRejectPossibleResponse = new RouteRejectPossibleResponse(tmpList);
 
         List<RouteOrderingDto> newRouteDtos = NewRoutes.stream().map(
                 c -> new RouteOrderingDto(
@@ -53,7 +59,10 @@ public class RouteOrderingDto {
                                 routeProductRepository.findAllByRouteOrdering(
                                         routeOrderingRepository.findById(c.getId()).orElseThrow()
                         )
-                        )
+                        ),
+
+                        tmpRouteRejectPossibleResponse
+
 
 //                        routeProductRepository.findAllByRouteOrdering(
 //                                routeOrderingRepository.findById(c.getId()).orElseThrow()
@@ -69,7 +78,8 @@ public class RouteOrderingDto {
     public static RouteOrderingDto toDto(
             RouteOrdering Route,
             RouteProductRepository routeProductRepository,
-            RouteOrderingRepository routeOrderingRepository
+            RouteOrderingRepository routeOrderingRepository,
+            RouteRejectPossibleResponse routeRejectPossibleResponse
     ) {
 
         return new RouteOrderingDto(
@@ -81,6 +91,7 @@ public class RouteOrderingDto {
                 Route.getRevisedCnt(),
                 Route.getPresent(),
                 Route.getCreatedAt(),
+
                 RouteProductDto.toProductDtoList(
                         routeProductRepository.findAllByRouteOrdering(
                         routeOrderingRepository.findById(
@@ -88,7 +99,9 @@ public class RouteOrderingDto {
                         )
                                 .orElseThrow()
         )
-                )
+                ),
+
+                routeRejectPossibleResponse
 
         );
     }
