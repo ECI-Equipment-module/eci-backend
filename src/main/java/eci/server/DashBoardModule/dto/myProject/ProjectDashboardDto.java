@@ -22,7 +22,11 @@ public class ProjectDashboardDto {
 
     private String produceOrganization;
     private String clientOrganization;
-    private String carType;
+
+
+    private CarTypeDto carType;
+
+    private String clientItemNumber;
 
     //제품명, 제품 번호
     private ItemProjectDashboardDto itemProjectDashboardDto;

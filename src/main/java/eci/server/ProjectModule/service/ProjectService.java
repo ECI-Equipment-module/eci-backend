@@ -219,9 +219,20 @@ public class ProjectService {
                         i->i.getTempsave().equals(false)
                 ).collect(Collectors.toList());
 
-        Page<Project> projectList = new PageImpl<>(projectListList);
+        List<Project> workingProjectListList =
+                projectListList.stream().filter(
+                        i->i.getLifecycle().equals("WORKING") //COMPLETE인 애들은 따로
+                        ).collect(Collectors.toList());
 
-        Page<ProjectDashboardDto> pagingList = projectList.map(
+        List<Project> completeProjectListList =
+                projectListList.stream().filter(
+                        i->i.getLifecycle().equals("COMPLETE") //COMPLETE인 애들은 따로
+                ).collect(Collectors.toList());
+
+        Page<Project> workingProjectList = new PageImpl<>(workingProjectListList);
+        Page<Project> completeProjectList = new PageImpl<>(completeProjectListList);
+
+        Page<ProjectDashboardDto> workingPagingList = workingProjectList.map(
                 project -> new ProjectDashboardDto(
 
                         project.getId(),
@@ -233,12 +244,11 @@ public class ProjectService {
 
                         ProduceOrganizationDto.toDto(project.getProduceOrganization()).getName(),
                         ClientOrganizationDto.toDto(project.getClientOrganization()).getName(),
-                        CarTypeDto.toDto(project.getCarType()).getName(),
+                        CarTypeDto.toDto(project.getCarType()),
+
+                        project.getClientItemNumber(),
 
                         ItemProjectDashboardDto.toDto(project.getItem()),
-
-//                        project.getStartPeriod(),
-//                        project.getOverPeriod(),
 
                         project.getTempsave(),
 
@@ -271,6 +281,45 @@ public class ProjectService {
                                         project.getItem()
                                 ).size()-1
                         ).getLifecycleStatus(),//라우트 오더링 중에서 현재 진행중인 라우트프로덕트
+
+                        project.getCreatedAt()
+                )
+        );
+
+
+        Page<ProjectDashboardDto> completePagingList = completeProjectList.map(
+                project -> new ProjectDashboardDto(
+
+                        project.getId(),
+                        project.getProjectNumber(),
+                        project.getName(),
+
+                        project.getProjectType().getName(),
+                        project.getProjectLevel().getName(),
+
+                        ProduceOrganizationDto.toDto(project.getProduceOrganization()).getName(),
+                        ClientOrganizationDto.toDto(project.getClientOrganization()).getName(),
+                        CarTypeDto.toDto(project.getCarType()),
+
+                        project.getClientItemNumber(),
+
+                        ItemProjectDashboardDto.toDto(project.getItem()),
+
+//                        project.getStartPeriod(),
+//                        project.getOverPeriod(),
+
+                        project.getTempsave(),
+
+
+                        "complete",
+
+                        routeOrderingRepository.findByItem(
+                                project.getItem()
+                        ).get(
+                                routeOrderingRepository.findByItem(
+                                        project.getItem()
+                                ).size()-1
+                        ).getLifecycleStatus(),//라우트 오더링 중에서 현재 진행중인 라우트프로덕트
                         //현재 phase의 sequence가
 //
 //                        (double) routeOrderingRepository.findByItem(
@@ -295,7 +344,9 @@ public class ProjectService {
                 )
         );
 
-        return pagingList;
+
+
+        return workingPagingList;
 
     }
 //    //로젝트 리스트에서 찾아노는 경우
@@ -393,18 +444,35 @@ public class ProjectService {
 
                         ProduceOrganizationDto.toDto(project.getProduceOrganization()).getName(),
                         ClientOrganizationDto.toDto(project.getClientOrganization()).getName(),
-                        CarTypeDto.toDto(project.getCarType()).getName(),
+
+                        CarTypeDto.toDto(project.getCarType()),
+                        project.getClientItemNumber(),
 
                         ItemProjectDashboardDto.toDto(project.getItem()),
-
-//                        project.getStartPeriod(),
-//                        project.getOverPeriod(),
 
                         project.getTempsave(),
 
 
                         //현재 phase의 이름
 
+                        routeOrderingRepository.findByItem(
+                                        project.getItem()
+                                ).get(
+                                        routeOrderingRepository.findByItem(
+                                                project.getItem()
+                                        ).size()-1
+                                )//아이템의 라우트 오더링 중에서 최신 아이
+                                .getPresent()
+                ==                         routeProductRepository.findAllByRouteOrdering(
+                                routeOrderingRepository.findByItem(
+                                        project.getItem()
+                                ).get(
+                                        routeOrderingRepository.findByItem(
+                                                project.getItem()
+                                        ).size()-1
+                                )//아이템의 라우트 오더링 중에서 최신 라우트오더링
+                        ).size()
+                                ?"PROCESS COMPLETE":
                         routeProductRepository.findAllByRouteOrdering(
                                         routeOrderingRepository.findByItem(
                                                 project.getItem()
@@ -412,7 +480,7 @@ public class ProjectService {
                                                 routeOrderingRepository.findByItem(
                                                         project.getItem()
                                                 ).size()-1
-                                        )//아이템의 라우트 오더링 중에서 최신 아이
+                                        )//아이템의 라우트 오더링 중에서 최신 라우트오더링
                                 ).get(
                                         routeOrderingRepository.findByItem(
                                                         project.getItem()
