@@ -1,11 +1,7 @@
 package eci.server.ItemModule.repository.item;
 
-import eci.server.ItemModule.dto.item.ItemProjectCreateReadCondition;
-import eci.server.ItemModule.dto.item.ItemProjectCreateResponse;
 import eci.server.ItemModule.entity.item.Item;
 import eci.server.ItemModule.entity.member.Member;
-import eci.server.ProjectModule.dto.carType.CarTypeReadCondition;
-import eci.server.ProjectModule.dto.carType.CarTypeReadResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
