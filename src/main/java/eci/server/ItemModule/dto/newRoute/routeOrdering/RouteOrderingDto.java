@@ -42,7 +42,7 @@ public class RouteOrderingDto {
             RouteOrderingRepository routeOrderingRepository
     ) {
 
-        List<Long> tmpList = new ArrayList<>();
+        List<SeqAndName> tmpList = new ArrayList<>();
         RouteRejectPossibleResponse tmpRouteRejectPossibleResponse = new RouteRejectPossibleResponse(tmpList);
 
         List<RouteOrderingDto> newRouteDtos = NewRoutes.stream().map(

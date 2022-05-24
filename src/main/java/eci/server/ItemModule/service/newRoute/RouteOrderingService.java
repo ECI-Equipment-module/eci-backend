@@ -251,7 +251,8 @@ public class RouteOrderingService {
 
     /**
      * 라우트 오더링 아이디 전달, 거절 가능한 라우트 프로덕트 아이디 돌려주기
-     *0523
+     * 0523
+     *
      * @param id
      * @return
      */
@@ -267,8 +268,9 @@ public class RouteOrderingService {
         List<RouteProduct> presentRouteProductCandidate = routeProductRepository
                 .findAllByRouteOrdering(routeOrdering);
 
-        if (routeOrdering.getPresent()==presentRouteProductCandidate.size()){
-            List<Long> tmpList = new ArrayList<>();
+        if (routeOrdering.getPresent() == presentRouteProductCandidate.size()) {
+            //SeqAndName tmpSeqAndName = new SeqAndName(null,null);
+            List<SeqAndName> tmpList = new ArrayList<>();
             return new RouteRejectPossibleResponse(tmpList);
         }
 
@@ -280,7 +282,9 @@ public class RouteOrderingService {
         RouteProduct targetRoutProduct = presentRouteProductCandidate.get(routeOrdering.getPresent());
 
         // 거절 가능애들 담을 아이디 리스트
-        List<Long> rejectPossibleIdList = new ArrayList<>();
+        //List<Long> rejectPossibleIdList = new ArrayList<>();
+        List<SeqAndName> seqAndNameList = new ArrayList<>();
+
 
         //CASE1 ) 만약 이전에 있는 것 모두 거절가능하다면
 //        for(RouteProduct routeProduct : routeProductRejectCandidates){
@@ -295,7 +299,6 @@ public class RouteOrderingService {
         if (routePreset.reviewRouteArrList.contains(targetRoutProduct.getType().getId().toString())) {
             //만약 리뷰타입의 라우트라면
             Long rejectPossibleTypeId = null;
-
 
 
             switch (targetRoutProduct.getType().getId().toString()) {
@@ -319,10 +322,14 @@ public class RouteOrderingService {
             }
 
             for (RouteProduct routeProduct : routeProductRejectCandidates) {
-                    System.out.println(routeProduct.getType().getId());
+                System.out.println(routeProduct.getType().getId());
                 if (Objects.equals(routeProduct.getType().getId(), rejectPossibleTypeId)
                         && !(routeProduct.isDisabled())) {
-                    rejectPossibleIdList.add(routeProduct.getId());
+                    seqAndNameList.add(
+                            new SeqAndName(
+                                    routeProduct.getSequence(),
+                                    routeProduct.getRoute_name()
+                            ));
                 }
 
             }
@@ -333,7 +340,7 @@ public class RouteOrderingService {
 //            throw new RejectImpossibleException();
 //        } // 05-24 : get에 얘를 포함하면서부턴, 리뷰가 아닌 라우트 프로덕트들에게도 이 서비스가 적용 예정
         // => 따라서 이 예외처리 제외시켜줌
-        return new RouteRejectPossibleResponse(rejectPossibleIdList);
-    }
+        return new RouteRejectPossibleResponse(seqAndNameList);
 
+    }
 }
