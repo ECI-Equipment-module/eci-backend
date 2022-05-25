@@ -16,19 +16,6 @@ spring:
     serialization:
       fail-on-empty-beans: false
 
-#  thymeleaf:
-#    prefix:
-#      classpath: /templates/
-#    suffix: .html
-#    enabled: false
-#  devtools:
-#    livereload:
-#      enabled: true
-#    restart:
-#      enabled: false
-#  freemarker:
-#    cache: false
-
   main:
     allow-bean-definition-overriding: true
 
@@ -42,7 +29,7 @@ spring:
     url: jdbc:oracle:thin:@localhost:1521:xe
     driverClassName: oracle.jdbc.driver.OracleDriver
     username: eci3
-    password: Ecieci0321
+
 
   jpa:
     database: oracle
@@ -66,8 +53,7 @@ spring:
   servlet.multipart.max-request-size: 500MB
 
 upload:
-#  location
-#  #C:/Users/DONGYUN/Desktop/spring/server3/prodmedia/image/
+
    image:
      location: src/main/prodmedia/image/
    design-info:
@@ -75,10 +61,4 @@ upload:
    design-attach:
      location: src/main/prodmedia/design-attach/
 
-
-#  upload:
-#    image:
-#      location: prod-location
-      # test : local-location
-      # prod : prod-location
 
