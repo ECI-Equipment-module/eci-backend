@@ -68,7 +68,7 @@ public class ItemService {
     private final ReadPartNumberService readPartNumber;
 
     private final FileService fileService;
-//    private final AWSFileService localFileService;
+
 
     private final AuthHelper authHelper;
 
