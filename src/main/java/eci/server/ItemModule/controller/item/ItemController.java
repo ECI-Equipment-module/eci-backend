@@ -136,17 +136,17 @@ public class ItemController {
      * @return 200 (success)
      */
 
-    @CrossOrigin(origins = "https://localhost:3000")
-    @GetMapping(value=  "/images/{id}", produces= MediaType.IMAGE_PNG_VALUE)
-    @ResponseStatus(HttpStatus.OK)
-    public byte[] img(
-            @PathVariable Long id) {
-        {
-            byte[] image = itemService.readImg(id);
-            return image;
-
-        }
-    }
+//    @CrossOrigin(origins = "https://localhost:3000")
+//    @GetMapping(value=  "/images/{id}", produces= MediaType.IMAGE_PNG_VALUE)
+//    @ResponseStatus(HttpStatus.OK)
+//    public byte[] img(
+//            @PathVariable Long id) {
+//        {
+//            byte[] image = itemService.readImg(id);
+//            return image;
+//
+//        }
+//    }
 
 
     /**

@@ -7,6 +7,7 @@ import eci.server.ItemModule.repository.item.ItemManufactureRepository;
 import eci.server.ItemModule.repository.item.ItemMaterialRepository;
 import eci.server.ItemModule.repository.newRoute.RouteOrderingRepository;
 
+import eci.server.ItemModule.service.file.AWSFileService;
 import eci.server.ProjectModule.repository.project.ProjectRepository;
 import eci.server.config.guard.AuthHelper;
 import eci.server.ItemModule.dto.item.*;
@@ -68,7 +69,7 @@ public class ItemService {
     private final ReadPartNumberService readPartNumber;
 
     private final FileService fileService;
-    private final LocalFileService localFileService;
+//    private final AWSFileService localFileService;
 
     private final AuthHelper authHelper;
 
@@ -165,15 +166,15 @@ public class ItemService {
                 );
     }
 
-    public byte[] readImg(Long id) {
-        Item targetItem = itemRepository.findById(id).orElseThrow(ItemNotFoundException::new);
-        byte[] image = localFileService.getImage(
-                targetItem.getCreatedAt().toString(),
-                targetItem.getThumbnail().get(0).
-                        getUniqueName()
-        );
-        return image;
-    }
+//    public byte[] readImg(Long id) {
+//        Item targetItem = itemRepository.findById(id).orElseThrow(ItemNotFoundException::new);
+//        byte[] image = localFileService.getImage(
+//                targetItem.getCreatedAt().toString(),
+//                targetItem.getThumbnail().get(0).
+//                        getUniqueName()
+//        );
+//        return image;
+//    }
 
     public ReadItemDto read(Long id) {
         Item targetItem = itemRepository.findById(id).orElseThrow(ItemNotFoundException::new);
