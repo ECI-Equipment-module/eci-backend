@@ -1,20 +1,11 @@
 package eci.server.DashBoardModule.controller;
 
 import eci.server.DashBoardModule.service.DashboardService;
-import eci.server.ItemModule.dto.item.ItemTemporaryCreateRequest;
-import eci.server.aop.AssignMemberId;
-import eci.server.ItemModule.dto.item.ItemCreateRequest;
-import eci.server.ItemModule.dto.item.ItemReadCondition;
-import eci.server.ItemModule.dto.item.ItemUpdateRequest;
 import eci.server.ItemModule.dto.response.Response;
-import eci.server.ItemModule.service.item.ItemService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
-
-import javax.validation.Valid;
 
 @RestController
 @RequiredArgsConstructor
