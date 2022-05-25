@@ -7,7 +7,6 @@ import eci.server.ItemModule.repository.item.ItemManufactureRepository;
 import eci.server.ItemModule.repository.item.ItemMaterialRepository;
 import eci.server.ItemModule.repository.newRoute.RouteOrderingRepository;
 
-import eci.server.ItemModule.service.file.AWSFileService;
 import eci.server.ProjectModule.repository.project.ProjectRepository;
 import eci.server.config.guard.AuthHelper;
 import eci.server.ItemModule.dto.item.*;
