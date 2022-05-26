@@ -68,7 +68,7 @@ public class ItemService {
     private final ReadPartNumberService readPartNumber;
 
     private final FileService fileService;
-
+    private final LocalFileService localFileService;
 
     private final AuthHelper authHelper;
 
@@ -165,15 +165,15 @@ public class ItemService {
                 );
     }
 
-//    public byte[] readImg(Long id) {
-//        Item targetItem = itemRepository.findById(id).orElseThrow(ItemNotFoundException::new);
-//        byte[] image = localFileService.getImage(
-//                targetItem.getCreatedAt().toString(),
-//                targetItem.getThumbnail().get(0).
-//                        getUniqueName()
-//        );
-//        return image;
-//    }
+    public byte[] readImg(Long id) {
+        Item targetItem = itemRepository.findById(id).orElseThrow(ItemNotFoundException::new);
+        byte[] image = localFileService.getImage(
+                targetItem.getCreatedAt().toString(),
+                targetItem.getThumbnail().get(0).
+                        getUniqueName()
+        );
+        return image;
+    }
 
     public ReadItemDto read(Long id) {
         Item targetItem = itemRepository.findById(id).orElseThrow(ItemNotFoundException::new);
