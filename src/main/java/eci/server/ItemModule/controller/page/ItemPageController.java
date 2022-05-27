@@ -79,7 +79,7 @@ public class ItemPageController {
 
 
     /**
-     * 링크되지 않은 아이템들, 나에게 기다리고 있는 아이템들
+     * 링크되지 않은 아이템들, 나에게 기다리고 있는 아이템들 05-27 수정
      *
      * @return 200 (success)
      */
