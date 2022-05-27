@@ -28,13 +28,13 @@ import static eci.server.ItemModule.entity.newRoute.QRouteOrdering.routeOrdering
 /**
  * CustomItemRepository의 구현체
  */
-@Transactional(readOnly = true) // 1
-public class CustomItemRepositoryImpl extends QuerydslRepositorySupport implements CustomItemRepository { // 2
+@Transactional(readOnly = true)
+public class CustomItemRepositoryImpl extends QuerydslRepositorySupport implements CustomItemRepository {
 
-    private final JPAQueryFactory jpaQueryFactory; // 3
+    private final JPAQueryFactory jpaQueryFactory;
 
 
-    public CustomItemRepositoryImpl(JPAQueryFactory jpaQueryFactory) { // 4
+    public CustomItemRepositoryImpl(JPAQueryFactory jpaQueryFactory) {
         super(Item.class);
         this.jpaQueryFactory = jpaQueryFactory;
 
@@ -56,19 +56,6 @@ public class CustomItemRepositoryImpl extends QuerydslRepositorySupport implemen
     }
 
 
-    private List<AttachmentSimpleDto> attachmentSimpleDtos(NumberPath<Long> itemId){
-        List<AttachmentSimpleDto> attachmentSimpleDtoList = jpaQueryFactory
-                .select(constructor(
-                        AttachmentSimpleDto.class,
-                        attachment.attachmentaddress
-                        )
-                ).from(attachment)
-                .where(attachment.item.id.eq(itemId)
-                )
-                .fetch();
-
-        return attachmentSimpleDtoList;
-    }
     /**
      * 아이템 목록을 ItemSimpleDto로 조회한 결과 반환환
      * @param predicate

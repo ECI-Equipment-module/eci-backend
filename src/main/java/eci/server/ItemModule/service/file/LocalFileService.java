@@ -11,7 +11,6 @@ import java.io.*;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-
 @Service
 @Slf4j
 public class LocalFileService implements FileService {
@@ -81,7 +80,7 @@ public class LocalFileService implements FileService {
         System.out.println(
                 filePath.substring(0, 10)
         );
-//location + filePath.substring(0, 10) + uniquename
+
         String fileDir = location + filePath.substring(0, 10) + "\\"  + value ; // 파일경로
 
         try{
@@ -106,6 +105,8 @@ public class LocalFileService implements FileService {
         }
         return fileArray;
     }
+
+
 
 
 }
