@@ -24,6 +24,7 @@ public class RouteProductDto {
     private String comment;
     private boolean passed;
     private boolean rejected;
+    private boolean refusal;
     private boolean show;
     private List<MemberDto> member;
 
@@ -39,6 +40,7 @@ public class RouteProductDto {
                         c.getComments(),
                         c.isPassed(),
                         c.isRejected(),
+                        c.isRefusal(),
                         c.isRoute_show(),
                         MemberDto.toDtoList(
                                 c.getMembers().stream().map(
@@ -62,6 +64,7 @@ public class RouteProductDto {
                 routeProduct.getComments(),
                 routeProduct.isPassed(),
                 routeProduct.isRejected(),
+                routeProduct.isRefusal(),
                 routeProduct.isRoute_show(),
                 MemberDto.toDtoList(
                         routeProduct.getMembers().stream().map(

@@ -82,8 +82,11 @@ public class RouteProduct extends EntityDate {
     @Column(nullable = false)
     private boolean route_show;
 
-    @Column(nullable = true)
+    @Column
     private boolean disabled;
+
+    @Column
+    private boolean refusal;
 
     @OneToMany(
             mappedBy = "routeProduct",
@@ -131,6 +134,7 @@ public class RouteProduct extends EntityDate {
             boolean rejected,
             boolean show,
             boolean disabled,
+            boolean refusal,
             List<Member> member,
             RouteOrdering newRoute
 
@@ -148,6 +152,7 @@ public class RouteProduct extends EntityDate {
         this.rejected = rejected;
         this.route_show = show;
         this.disabled = disabled;
+        this.refusal = refusal;
         this.members =
                 member.stream().map(
                         r -> new RouteProductMember(
@@ -169,6 +174,7 @@ public class RouteProduct extends EntityDate {
             boolean rejected,
             boolean show,
             boolean disabled,
+            boolean refusal,
             List<Member> member,
             RouteOrdering newRoute,
             Project project,
@@ -186,6 +192,7 @@ public class RouteProduct extends EntityDate {
         this.rejected = rejected;
         this.route_show = show;
         this.disabled = disabled;
+        this.refusal = refusal;
         this.members =
                 member.stream().map(
                                 r -> new RouteProductMember(
@@ -223,6 +230,7 @@ public class RouteProduct extends EntityDate {
         this.comments = req.getComment();
         this.passed = true;
         this.rejected = false;
+        this.refusal = false;
 
         this.routeOrdering = routeProduct.getRouteOrdering();
 
@@ -241,6 +249,10 @@ public class RouteProduct extends EntityDate {
 
     public void setComment(String comment) {
         this.comments = comment;
+    }
+
+    public void updateRefusal(boolean refusal) {
+        this.refusal = refusal;
     }
 
     public void setShow(boolean show) {

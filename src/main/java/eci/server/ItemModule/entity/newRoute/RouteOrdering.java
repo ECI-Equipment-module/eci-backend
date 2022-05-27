@@ -228,6 +228,7 @@ public class RouteOrdering extends EntityDate {
         routeProductList.get(rejectedIndex).setRejected(true);
         routeProductList.get(rejectedIndex).setDisabled(true);
         routeProductList.get(this.present-1).setComment(rejectedComment);
+        routeProductList.get(this.present-1).updateRefusal(true);
         //routeProductList.get(this.present).setShow(false);
         /**
          * 거부된 라우트 하나 먼저 복제
@@ -250,6 +251,7 @@ public class RouteOrdering extends EntityDate {
                     true,
                     true,
                     false,
+                    false, //0527 - 거절당한 것, 거절자는 아니다
                     routeProductList.get(rejectedIndex)
                             .getMembers().stream().map(
                                     RouteProductMember::getMember
@@ -297,6 +299,7 @@ public class RouteOrdering extends EntityDate {
                         false, //passed
                         false, //rejected
                         true,
+                        false,
                         false,
                         i.getMembers().stream().map(
                                 m -> m.getMember()
