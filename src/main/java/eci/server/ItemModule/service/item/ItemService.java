@@ -37,6 +37,8 @@ import eci.server.ItemModule.service.file.LocalFileService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -592,6 +594,79 @@ public class ItemService {
         }
 
         return setToListUnlinked;
+
+    }
+
+
+    public List<ItemProjectCreateDto> linkNeededItemsForProjectPage() {
+
+        //0) 현재 로그인 된 유저
+        Member member1 = memberRepository.findById(authHelper.extractMemberId()).orElseThrow(
+                AuthenticationEntryPointException::new
+        );
+
+        //1) 현재 진행 중인 라우트 프로덕트 카드들
+        List<RouteProduct> routeProductList = routeProductRepository.findAll().stream().filter(
+                rp -> rp.getSequence().equals(
+                        rp.getRouteOrdering().getPresent()
+                )
+        ).collect(Collectors.toList());
+
+        //2) 라우트 프로덕트들 중 나에게 할당된 카드들 & 단계가 프로젝트와 Item(제품) Link(설계자) 인 것
+        List<RouteProduct> myRouteProductList = new ArrayList<>();
+
+        for (RouteProduct routeProduct : routeProductList) {
+            for (RouteProductMember routeProductMember : routeProduct.getMembers()) {
+                if (routeProductMember.getMember().getId().equals(member1.getId()) &&
+                        routeProduct.getRoute_name().equals("프로젝트와 Item(제품) Link(설계자)")) {
+                    myRouteProductList.add(routeProduct);
+                    break;
+                }
+
+            }
+        }
+
+        //3) 프로젝트 링크 안된 애만 담기
+
+        List<Item> unlinkedItemList = new ArrayList<>();
+
+        for (RouteProduct routeProduct : myRouteProductList){
+            if(projectRepository.findByItem(routeProduct.getRouteOrdering().getItem()).size()==0){
+
+                List<Attachment> attachmentList =
+                        attachmentRepository.findByItem(
+                                routeProduct.getRouteOrdering().getItem()
+                        );
+
+                RouteOrdering routeOrdering = routeOrderingRepository.findByItem(
+                        routeProduct.getRouteOrdering().getItem()
+                ).get(
+                        routeOrderingRepository.findByItem(
+                                routeProduct.getRouteOrdering().getItem()
+                        ).size()-1
+                );
+
+                ItemDto itemDto = ItemDto.toDto(
+                        routeProduct.getRouteOrdering().getItem()
+                );
+
+                Item targetItem = routeProduct.getRouteOrdering().getItem();
+
+                unlinkedItemList.add(
+                        targetItem
+                );
+            }
+        }
+
+        List<ItemProjectCreateDto>  itemProjectCreateDtos =
+                unlinkedItemList.stream().map(
+                        i -> ItemProjectCreateDto.toDto(
+                                i,
+                                routeOrderingRepository
+                        )
+                ).collect(Collectors.toList());
+
+        return itemProjectCreateDtos;
 
     }
 

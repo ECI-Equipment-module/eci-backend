@@ -2,6 +2,7 @@ package eci.server.DesignModule.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import eci.server.DesignModule.entity.design.Design;
+import eci.server.ItemModule.dto.item.ItemDesignDto;
 import eci.server.ItemModule.dto.item.ItemProjectDto;
 import eci.server.ItemModule.dto.member.MemberDto;
 import eci.server.ItemModule.dto.newRoute.routeOrdering.RouteOrderingDto;
@@ -22,7 +23,7 @@ import static java.util.stream.Collectors.toList;
 public class DesignDto {
     private Long id;
 
-    private ItemProjectDto item;
+    private ItemDesignDto item;
     private MemberDto member;
     private Boolean tempsave;
     private List<DesignAttachmentDto> designAttachments;
@@ -55,7 +56,7 @@ public class DesignDto {
         return new DesignDto(
 
                 design.getId(),
-                ItemProjectDto.toDto(design.getItem()),
+                ItemDesignDto.toDto(design.getItem()),
                 MemberDto.toDto(design.getMember()),
                 design.getTempsave(),
 

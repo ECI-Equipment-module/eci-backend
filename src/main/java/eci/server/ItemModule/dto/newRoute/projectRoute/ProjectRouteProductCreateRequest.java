@@ -91,6 +91,7 @@ public class ProjectRouteProductCreateRequest {
                 false,
                 true,
                 false,
+                false,
                 member1,
                 routeOrdering
 
@@ -119,6 +120,7 @@ public class ProjectRouteProductCreateRequest {
                                         false,
                                         false,
                                         true,
+                                        false,
                                         false,
                                         req.getMemberIds().get(req.getMemberIds().indexOf(i)) //memberIds에서는 0부터 시작(request member 포함x)
                                                 .stream().map(

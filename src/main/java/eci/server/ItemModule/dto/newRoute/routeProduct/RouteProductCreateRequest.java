@@ -83,6 +83,7 @@ public class RouteProductCreateRequest {
                 false,
                 true,
                 false,
+                false,
                 member1,
                 routeOrdering
 
@@ -117,6 +118,7 @@ public class RouteProductCreateRequest {
                     false,
                     false,
                     true,
+                    false,
                     false,
                     req.getMemberIds().get(index) //memberIds에서는 0부터 시작(request member 포함x)
                             .stream().map(

@@ -1,9 +1,12 @@
 package eci.server.ItemModule.controller.page;
 
+import eci.server.ItemModule.dto.item.ItemProjectCreateDto;
 import eci.server.ItemModule.dto.item.ItemSimpleDto;
+import eci.server.ItemModule.dto.response.Response;
 import eci.server.ItemModule.entity.item.Attachment;
 import eci.server.ItemModule.entity.item.Item;
 import eci.server.ItemModule.repository.item.ItemRepository;
+import eci.server.ItemModule.service.item.ItemService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -28,6 +31,7 @@ public class ItemPageController {
 
     @Autowired
     ItemRepository itemRepository;
+
 
     @CrossOrigin(origins = "https://localhost:3000")
     @GetMapping("/item/page")
@@ -70,6 +74,34 @@ public class ItemPageController {
 
                 )
         );
+    }
+
+
+
+    /**
+     * 링크되지 않은 아이템들, 나에게 기다리고 있는 아이템들 05-27 수정
+     *
+     * @return 200 (success)
+     */
+    @Autowired
+    ItemService itemService;
+    @CrossOrigin(origins = "https://localhost:3000")
+    @GetMapping("/item-candidates")
+    public Page<ItemProjectCreateDto> readItemCandidate(@PageableDefault(size=5)
+                                      @SortDefault.SortDefaults({
+                                              @SortDefault(
+                                                      sort = "createdAt",
+                                                      direction = Sort.Direction.DESC)
+                                      })
+                                              Pageable pageRequest) {
+
+        List<ItemProjectCreateDto> itemListReal =
+                itemService.linkNeededItemsForProjectPage();
+
+        Page<ItemProjectCreateDto> itemList = new PageImpl<>(itemListReal);
+
+        return itemList;
+
     }
 
 }
