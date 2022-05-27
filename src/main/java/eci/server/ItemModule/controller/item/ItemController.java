@@ -177,20 +177,16 @@ public class ItemController {
 //        );
 //    }
 
-    /**
-     * 링크되지 않은 아이템들, 나에게 기다리고 있는 아이템들
-     *
-     * @return 200 (success)
-     */
-    @CrossOrigin(origins = "https://localhost:3000")
-    @GetMapping("/item-candidates")
-    @ResponseStatus(HttpStatus.OK)
-    public Response linkNeededItemForProject(
-            @Valid ItemProjectCreateReadCondition cond
-    ) {
-        return Response.success(
-                itemService.readItemCandidatesAll(cond)
-        );
-    }
+
+//    @CrossOrigin(origins = "https://localhost:3000")
+//    @GetMapping("/item-candidates")
+//    @ResponseStatus(HttpStatus.OK)
+//    public Response linkNeededItemForProject(
+//            @Valid ItemProjectCreateReadCondition cond
+//    ) {
+//        return Response.success(
+//                itemService.readItemCandidatesAll(cond)
+//        );
+//    }
 
 }
