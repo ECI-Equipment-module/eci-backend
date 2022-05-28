@@ -15,6 +15,7 @@ import java.util.List;
 
 @Entity
 @Getter
+@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Slf4j
 public class ItemTypes {
@@ -29,13 +30,20 @@ public class ItemTypes {
   @Column(nullable = false, unique = true)
   private ItemType itemType;
 
+//  @ManyToOne(fetch = FetchType.LAZY)
+//  @JoinColumn(name = "classification1_id", nullable = false)
+//  @OnDelete(action = OnDeleteAction.CASCADE)
+//  private Classification1 classification1;
+
   public ItemTypes(ItemType itemType) {
     this.itemType = itemType;
   }
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "classification1_id", nullable = false)
-  @OnDelete(action = OnDeleteAction.CASCADE)
-  private Classification1 classification1;
-
+//  public ItemTypes(ItemType itemType) {
+//    this.itemType = itemType;
+//  }
+//
+//
+//  public ItemTypes(ItemType itemType, int i) {
+//  }
 }
