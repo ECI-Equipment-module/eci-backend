@@ -10,8 +10,11 @@ import java.io.Serializable;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class ClassificationId12 implements Serializable {
+public class ClassificationId implements Serializable {
+
     private Classification1 classification1;
+
     private Classification2 classification2;
 
+    private Classification3 classification3;
 }

@@ -9,8 +9,8 @@ import javax.persistence.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @EqualsAndHashCode
-@IdClass(ClassificationId12.class)
-public class Classification12 {
+@IdClass(ClassificationId.class)
+public class Classification {
 
     @Id
     @ManyToOne(fetch = FetchType.LAZY)
@@ -22,5 +22,8 @@ public class Classification12 {
     @JoinColumn(name = "classification2_id")
     private Classification2 classification2;
 
-
+    @Id
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "classification3_id")
+    private Classification3 classification3;
 }

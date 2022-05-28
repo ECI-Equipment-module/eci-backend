@@ -1,6 +1,7 @@
 package eci.server.ItemModule.entity.item;
 
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,31 +19,16 @@ import java.util.List;
 public class ItemTypes {
 
     @Id
-
 //  @GeneratedValue(strategy = GenerationType.IDENTITY)
   @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQUENCE1")
   @SequenceGenerator(name="SEQUENCE1", sequenceName="SEQUENCE1", allocationSize=1)
+  private Long id;
 
-    private Long id;
+  @Enumerated(EnumType.STRING)
+  @Column(nullable = false, unique = true)
+  private ItemType itemType;
 
-    //@Enumerated(EnumType.STRING)
-    @Column(nullable = false, unique = true)
-    private String name;
-//
-//    @OneToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "routetype_id", nullable = false)
-//    private RouteType routeType;
-//    //itemType 이 지정된다면 routeOrdering 은
-//    // routeType으로 지정된다.
-
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "parent_id")
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private ItemTypes parent;
-
-    @OneToMany(mappedBy = "parent", fetch = FetchType.LAZY)
-    private List<ItemTypes> children = new ArrayList<>();
-
-
+  public ItemTypes(ItemType itemType) {
+    this.itemType = itemType;
+  }
 }
