@@ -7,7 +7,7 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import eci.server.ItemModule.dto.manufacture.ManufactureReadCondition;
 import eci.server.ItemModule.dto.manufacture.ManufactureSimpleDto;
-import eci.server.ItemModule.entity.item.Manufacture;
+import eci.server.ItemModule.entity.manufacture.Manufacture;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;

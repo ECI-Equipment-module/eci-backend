@@ -3,13 +3,12 @@ package eci.server.ItemModule.entity.item;
 import eci.server.ItemModule.dto.item.ItemUpdateRequest;
 
 import eci.server.ItemModule.entity.entitycommon.EntityDate;
+import eci.server.ItemModule.entity.manufacture.ItemManufacture;
+import eci.server.ItemModule.entity.manufacture.Manufacture;
 import eci.server.ItemModule.entity.material.ItemMaterial;
-import eci.server.ItemModule.entity.material.ItemMaterialId;
 import eci.server.ItemModule.entity.material.Material;
 import eci.server.ItemModule.entity.member.Member;
 import eci.server.ItemModule.exception.item.ColorNotFoundException;
-import eci.server.ItemModule.exception.item.ManufactureNotFoundException;
-import eci.server.ItemModule.exception.item.MaterialNotFoundException;
 import eci.server.ItemModule.exception.member.sign.MemberNotFoundException;
 import eci.server.ItemModule.repository.color.ColorRepository;
 import eci.server.ItemModule.repository.item.ItemManufactureRepository;
@@ -40,7 +39,6 @@ public class Item extends EntityDate {
 //  @GeneratedValue(strategy = GenerationType.IDENTITY)
    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQUENCE2")
    @SequenceGenerator(name="SEQUENCE2", sequenceName="SEQUENCE2", allocationSize=1)
-
     private Long id;
 
     @Column(nullable = false)

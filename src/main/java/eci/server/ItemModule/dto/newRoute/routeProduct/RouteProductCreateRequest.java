@@ -26,7 +26,7 @@ public class RouteProductCreateRequest {
             RoutePreset routePreset,
             MemberRepository memberRepository,
             RouteTypeRepository routeTypeRepository
-            //ItemType itemType
+
     ) {
         //아이템 타입의해 routeType 결정됨
         Integer routeTypeIdx = ItemType.valueOf(

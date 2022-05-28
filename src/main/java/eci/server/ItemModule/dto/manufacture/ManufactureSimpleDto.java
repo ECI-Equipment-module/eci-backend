@@ -1,6 +1,6 @@
 package eci.server.ItemModule.dto.manufacture;
 
-import eci.server.ItemModule.entity.item.Manufacture;
+import eci.server.ItemModule.entity.manufacture.Manufacture;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

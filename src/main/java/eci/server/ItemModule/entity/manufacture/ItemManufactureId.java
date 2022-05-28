@@ -1,5 +1,6 @@
-package eci.server.ItemModule.entity.item;
+package eci.server.ItemModule.entity.manufacture;
 
+import eci.server.ItemModule.entity.item.Item;
 import lombok.*;
 
 import javax.persistence.Embeddable;

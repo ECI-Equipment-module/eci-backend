@@ -1,12 +1,11 @@
 package eci.server.ItemModule.repository.item;
 
 import eci.server.ItemModule.entity.item.Item;
-import eci.server.ItemModule.entity.item.ItemManufacture;
-import eci.server.ItemModule.entity.item.Manufacture;
+import eci.server.ItemModule.entity.manufacture.ItemManufacture;
+import eci.server.ItemModule.entity.manufacture.Manufacture;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface ItemManufactureRepository extends JpaRepository<ItemManufacture, Long>{
 

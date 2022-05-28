@@ -1,9 +1,8 @@
 package eci.server.ItemModule.dto.manufacture;
 
 import eci.server.ItemModule.entity.item.Item;
-import eci.server.ItemModule.entity.item.ItemManufacture;
+import eci.server.ItemModule.entity.manufacture.ItemManufacture;
 import eci.server.ItemModule.repository.item.ItemManufactureRepository;
-import eci.server.ItemModule.repository.item.ItemRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
