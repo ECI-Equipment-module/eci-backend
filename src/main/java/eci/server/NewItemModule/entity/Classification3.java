@@ -4,6 +4,8 @@ package eci.server.NewItemModule.entity;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 
@@ -21,5 +23,9 @@ public class Classification3 {
     @Column(nullable = false)
     private String name;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "classification2_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private Classification2 classification2;
 
 }

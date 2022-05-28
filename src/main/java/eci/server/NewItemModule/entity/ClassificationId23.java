@@ -3,15 +3,19 @@ package eci.server.NewItemModule.entity;
 import lombok.*;
 
 import javax.persistence.Embeddable;
+import javax.persistence.Entity;
+import javax.persistence.IdClass;
 import java.io.Serializable;
 
-@Embeddable
-@EqualsAndHashCode
+@Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class ClassificationId implements Serializable {
-    private Classification1 classification1;
-    private Classification2 classification2;
+@EqualsAndHashCode
+@IdClass(ClassificationId23.class)
+public class ClassificationId23 implements Serializable {
+
+    private Classification12 classification12;
     private Classification3 classification3;
+
 }

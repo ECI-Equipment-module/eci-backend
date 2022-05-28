@@ -1,8 +1,5 @@
 package eci.server.NewItemModule.entity;
 
-import eci.server.ItemModule.entity.item.Item;
-import eci.server.ItemModule.entity.manufacture.ItemManufactureId;
-import eci.server.ItemModule.entity.manufacture.Manufacture;
 import lombok.*;
 
 import javax.persistence.*;
@@ -12,8 +9,8 @@ import javax.persistence.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @EqualsAndHashCode
-@IdClass(ClassificationId.class)
-public class Classification {
+@IdClass(ClassificationId12.class)
+public class Classification12 {
 
     @Id
     @ManyToOne(fetch = FetchType.LAZY)
@@ -25,9 +22,5 @@ public class Classification {
     @JoinColumn(name = "classification2_id")
     private Classification2 classification2;
 
-    @Id
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "classification3_id")
-    private Classification3 classification3;
 
 }
