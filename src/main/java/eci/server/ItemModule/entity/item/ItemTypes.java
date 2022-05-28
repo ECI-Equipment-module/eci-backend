@@ -1,5 +1,6 @@
 package eci.server.ItemModule.entity.item;
 
+import eci.server.NewItemModule.entity.Classification1;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -31,4 +32,10 @@ public class ItemTypes {
   public ItemTypes(ItemType itemType) {
     this.itemType = itemType;
   }
+
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "classification1_id", nullable = false)
+  @OnDelete(action = OnDeleteAction.CASCADE)
+  private Classification1 classification1;
+
 }
