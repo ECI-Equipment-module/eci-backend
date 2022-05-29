@@ -1,6 +1,7 @@
-package eci.server.NewItemModule.entity;
+package eci.server.NewItemModule.entity.classification;
 
-import eci.server.ItemModule.entity.material.ItemMaterial;
+import eci.server.NewItemModule.entity.activateAttributeClassification.ClassificationId;
+import eci.server.NewItemModule.entity.activateAttributeClassification.ClassifyActivate;
 import lombok.*;
 
 import javax.persistence.*;

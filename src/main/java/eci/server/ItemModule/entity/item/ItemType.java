@@ -10,7 +10,8 @@ public enum ItemType {
     TYPE3(3), //외주구매품(시방)
     TYPE4(3), //사내가공품 (외주구매품 시방이랑 THE SAME)
     TYPE5(4),//제품
-    TYPE6(0) //기타 - 엮일 것 없삼
+    TYPE6(0), //기타 - 엮일 것 없삼
+    TYPE7(1) //부자재
     ;
 
     private final Integer label;

@@ -1,6 +1,5 @@
-package eci.server.NewItemModule.entity;
+package eci.server.NewItemModule.entity.activateAttributes;
 
-import eci.server.ItemModule.entity.manufacture.ItemManufacture;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

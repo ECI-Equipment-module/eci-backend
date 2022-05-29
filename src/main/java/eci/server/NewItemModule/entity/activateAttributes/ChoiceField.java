@@ -1,6 +1,6 @@
-package eci.server.NewItemModule.entity;
+package eci.server.NewItemModule.entity.activateAttributes;
 
-import eci.server.ItemModule.entity.manufacture.Manufacture;
+import eci.server.NewItemModule.entity.activateAttributes.ActivateAttributes;
 import lombok.*;
 
 import javax.persistence.*;
