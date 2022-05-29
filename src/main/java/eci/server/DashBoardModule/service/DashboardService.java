@@ -23,10 +23,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -246,7 +243,13 @@ public class DashboardService {
         List<Design> tempSavedDesignList = new ArrayList<>();
 
         for (Design design : myDesignList) {
-            if (design.getTempsave()) {
+            if (design.getTempsave()
+                &&
+            Objects.equals(design.getId(), designRepository.findByItem(design.getItem()).get(
+                    designRepository.findByItem(design.getItem()).size() - 1
+            ).getId())){
+            //05-30 - 이 아이가 최신 아이일 때만! (최신 아니고 옛날 거면 필요 없음)
+
                 tempSavedDesignList.add(design);
                 //임시저장 진행 중인 것
             }
