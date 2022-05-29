@@ -11,7 +11,7 @@ import eci.server.ItemModule.entity.member.Member;
 import eci.server.ItemModule.exception.item.ColorNotFoundException;
 import eci.server.ItemModule.exception.member.sign.MemberNotFoundException;
 import eci.server.ItemModule.repository.color.ColorRepository;
-import eci.server.ItemModule.repository.item.ItemManufactureRepository;
+import eci.server.ItemModule.repository.item.ItemMakerRepository;
 import eci.server.ItemModule.repository.item.ItemMaterialRepository;
 import eci.server.ItemModule.repository.manufacture.MakerRepository;
 import eci.server.ItemModule.repository.material.MaterialRepository;
@@ -293,7 +293,7 @@ public class Item extends EntityDate {
             MemberRepository memberRepository,
             MaterialRepository materialRepository,
             MakerRepository manufactureRepository,
-            ItemManufactureRepository itemManufactureRepository,
+            ItemMakerRepository itemMakerRepository,
             ItemMaterialRepository itemMaterialRepository
     ) {
         AtomicInteger k = new AtomicInteger();

@@ -7,9 +7,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface ItemManufactureRepository extends JpaRepository<ItemMaker, Long>{
+public interface ItemMakerRepository extends JpaRepository<ItemMaker, Long>{
 
-    ItemMaker findByItemAndManufacture(Item item, Maker maker);
+    ItemMaker findByItemAndMaker(Item item, Maker maker);
     List<ItemMaker> findByItem(Item item);
-    List<ItemMaker> findByManufacture(Maker maker);
+    List<ItemMaker> findByMaker(Maker maker);
 }

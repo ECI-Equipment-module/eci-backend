@@ -3,7 +3,7 @@ package eci.server.ItemModule.service.item;
 import eci.server.DashBoardModule.dto.itemTodo.ItemTodoResponse;
 import eci.server.DashBoardModule.dto.itemTodo.ItemTodoResponseList;
 import eci.server.ItemModule.exception.member.auth.AuthenticationEntryPointException;
-import eci.server.ItemModule.repository.item.ItemManufactureRepository;
+import eci.server.ItemModule.repository.item.ItemMakerRepository;
 import eci.server.ItemModule.repository.item.ItemMaterialRepository;
 import eci.server.ItemModule.repository.newRoute.RouteOrderingRepository;
 
@@ -60,7 +60,7 @@ public class ItemService {
     private final AttachmentRepository attachmentRepository;
     private final RouteOrderingRepository routeOrderingRepository;
     private final RouteProductRepository routeProductRepository;
-    private final ItemManufactureRepository itemManufactureRepository;
+    private final ItemMakerRepository itemMakerRepository;
     private final ItemMaterialRepository itemMaterialRepository;
 
     private final ProjectRepository projectRepository;
@@ -288,7 +288,7 @@ public class ItemService {
                 memberRepository,
                 materialRepository,
                 manufactureRepository,
-                itemManufactureRepository,
+                itemMakerRepository,
                 itemMaterialRepository
                 );
 
