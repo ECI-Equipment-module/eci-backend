@@ -131,7 +131,12 @@ public class DashboardService {
         List<Project> tempSavedProjectList = new ArrayList<>();
 
         for (Project project : myProjectList) {
-            if (project.getTempsave()) {
+            if (project.getTempsave()
+                &&
+            Objects.equals(project.getId(), projectRepository.findByItem(project.getItem()).get(
+                    projectRepository.findByItem(project.getItem()).size() - 1
+            ).getId())
+            ) {
                 tempSavedProjectList.add(project);
                 //임시저장 진행 중인 것
             }
