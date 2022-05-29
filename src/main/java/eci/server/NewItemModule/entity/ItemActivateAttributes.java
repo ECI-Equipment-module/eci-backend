@@ -1,18 +1,15 @@
 package eci.server.NewItemModule.entity;
 
-
-import eci.server.ItemModule.entity.manufacture.ItemManufacture;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Classification1 {
+public class ItemActivateAttributes {
     @Id
 //  @GeneratedValue(strategy = GenerationType.IDENTITY)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQUENCE2")
@@ -23,6 +20,8 @@ public class Classification1 {
     private String name;
 
     @Column(nullable = false)
-    private List<ItemActivateAttributes> itemActivateAttributes;
+    private String inputType;
 
+    @Column
+    private String apiUri;
 }

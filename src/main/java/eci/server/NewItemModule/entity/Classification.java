@@ -3,6 +3,7 @@ package eci.server.NewItemModule.entity;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Getter
@@ -26,4 +27,7 @@ public class Classification {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "classification3_id")
     private Classification3 classification3;
+
+    @Column
+    private List<ItemActivateAttributes> itemAttributesList;
 }
