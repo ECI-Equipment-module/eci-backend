@@ -9,7 +9,7 @@ import javax.persistence.*;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class ItemActivateAttributes {
+public class ActivateAttributes {
     @Id
 //  @GeneratedValue(strategy = GenerationType.IDENTITY)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQUENCE2")
@@ -24,4 +24,15 @@ public class ItemActivateAttributes {
 
     @Column
     private String apiUri;
+
+    public ActivateAttributes(
+            String name,
+            String inputType,
+            String apiUri
+    ){
+        this.name = name;
+        this.inputType = inputType;
+        this.apiUri = apiUri;
+
+    }
 }

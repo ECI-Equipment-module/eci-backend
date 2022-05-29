@@ -22,7 +22,4 @@ public class Classification1 {
     @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false)
-    private List<ItemActivateAttributes> itemActivateAttributes;
-
 }

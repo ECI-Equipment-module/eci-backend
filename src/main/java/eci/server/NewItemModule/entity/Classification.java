@@ -1,5 +1,6 @@
 package eci.server.NewItemModule.entity;
 
+import eci.server.ItemModule.entity.material.ItemMaterial;
 import lombok.*;
 
 import javax.persistence.*;
@@ -28,6 +29,11 @@ public class Classification {
     @JoinColumn(name = "classification3_id")
     private Classification3 classification3;
 
-    @Column
-    private List<ItemActivateAttributes> itemAttributesList;
+    @OneToMany(
+            mappedBy = "classification",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true,
+            fetch = FetchType.LAZY)
+    private List<ClassificationActivateAttributes> itemAttributesList;
+
 }
