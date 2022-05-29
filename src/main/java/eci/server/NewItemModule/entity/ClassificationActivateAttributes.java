@@ -14,9 +14,9 @@ public class ClassificationActivateAttributes {
 
     @Id
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "classification1_id", insertable = false, updatable = false)
-    @JoinColumn(name = "classification2_id", insertable = false, updatable = false)
-    @JoinColumn(name = "classification3_id", insertable = false, updatable = false)
+    @JoinColumn(name = "classification1_id")
+    @JoinColumn(name = "classification2_id")
+    @JoinColumn(name = "classification3_id")
     private Classification classification;
 
     @Id

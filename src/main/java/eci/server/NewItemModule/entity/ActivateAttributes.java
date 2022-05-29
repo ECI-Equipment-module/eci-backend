@@ -22,6 +22,9 @@ public class ActivateAttributes {
     @Column(nullable = false)
     private String inputType;
 
+    @Column(nullable = false)
+    private String[] choiceField;
+
     @Column
     private String apiUri;
 
