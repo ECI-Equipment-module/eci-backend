@@ -34,6 +34,6 @@ public class Classification {
             cascade = CascadeType.ALL,
             orphanRemoval = true,
             fetch = FetchType.LAZY)
-    private List<ClassificationActivateAttributes> itemAttributesList;
+    private List<ClassifyActivate> itemAttributesList;
 
 }

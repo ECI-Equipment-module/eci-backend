@@ -1,10 +1,12 @@
 package eci.server.NewItemModule.entity;
 
+import eci.server.ItemModule.entity.manufacture.ItemManufacture;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Getter
 @Entity
@@ -22,8 +24,12 @@ public class ActivateAttributes {
     @Column(nullable = false)
     private String inputType;
 
-    @Column(nullable = false)
-    private String[] choiceField;
+    @OneToMany(
+            mappedBy = "activateAttributes",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true,
+            fetch = FetchType.LAZY)
+    private List<ChoiceField> choiceFields;
 
     @Column
     private String apiUri;
@@ -31,11 +37,14 @@ public class ActivateAttributes {
     public ActivateAttributes(
             String name,
             String inputType,
-            String apiUri
+            String apiUri,
+            List<ChoiceField> choiceFields
     ){
         this.name = name;
         this.inputType = inputType;
+        this.choiceFields = choiceFields;
         this.apiUri = apiUri;
+
 
     }
 }

@@ -9,18 +9,18 @@ import javax.persistence.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @EqualsAndHashCode
-@IdClass(ClassificationActivateAttributesId.class)
-public class ClassificationActivateAttributes {
+@IdClass(ClassifyActivateId.class)
+public class ClassifyActivate {
 
     @Id
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "classification1_id")
-    @JoinColumn(name = "classification2_id")
-    @JoinColumn(name = "classification3_id")
+    @JoinColumn(name = "c1_id")
+    @JoinColumn(name = "c2_id")
+    @JoinColumn(name = "c3_id")
     private Classification classification;
 
     @Id
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "activateAttributes_id")
+    @JoinColumn(name = "activate_id")
     private ActivateAttributes activateAttributes;
 }

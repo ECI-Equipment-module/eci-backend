@@ -10,7 +10,7 @@ import java.io.Serializable;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class ClassificationActivateAttributesId implements Serializable {
+public class ClassifyActivateId implements Serializable {
     private Classification classification;
     private ActivateAttributes activateAttributes;
 }
