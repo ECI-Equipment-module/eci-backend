@@ -8,13 +8,13 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ManufactureSimpleDto {
+public class MakerSimpleDto {
     Long id;
     private String code;
     private String name;
 
-    public static ManufactureSimpleDto toDto(Manufacture manufacture) {
-        return new ManufactureSimpleDto(
+    public static MakerSimpleDto toDto(Manufacture manufacture) {
+        return new MakerSimpleDto(
                 manufacture.getId(),
                 manufacture.getCode(),
                 manufacture.getName());

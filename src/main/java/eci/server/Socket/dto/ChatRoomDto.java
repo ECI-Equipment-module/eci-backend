@@ -7,7 +7,6 @@ import org.springframework.web.socket.WebSocketSession;
 
 import java.text.ParseException;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 
 @Getter
 public class ChatRoomDto {

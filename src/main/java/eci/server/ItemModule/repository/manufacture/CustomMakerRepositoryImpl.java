@@ -5,8 +5,8 @@ import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import eci.server.ItemModule.dto.manufacture.ManufactureReadCondition;
-import eci.server.ItemModule.dto.manufacture.ManufactureSimpleDto;
+import eci.server.ItemModule.dto.manufacture.MakerReadCondition;
+import eci.server.ItemModule.dto.manufacture.MakerSimpleDto;
 import eci.server.ItemModule.entity.item.Manufacture;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -22,29 +22,29 @@ import static com.querydsl.core.types.Projections.constructor;
 import static eci.server.ItemModule.entity.item.QManufacture.manufacture;
 
 @Transactional(readOnly = true)
-public class CustomManufactureRepositoryImpl extends QuerydslRepositorySupport implements CustomManufactureRepository {
+public class CustomMakerRepositoryImpl extends QuerydslRepositorySupport implements CustomMakerRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
 
-    public CustomManufactureRepositoryImpl(JPAQueryFactory jpaQueryFactory) {
+    public CustomMakerRepositoryImpl(JPAQueryFactory jpaQueryFactory) {
         super(Manufacture.class);
         this.jpaQueryFactory = jpaQueryFactory;
     }
 
     @Override
-    public Page<ManufactureSimpleDto> findAllByCondition(ManufactureReadCondition cond) {
+    public Page<MakerSimpleDto> findAllByCondition(MakerReadCondition cond) {
         Pageable pageable = PageRequest.of(cond.getPage(), cond.getSize());
         Predicate predicate = createPredicate(cond);
         return new PageImpl<>(fetchAll(predicate, pageable), pageable, fetchCount(predicate));
     }
 
 
-    private List<ManufactureSimpleDto> fetchAll(Predicate predicate, Pageable pageable) {
+    private List<MakerSimpleDto> fetchAll(Predicate predicate, Pageable pageable) {
         return getQuerydsl().applyPagination(
                 pageable,
                 jpaQueryFactory
                         .select(constructor(
-                                ManufactureSimpleDto.class,
+                                MakerSimpleDto.class,
                                 manufacture.id,
                                 manufacture.code,
                                 manufacture.name
@@ -62,7 +62,7 @@ public class CustomManufactureRepositoryImpl extends QuerydslRepositorySupport i
                 where(predicate).fetchOne();
     }
 
-    private Predicate createPredicate(ManufactureReadCondition cond) { // 8
+    private Predicate createPredicate(MakerReadCondition cond) { // 8
         return new BooleanBuilder();
     }
 

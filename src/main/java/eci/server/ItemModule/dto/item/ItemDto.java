@@ -2,7 +2,7 @@ package eci.server.ItemModule.dto.item;
 
 
 import eci.server.ItemModule.dto.color.ColorDto;
-import eci.server.ItemModule.dto.manufacture.ManufactureSimpleDto;
+import eci.server.ItemModule.dto.manufacture.MakerSimpleDto;
 import eci.server.ItemModule.dto.material.MaterialSimpleDto;
 import eci.server.ItemModule.dto.member.MemberDto;
 import eci.server.ItemModule.entity.item.Item;
@@ -10,7 +10,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
@@ -32,7 +31,7 @@ public class ItemDto {
     private ColorDto color;
 
     private List<MaterialSimpleDto> materialDto;
-    private List<ManufactureSimpleDto> manufactureSimpleDtos;
+    private List<MakerSimpleDto> makerSimpleDtos;
 
     private char revision;
 
@@ -69,7 +68,7 @@ public class ItemDto {
 
                 Item.getManufactures().
                         stream().
-                        map(i -> ManufactureSimpleDto.toDto(
+                        map(i -> MakerSimpleDto.toDto(
                                 i.getManufacture())
                         ).collect(toList()),
 

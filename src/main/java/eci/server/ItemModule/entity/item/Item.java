@@ -4,17 +4,14 @@ import eci.server.ItemModule.dto.item.ItemUpdateRequest;
 
 import eci.server.ItemModule.entity.entitycommon.EntityDate;
 import eci.server.ItemModule.entity.material.ItemMaterial;
-import eci.server.ItemModule.entity.material.ItemMaterialId;
 import eci.server.ItemModule.entity.material.Material;
 import eci.server.ItemModule.entity.member.Member;
 import eci.server.ItemModule.exception.item.ColorNotFoundException;
-import eci.server.ItemModule.exception.item.ManufactureNotFoundException;
-import eci.server.ItemModule.exception.item.MaterialNotFoundException;
 import eci.server.ItemModule.exception.member.sign.MemberNotFoundException;
 import eci.server.ItemModule.repository.color.ColorRepository;
 import eci.server.ItemModule.repository.item.ItemManufactureRepository;
 import eci.server.ItemModule.repository.item.ItemMaterialRepository;
-import eci.server.ItemModule.repository.manufacture.ManufactureRepository;
+import eci.server.ItemModule.repository.manufacture.MakerRepository;
 import eci.server.ItemModule.repository.material.MaterialRepository;
 import eci.server.ItemModule.repository.member.MemberRepository;
 import lombok.*;
@@ -293,7 +290,7 @@ public class Item extends EntityDate {
             ColorRepository colorRepository,
             MemberRepository memberRepository,
             MaterialRepository materialRepository,
-            ManufactureRepository manufactureRepository,
+            MakerRepository manufactureRepository,
             ItemManufactureRepository itemManufactureRepository,
             ItemMaterialRepository itemMaterialRepository
     ) {

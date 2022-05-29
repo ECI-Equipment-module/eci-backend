@@ -4,7 +4,7 @@ import eci.server.ItemModule.entity.item.*;
 import eci.server.ItemModule.exception.item.*;
 import eci.server.ItemModule.exception.member.sign.MemberNotFoundException;
 import eci.server.ItemModule.repository.color.ColorRepository;
-import eci.server.ItemModule.repository.manufacture.ManufactureRepository;
+import eci.server.ItemModule.repository.manufacture.MakerRepository;
 import eci.server.ItemModule.repository.material.MaterialRepository;
 import eci.server.ItemModule.repository.member.MemberRepository;
 import lombok.AllArgsConstructor;
@@ -14,13 +14,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.SequenceGenerator;
 import javax.validation.constraints.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.partitioningBy;
 import static java.util.stream.Collectors.toList;
@@ -80,7 +76,7 @@ public class ItemCreateRequest {
             MemberRepository memberRepository,
             ColorRepository colorRepository,
             MaterialRepository materialRepository,
-            ManufactureRepository manufactureRepository) {
+            MakerRepository manufactureRepository) {
 
         if (req.type.equals("NONE")) {
             //아이템 타입이 none이라면 제대로 저장하면 안됨

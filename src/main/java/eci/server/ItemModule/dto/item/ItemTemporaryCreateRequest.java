@@ -6,7 +6,7 @@ import eci.server.ItemModule.exception.item.ManufactureNotFoundException;
 import eci.server.ItemModule.exception.item.MaterialNotFoundException;
 import eci.server.ItemModule.exception.member.sign.MemberNotFoundException;
 import eci.server.ItemModule.repository.color.ColorRepository;
-import eci.server.ItemModule.repository.manufacture.ManufactureRepository;
+import eci.server.ItemModule.repository.manufacture.MakerRepository;
 import eci.server.ItemModule.repository.material.MaterialRepository;
 import eci.server.ItemModule.repository.member.MemberRepository;
 import lombok.AllArgsConstructor;
@@ -19,12 +19,9 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.SequenceGenerator;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.partitioningBy;
 import static java.util.stream.Collectors.toList;
@@ -79,7 +76,7 @@ public class ItemTemporaryCreateRequest {
             MemberRepository memberRepository,
             ColorRepository colorRepository,
             MaterialRepository materialRepository,
-            ManufactureRepository manufactureRepository) {
+            MakerRepository manufactureRepository) {
 
 
         return new Item(

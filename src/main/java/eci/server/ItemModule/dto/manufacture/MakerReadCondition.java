@@ -11,7 +11,7 @@ import javax.validation.constraints.PositiveOrZero;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ManufactureReadCondition {
+public class MakerReadCondition {
     @NotNull(message = "페이지 번호를 입력해주세요.")
     @PositiveOrZero(message = "올바른 페이지 번호를 입력해주세요. (0 이상)")
     private Integer page;
