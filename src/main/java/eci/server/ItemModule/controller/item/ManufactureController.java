@@ -19,7 +19,7 @@ public class ManufactureController {
 
     private final ManufactureService manufactureService;
 
-    @GetMapping("/manufactures")
+    @GetMapping("/manufacture")
     @ResponseStatus(HttpStatus.OK)
     public Response readAll(@Valid ManufactureReadCondition cond) {
         return Response.success(

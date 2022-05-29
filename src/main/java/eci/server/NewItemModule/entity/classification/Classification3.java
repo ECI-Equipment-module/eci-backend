@@ -24,6 +24,10 @@ public class Classification3 {
     @Column(nullable = false)
     private String name;
 
+    @Column
+    private boolean last;
+
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "classification2_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)

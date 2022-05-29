@@ -1,13 +1,11 @@
 package eci.server.NewItemModule.entity.classification;
 
 
-import eci.server.ItemModule.entity.manufacture.ItemManufacture;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Getter
 @Entity
@@ -22,4 +20,6 @@ public class Classification1 {
     @Column(nullable = false)
     private String name;
 
+    @Column
+    private boolean last;
 }
