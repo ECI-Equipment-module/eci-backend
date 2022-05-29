@@ -1,4 +1,4 @@
-package eci.server.ItemModule.entity.item;
+package eci.server.NewItemModule.entity;
 
 import lombok.*;
 
@@ -10,7 +10,7 @@ import java.io.Serializable;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class ItemManufactureId implements Serializable {
-    private Item item;
-    private Manufacture manufacture;
+public class ClassifyActivateId implements Serializable {
+    private Classification classification;
+    private ActivateAttributes activateAttributes;
 }

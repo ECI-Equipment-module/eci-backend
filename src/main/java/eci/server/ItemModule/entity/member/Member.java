@@ -1,7 +1,6 @@
 package eci.server.ItemModule.entity.member;
 
 import eci.server.ItemModule.entity.entitycommon.EntityDate;
-import eci.server.ItemModule.entity.item.ItemManufacture;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
