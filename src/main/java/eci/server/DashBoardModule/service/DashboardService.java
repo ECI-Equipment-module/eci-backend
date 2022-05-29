@@ -238,7 +238,7 @@ public class DashboardService {
                 AuthenticationEntryPointException::new
         );
 
-        //1-1 temp save 용 ) 내가 작성자인 모든 프로젝트들 데려오기
+        //1-1 temp save 용 ) 내가 작성자인 모든 디자인 데려오기
         List<Design> myDesignList = designRepository.findByMember(member1);
         Iterator<Design> myDesignListItr = myDesignList.iterator();
 

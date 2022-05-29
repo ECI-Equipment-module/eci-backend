@@ -89,7 +89,6 @@ public class Item extends EntityDate {
             cascade = CascadeType.PERSIST,
             orphanRemoval = true
     )
-
     private List<Attachment> attachments;
 
     @Column(nullable = false)
