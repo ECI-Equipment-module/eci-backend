@@ -1,5 +1,6 @@
-package eci.server.ItemModule.entity.item;
+package eci.server.ItemModule.entity.manufacture;
 
+import eci.server.ItemModule.entity.item.Item;
 import lombok.*;
 
 import javax.persistence.Embeddable;
@@ -10,7 +11,7 @@ import java.io.Serializable;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class ItemManufactureId implements Serializable {
+public class ItemMakerId implements Serializable {
     private Item item;
-    private Manufacture manufacture;
+    private Maker maker;
 }

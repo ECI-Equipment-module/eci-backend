@@ -1,4 +1,4 @@
-package eci.server.ItemModule.entity.item;
+package eci.server.ItemModule.entity.manufacture;
 
 import eci.server.ItemModule.entitycommon.EntityDate;
 import lombok.AccessLevel;
@@ -10,7 +10,7 @@ import javax.persistence.*;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Manufacture extends EntityDate {
+public class Maker extends EntityDate {
     @Id
 
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,7 +25,7 @@ public class Manufacture extends EntityDate {
     @Column(nullable = false)
     private String name;
 
-    public Manufacture(
+    public Maker(
             String code,
             String name
     ){

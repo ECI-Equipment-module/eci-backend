@@ -1,8 +1,8 @@
-package eci.server.ItemModule.controller.item;
+package eci.server.NewItemModule.controller.coating;
 
-import eci.server.ItemModule.dto.manufacture.MakerReadCondition;
 import eci.server.ItemModule.dto.response.Response;
-import eci.server.ItemModule.service.item.MakerService;
+import eci.server.NewItemModule.dto.coatingWay.CoatingWayReadCondition;
+import eci.server.NewItemModule.service.coating.CoatingWayService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -15,15 +15,14 @@ import javax.validation.Valid;
 @RequiredArgsConstructor
 @RestController
 @CrossOrigin(origins = "https://localhost:3000")
-public class MakerController {
+public class CoatingWayController {
+    private final CoatingWayService coatingWayService;
 
-    private final MakerService makerService;
-    @GetMapping("/makers")
+    @GetMapping("/coating-way")
     @ResponseStatus(HttpStatus.OK)
-    public Response readAll(@Valid MakerReadCondition cond) {
+    public Response readAll(@Valid CoatingWayReadCondition cond) {
         return Response.success(
-                makerService.
+                coatingWayService.
                         readAll(cond));
     }
-
 }

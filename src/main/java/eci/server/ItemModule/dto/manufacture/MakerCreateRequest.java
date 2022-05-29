@@ -1,5 +1,5 @@
 package eci.server.ItemModule.dto.manufacture;
-import eci.server.ItemModule.entity.item.Manufacture;
+import eci.server.ItemModule.entity.manufacture.Maker;
 
 import javax.validation.constraints.NotBlank;
 
@@ -10,9 +10,9 @@ public class MakerCreateRequest {
     @NotBlank(message = "이름을 입력해주세요.")
     private String name;
 
-    public Manufacture toEntity(MakerCreateRequest req) {
+    public Maker toEntity(MakerCreateRequest req) {
 
-        return new Manufacture(
+        return new Maker(
                 req.code,
                 req.name
         );

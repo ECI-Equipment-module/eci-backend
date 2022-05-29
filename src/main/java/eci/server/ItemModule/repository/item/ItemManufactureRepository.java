@@ -1,16 +1,15 @@
 package eci.server.ItemModule.repository.item;
 
 import eci.server.ItemModule.entity.item.Item;
-import eci.server.ItemModule.entity.item.ItemManufacture;
-import eci.server.ItemModule.entity.item.Manufacture;
+import eci.server.ItemModule.entity.manufacture.ItemMaker;
+import eci.server.ItemModule.entity.manufacture.Maker;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
-import java.util.Optional;
 
-public interface ItemManufactureRepository extends JpaRepository<ItemManufacture, Long>{
+public interface ItemManufactureRepository extends JpaRepository<ItemMaker, Long>{
 
-    ItemManufacture findByItemAndManufacture(Item item, Manufacture manufacture);
-    List<ItemManufacture> findByItem(Item item);
-    List<ItemManufacture> findByManufacture(Manufacture manufacture);
+    ItemMaker findByItemAndManufacture(Item item, Maker maker);
+    List<ItemMaker> findByItem(Item item);
+    List<ItemMaker> findByManufacture(Maker maker);
 }

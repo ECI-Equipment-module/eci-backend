@@ -3,6 +3,8 @@ package eci.server.ItemModule.entity.item;
 import eci.server.ItemModule.dto.item.ItemUpdateRequest;
 
 import eci.server.ItemModule.entity.entitycommon.EntityDate;
+import eci.server.ItemModule.entity.manufacture.ItemMaker;
+import eci.server.ItemModule.entity.manufacture.Maker;
 import eci.server.ItemModule.entity.material.ItemMaterial;
 import eci.server.ItemModule.entity.material.Material;
 import eci.server.ItemModule.entity.member.Member;
@@ -34,9 +36,9 @@ import static java.util.stream.Collectors.toList;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Item extends EntityDate {
     @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-//   @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQUENCE2")
-//   @SequenceGenerator(name="SEQUENCE2", sequenceName="SEQUENCE2", allocationSize=1)
+//  @GeneratedValue(strategy = GenerationType.IDENTITY)
+   @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQUENCE2")
+   @SequenceGenerator(name="SEQUENCE2", sequenceName="SEQUENCE2", allocationSize=1)
 
     private Long id;
 
@@ -113,7 +115,7 @@ public class Item extends EntityDate {
             cascade = CascadeType.ALL,
             orphanRemoval = true,
             fetch = FetchType.LAZY)
-    private List<ItemManufacture> manufactures;
+    private List<ItemMaker> manufactures;
 
     @Column
     private int revision;
@@ -133,7 +135,7 @@ public class Item extends EntityDate {
      * @param thumbnail
      * @param attachments
      * @param materials
-     * @param manufactures
+     * @param makers
      * @param partnumbers
      */
     public Item(
@@ -155,7 +157,7 @@ public class Item extends EntityDate {
 
             List<Material> materials,
 
-            List<Manufacture> manufactures,
+            List<Maker> makers,
             List<String> partnumbers
 
 
@@ -186,11 +188,11 @@ public class Item extends EntityDate {
                         .collect(toList());
 
         this.manufactures =
-                manufactures.stream().map(
+                makers.stream().map(
 
                                 //다대다 관계를 만드는 구간
-                                r -> new ItemManufacture(
-                                        this, r, partnumbers.get(manufactures.indexOf(r))
+                                r -> new ItemMaker(
+                                        this, r, partnumbers.get(makers.indexOf(r))
                                 )
                         )
                         .collect(toList());
@@ -213,7 +215,7 @@ public class Item extends EntityDate {
      * @param color
      * @param thumbnail
      * @param materials
-     * @param manufactures
+     * @param makers
      * @param partnumbers
      */
     public Item(
@@ -234,7 +236,7 @@ public class Item extends EntityDate {
 
             List<Material> materials,
 
-            List<Manufacture> manufactures,
+            List<Maker> makers,
             List<String> partnumbers
 
 
@@ -264,11 +266,11 @@ public class Item extends EntityDate {
                         .collect(toList());
 
         this.manufactures =
-                manufactures.stream().map(
+                makers.stream().map(
 
                                 //다대다 관계를 만드는 구간
-                                r -> new ItemManufacture(
-                                        this, r, partnumbers.get(manufactures.indexOf(r))
+                                r -> new ItemMaker(
+                                        this, r, partnumbers.get(makers.indexOf(r))
                                 )
                         )
                         .collect(toList());

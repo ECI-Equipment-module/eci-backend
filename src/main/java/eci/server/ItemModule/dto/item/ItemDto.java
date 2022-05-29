@@ -69,7 +69,7 @@ public class ItemDto {
                 Item.getManufactures().
                         stream().
                         map(i -> MakerSimpleDto.toDto(
-                                i.getManufacture())
+                                i.getMaker())
                         ).collect(toList()),
 
                 (char) Item.getRevision()

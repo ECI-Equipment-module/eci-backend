@@ -1,6 +1,6 @@
 package eci.server.ItemModule.dto.manufacture;
 
-import eci.server.ItemModule.entity.item.Manufacture;
+import eci.server.ItemModule.entity.manufacture.Maker;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,11 +13,11 @@ public class MakerSimpleDto {
     private String code;
     private String name;
 
-    public static MakerSimpleDto toDto(Manufacture manufacture) {
+    public static MakerSimpleDto toDto(Maker maker) {
         return new MakerSimpleDto(
-                manufacture.getId(),
-                manufacture.getCode(),
-                manufacture.getName());
+                maker.getId(),
+                maker.getCode(),
+                maker.getName());
     }
 
 }

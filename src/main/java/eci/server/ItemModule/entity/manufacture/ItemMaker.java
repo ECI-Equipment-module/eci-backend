@@ -1,5 +1,6 @@
-package eci.server.ItemModule.entity.item;
+package eci.server.ItemModule.entity.manufacture;
 
+import eci.server.ItemModule.entity.item.Item;
 import lombok.*;
 
 import javax.persistence.*;
@@ -9,8 +10,8 @@ import javax.persistence.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @EqualsAndHashCode
-@IdClass(ItemManufactureId.class)
-public class ItemManufacture {
+@IdClass(ItemMakerId.class)
+public class ItemMaker {
 
     @Id
     @ManyToOne(fetch = FetchType.LAZY)
@@ -20,7 +21,7 @@ public class ItemManufacture {
     @Id
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "manufacture_id")
-    private Manufacture manufacture;
+    private Maker maker;
 
     @Column
     private String partnumber;
