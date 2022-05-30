@@ -177,6 +177,11 @@ public class NewItem extends EntityDate {
             fetch = FetchType.LAZY)
     private List<NewItemMaker> makers;
 
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "supplier_id")
+//    @OnDelete(action = OnDeleteAction.CASCADE)
+//    private List<NewItemMaker> makers;
+
     @Column(nullable = false)
     private Boolean tempsave;
 

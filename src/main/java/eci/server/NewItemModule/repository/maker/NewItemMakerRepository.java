@@ -6,6 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface NewItemMakerRepository extends JpaRepository<NewItemMaker, Long> {
+public interface NewItemMakerRepository extends JpaRepository<NewItemMaker, Long>{
     List<NewItemMaker> findByNewItem(NewItem item);
 }

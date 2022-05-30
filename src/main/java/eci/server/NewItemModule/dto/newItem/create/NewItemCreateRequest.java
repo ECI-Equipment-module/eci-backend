@@ -26,8 +26,6 @@
 //@NoArgsConstructor
 //@AllArgsConstructor
 //public class NewItemCreateRequest {
-//    @Null
-//    private String name;
 //
 //    @NotNull(message = "분류 타입을 입력해주세요.")
 //    private Long classification1;
@@ -40,15 +38,58 @@
 //
 //    @NotNull(message = "아이템 타입을 입력해주세요.")
 //    private String type;
+//    //ItemTypes 으로 변환하기
 //
 //    @Null
 //    private Integer itemNumber;
+//
+//    @Null
+//    private String name;
+//
+//    private boolean share;
+//
+//    private Long carType;
+//
+//    // 맞춤 속성 ) boolean 빼고 다 만듦
+//    // integrate; curve;  forming;
+//
+//    private
 //
 //    private String width;
 //
 //    private String height;
 //
+//    private String thickness;
+//
 //    private String weight;
+//
+//    private String importance;
+//
+//    private Long colorId;
+//
+//    private Integer loadQuantity;
+//
+//    private Long coatingWayId;
+//
+//    private Long coatingTypeId;
+//
+//    private Integer modulus;
+//
+//    private String screw;
+//
+//    private String cuttingType;
+//
+//    private String lcd;
+//
+//    private Integer displaySize;
+//
+//    private Integer screwHeight;
+//
+//    private Long clientOrganizationId;
+//
+//    private Long supplierOrganizationId;
+//
+//    private Long makersId;
 //
 //    private List<MultipartFile> thumbnail = new ArrayList<>();
 //
@@ -56,8 +97,6 @@
 //
 //    private List<String> tag = new ArrayList<>();
 //    private List<String> attachmentComment = new ArrayList<>();
-//
-//    private Long colorId;
 //
 //    private List<Long> maker = new ArrayList<>();
 //

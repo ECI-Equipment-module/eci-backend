@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.function.Function;
 
 import static com.querydsl.core.types.Projections.constructor;
-import static eci.server.ItemModule.entity.manufacture.QMaker.maker;
+import static eci.server.NewItemModule.entity.supplier.QMaker.maker;
 
 @Transactional(readOnly = true)
 public class CustomMakerRepositoryImpl extends QuerydslRepositorySupport implements CustomMakerRepository {
