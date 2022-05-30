@@ -1,8 +1,6 @@
 package eci.server.NewItemModule.entity.maker;
 
-import eci.server.ItemModule.entity.item.Item;
-import eci.server.ItemModule.entity.manufacture.ItemMakerId;
-import eci.server.ItemModule.entity.manufacture.Maker;
+import eci.server.NewItemModule.entity.supplier.Maker;
 import eci.server.NewItemModule.entity.NewItem;
 import lombok.*;
 
@@ -23,7 +21,7 @@ public class NewItemMaker {
 
     @Id
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "manufacture_id")
+    @JoinColumn(name = "maker_id")
     private Maker maker;
 
     @Column

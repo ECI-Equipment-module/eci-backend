@@ -5,9 +5,15 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-@JsonInclude(JsonInclude.Include.NON_NULL) // 1
-@AllArgsConstructor(access = AccessLevel.PRIVATE) // 2
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Getter
+//단순 응답 형태만 통일하실꺼면은
+// 인터페이스나 추상클래스 하나 만드셔서
+// Response로 보낼
+// 베이스 클래스 하나 만드시고,
+// 그걸 상속 받는 콘크리트 클래스 만드시는게 더
+// 수월할 수 있어요.
 public class Response {
     /**
      * 일관화된 응답 방식을 위한 클래스

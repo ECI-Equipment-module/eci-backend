@@ -1,4 +1,4 @@
-package eci.server.ItemModule.entity.manufacture;
+package eci.server.NewItemModule.entity.supplier;
 
 import eci.server.ItemModule.entitycommon.EntityDate;
 import lombok.AccessLevel;

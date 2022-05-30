@@ -3,10 +3,7 @@ package eci.server.NewItemModule.entity;
 import eci.server.ItemModule.dto.item.ItemUpdateRequest;
 import eci.server.ItemModule.entity.entitycommon.EntityDate;
 import eci.server.ItemModule.entity.item.*;
-import eci.server.ItemModule.entity.manufacture.ItemMaker;
-import eci.server.ItemModule.entity.manufacture.Maker;
-import eci.server.ItemModule.entity.material.ItemMaterial;
-import eci.server.ItemModule.entity.material.Material;
+import eci.server.NewItemModule.entity.supplier.Maker;
 import eci.server.ItemModule.entity.member.Member;
 import eci.server.NewItemModule.entity.classification.Classification;
 import eci.server.NewItemModule.entity.coating.CoatingType;
@@ -42,20 +39,27 @@ public class NewItem extends EntityDate {
     @SequenceGenerator(name="SEQUENCE2", sequenceName="SEQUENCE2", allocationSize=1)
     private Long id;
 
-    @Column(nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "c1_id", nullable = false)
+    @JoinColumn(name = "c2_id", nullable = false)
+    @JoinColumn(name = "c3_id", nullable = false)
     private Classification classification;
 
     @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false)
-    private ItemTypes type;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(
+            name = "item_types_id",
+            nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private ItemTypes itemTypes;
 
     @Column(nullable = false)
     private Integer itemNumber;
 
     @OneToMany(
-            mappedBy = "item",
+            mappedBy = "newItem",
             cascade = CascadeType.PERSIST,
             orphanRemoval = true
     )
@@ -121,11 +125,15 @@ public class NewItem extends EntityDate {
     private boolean forming;
 
     //코팅 방식
-    @Column
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "coating_way_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private CoatingWay coatingWay;
 
     //코팅 종류
-    @Column
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "coating_type_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private CoatingType coatingType;
 
     //모듈러스 숫자 입력
@@ -163,7 +171,7 @@ public class NewItem extends EntityDate {
     private ProduceOrganization supplierOrganization;
 
     @OneToMany(
-            mappedBy = "new_item",
+            mappedBy = "newItem",
             cascade = CascadeType.ALL,
             orphanRemoval = true,
             fetch = FetchType.LAZY)
@@ -201,9 +209,9 @@ public class NewItem extends EntityDate {
     public NewItem(
             Classification classification,
             String name,
-            ItemTypes type,
+            ItemTypes itemTypes,
             Integer itemNumber,
-            List<Image> thumbnail,
+            List<NewItemImage> thumbnail,
             boolean share,
             CarType carType,
             boolean integrate,
@@ -235,40 +243,77 @@ public class NewItem extends EntityDate {
 
             List<NewItemAttachment> attachments
     ) {
-        this.name = name;
-        this.type = type;
-        this.itemNumber = itemNumber;
-        this.width = width;
-        this.height = height;
-        this.member = member;
-        this.weight = weight;
-        this.tempsave = tempsave;
-        this.revise_progress = revise_progress;
 
-        this.color = (color);
+        this.classification = classification;
+        this.name = name;
+
+        this.itemTypes = itemTypes;
+
+        this.itemNumber = itemNumber;
 
         this.thumbnail = new ArrayList<>();
         addImages(thumbnail);
 
-        this.attachments = new ArrayList<>();
-        addAttachments(attachments);
+        this.share = share;
 
-        this.materials =
-                materials.stream().map(
-                                r -> new ItemMaterial(
-                                        this, r)
-                        )
-                        .collect(toList());
+        this.carType = carType;
 
-        this.manufactures =
+        this.integrate = integrate;
+
+        this.curve = curve;
+
+        this.width = width;
+
+        this.height = height;
+
+        this.thickness = thickness;
+
+        this.weight = weight;
+
+        this.importance = importance;
+
+        this.color = color;
+
+        this.loadQuantity = loadQuantity;
+
+        this.forming = forming;
+
+        this.coatingWay = coatingWay;
+
+        this.coatingType = coatingType;
+
+        this.modulus = modulus;
+
+        this.screw = screw;
+
+        this.cuttingType = cuttingType;
+
+        this.lcd = lcd;
+
+        this.displaySize = displaySize;
+
+        this.screwHeight = screwHeight;
+
+        this.clientOrganization = clientOrganizations;
+
+        this.supplierOrganization = supplierOrganization;
+
+        this.makers =
                 makers.stream().map(
 
                                 //다대다 관계를 만드는 구간
-                                r -> new ItemMaker(
+                                r -> new NewItemMaker(
                                         this, r, partnumbers.get(makers.indexOf(r))
                                 )
                         )
                         .collect(toList());
+
+        this.tempsave = tempsave;
+
+        this.revise_progress = revise_progress;
+
+        this.attachments = new ArrayList<>();
+        addAttachments(attachments);
 
         this.revision = 65;
 
@@ -292,7 +337,7 @@ public class NewItem extends EntityDate {
      * @param added
      */
     private void addAttachments(List<NewItemAttachment> added) {
-        added.stream().forEach(i -> {
+        added.forEach(i -> {
             attachments.add(i);
             i.initNewItem(this);
         });

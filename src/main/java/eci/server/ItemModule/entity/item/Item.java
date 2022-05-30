@@ -4,7 +4,7 @@ import eci.server.ItemModule.dto.item.ItemUpdateRequest;
 
 import eci.server.ItemModule.entity.entitycommon.EntityDate;
 import eci.server.ItemModule.entity.manufacture.ItemMaker;
-import eci.server.ItemModule.entity.manufacture.Maker;
+import eci.server.NewItemModule.entity.supplier.Maker;
 import eci.server.ItemModule.entity.material.ItemMaterial;
 import eci.server.ItemModule.entity.material.Material;
 import eci.server.ItemModule.entity.member.Member;

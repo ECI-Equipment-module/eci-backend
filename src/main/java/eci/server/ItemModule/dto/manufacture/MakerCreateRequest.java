@@ -1,5 +1,5 @@
 package eci.server.ItemModule.dto.manufacture;
-import eci.server.ItemModule.entity.manufacture.Maker;
+import eci.server.NewItemModule.entity.supplier.Maker;
 
 import javax.validation.constraints.NotBlank;
 

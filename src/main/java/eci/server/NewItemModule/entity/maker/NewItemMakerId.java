@@ -1,6 +1,6 @@
 package eci.server.NewItemModule.entity.maker;
 
-import eci.server.ItemModule.entity.manufacture.Maker;
+import eci.server.NewItemModule.entity.supplier.Maker;
 import eci.server.NewItemModule.entity.NewItem;
 import lombok.*;
 

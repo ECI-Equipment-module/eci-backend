@@ -1,6 +1,6 @@
 package eci.server.ItemModule.dto.manufacture;
 
-import eci.server.ItemModule.entity.manufacture.Maker;
+import eci.server.NewItemModule.entity.supplier.Maker;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
