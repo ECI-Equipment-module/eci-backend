@@ -1,6 +1,7 @@
 package eci.server.NewItemModule.dto.classification;
 
 import eci.server.NewItemModule.entity.classification.Classification2;
+import eci.server.NewItemModule.repository.classification.Classification2Repository;
 import eci.server.NewItemModule.repository.classification.Classification3Repository;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -34,11 +35,12 @@ public class C2SelectDto {
 
 
     public static List<C2SelectDto> toDtoList(
-            List <Classification2> classification1List,
+            List <Classification2> classification2List,
+            Classification2Repository classification2Repository,
             Classification3Repository classification3Repository
     ) {
         List<C2SelectDto> classification1SelectDtoList
-                = classification1List.stream().map(
+                = classification2List.stream().map(
                 c -> new C2SelectDto(
                         c.getId(),
                         c.getName(),

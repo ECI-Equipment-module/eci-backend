@@ -30,6 +30,7 @@ public class C1SelectDto {
                 classification1.isLast(),
                 C2SelectDto.toDtoList(
                         classification2Repository.findByClassification1(classification1),
+                        classification2Repository,
                         classification3Repository
                 )
         );
@@ -49,6 +50,8 @@ public class C1SelectDto {
                         c.isLast(),
                         C2SelectDto.toDtoList(
                                 classification2Repository.findByClassification1(c),
+                                //classification2Repository.findAllByClassification2(),
+                                classification2Repository,
                                 classification3Repository
                         )
 

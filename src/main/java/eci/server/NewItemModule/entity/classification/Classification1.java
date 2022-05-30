@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Getter
 @Entity
@@ -22,4 +23,11 @@ public class Classification1 {
 
     @Column
     private boolean last;
+
+    @OneToMany(
+            mappedBy = "classification1",
+            cascade = CascadeType.PERSIST,
+            orphanRemoval = true
+    )
+    private List<Classification2> classification2List;
 }

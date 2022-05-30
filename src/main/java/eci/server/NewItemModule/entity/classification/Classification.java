@@ -37,4 +37,5 @@ public class Classification {
             fetch = FetchType.LAZY)
     private List<ClassifyActivate> activateAttributes;
 
+
 }

@@ -6,10 +6,7 @@ import eci.server.NewItemModule.service.classification.ClassificationService;
 import eci.server.NewItemModule.service.coating.CoatingTypeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
@@ -19,6 +16,7 @@ import javax.validation.Valid;
 public class ClassificationController {
     private final ClassificationService classificationService;
 
+    @CrossOrigin(origins = "https://localhost:3000")
     @GetMapping("/classification1")
     @ResponseStatus(HttpStatus.OK)
     public Response readClassification1All() {
@@ -27,6 +25,19 @@ public class ClassificationController {
                         readAllClassification1());
     }
 
+    @CrossOrigin(origins = "https://localhost:3000")
+    @GetMapping(value = "/attributes/{c1}/{c2}/{c3}")
+    @ResponseStatus(HttpStatus.OK)
+    public Response read(
+            @PathVariable Long c1,
+            @PathVariable Long c2,
+            @PathVariable Long c3
+            ) {
+        return Response.success(
+                classificationService
+                        .retrieveAttributes(c1,c2,c3)
 
+        );
+    }
 
 }

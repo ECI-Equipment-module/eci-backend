@@ -9,6 +9,7 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Getter
 @Entity
@@ -32,5 +33,10 @@ public class Classification2 {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Classification1 classification1;
 
-
+    @OneToMany(
+            mappedBy = "classification2",
+            cascade = CascadeType.PERSIST,
+            orphanRemoval = true
+    )
+    private List<Classification3> classification3_list;
 }
