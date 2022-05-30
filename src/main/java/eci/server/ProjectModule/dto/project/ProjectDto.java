@@ -89,7 +89,7 @@ public class ProjectDto {
     ) {
         List<RouteOrderingDto> routeDtoList = Optional.ofNullable(
                 RouteOrderingDto.toDtoList(
-                        routeOrderingRepository.findByItem(project.getItem()),
+                        routeOrderingRepository.findByNewItem(project.getNewItem()),
                         routeProductRepository,
                         routeOrderingRepository
                 )
@@ -113,7 +113,7 @@ public class ProjectDto {
                 project.getSopStartPeriod(),
                 project.getSopOverPeriod(),
 
-                ItemProjectDto.toDto(project.getItem()),
+                ItemProjectDto.toDto(project.getNewItem()),
                 MemberDto.toDto(project.getMember()),
                 project.getTempsave(),
                 ProjectTypeDto.toDto(project.getProjectType()),
@@ -131,8 +131,8 @@ public class ProjectDto {
                 //routeDtoList
 
                 //가장 최신의 라우트 오더링 중 최신의 라우트 오더링 아이디
-                routeOrderingRepository.findByItem(project.getItem()).
-                        get(routeOrderingRepository.findByItem(project.getItem()).size() - 1)
+                routeOrderingRepository.findByNewItem(project.getNewItem()).
+                        get(routeOrderingRepository.findByNewItem(project.getNewItem()).size() - 1)
                         .getId(),
 
                 //05-22추가

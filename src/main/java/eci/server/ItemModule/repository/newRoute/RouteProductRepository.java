@@ -11,5 +11,4 @@ public interface RouteProductRepository extends JpaRepository<RouteProduct, Long
 
     List<RouteProduct> findAllByRouteOrdering(RouteOrdering routeOrdering);
 
-    List<RouteProduct> findAllByProject(Project project);
 }

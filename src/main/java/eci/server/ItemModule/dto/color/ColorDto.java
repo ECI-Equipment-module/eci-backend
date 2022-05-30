@@ -1,8 +1,6 @@
 package eci.server.ItemModule.dto.color;
 
-import eci.server.ItemModule.dto.member.MemberDto;
 import eci.server.ItemModule.entity.item.Color;
-import eci.server.ItemModule.entity.member.Member;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

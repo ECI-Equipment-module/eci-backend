@@ -2,7 +2,9 @@ package eci.server.ItemModule.dto.newRoute.routeProduct;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import eci.server.ItemModule.dto.member.MemberDto;
+import eci.server.ItemModule.dto.newRoute.routeOrdering.SeqAndName;
 import eci.server.ItemModule.entity.newRoute.RouteProduct;
+import eci.server.ItemModule.entity.newRoute.RouteProductMember;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -24,7 +26,7 @@ public class RouteProductDto {
     private String comment;
     private boolean passed;
     private boolean rejected;
-    private boolean refusal;
+    private int refusal;
     private boolean show;
     private List<MemberDto> member;
 
@@ -40,11 +42,11 @@ public class RouteProductDto {
                         c.getComments(),
                         c.isPassed(),
                         c.isRejected(),
-                        c.isRefusal(),
+                        c.getRefusal(),
                         c.isRoute_show(),
                         MemberDto.toDtoList(
                                 c.getMembers().stream().map(
-                                        m -> m.getMember()
+                                        RouteProductMember::getMember
                                 ).collect(toList())
                         )
                 )
@@ -64,11 +66,11 @@ public class RouteProductDto {
                 routeProduct.getComments(),
                 routeProduct.isPassed(),
                 routeProduct.isRejected(),
-                routeProduct.isRefusal(),
+                routeProduct.getRefusal(),
                 routeProduct.isRoute_show(),
                 MemberDto.toDtoList(
                         routeProduct.getMembers().stream().map(
-                                m -> m.getMember()
+                                RouteProductMember::getMember
                         ).collect(toList())
                 )
         );

@@ -1,5 +1,6 @@
 package eci.server.ItemModule.dto.newRoute.projectRoute;
 
+import eci.server.ItemModule.dto.newRoute.routeOrdering.SeqAndName;
 import eci.server.ItemModule.entity.item.ItemType;
 import eci.server.ItemModule.entity.member.Member;
 import eci.server.ItemModule.entity.newRoute.RouteOrdering;
@@ -39,7 +40,7 @@ public class ProjectRouteProductCreateRequest {
 
         //프로젝트의 아이템 타입의해 routeType 결정됨
         Integer routeTypeIdx = ItemType.valueOf(
-                routeOrdering.getItem().getType()
+                routeOrdering.getNewItem().getItemTypes().getItemType().toString()
         ).label();
 
 
@@ -71,6 +72,7 @@ public class ProjectRouteProductCreateRequest {
         member1.add(memberRepository.findById(req.getMemberId())
                 .orElseThrow(MemberNotFoundException::new));
 
+
         RouteProduct requestRouteProduct = new RouteProduct(
                 0,
 
@@ -91,7 +93,7 @@ public class ProjectRouteProductCreateRequest {
                 false,
                 true,
                 false,
-                false,
+                -1,
                 member1,
                 routeOrdering
 
@@ -121,7 +123,7 @@ public class ProjectRouteProductCreateRequest {
                                         false,
                                         true,
                                         false,
-                                        false,
+                                        -1,
                                         req.getMemberIds().get(req.getMemberIds().indexOf(i)) //memberIds에서는 0부터 시작(request member 포함x)
                                                 .stream().map(
                                                         m->

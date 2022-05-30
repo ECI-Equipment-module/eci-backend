@@ -86,7 +86,7 @@ public class RouteProduct extends EntityDate {
     private boolean disabled;
 
     @Column
-    private boolean refusal;
+    private Integer refusal;
 
     @OneToMany(
             mappedBy = "routeProduct",
@@ -134,7 +134,7 @@ public class RouteProduct extends EntityDate {
             boolean rejected,
             boolean show,
             boolean disabled,
-            boolean refusal,
+            Integer refusal,
             List<Member> member,
             RouteOrdering newRoute
 
@@ -174,7 +174,7 @@ public class RouteProduct extends EntityDate {
             boolean rejected,
             boolean show,
             boolean disabled,
-            boolean refusal,
+            Integer refusal,
             List<Member> member,
             RouteOrdering newRoute,
             Project project,
@@ -230,7 +230,7 @@ public class RouteProduct extends EntityDate {
         this.comments = req.getComment();
         this.passed = true;
         this.rejected = false;
-        this.refusal = false;
+        this.refusal = -1;
 
         this.routeOrdering = routeProduct.getRouteOrdering();
 
@@ -251,7 +251,7 @@ public class RouteProduct extends EntityDate {
         this.comments = comment;
     }
 
-    public void updateRefusal(boolean refusal) {
+    public void updateRefusal(Integer refusal) {
         this.refusal = refusal;
     }
 

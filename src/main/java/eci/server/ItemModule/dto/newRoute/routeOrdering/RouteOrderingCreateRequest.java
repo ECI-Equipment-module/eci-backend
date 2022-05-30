@@ -8,6 +8,8 @@ import eci.server.ItemModule.exception.item.ItemNotFoundException;
 import eci.server.ItemModule.exception.member.sign.MemberNotFoundException;
 import eci.server.ItemModule.repository.item.ItemRepository;
 import eci.server.ItemModule.repository.newRoute.RouteTypeRepository;
+import eci.server.NewItemModule.entity.NewItem;
+import eci.server.NewItemModule.repository.item.NewItemRepository;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -42,19 +44,19 @@ public class RouteOrderingCreateRequest {
 
     public static RouteOrdering toEntity(
             RouteOrderingCreateRequest req,
-            ItemRepository itemRepository,
+            NewItemRepository newItemRepository,
             RoutePreset routePreset,
             RouteTypeRepository routeTypeRepository
             //ItemType itemType
     ){
-        Item targetItem = itemRepository.findById(req.itemId).orElseThrow(ItemNotFoundException::new);
+        NewItem targetItem = newItemRepository.findById(req.itemId).orElseThrow(ItemNotFoundException::new);
 
         List<String> typeList = new ArrayList<>();
 
         //아이템 타입에따라서 라우트 타입이 선택된다.
 
         // TODO 라벨 아니고 ITEM.ROUTE_TYPE.ID 로 선택해준다
-        Integer routeType =  ItemType.valueOf(targetItem.getType()).label();
+        Integer routeType =  ItemType.valueOf(targetItem.getItemTypes().getItemType().name()).label();
 
         List routeProduct = List.of((routePreset.itemRouteName[routeType]));
 
@@ -67,7 +69,7 @@ public class RouteOrderingCreateRequest {
 
         return new RouteOrdering(
                 typeList.toString(),
-                itemRepository.findById(req.itemId)
+                newItemRepository.findById(req.itemId)
                         .orElseThrow(MemberNotFoundException::new)
         );
     }

@@ -4,10 +4,10 @@ import eci.server.DesignModule.entity.design.Design;
 import eci.server.DesignModule.entity.designfile.DesignAttachment;
 import eci.server.ItemModule.exception.item.ItemNotFoundException;
 import eci.server.ItemModule.exception.member.sign.MemberNotFoundException;
-import eci.server.ItemModule.repository.item.ItemRepository;
 import eci.server.ItemModule.repository.member.MemberRepository;
+import eci.server.NewItemModule.repository.item.NewItemRepository;
 import eci.server.ProjectModule.exception.*;
-import eci.server.ProjectModule.repository.project.ProjectRepository;
+
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -38,7 +38,7 @@ public class DesignTempCreateRequest {
     public static Design toEntity(
             DesignTempCreateRequest req,
             MemberRepository memberRepository,
-            ItemRepository itemRepository
+            NewItemRepository itemRepository
     ) {
 
 

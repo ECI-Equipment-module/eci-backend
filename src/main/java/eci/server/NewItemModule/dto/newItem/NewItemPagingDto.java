@@ -1,4 +1,4 @@
-package eci.server.NewItemModule.dto;
+package eci.server.NewItemModule.dto.newItem;
 
 import eci.server.ItemModule.entity.item.ItemType;
 import eci.server.NewItemModule.dto.image.NewItemImageDto;
@@ -13,7 +13,7 @@ import static java.util.stream.Collectors.toList;
 
 @Data
 @AllArgsConstructor
-public class NewItemDto {
+public class NewItemPagingDto {
 
     private Long id;
     private List<NewItemImageDto> thumbnail;
@@ -24,9 +24,9 @@ public class NewItemDto {
     private boolean share;
 
 
-    public static NewItemDto toDto(NewItem newItem) {
+    public static NewItemPagingDto toDto(NewItem newItem) {
 
-        return new NewItemDto(
+        return new NewItemPagingDto(
 
                 newItem.getId(),
 

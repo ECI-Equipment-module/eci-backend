@@ -1,10 +1,10 @@
 package eci.server.NewItemModule.repository.item;
 
-import eci.server.NewItemModule.dto.NewItemDto;
-import eci.server.NewItemModule.dto.item.NewItemReadCondition;
+import eci.server.NewItemModule.dto.newItem.NewItemPagingDto;
+import eci.server.NewItemModule.dto.newItem.NewItemReadCondition;
 import org.springframework.data.domain.Page;
 
 public interface CustomNewItemRepository {
-    Page<NewItemDto> findAllByCondition(NewItemReadCondition cond);
+    //Page<NewItemPagingDto> findAllByCondition(NewItemReadCondition cond);
 
 }

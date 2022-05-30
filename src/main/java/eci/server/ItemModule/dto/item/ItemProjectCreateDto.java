@@ -2,6 +2,7 @@ package eci.server.ItemModule.dto.item;
 
 import eci.server.ItemModule.entity.item.Item;
 import eci.server.ItemModule.repository.newRoute.RouteOrderingRepository;
+import eci.server.NewItemModule.entity.NewItem;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -23,18 +24,18 @@ public class ItemProjectCreateDto {
 
 
     public static ItemProjectCreateDto toDto(
-            Item Item,
+            NewItem Item,
             RouteOrderingRepository routeOrderingRepository) {
 
         return new ItemProjectCreateDto(
 
                 Item.getId(),
                 Item.getName(),
-                Item.getType(),
+                Item.getItemTypes().getItemType().toString(),
                 Item.getItemNumber(),
                 Item.getRevision(),
-                routeOrderingRepository.findByItem(Item).get(
-                        routeOrderingRepository.findByItem(Item).size()-1
+                routeOrderingRepository.findByNewItem(Item).get(
+                        routeOrderingRepository.findByNewItem(Item).size()-1
                 ).getLifecycleStatus()
 
         );

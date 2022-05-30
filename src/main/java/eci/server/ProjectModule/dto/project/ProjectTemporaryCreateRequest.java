@@ -4,6 +4,7 @@ import eci.server.ItemModule.exception.item.ItemNotFoundException;
 import eci.server.ItemModule.exception.member.sign.MemberNotFoundException;
 import eci.server.ItemModule.repository.item.ItemRepository;
 import eci.server.ItemModule.repository.member.MemberRepository;
+import eci.server.NewItemModule.repository.item.NewItemRepository;
 import eci.server.ProjectModule.entity.project.Project;
 import eci.server.ProjectModule.entity.projectAttachment.ProjectAttachment;
 import eci.server.ProjectModule.exception.*;
@@ -78,7 +79,7 @@ public class ProjectTemporaryCreateRequest  {
         public static Project toEntity(
                 ProjectTemporaryCreateRequest req,
                 MemberRepository memberRepository,
-                ItemRepository itemRepository,
+                NewItemRepository itemRepository,
                 ProjectTypeRepository projectTypeRepository,
                 ProjectLevelRepository projectLevelRepository,
                 ProduceOrganizationRepository produceOrganizationRepository,
