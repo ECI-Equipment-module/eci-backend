@@ -1,5 +1,7 @@
 package eci.server.NewItemModule.dto.activateAttribute;
 
+import eci.server.NewItemModule.dto.ItemTypesDto;
+import eci.server.NewItemModule.dto.attachment.AttachmentTagDto;
 import eci.server.NewItemModule.entity.activateAttributeClassification.ChoiceFieldDto;
 import eci.server.NewItemModule.entity.activateAttributes.ActivateAttributes;
 import eci.server.NewItemModule.entity.activateAttributes.ChoiceField;
@@ -22,12 +24,13 @@ public class ActivateAttributesDto {
     private String requestName;
     private List<ChoiceFieldDto> choiceFields;
 
+
+
     public static ActivateAttributesDto toDto(
             ActivateAttributes activateAttributes) {
 
         return new ActivateAttributesDto(
                 activateAttributes.getId(),
-//                activateAttributes.getApiUri(),
                 activateAttributes.getInputType(),
                 activateAttributes.getName(),
                 activateAttributes.getRequestName(),

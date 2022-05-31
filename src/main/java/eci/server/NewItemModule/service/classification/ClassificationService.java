@@ -1,6 +1,8 @@
 package eci.server.NewItemModule.service.classification;
 
+import eci.server.ItemModule.repository.item.ItemTypesRepository;
 import eci.server.NewItemModule.dto.activateAttribute.ActivateAttributesDto;
+import eci.server.NewItemModule.dto.activateAttribute.RetrieveActivateAttributes;
 import eci.server.NewItemModule.dto.classification.C1SelectDto;
 import eci.server.NewItemModule.entity.activateAttributeClassification.ClassifyActivate;
 import eci.server.NewItemModule.entity.activateAttributes.ActivateAttributes;
@@ -10,6 +12,7 @@ import eci.server.NewItemModule.entity.classification.Classification2;
 import eci.server.NewItemModule.entity.classification.Classification3;
 import eci.server.NewItemModule.exception.ClassificationNotFoundException;
 import eci.server.NewItemModule.repository.activateAttributes.ActivateAttributesRepository;
+import eci.server.NewItemModule.repository.attachment.Classification1AttachmentTagRepository;
 import eci.server.NewItemModule.repository.classification.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -28,6 +31,8 @@ public class ClassificationService {
     private final ClassificationRepository classificationRepository;
     private final ClassifyActivateRepository classifyActivateRepository;
     private final ActivateAttributesRepository activateAttributesRepository;
+    private final ItemTypesRepository itemTypesRepository;
+    private final Classification1AttachmentTagRepository classification1AttachmentTagRepository;
 
     public List<C1SelectDto> readAllClassification1() {
         return  C1SelectDto.toDtoList(
@@ -38,7 +43,7 @@ public class ClassificationService {
         );
     }
 
-    public List<ActivateAttributesDto> retrieveAttributes(Long c1, Long c2, Long c3){
+    public RetrieveActivateAttributes retrieveAttributes(Long c1, Long c2, Long c3){
         Classification1 classification1 =
                 classification1Repository.findById(c1).orElseThrow(ClassificationNotFoundException::new);
         Classification2 classification2 =
@@ -50,6 +55,7 @@ public class ClassificationService {
         List<ClassifyActivate> classifyActivates
                 = classifyActivateRepository.findByClassification(classification);
 
+
         List<ActivateAttributes> activateAttributes = new ArrayList<>();
         for(ClassifyActivate classifyActivate : classifyActivates){
             activateAttributes.add(classifyActivate.getActivateAttributes());
@@ -58,7 +64,10 @@ public class ClassificationService {
         List<ActivateAttributesDto> attributesDtoList = ActivateAttributesDto.toDtoList(activateAttributes);
 
 
-        return  attributesDtoList;
+
+        return  RetrieveActivateAttributes.toDto(
+                attributesDtoList, classification1, itemTypesRepository, classification1AttachmentTagRepository
+        );
     }
 
 }

@@ -1,10 +1,13 @@
 package eci.server.ItemModule.entity.item;
 
+import eci.server.NewItemModule.entity.classification.Classification1;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 
@@ -43,4 +46,9 @@ public class ItemTypes {
 //
 //  public ItemTypes(ItemType itemType, int i) {
 //  }
+
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "classification1", nullable = false)
+  @OnDelete(action = OnDeleteAction.CASCADE)
+  private Classification1 classification1;
 }

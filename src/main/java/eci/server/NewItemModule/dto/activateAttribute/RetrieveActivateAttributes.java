@@ -1,34 +1,39 @@
-//package eci.server.NewItemModule.dto.activateAttribute;
-//
-//import eci.server.ItemModule.entity.item.ItemTypes;
-//import eci.server.NewItemModule.entity.activateAttributeClassification.ChoiceFieldDto;
-//import eci.server.NewItemModule.entity.activateAttributes.ActivateAttributes;
-//import lombok.AllArgsConstructor;
-//import lombok.Data;
-//import lombok.NoArgsConstructor;
-//
-//import java.util.List;
-//
-//@Data
-//@AllArgsConstructor
-//@NoArgsConstructor
-//public class RetrieveActivateAttributes {
-//    List<ActivateAttributesDto> attributesDtoList;
-//    List<ItemTypes> selectableItemTypes;
-//    List<AttachmentTag> selectableAttachmentTags;
-//
-//    public static ActivateAttributesDto toDto(
-//            ActivateAttributes activateAttributes) {
-//
-//        return new ActivateAttributesDto(
-//                activateAttributes.getId(),
-////                activateAttributes.getApiUri(),
-//                activateAttributes.getInputType(),
-//                activateAttributes.getName(),
-//                activateAttributes.getRequestName(),
-//                ChoiceFieldDto.toDtoList(
-//                        activateAttributes.getChoiceFields()
-//                )
-//
-//        );
-//}
+package eci.server.NewItemModule.dto.activateAttribute;
+
+import eci.server.ItemModule.repository.item.ItemTypesRepository;
+import eci.server.NewItemModule.dto.ItemTypesDto;
+import eci.server.NewItemModule.dto.attachment.AttachmentTagDto;
+import eci.server.NewItemModule.entity.classification.Classification1;
+import eci.server.NewItemModule.repository.attachment.Classification1AttachmentTagRepository;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.util.List;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class RetrieveActivateAttributes {
+    List<ActivateAttributesDto> attributesDtoList;
+    List<ItemTypesDto> selectableItemTypes;
+    List<AttachmentTagDto> selectableAttachmentTags;
+
+    public static RetrieveActivateAttributes toDto(
+            List<ActivateAttributesDto> attributesDtoList,
+            Classification1 classification1,
+            ItemTypesRepository itemTypesRepository,
+            Classification1AttachmentTagRepository classification1AttachmentTagRepository) {
+
+        return new RetrieveActivateAttributes(
+                attributesDtoList,
+                ItemTypesDto.toDtoList(
+                        itemTypesRepository.findByClassification1(classification1)
+                ),
+                AttachmentTagDto.toDtoList(
+                        classification1AttachmentTagRepository.findByClassification1(classification1)
+                )
+
+        );
+    }
+}

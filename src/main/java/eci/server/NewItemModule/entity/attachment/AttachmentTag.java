@@ -1,4 +1,4 @@
-package eci.server.NewItemModule.entity;
+package eci.server.NewItemModule.entity.attachment;
 
 import lombok.AccessLevel;
 import lombok.Getter;
