@@ -19,6 +19,7 @@ public class ActivateAttributesDto {
     private String apiUri;
     private String inputType;
     private String name;
+    private String requestName;
     private List<ChoiceFieldDto> choiceFields;
 
     public static ActivateAttributesDto toDto(
@@ -29,6 +30,7 @@ public class ActivateAttributesDto {
                 activateAttributes.getApiUri(),
                 activateAttributes.getInputType(),
                 activateAttributes.getName(),
+                activateAttributes.getRequestName(),
                 ChoiceFieldDto.toDtoList(
                         activateAttributes.getChoiceFields()
                 )
@@ -47,6 +49,7 @@ public class ActivateAttributesDto {
                         a.getApiUri(),
                         a.getInputType(),
                         a.getName(),
+                        a.getRequestName(),
                         ChoiceFieldDto.toDtoList(
                                 a.getChoiceFields()
                         )

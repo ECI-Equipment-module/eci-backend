@@ -21,6 +21,9 @@ public class ActivateAttributes {
     @Column(nullable = false)
     private String name;
 
+    //@Column(nullable = false)
+    private String requestName;
+
     @Column(nullable = false)
     private String inputType;
 
@@ -37,11 +40,13 @@ public class ActivateAttributes {
     public ActivateAttributes(
             String name,
             String inputType,
+            String requestName,
             String apiUri,
             List<ChoiceField> choiceFields
     ){
         this.name = name;
         this.inputType = inputType;
+        this.requestName = requestName;
         this.choiceFields = choiceFields;
         this.apiUri = apiUri;
 
