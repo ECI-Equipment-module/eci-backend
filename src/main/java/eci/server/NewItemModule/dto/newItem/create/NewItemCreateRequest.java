@@ -91,13 +91,13 @@ public class NewItemCreateRequest {
 
     private Long colorId;
 
-    private Integer loadQuantity;
+    private String loadQuantity;
 
     private Long coatingWayId;
 
     private Long coatingTypeId;
 
-    private Integer modulus;
+    private String modulus;
 
     private String screw;
 
@@ -105,9 +105,9 @@ public class NewItemCreateRequest {
 
     private String lcd;
 
-    private Integer displaySize;
+    private String displaySize;
 
-    private Integer screwHeight;
+    private String screwHeight;
 
     private Long clientOrganizationId;
 
@@ -153,6 +153,8 @@ public class NewItemCreateRequest {
         }
 
 
+
+
         if (req.getTag().size() == 0) {
 
 
@@ -186,9 +188,10 @@ public class NewItemCreateRequest {
                     req.share,
 
                     //전용일 때야 차종 생성
-                    (req.isShare()==false)?
+                    (!req.isShare())?
                             carTypeRepository.findById(req.carTypeId).orElseThrow(CarTypeNotFoundException::new)
-                    :null,
+                    :carTypeRepository.findById(99999L).orElseThrow(CarTypeNotFoundException::new),
+
 
                     req.integrate.isBlank()?"":req.integrate,
 
@@ -204,20 +207,22 @@ public class NewItemCreateRequest {
 
                     req.importance.isBlank()?"":req.importance,
 
-                    req.colorId==null?null:
+                    req.getColorId()==null?
+                            colorRepository.findById(99999L).orElseThrow(ColorNotFoundException::new):
                     colorRepository.findById(req.colorId).orElseThrow(ColorNotFoundException::new),
 
-                    req.loadQuantity.toString().isBlank()?null:req.loadQuantity,
+                    req.loadQuantity.isBlank()?"":req.loadQuantity,
 
                     req.forming.isBlank()?"":req.forming,
 
-                    req.coatingWayId==null?null:
+                    req.getCoatingWayId()==null?coatingWayRepository.findById(99999L).orElseThrow(CoatingNotFoundException::new):
                     coatingWayRepository.findById(req.coatingWayId).orElseThrow(CoatingNotFoundException::new),
 
-                    req.coatingTypeId==null?null:
+                    req.getCoatingTypeId()==null?
+            coatingTypeRepository.findById(99999L).orElseThrow(CoatingNotFoundException::new):
                     coatingTypeRepository.findById(req.coatingTypeId).orElseThrow(CoatingNotFoundException::new),
 
-                    req.modulus.toString().isBlank()?null:req.modulus,
+                    req.modulus.isBlank()?"":req.modulus,
 
                     req.screw.isBlank()?"":req.screw,
 
@@ -225,15 +230,20 @@ public class NewItemCreateRequest {
 
                     req.lcd.isBlank()?"":req.cuttingType,
 
-                    req.displaySize.toString().isBlank()?null:req.displaySize,
+                    req.displaySize.isBlank()?null:req.displaySize,
 
-                    req.screwHeight.toString().isBlank()?null:req.screwHeight,
+                    req.screwHeight.isBlank()?null:req.screwHeight,
 
-                    req.getClientOrganizationId() == null ? null :
+                    req.getClientOrganizationId() == null ?
+                            clientOrganizationRepository.findById(99999L)
+                                    .orElseThrow(ClientOrganizationNotFoundException::new)
+            :
                             clientOrganizationRepository.findById(req.getClientOrganizationId())
                                     .orElseThrow(ClientOrganizationNotFoundException::new),
 
-                    req.getSupplierOrganizationId() == null ? null :
+                    req.getSupplierOrganizationId() == null ?
+                            supplierRepository.findById(99999L)
+                                    .orElseThrow(ProduceOrganizationNotFoundException::new):
                             supplierRepository.findById(req.getSupplierOrganizationId())
                                     .orElseThrow(ProduceOrganizationNotFoundException::new),
 
@@ -274,7 +284,6 @@ public class NewItemCreateRequest {
                         classification2Repository.findById(req.classification2Id).orElseThrow(ClassificationNotFoundException::new),
                         classification3Repository.findById(req.classification3Id).orElseThrow(ClassificationNotFoundException::new)
                 ),
-
                 req.name,
 
                 itemTypesRepository.findById(req.getTypeId()).orElseThrow(ItemNotFoundException::new),
@@ -294,9 +303,10 @@ public class NewItemCreateRequest {
                 req.share,
 
                 //전용일 때야 차종 생성
-                (req.isShare()==false)?
+                (!req.isShare())?
                         carTypeRepository.findById(req.carTypeId).orElseThrow(CarTypeNotFoundException::new)
-                        :null,
+                        :carTypeRepository.findById(99999L).orElseThrow(CarTypeNotFoundException::new),
+
 
                 req.integrate.isBlank()?"":req.integrate,
 
@@ -312,20 +322,22 @@ public class NewItemCreateRequest {
 
                 req.importance.isBlank()?"":req.importance,
 
-                req.colorId==null?null:
+                req.getColorId()==null?
+                        colorRepository.findById(99999L).orElseThrow(ColorNotFoundException::new):
                         colorRepository.findById(req.colorId).orElseThrow(ColorNotFoundException::new),
 
-                req.loadQuantity.toString().isBlank()?null:req.loadQuantity,
+                req.loadQuantity.isBlank()?"":req.loadQuantity,
 
                 req.forming.isBlank()?"":req.forming,
 
-                req.coatingWayId==null?null:
+                req.getCoatingWayId()==null?coatingWayRepository.findById(99999L).orElseThrow(CoatingNotFoundException::new):
                         coatingWayRepository.findById(req.coatingWayId).orElseThrow(CoatingNotFoundException::new),
 
-                req.coatingTypeId==null?null:
+                req.getCoatingTypeId()==null?
+                        coatingTypeRepository.findById(99999L).orElseThrow(CoatingNotFoundException::new):
                         coatingTypeRepository.findById(req.coatingTypeId).orElseThrow(CoatingNotFoundException::new),
 
-                req.modulus.toString().isBlank()?null:req.modulus,
+                req.modulus.toString().isBlank()?"":req.modulus,
 
                 req.screw.isBlank()?"":req.screw,
 
@@ -333,15 +345,20 @@ public class NewItemCreateRequest {
 
                 req.lcd.isBlank()?"":req.cuttingType,
 
-                req.displaySize.toString().isBlank()?null:req.displaySize,
+                req.displaySize.isBlank()?null:req.displaySize,
 
-                req.screwHeight.toString().isBlank()?null:req.screwHeight,
+                req.screwHeight.isBlank()?null:req.screwHeight,
 
-                req.getClientOrganizationId() == null ? null :
+                req.getClientOrganizationId() == null ?
+                        clientOrganizationRepository.findById(99999L)
+                                .orElseThrow(ClientOrganizationNotFoundException::new)
+                        :
                         clientOrganizationRepository.findById(req.getClientOrganizationId())
                                 .orElseThrow(ClientOrganizationNotFoundException::new),
 
-                req.getSupplierOrganizationId() == null ? null :
+                req.getSupplierOrganizationId() == null ?
+                        supplierRepository.findById(99999L)
+                                .orElseThrow(ProduceOrganizationNotFoundException::new):
                         supplierRepository.findById(req.getSupplierOrganizationId())
                                 .orElseThrow(ProduceOrganizationNotFoundException::new),
 
@@ -362,7 +379,7 @@ public class NewItemCreateRequest {
 
                 true, //임시저장 (라우트 작성 해야 false로 변한다)
 
-                false,//revise progress 중 아니다
+                false ,//revise progress 중 아니다
 
 
                 req.attachments.stream().map(

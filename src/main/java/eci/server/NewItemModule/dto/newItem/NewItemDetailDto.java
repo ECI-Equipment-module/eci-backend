@@ -1,10 +1,7 @@
 package eci.server.NewItemModule.dto.newItem;
 
 import eci.server.ItemModule.dto.color.ColorDto;
-import eci.server.ItemModule.dto.item.AttachmentDto;
-import eci.server.ItemModule.dto.item.ImageDto;
 import eci.server.ItemModule.dto.manufacture.MakerSimpleDto;
-import eci.server.ItemModule.dto.material.MaterialSimpleDto;
 import eci.server.ItemModule.dto.member.MemberDto;
 import eci.server.NewItemModule.dto.attachment.NewItemAttachmentDto;
 import eci.server.NewItemModule.dto.image.NewItemImageDto;
@@ -18,7 +15,7 @@ import static java.util.stream.Collectors.toList;
 
 @Data
 @AllArgsConstructor
-public class NewItemDto {
+public class NewItemDetailDto {
     private boolean tempsave;
 
     private Long id;
@@ -37,9 +34,9 @@ public class NewItemDto {
 
     private char revision;
 
-    public static NewItemDto toDto(NewItem Item) {
+    public static NewItemDetailDto toDto(NewItem Item) {
 
-        return new NewItemDto(
+        return new NewItemDetailDto(
                 Item.getTempsave(),
 
                 Item.getId(),

@@ -42,7 +42,7 @@ public class NewItemPagingDto {
 
                 newItem.getClassification(),
 
-                newItem.isShare()
+                newItem.isSharing()
         );
 
     }

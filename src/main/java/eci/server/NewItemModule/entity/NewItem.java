@@ -10,10 +10,8 @@ import eci.server.NewItemModule.entity.coating.CoatingType;
 import eci.server.NewItemModule.entity.coating.CoatingWay;
 import eci.server.NewItemModule.entity.maker.NewItemMaker;
 import eci.server.NewItemModule.entity.supplier.Supplier;
-import eci.server.NewItemModule.repository.supplier.SupplierRepository;
 import eci.server.ProjectModule.entity.project.CarType;
 import eci.server.ProjectModule.entity.project.ClientOrganization;
-import eci.server.ProjectModule.entity.project.ProduceOrganization;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -37,8 +35,8 @@ import static java.util.stream.Collectors.toList;
 public class NewItem extends EntityDate {
     @Id
 //  @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQUENCE2")
-    @SequenceGenerator(name="SEQUENCE2", sequenceName="SEQUENCE2", allocationSize=1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQUENCE3")
+    @SequenceGenerator(name="SEQUENCE3", sequenceName="SEQUENCE3", allocationSize=1)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -52,7 +50,8 @@ public class NewItem extends EntityDate {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(
-            name = "item_types_id",
+            name = "itemTypes_id",
+            //name = "item_types_id",
             nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private ItemTypes itemTypes;
@@ -71,7 +70,7 @@ public class NewItem extends EntityDate {
      * true면 공용, false면 전용
      */
     @Column
-    private boolean share;
+    private boolean sharing;
 
     /**
      * share 이 false 면 필수!
@@ -120,7 +119,7 @@ public class NewItem extends EntityDate {
 
     //적재 수량
     @Column
-    private Integer loadQuantity;
+    private String loadQuantity;
 
     //포밍 유무
     @Column
@@ -140,7 +139,7 @@ public class NewItem extends EntityDate {
 
     //모듈러스 숫자 입력
     @Column
-    private Integer modulus;
+    private String modulus;
 
     //나사 (태평 , 기계)
     @Column
@@ -156,11 +155,11 @@ public class NewItem extends EntityDate {
 
     //Display 사이즈
     @Column
-    private Integer displaySize;
+    private String displaySize;
 
     //나사경
     @Column
-    private Integer screwHeight;
+    private String screwHeight;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "clientOrganization_id")
@@ -220,7 +219,7 @@ public class NewItem extends EntityDate {
      * @param itemTypes
      * @param itemNumber
      * @param thumbnail
-     * @param share
+     * @param sharinge
      * @param carType
      * @param integrate
      * @param curve
@@ -255,7 +254,7 @@ public class NewItem extends EntityDate {
             ItemTypes itemTypes,
             String itemNumber,
             List<NewItemImage> thumbnail,
-            boolean share,
+            boolean sharinge,
             CarType carType,
             String integrate,
             String curve,
@@ -265,16 +264,16 @@ public class NewItem extends EntityDate {
             String weight,
             String importance,
             Color color,
-            Integer loadQuantity,
+            String loadQuantity,
             String forming,
             CoatingWay coatingWay,
             CoatingType coatingType,
-            Integer modulus,
+            String modulus,
             String screw,
             String cuttingType,
             String lcd,
-            Integer displaySize,
-            Integer screwHeight,
+            String displaySize,
+            String screwHeight,
             ClientOrganization clientOrganizations,
             Supplier supplierOrganization,
             List<Maker> makers,
@@ -297,7 +296,7 @@ public class NewItem extends EntityDate {
         this.thumbnail = new ArrayList<>();
         addImages(thumbnail);
 
-        this.share = share;
+        this.sharing = sharinge;
 
         this.carType = carType;
 
@@ -373,7 +372,7 @@ public class NewItem extends EntityDate {
      * @param itemTypes
      * @param itemNumber
      * @param thumbnail
-     * @param share
+     * @param sharinge
      * @param carType
      * @param integrate
      * @param curve
@@ -407,7 +406,7 @@ public class NewItem extends EntityDate {
             ItemTypes itemTypes,
             String itemNumber,
             List<NewItemImage> thumbnail,
-            boolean share,
+            boolean sharinge,
             CarType carType,
             String integrate,
             String curve,
@@ -417,16 +416,16 @@ public class NewItem extends EntityDate {
             String weight,
             String importance,
             Color color,
-            Integer loadQuantity,
+            String loadQuantity,
             String forming,
             CoatingWay coatingWay,
             CoatingType coatingType,
-            Integer modulus,
+            String modulus,
             String screw,
             String cuttingType,
             String lcd,
-            Integer displaySize,
-            Integer screwHeight,
+            String displaySize,
+            String screwHeight,
             ClientOrganization clientOrganizations,
             Supplier supplierOrganization,
             List<Maker> makers,
@@ -448,7 +447,7 @@ public class NewItem extends EntityDate {
         this.thumbnail = new ArrayList<>();
         addImages(thumbnail);
 
-        this.share = share;
+        this.sharing = sharinge;
 
         this.carType = carType;
 

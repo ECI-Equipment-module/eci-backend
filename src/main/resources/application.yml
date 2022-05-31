@@ -25,12 +25,17 @@ spring:
 
   security.headers.frame: false
 
+#  datasource:
+#    url: jdbc:oracle:thin:@localhost:1521:xe
+#    driverClassName: oracle.jdbc.driver.OracleDriver
+#    username: eci3
+#    password: Ecieci0321
+
   datasource:
     url: jdbc:oracle:thin:@localhost:1521:xe
     driverClassName: oracle.jdbc.driver.OracleDriver
     username: eci3
     password: Ecieci0321
-
 
   jpa:
     database: oracle
