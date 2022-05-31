@@ -18,7 +18,7 @@ import javax.validation.Valid;
 public class MakerController {
 
     private final MakerService makerService;
-    @GetMapping("/makers")
+    @GetMapping("/makersId")
     @ResponseStatus(HttpStatus.OK)
     public Response readAll(@Valid MakerReadCondition cond) {
         return Response.success(

@@ -18,7 +18,7 @@ import javax.validation.Valid;
 public class CoatingWayController {
     private final CoatingWayService coatingWayService;
 
-    @GetMapping("/coating-way")
+    @GetMapping("/coatingWayId")
     @ResponseStatus(HttpStatus.OK)
     public Response readAll(@Valid CoatingWayReadCondition cond) {
         return Response.success(

@@ -18,7 +18,7 @@ import javax.validation.Valid;
 public class ClientOrganizationController {
     private final ClientOrganizationService clientOrganizationService;
 
-    @GetMapping("/client-organization")
+    @GetMapping("/clientOrganizationId")
     @ResponseStatus(HttpStatus.OK)
     public Response readAll(@Valid ClientOrganizationReadCondition cond) {
         return Response.success(

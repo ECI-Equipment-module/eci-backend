@@ -20,7 +20,7 @@ import javax.validation.Valid;
 public class CoatingTypeController {
     private final CoatingTypeService coatingTypeService;
 
-    @GetMapping("/coating-type")
+    @GetMapping("/coatingTypeId")
     @ResponseStatus(HttpStatus.OK)
     public Response readAll(@Valid CoatingTypeReadCondition cond) {
         return Response.success(

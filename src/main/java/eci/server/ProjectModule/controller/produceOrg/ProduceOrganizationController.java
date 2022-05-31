@@ -18,7 +18,7 @@ import javax.validation.Valid;
 public class ProduceOrganizationController {
     private final ProduceOrganizationService produceOrganizationService;
 
-    @GetMapping("/produce-organization")
+    @GetMapping("/supplier")
     @ResponseStatus(HttpStatus.OK)
     public Response readAll(@Valid ProduceOrganizationReadCondition cond) {
         return Response.success(

@@ -19,7 +19,7 @@ import javax.validation.Valid;
 public class SupplierController {
     private final SupplierService supplierService;
 
-    @GetMapping("/supplier")
+    @GetMapping("/supplierOrganizationId")
     @ResponseStatus(HttpStatus.OK)
     public Response readAll(@Valid SupplierReadCondition cond) {
         return Response.success(

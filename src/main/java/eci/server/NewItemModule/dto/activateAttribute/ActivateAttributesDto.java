@@ -16,7 +16,7 @@ import static java.util.stream.Collectors.toList;
 @NoArgsConstructor
 public class ActivateAttributesDto {
     private Long id;
-    private String apiUri;
+//    private String apiUri;
     private String inputType;
     private String name;
     private String requestName;
@@ -27,7 +27,7 @@ public class ActivateAttributesDto {
 
         return new ActivateAttributesDto(
                 activateAttributes.getId(),
-                activateAttributes.getApiUri(),
+//                activateAttributes.getApiUri(),
                 activateAttributes.getInputType(),
                 activateAttributes.getName(),
                 activateAttributes.getRequestName(),
@@ -46,7 +46,7 @@ public class ActivateAttributesDto {
                 = activateAttributes.stream().map(
                 a -> new ActivateAttributesDto(
                         a.getId(),
-                        a.getApiUri(),
+//                        a.getApiUri(),
                         a.getInputType(),
                         a.getName(),
                         a.getRequestName(),
