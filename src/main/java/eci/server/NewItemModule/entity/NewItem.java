@@ -83,13 +83,13 @@ public class NewItem extends EntityDate {
      * 단독/통합 true 면  통합, false면 단독
      */
     @Column
-    private boolean integrate;
+    private String integrate;
 
     /**
     * true면 곡면, false면 평면
      */
     @Column
-    private boolean curve;
+    private String curve;
 
     //가로
     @Column
@@ -122,7 +122,7 @@ public class NewItem extends EntityDate {
 
     //포밍 유무
     @Column
-    private boolean forming;
+    private String forming;
 
     //코팅 방식
     @ManyToOne(fetch = FetchType.LAZY)
@@ -219,8 +219,8 @@ public class NewItem extends EntityDate {
             List<NewItemImage> thumbnail,
             boolean share,
             CarType carType,
-            boolean integrate,
-            boolean curve,
+            String integrate,
+            String curve,
             String width,
             String height,
             String thickness,
@@ -228,7 +228,7 @@ public class NewItem extends EntityDate {
             String importance,
             Color color,
             Integer loadQuantity,
-            boolean forming,
+            String forming,
             CoatingWay coatingWay,
             CoatingType coatingType,
             Integer modulus,
