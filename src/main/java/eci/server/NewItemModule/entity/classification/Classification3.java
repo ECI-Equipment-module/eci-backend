@@ -25,7 +25,13 @@ public class Classification3 {
     private String name;
 
     @Column
-    private boolean last;
+    private Integer last;
+
+    @Column
+    private boolean value; //value"	: 파트/메카니컬/LCD"
+
+    @Column
+    private boolean classification; //classification" :	:	1/1/99999
 
 
     @ManyToOne(fetch = FetchType.LAZY)
