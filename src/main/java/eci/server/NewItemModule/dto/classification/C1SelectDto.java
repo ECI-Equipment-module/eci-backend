@@ -32,6 +32,8 @@ public class C1SelectDto {
                 classification1.getName(),
                 classification1.getLast(),
                 C2SelectDto.toDtoList(
+                        classification1.getId().toString(),
+                        classification1.getName(),
                         classification2Repository.findByClassification1(classification1),
                         classification2Repository,
                         classification3Repository
@@ -52,6 +54,8 @@ public class C1SelectDto {
                         c.getName(),
                         c.getLast(),
                         C2SelectDto.toDtoList(
+                                c.getName(),
+                                c.getId().toString(),
                                 classification2Repository.findByClassification1(c),
                                 //classification2Repository.findAllByClassification2(),
                                 classification2Repository,
