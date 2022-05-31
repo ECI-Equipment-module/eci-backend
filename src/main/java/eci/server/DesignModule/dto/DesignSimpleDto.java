@@ -19,7 +19,7 @@ public class DesignSimpleDto {
     private Long id;
 
     private String itemName;
-    private Integer itemNumber;
+    private String itemNumber;
 
     private Boolean tempsave;
 

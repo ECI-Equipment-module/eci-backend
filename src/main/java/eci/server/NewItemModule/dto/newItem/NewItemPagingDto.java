@@ -17,7 +17,7 @@ public class NewItemPagingDto {
 
     private Long id;
     private List<NewItemImageDto> thumbnail;
-    private Integer itemNumber;
+    private String itemNumber;
     private String name;
     private ItemType type;
     private Classification classification;

@@ -10,7 +10,7 @@ public class ItemProjectDashboardDto {
 
     private Long id;
     private String name;
-    private Integer itemNumber;
+    private String itemNumber;
 
 
     public static ItemProjectDashboardDto toDto(NewItem Item) {

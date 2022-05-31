@@ -52,7 +52,7 @@ public class Item extends EntityDate {
     private String type;
 
     @Column(nullable = false)
-    private Integer itemNumber;
+    private String itemNumber;
     //save 할 시에 type + id 값으로 지정
 
     @Column(nullable = false)
@@ -140,7 +140,7 @@ public class Item extends EntityDate {
     public Item(
             String name,
             String type,
-            Integer itemNumber,
+            String itemNumber,
             String width,
             String height,
             String weight,
@@ -220,7 +220,7 @@ public class Item extends EntityDate {
     public Item(
             String name,
             String type,
-            Integer itemNumber,
+            String itemNumber,
             String width,
             String height,
             String weight,
@@ -307,69 +307,6 @@ public class Item extends EntityDate {
 
         this.color = req.getColorId()==null?null:colorRepository.findById(Long.valueOf(req.getColorId()))
                 .orElseThrow(ColorNotFoundException::new);
-//
-//        if (req.getMaterials().size()>0) {
-//
-////            for(ItemMaterial itemMaterial : this.materials){
-////                ItemMaterial clearedItemMaterial =
-////                        itemMaterialRepository.findByItemAndMaterial(
-////                        itemMaterial.getItem(), itemMaterial.getMaterial()
-////                );
-////                itemMaterialRepository.delete(clearedItemMaterial);
-////            }
-//
-//            this.materials.clear();
-//
-//            this.materials.addAll(
-//                    req.getMaterials().stream().map(
-//                                    i ->
-//                                            materialRepository.
-//                                                    findById(i).orElseThrow(MaterialNotFoundException::new)
-//                            ).collect(
-//                                    toList()
-//                            )
-//                            .stream().map(
-//                                    r -> new ItemMaterial(
-//                                            this, r)
-//                            )
-//                            .collect(toList())
-//            );
-//        }
-//
-//
-//        if(req.getManufactures().size()>0){
-//
-////            for(ItemManufacture itemManufacture : this.manufactures){
-////                ItemManufacture clearedItemManufacture =
-////                        itemManufactureRepository.findByItemAndManufacture(
-////                                itemManufacture.getItem(), itemManufacture.getManufacture()
-////                        );
-////                itemManufactureRepository.delete(clearedItemManufacture);
-////            }
-//
-//            this.manufactures.clear();
-//
-//
-//            this.manufactures.addAll(
-//                    req.getManufactures().stream().map(
-//                                    i ->
-//                                            manufactureRepository.
-//                                                    findById(i).orElseThrow(ManufactureNotFoundException::new)
-//                            ).collect(
-//                                    toList()
-//                            ).stream().map(
-//
-//                                    //다대다 관계를 만드는 구간
-//                                    r -> new ItemManufacture(
-//                                            this, r, req.getPartnumbers().
-//                                            get(k.getAndIncrement())
-//                                    )
-//                            )
-//                            .collect(toList())
-//                    );
-//        }
-
-
 
         ImageUpdatedResult resultImage =
                 findImageUpdatedResult(

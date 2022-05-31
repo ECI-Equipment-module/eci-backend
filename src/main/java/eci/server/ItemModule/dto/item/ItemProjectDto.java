@@ -13,7 +13,7 @@ public class ItemProjectDto {
     private Long id;
     private String name;
     private String type;
-    private Integer itemNumber;
+    private String itemNumber;
     private int revision;
 
 

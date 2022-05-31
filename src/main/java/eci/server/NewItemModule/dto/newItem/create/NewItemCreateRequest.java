@@ -113,7 +113,6 @@ public class NewItemCreateRequest {
 
     private Long supplierOrganizationId;
 
-    private Long makersId;
 
     private List<MultipartFile> thumbnail = new ArrayList<>();
 
@@ -122,7 +121,7 @@ public class NewItemCreateRequest {
     private List<String> attachmentComment = new ArrayList<>();
 
 
-    private List<Long> maker = new ArrayList<>();
+    private List<Long> makersId = new ArrayList<>();
 
     private List<String> partnumbers = new ArrayList<>();
 
@@ -155,8 +154,12 @@ public class NewItemCreateRequest {
 
 
         if (req.getTag().size() == 0) {
+
+
             // attachment 가 없을 경우
             return new NewItem(
+
+
 
                     new Classification(
                             classification1Repository.findById(req.classification1Id).orElseThrow(ClassificationNotFoundException::new),
@@ -182,43 +185,49 @@ public class NewItemCreateRequest {
 
                     req.share,
 
-                    carTypeRepository.findById(req.carTypeId).orElseThrow(CarTypeNotFoundException::new),
+                    //전용일 때야 차종 생성
+                    (req.isShare()==false)?
+                            carTypeRepository.findById(req.carTypeId).orElseThrow(CarTypeNotFoundException::new)
+                    :null,
 
-                    req.integrate,
+                    req.integrate.isBlank()?"":req.integrate,
 
-                    req.curve,
+                    req.curve.isBlank()?"":req.curve,
 
-                    req.width,
+                    req.width.isBlank()?"":req.width,
 
-                    req.height,
+                    req.height.isBlank()?"":req.height,
 
-                    req.thickness,
+                    req.thickness.isBlank()?"":req.thickness,
 
-                    req.weight,
+                    req.weight.isBlank()?"":req.weight,
 
-                    req.importance,
+                    req.importance.isBlank()?"":req.importance,
 
+                    req.colorId==null?null:
                     colorRepository.findById(req.colorId).orElseThrow(ColorNotFoundException::new),
 
-                    req.loadQuantity,
+                    req.loadQuantity.toString().isBlank()?null:req.loadQuantity,
 
-                    req.forming,
+                    req.forming.isBlank()?"":req.forming,
 
+                    req.coatingWayId==null?null:
                     coatingWayRepository.findById(req.coatingWayId).orElseThrow(CoatingNotFoundException::new),
 
+                    req.coatingTypeId==null?null:
                     coatingTypeRepository.findById(req.coatingTypeId).orElseThrow(CoatingNotFoundException::new),
 
-                    req.modulus,
+                    req.modulus.toString().isBlank()?null:req.modulus,
 
-                    req.screw,
+                    req.screw.isBlank()?"":req.screw,
 
-                    req.cuttingType,
+                    req.cuttingType.isBlank()?"":req.cuttingType,
 
-                    req.lcd,
+                    req.lcd.isBlank()?"":req.cuttingType,
 
-                    req.displaySize,
+                    req.displaySize.toString().isBlank()?null:req.displaySize,
 
-                    req.screwHeight,
+                    req.screwHeight.toString().isBlank()?null:req.screwHeight,
 
                     req.getClientOrganizationId() == null ? null :
                             clientOrganizationRepository.findById(req.getClientOrganizationId())
@@ -228,7 +237,7 @@ public class NewItemCreateRequest {
                             supplierRepository.findById(req.getSupplierOrganizationId())
                                     .orElseThrow(ProduceOrganizationNotFoundException::new),
 
-                    req.maker.stream().map(
+                    req.makersId.stream().map(
                             i ->
                                     makerRepository.
                                             findById(i).orElseThrow(ManufactureNotFoundException::new)
@@ -255,7 +264,10 @@ public class NewItemCreateRequest {
 
 
         // attachment 가 존재할 경우
+
         return new NewItem(
+
+
 
                 new Classification(
                         classification1Repository.findById(req.classification1Id).orElseThrow(ClassificationNotFoundException::new),
@@ -281,43 +293,49 @@ public class NewItemCreateRequest {
 
                 req.share,
 
-                carTypeRepository.findById(req.carTypeId).orElseThrow(CarTypeNotFoundException::new),
+                //전용일 때야 차종 생성
+                (req.isShare()==false)?
+                        carTypeRepository.findById(req.carTypeId).orElseThrow(CarTypeNotFoundException::new)
+                        :null,
 
-                req.integrate,
+                req.integrate.isBlank()?"":req.integrate,
 
-                req.curve,
+                req.curve.isBlank()?"":req.curve,
 
-                req.width,
+                req.width.isBlank()?"":req.width,
 
-                req.height,
+                req.height.isBlank()?"":req.height,
 
-                req.thickness,
+                req.thickness.isBlank()?"":req.thickness,
 
-                req.weight,
+                req.weight.isBlank()?"":req.weight,
 
-                req.importance,
+                req.importance.isBlank()?"":req.importance,
 
-                colorRepository.findById(req.colorId).orElseThrow(ColorNotFoundException::new),
+                req.colorId==null?null:
+                        colorRepository.findById(req.colorId).orElseThrow(ColorNotFoundException::new),
 
-                req.loadQuantity,
+                req.loadQuantity.toString().isBlank()?null:req.loadQuantity,
 
-                req.forming,
+                req.forming.isBlank()?"":req.forming,
 
-                coatingWayRepository.findById(req.coatingWayId).orElseThrow(CoatingNotFoundException::new),
+                req.coatingWayId==null?null:
+                        coatingWayRepository.findById(req.coatingWayId).orElseThrow(CoatingNotFoundException::new),
 
-                coatingTypeRepository.findById(req.coatingTypeId).orElseThrow(CoatingNotFoundException::new),
+                req.coatingTypeId==null?null:
+                        coatingTypeRepository.findById(req.coatingTypeId).orElseThrow(CoatingNotFoundException::new),
 
-                req.modulus,
+                req.modulus.toString().isBlank()?null:req.modulus,
 
-                req.screw,
+                req.screw.isBlank()?"":req.screw,
 
-                req.cuttingType,
+                req.cuttingType.isBlank()?"":req.cuttingType,
 
-                req.lcd,
+                req.lcd.isBlank()?"":req.cuttingType,
 
-                req.displaySize,
+                req.displaySize.toString().isBlank()?null:req.displaySize,
 
-                req.screwHeight,
+                req.screwHeight.toString().isBlank()?null:req.screwHeight,
 
                 req.getClientOrganizationId() == null ? null :
                         clientOrganizationRepository.findById(req.getClientOrganizationId())
@@ -327,7 +345,7 @@ public class NewItemCreateRequest {
                         supplierRepository.findById(req.getSupplierOrganizationId())
                                 .orElseThrow(ProduceOrganizationNotFoundException::new),
 
-                req.maker.stream().map(
+                req.makersId.stream().map(
                         i ->
                                 makerRepository.
                                         findById(i).orElseThrow(ManufactureNotFoundException::new)
@@ -344,7 +362,7 @@ public class NewItemCreateRequest {
 
                 true, //임시저장 (라우트 작성 해야 false로 변한다)
 
-                false, //revise progress 중 아니다
+                false,//revise progress 중 아니다
 
 
                 req.attachments.stream().map(

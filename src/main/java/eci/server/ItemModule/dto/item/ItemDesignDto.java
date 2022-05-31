@@ -13,7 +13,7 @@ public class ItemDesignDto {
     private Long id;
     private String name;
     private String type;
-    private Integer itemNumber;
+    private String itemNumber;
     private String imageAddress;
     private int revision;
 

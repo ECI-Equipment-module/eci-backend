@@ -17,7 +17,7 @@ public class ItemProjectCreateDto {
 
     private String name;
     private String type;
-    private Integer itemNumber;
+    private String itemNumber;
     private Integer revision;
     private String status;
 

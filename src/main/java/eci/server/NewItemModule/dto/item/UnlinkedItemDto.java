@@ -22,7 +22,7 @@
 //    private Long id;
 //    private String name;
 //
-//    private Integer itemNumber;
+//    private String itemNumber;
 //
 //    private char revision;
 //
@@ -43,7 +43,7 @@
 //    private List<String> designAttachmentName;
 //
 //    //파일 없는 생성자
-//    public UnlinkedItemDto(boolean tempsave, Long id, String name, Integer itemNumber, char revision, String lifecyclePhase, MemberDto member) {
+//    public UnlinkedItemDto(boolean tempsave, Long id, String name, String itemNumber, char revision, String lifecyclePhase, MemberDto member) {
 //        this.tempsave = tempsave;
 //        this.id = id;
 //        this.name = name;

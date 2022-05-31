@@ -75,7 +75,7 @@ public class CustomProjectRepositoryImpl extends QuerydslRepositorySupport imple
                         ))
                         .from(project)
 
-                        .join(item).on(project.item.id.eq(item.id))
+                        .join(item).on(project.newItem.id.eq(item.id))
 
                         .join(routeProduct).on(project.id.eq(routeProduct.project.id))
 

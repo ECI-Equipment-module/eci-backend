@@ -31,7 +31,7 @@ public class ReadItemDto {
     private String name;
     private String type;
 
-    private Integer itemNumber;
+    private String itemNumber;
 
     private String width;
     private String height;

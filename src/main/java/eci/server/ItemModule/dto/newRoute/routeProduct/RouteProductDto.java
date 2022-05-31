@@ -26,7 +26,7 @@ public class RouteProductDto {
     private String comment;
     private boolean passed;
     private boolean rejected;
-    private int refusal;
+    private int refusal; //05-31 얘 SeqAndName으로 변경
     private boolean show;
     private List<MemberDto> member;
 
