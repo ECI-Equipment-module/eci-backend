@@ -20,6 +20,9 @@ import eci.server.ItemModule.exception.route.RejectImpossibleException;
 import eci.server.ItemModule.exception.route.RouteNotFoundException;
 import eci.server.ItemModule.exception.route.UpdateImpossibleException;
 import eci.server.NewItemModule.exception.ClassificationNotFoundException;
+import eci.server.NewItemModule.exception.ClassificationRequiredException;
+import eci.server.NewItemModule.exception.CoatingNotFoundException;
+import eci.server.NewItemModule.exception.ItemTypeRequiredException;
 import eci.server.ProjectModule.exception.CarTypeNotFoundException;
 import eci.server.ProjectModule.exception.IdNotAppropriateException;
 import eci.server.ProjectModule.exception.ProjectNotLinkedException;
@@ -284,6 +287,27 @@ public class ExceptionAdvice {
     public Response ClassificationNotFoundException(ClassificationNotFoundException e) {
         log.info("e = {}", e.getMessage());
         return Response.failure(400, "존재하지 않는 분류입니다.");
+    }
+
+    @ExceptionHandler(ItemTypeRequiredException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Response ItemTypeRequiredException(ItemTypeRequiredException e) {
+        log.info("e = {}", e.getMessage());
+        return Response.failure(400, "아이템 타입은 필수속성입니다.");
+    }
+
+    @ExceptionHandler(ClassificationRequiredException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Response ClassificationRequiredException(ClassificationRequiredException e) {
+        log.info("e = {}", e.getMessage());
+        return Response.failure(400, "분류는 필수속성입니다.");
+    }
+
+    @ExceptionHandler(CoatingNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Response CoatingNotFoundException(CoatingNotFoundException e) {
+        log.info("e = {}", e.getMessage());
+        return Response.failure(400, "코팅 타입/ 방법이 없습니다");
     }
 
 }

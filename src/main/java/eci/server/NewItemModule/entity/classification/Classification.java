@@ -37,5 +37,9 @@ public class Classification {
             fetch = FetchType.LAZY)
     private List<ClassifyActivate> activateAttributes;
 
-
+    public Classification(Classification1 classification1, Classification2 classification2, Classification3 classification3) {
+        this.classification1 = classification1;
+        this.classification2 = classification2;
+        this.classification3 = classification3;
+    }
 }

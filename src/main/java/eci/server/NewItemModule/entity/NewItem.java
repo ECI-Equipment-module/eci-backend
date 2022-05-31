@@ -9,6 +9,8 @@ import eci.server.NewItemModule.entity.classification.Classification;
 import eci.server.NewItemModule.entity.coating.CoatingType;
 import eci.server.NewItemModule.entity.coating.CoatingWay;
 import eci.server.NewItemModule.entity.maker.NewItemMaker;
+import eci.server.NewItemModule.entity.supplier.Supplier;
+import eci.server.NewItemModule.repository.supplier.SupplierRepository;
 import eci.server.ProjectModule.entity.project.CarType;
 import eci.server.ProjectModule.entity.project.ClientOrganization;
 import eci.server.ProjectModule.entity.project.ProduceOrganization;
@@ -56,7 +58,7 @@ public class NewItem extends EntityDate {
     private ItemTypes itemTypes;
 
     @Column(nullable = false)
-    private Integer itemNumber;
+    private String itemNumber;
 
     @OneToMany(
             mappedBy = "newItem",
@@ -168,7 +170,7 @@ public class NewItem extends EntityDate {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "supplier_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
-    private ProduceOrganization supplierOrganization;
+    private Supplier supplierOrganization;
 
     @OneToMany(
             mappedBy = "newItem",
@@ -211,11 +213,47 @@ public class NewItem extends EntityDate {
     )
     private List<NewItemAttachment> attachments;
 
+    /**
+     * attachment 있을 때 생성자
+     * @param classification
+     * @param name
+     * @param itemTypes
+     * @param itemNumber
+     * @param thumbnail
+     * @param share
+     * @param carType
+     * @param integrate
+     * @param curve
+     * @param width
+     * @param height
+     * @param thickness
+     * @param weight
+     * @param importance
+     * @param color
+     * @param loadQuantity
+     * @param forming
+     * @param coatingWay
+     * @param coatingType
+     * @param modulus
+     * @param screw
+     * @param cuttingType
+     * @param lcd
+     * @param displaySize
+     * @param screwHeight
+     * @param clientOrganizations
+     * @param supplierOrganization
+     * @param makers
+     * @param partnumbers
+     * @param member
+     * @param tempsave
+     * @param revise_progress
+     * @param attachments
+     */
     public NewItem(
             Classification classification,
             String name,
             ItemTypes itemTypes,
-            Integer itemNumber,
+            String itemNumber,
             List<NewItemImage> thumbnail,
             boolean share,
             CarType carType,
@@ -238,7 +276,7 @@ public class NewItem extends EntityDate {
             Integer displaySize,
             Integer screwHeight,
             ClientOrganization clientOrganizations,
-            ProduceOrganization supplierOrganization,
+            Supplier supplierOrganization,
             List<Maker> makers,
             List<String> partnumbers,
 
@@ -322,7 +360,159 @@ public class NewItem extends EntityDate {
 
         this.revision = 65;
 
+        this.member = member;
+        this.modifier = member;
+
     }
+
+
+    /**
+     * attachment 없을 때 생성자
+     * @param classification
+     * @param name
+     * @param itemTypes
+     * @param itemNumber
+     * @param thumbnail
+     * @param share
+     * @param carType
+     * @param integrate
+     * @param curve
+     * @param width
+     * @param height
+     * @param thickness
+     * @param weight
+     * @param importance
+     * @param color
+     * @param loadQuantity
+     * @param forming
+     * @param coatingWay
+     * @param coatingType
+     * @param modulus
+     * @param screw
+     * @param cuttingType
+     * @param lcd
+     * @param displaySize
+     * @param screwHeight
+     * @param clientOrganizations
+     * @param supplierOrganization
+     * @param makers
+     * @param partnumbers
+     * @param member
+     * @param tempsave
+     * @param revise_progress
+     */
+    public NewItem(
+            Classification classification,
+            String name,
+            ItemTypes itemTypes,
+            String itemNumber,
+            List<NewItemImage> thumbnail,
+            boolean share,
+            CarType carType,
+            String integrate,
+            String curve,
+            String width,
+            String height,
+            String thickness,
+            String weight,
+            String importance,
+            Color color,
+            Integer loadQuantity,
+            String forming,
+            CoatingWay coatingWay,
+            CoatingType coatingType,
+            Integer modulus,
+            String screw,
+            String cuttingType,
+            String lcd,
+            Integer displaySize,
+            Integer screwHeight,
+            ClientOrganization clientOrganizations,
+            Supplier supplierOrganization,
+            List<Maker> makers,
+            List<String> partnumbers,
+
+            Member member,
+            Boolean tempsave,
+            Boolean revise_progress
+
+    ) {
+
+        this.classification = classification;
+        this.name = name;
+
+        this.itemTypes = itemTypes;
+
+        this.itemNumber = itemNumber;
+
+        this.thumbnail = new ArrayList<>();
+        addImages(thumbnail);
+
+        this.share = share;
+
+        this.carType = carType;
+
+        this.integrate = integrate;
+
+        this.curve = curve;
+
+        this.width = width;
+
+        this.height = height;
+
+        this.thickness = thickness;
+
+        this.weight = weight;
+
+        this.importance = importance;
+
+        this.color = color;
+
+        this.loadQuantity = loadQuantity;
+
+        this.forming = forming;
+
+        this.coatingWay = coatingWay;
+
+        this.coatingType = coatingType;
+
+        this.modulus = modulus;
+
+        this.screw = screw;
+
+        this.cuttingType = cuttingType;
+
+        this.lcd = lcd;
+
+        this.displaySize = displaySize;
+
+        this.screwHeight = screwHeight;
+
+        this.clientOrganization = clientOrganizations;
+
+        this.supplierOrganization = supplierOrganization;
+
+        this.makers =
+                makers.stream().map(
+
+                                //다대다 관계를 만드는 구간
+                                r -> new NewItemMaker(
+                                        this, r, partnumbers.get(makers.indexOf(r))
+                                )
+                        )
+                        .collect(toList());
+
+        this.tempsave = tempsave;
+
+        this.revise_progress = revise_progress;
+
+        this.revision = 65;
+
+        this.member = member;
+        this.modifier = member;
+
+    }
+
 
     /**
      * 추가할 이미지
