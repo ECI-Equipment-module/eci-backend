@@ -24,11 +24,6 @@ public class Classification1 {
     @Column
     private Integer last;
 
-    @Column
-    private boolean value; //value"	: 파트/메카니컬/LCD"
-
-    @Column
-    private boolean classification; //classification" :	:	1/1/99999
 
     @OneToMany(
             mappedBy = "classification1",

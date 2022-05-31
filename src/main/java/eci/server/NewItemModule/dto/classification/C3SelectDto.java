@@ -15,13 +15,13 @@ import static java.util.stream.Collectors.toList;
 public class C3SelectDto {
     private Long id;
     private String name;
-    private boolean last;
+    private Integer last;
 
     public static C3SelectDto toDto(Classification3 classification3) {
         return new C3SelectDto(
                 classification3.getId(),
                 classification3.getName(),
-                classification3.isLast()
+                classification3.getLast()
         );
     }
 
@@ -34,7 +34,7 @@ public class C3SelectDto {
                 c -> new C3SelectDto(
                         c.getId(),
                         c.getName(),
-                        c.isLast()
+                        c.getLast()
                 )
         ).collect(
                 toList()

@@ -17,7 +17,7 @@ import static java.util.stream.Collectors.toList;
 public class C2SelectDto {
     private Long id;
     private String name;
-    private boolean last;
+    private Integer last;
     List<C3SelectDto> c3SelectDtos;
 
     public static C2SelectDto toDto(
@@ -26,7 +26,7 @@ public class C2SelectDto {
         return new C2SelectDto(
                 classification2.getId(),
                 classification2.getName(),
-                classification2.isLast(),
+                classification2.getLast(),
                 C3SelectDto.toDtoList(
                         classification3Repository.findByClassification2(classification2)
                 )
@@ -44,7 +44,7 @@ public class C2SelectDto {
                 c -> new C2SelectDto(
                         c.getId(),
                         c.getName(),
-                        c.isLast(),
+                        c.getLast(),
                         C3SelectDto.toDtoList(
                                 classification3Repository.findByClassification2(c)
                         )

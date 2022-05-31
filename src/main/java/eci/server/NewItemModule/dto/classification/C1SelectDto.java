@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.Column;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
@@ -17,17 +18,19 @@ import static java.util.stream.Collectors.toList;
 public class C1SelectDto {
     private Long id;
     private String name;
-    private boolean last;
+    private Integer last;
+
     List<C2SelectDto> c2SelectDtos;
 
     public static C1SelectDto toDto(
             Classification1 classification1,
             Classification2Repository classification2Repository,
             Classification3Repository classification3Repository) {
+
         return new C1SelectDto(
                 classification1.getId(),
                 classification1.getName(),
-                classification1.isLast(),
+                classification1.getLast(),
                 C2SelectDto.toDtoList(
                         classification2Repository.findByClassification1(classification1),
                         classification2Repository,
@@ -47,7 +50,7 @@ public class C1SelectDto {
                 c -> new C1SelectDto(
                         c.getId(),
                         c.getName(),
-                        c.isLast(),
+                        c.getLast(),
                         C2SelectDto.toDtoList(
                                 classification2Repository.findByClassification1(c),
                                 //classification2Repository.findAllByClassification2(),
