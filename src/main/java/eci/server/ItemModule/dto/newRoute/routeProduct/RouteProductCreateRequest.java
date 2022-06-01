@@ -46,7 +46,8 @@ public class RouteProductCreateRequest {
         Integer neededRouteProductCnt = routeProductType.size()-1;
 
         //request member 제외해서 일을 빼줌
-                if (neededRouteProductCnt - 1 < req.getMemberIds().size()) {
+//06-01 자가결재 여기서 에러
+                if (req.getMemberIds()!=null && neededRouteProductCnt - 1 < req.getMemberIds().size()) {
                     //멤버가 할당되지 않아서 짝이 안맞아
                     throw new MemberOverAssignedException();
                 }

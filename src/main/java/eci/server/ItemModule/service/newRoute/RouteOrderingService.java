@@ -102,6 +102,8 @@ public class RouteOrderingService {
             System.out.println(routeProduct1.getMembers().get(0).getRouteProduct());
         }
 
+        newRoute.getNewItem().updateTempsaveWhemMadeRoute();
+        //라우트 만들면 임시저장 해제
         return new RouteOrderingCreateResponse(newRoute.getId());
     }
 

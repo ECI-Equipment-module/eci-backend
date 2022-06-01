@@ -682,5 +682,7 @@ public class NewItem extends EntityDate {
         private NewItemImageUpdatedResult imageUpdatedResult;
     }
 
-
+    public void updateTempsaveWhemMadeRoute() {
+        this.tempsave = false;
+    }
 }
