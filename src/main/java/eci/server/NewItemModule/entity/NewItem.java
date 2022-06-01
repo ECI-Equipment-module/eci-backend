@@ -186,8 +186,8 @@ public class NewItem extends EntityDate {
     @Column(nullable = false)
     private boolean tempsave;
 
-//    @Column(nullable = false)
-//    private boolean read;
+    @Column(nullable = false)
+    private boolean readonly;
 
     @Column(nullable = false)
     private boolean revise_progress;
@@ -353,7 +353,8 @@ public class NewItem extends EntityDate {
                         )
                         .collect(toList());
 
-        this.tempsave = tempsave;
+        this.tempsave = true;
+        this.readonly = false;
 
         this.revise_progress = revise_progress;
 
@@ -504,7 +505,9 @@ public class NewItem extends EntityDate {
                         )
                         .collect(toList());
 
-        this.tempsave = tempsave;
+        this.tempsave = true;
+
+        this.readonly = false;
 
         this.revise_progress = revise_progress;
 
@@ -685,7 +688,10 @@ public class NewItem extends EntityDate {
         private NewItemImageUpdatedResult imageUpdatedResult;
     }
 
-    public void updateTempsaveWhemMadeRoute() {
+    public void updateTempsaveWhenMadeRoute() {
         this.tempsave = false;
+    }
+    public void updateReadOnlyWhenSaved() {
+        this.readonly = true;
     }
 }

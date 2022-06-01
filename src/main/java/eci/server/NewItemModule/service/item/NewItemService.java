@@ -172,6 +172,7 @@ public class NewItemService {
             uploadAttachments(item.getAttachments(), req.getAttachments());
         }
 
+        item.updateReadOnlyWhenSaved(); //저장하면 readonly = true
         return new NewItemCreateResponse(item.getId());
     }
 
