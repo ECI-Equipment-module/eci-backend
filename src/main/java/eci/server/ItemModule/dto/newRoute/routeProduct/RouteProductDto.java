@@ -26,13 +26,14 @@ public class RouteProductDto {
     private String comment;
     private boolean passed;
     private boolean rejected;
-    private int refusal; //05-31 얘 SeqAndName으로 변경
+    private SeqAndName refusal; //05-31 얘 SeqAndName으로 변경
     private boolean show;
     private List<MemberDto> member;
 
     public static List<RouteProductDto> toProductDtoList(
             List <RouteProduct> RouteProducts
     ) {
+
         List<RouteProductDto> routeProductList = RouteProducts.stream().map(
                 c -> new RouteProductDto(
                         c.getId(),
@@ -42,7 +43,9 @@ public class RouteProductDto {
                         c.getComments(),
                         c.isPassed(),
                         c.isRejected(),
-                        c.getRefusal(),
+                        c.getRefusal()!=-1?new SeqAndName((RouteProducts.get(c.getRefusal()).getId().intValue()),
+                                RouteProducts.get(c.getRefusal()).getRoute_name())
+                        :                new SeqAndName(-1, "no refusal"),
                         c.isRoute_show(),
                         MemberDto.toDtoList(
                                 c.getMembers().stream().map(
@@ -66,7 +69,7 @@ public class RouteProductDto {
                 routeProduct.getComments(),
                 routeProduct.isPassed(),
                 routeProduct.isRejected(),
-                routeProduct.getRefusal(),
+                new SeqAndName(-1, "no refusal"),
                 routeProduct.isRoute_show(),
                 MemberDto.toDtoList(
                         routeProduct.getMembers().stream().map(

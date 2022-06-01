@@ -229,7 +229,7 @@ public class RouteOrdering extends EntityDate {
         routeProductList.get(rejectedIndex).setRejected(true);
         routeProductList.get(rejectedIndex).setDisabled(true);
         routeProductList.get(this.present-1).setComment(rejectedComment);
-        routeProductList.get(this.present-1).updateRefusal(rejectedIndex);
+        routeProductList.get(this.present-1).updateRefusal(rejectedIndex); //06-01 : reject 된 seq을 전달
         //routeProductList.get(this.present).setShow(false);
         /**
          * 거부된 라우트 하나 먼저 복제
