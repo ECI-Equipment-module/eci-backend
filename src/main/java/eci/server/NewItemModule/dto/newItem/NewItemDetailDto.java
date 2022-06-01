@@ -60,9 +60,12 @@ public class NewItemDetailDto {
     private String partnumbers;
     private boolean tempsave;
     private boolean revise_progress;
-    private char revision;
+
     private MemberDto member;
     private List<NewItemAttachmentDto> attachments;
+    //아래는 읽기 전용 속성
+    private char revision;
+    private String status;
 
 
     public static NewItemDetailDto toDto(NewItem Item, NewItemMakerRepository newItemMakerRepository) {
@@ -101,12 +104,15 @@ public class NewItemDetailDto {
                     newItemMakerRepository.findByMaker(Item.getMakers().get(0).getMaker()).get(0).getPartnumber(),
                     Item.isTempsave(),
                     Item.isRevise_progress(),
-                    (char) Item.getRevision(),
+
                     MemberDto.toDto(Item.getMember()),
                     Item.getAttachments().
                             stream().
                             map(NewItemAttachmentDto::toDto)
-                            .collect(toList())
+                            .collect(toList()),
+                    (char) Item.getRevision(),
+                    "status"
+
 
             );
         }
@@ -143,12 +149,15 @@ public class NewItemDetailDto {
                 "no partnum",
                 Item.isTempsave(),
                 Item.isRevise_progress(),
-                (char) Item.getRevision(),
+
                 MemberDto.toDto(Item.getMember()),
                 Item.getAttachments().
                         stream().
                         map(NewItemAttachmentDto::toDto)
-                        .collect(toList())
+                        .collect(toList()),
+
+                (char) Item.getRevision(),
+                "status"
 
         );
     }
