@@ -334,13 +334,15 @@ public class DashboardService {
         List<TodoResponse> NEW_DESIGN = new ArrayList<>(unlinkedItemTodoResponses);
 
         //3) REJECT - 라우트 프로덕트들 중에서 현재이고,
+
         // 디자인 설계이고,
         // 라우트프로덕트 멤버가 나이고,
         // REJECTED=TRUE 인 것
         HashSet<TodoResponse> rejectedDesignTodoResponses = new HashSet<>();
 
         for (RouteProduct routeProduct : myRouteProductList) { //myRoute-> 내꺼 + 현재
-            if (routeProduct.isRejected() && routeProduct.getRoute_name().equals("기구Design생성[설계자]")) {
+            //06-01 수정
+            if (routeProduct.isPreRejected() && routeProduct.getRoute_name().equals("기구Design생성[설계자]")) {
 
                 Design targetDesign = routeProduct.getDesign();
 
