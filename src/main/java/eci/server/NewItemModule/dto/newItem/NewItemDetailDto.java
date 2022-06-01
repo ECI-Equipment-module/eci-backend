@@ -1,8 +1,11 @@
 package eci.server.NewItemModule.dto.newItem;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import eci.server.ItemModule.dto.color.ColorDto;
 import eci.server.ItemModule.dto.manufacture.MakerSimpleDto;
 import eci.server.ItemModule.dto.member.MemberDto;
+import eci.server.ItemModule.dto.newRoute.routeOrdering.RouteOrderingDto;
+import eci.server.ItemModule.dto.newRoute.routeProduct.RouteProductDto;
 import eci.server.ItemModule.entity.item.ItemTypes;
 import eci.server.NewItemModule.dto.ItemTypesDto;
 import eci.server.NewItemModule.dto.attachment.NewItemAttachmentDto;
@@ -19,6 +22,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import javax.persistence.Column;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
@@ -61,14 +65,30 @@ public class NewItemDetailDto {
     private boolean tempsave;
     private boolean revise_progress;
 
-    private MemberDto member;
     private List<NewItemAttachmentDto> attachments;
     //아래는 읽기 전용 속성
     private char revision;
     private String status;
 
+    private Long routeId;
 
-    public static NewItemDetailDto toDto(NewItem Item, NewItemMakerRepository newItemMakerRepository) {
+    //05-22 추가
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd hh:mm:ss.SSS", timezone = "Asia/Seoul")
+    private LocalDateTime createdAt;
+    private MemberDto creator;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd hh:mm:ss.SSS", timezone = "Asia/Seoul")
+    private LocalDateTime modifiedAt;
+    private MemberDto modifier;
+
+
+
+    public static NewItemDetailDto toDto(
+            NewItem Item,
+            NewItemMakerRepository newItemMakerRepository,
+            RouteOrderingDto routeOrderingDto,
+            RouteProductDto routeProductDto
+    ) {
 
         if(Item.getMakers().size()>0) {
             return new NewItemDetailDto(
@@ -105,13 +125,19 @@ public class NewItemDetailDto {
                     Item.isTempsave(),
                     Item.isRevise_progress(),
 
-                    MemberDto.toDto(Item.getMember()),
                     Item.getAttachments().
                             stream().
                             map(NewItemAttachmentDto::toDto)
                             .collect(toList()),
                     (char) Item.getRevision(),
-                    "status"
+                    routeOrderingDto.getLifecycleStatus(),
+
+                    routeOrderingDto.getId(),
+                    Item.getCreatedAt(),
+                    MemberDto.toDto(Item.getMember()),
+
+                    Item.getModifier()==null?null:Item.getModifiedAt(),
+                    Item.getModifier()==null?null:MemberDto.toDto(Item.getModifier())
 
 
             );
@@ -150,14 +176,126 @@ public class NewItemDetailDto {
                 Item.isTempsave(),
                 Item.isRevise_progress(),
 
-                MemberDto.toDto(Item.getMember()),
                 Item.getAttachments().
                         stream().
                         map(NewItemAttachmentDto::toDto)
                         .collect(toList()),
 
                 (char) Item.getRevision(),
-                "status"
+                routeOrderingDto.getLifecycleStatus(),
+                routeOrderingDto.getId(),
+                Item.getCreatedAt(),
+                MemberDto.toDto(Item.getMember()),
+
+                Item.getModifier()==null?null:Item.getModifiedAt(),
+                Item.getModifier()==null?null:MemberDto.toDto(Item.getModifier())
+
+        );
+    }
+
+
+    public static NewItemDetailDto noRoutetoDto(
+            NewItem Item,
+            NewItemMakerRepository newItemMakerRepository
+    ){
+        if(Item.getMakers().size()>0) {
+            return new NewItemDetailDto(
+                    Item.getId(),
+                    ClassificationDto.toDto(Item.getClassification()),
+                    Item.getName(),
+                    ItemTypesDto.toDto(Item.getItemTypes()),
+                    Item.getItemNumber(),
+                    NewItemImageDto.toDto(Item.getThumbnail().get(0)),
+                    Item.isSharing(),
+                    CarTypeDto.toDto(Item.getCarType()),
+                    Item.getIntegrate(),
+                    Item.getCurve(),
+                    Item.getWidth(),
+                    Item.getHeight(),
+                    Item.getThickness(),
+                    Item.getWeight(),
+                    Item.getImportance(),
+                    ColorDto.toDto(Item.getColor()),
+                    Item.getLoadQuantity(),
+                    Item.getForming(),
+                    CoatingDto.toDto(Item.getCoatingWay()),
+                    CoatingDto.toDto(Item.getCoatingType()),
+                    Item.getModulus(),
+                    Item.getScrew(),
+                    Item.getCuttingType(),
+                    Item.getLcd(),
+                    Item.getDisplaySize(),
+                    Item.getScrewHeight(),
+                    ClientOrganizationDto.toDto(Item.getClientOrganization()),
+                    SupplierDto.toDto(Item.getSupplierOrganization()),
+                    MakerSimpleDto.toDtoList(Item.getMakers()),
+                    newItemMakerRepository.findByMaker(Item.getMakers().get(0).getMaker()).get(0).getPartnumber(),
+                    Item.isTempsave(),
+                    Item.isRevise_progress(),
+
+                    Item.getAttachments().
+                            stream().
+                            map(NewItemAttachmentDto::toDto)
+                            .collect(toList()),
+                    (char) Item.getRevision(),
+                    "LIFECYCLE_NONE",
+                    0L,
+                    Item.getCreatedAt(),
+                    MemberDto.toDto(Item.getMember()),
+
+                    Item.getModifier()==null?null:Item.getModifiedAt(),
+                    Item.getModifier()==null?null:MemberDto.toDto(Item.getModifier())
+
+
+            );
+        }
+        return new NewItemDetailDto(
+                Item.getId(),
+                ClassificationDto.toDto(Item.getClassification()),
+                Item.getName(),
+                ItemTypesDto.toDto(Item.getItemTypes()),
+                Item.getItemNumber(),
+                NewItemImageDto.toDto(Item.getThumbnail().get(0)),
+                Item.isSharing(),
+                CarTypeDto.toDto(Item.getCarType()),
+                Item.getIntegrate(),
+                Item.getCurve(),
+                Item.getWidth(),
+                Item.getHeight(),
+                Item.getThickness(),
+                Item.getWeight(),
+                Item.getImportance(),
+                ColorDto.toDto(Item.getColor()),
+                Item.getLoadQuantity(),
+                Item.getForming(),
+                CoatingDto.toDto(Item.getCoatingWay()),
+                CoatingDto.toDto(Item.getCoatingType()),
+                Item.getModulus(),
+                Item.getScrew(),
+                Item.getCuttingType(),
+                Item.getLcd(),
+                Item.getDisplaySize(),
+                Item.getScrewHeight(),
+                ClientOrganizationDto.toDto(Item.getClientOrganization()),
+                SupplierDto.toDto(Item.getSupplierOrganization()),
+                MakerSimpleDto.toDtoList(Item.getMakers()),
+                "no partnum",
+                Item.isTempsave(),
+                Item.isRevise_progress(),
+
+                Item.getAttachments().
+                        stream().
+                        map(NewItemAttachmentDto::toDto)
+                        .collect(toList()),
+
+                (char) Item.getRevision(),
+                "LIFECYCLE_NONE",
+                0L,
+                Item.getCreatedAt(),
+                MemberDto.toDto(Item.getMember()),
+
+                Item.getModifier()==null?null:Item.getModifiedAt(),
+                Item.getModifier()==null?null:MemberDto.toDto(Item.getModifier())
 
         );
     }

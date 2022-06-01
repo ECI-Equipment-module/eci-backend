@@ -218,12 +218,45 @@ public class NewItemService {
     // read one project
     public RetrieveNewItemDetailDto read(Long id){
         NewItem targetItem = newItemRepository.findById(id).orElseThrow(ItemNotFoundException::new);
+        List<RouteOrderingDto> routeDtoList = Optional.ofNullable(
+                RouteOrderingDto.toDtoList(
+                        routeOrderingRepository.findByNewItem(targetItem),
+                        routeProductRepository,
+                        routeOrderingRepository
+                )
+        ).orElseThrow(RouteNotFoundException::new);
 
+
+        if (routeDtoList.size() > 0) {//아이템에 딸린 routeDto가 존재할 때
+
+            return new RetrieveNewItemDetailDto(
+                    classificationService.returnAttributesDtoList(targetItem.getClassification()),
+                    NewItemDetailDto.toDto(
+                    targetItem,
+                    itemMakerRepository,
+                    //최신 라우트에 딸린 라우트프로덕트 리스트 중,
+                    // 라우트의 present 인덱스에 해당하는 타입을 데리고 오기
+                    routeDtoList.get(routeDtoList.size() - 1),
+                    RouteProductDto.toDto(
+                            routeProductRepository.findAllByRouteOrdering(
+                                    routeOrderingRepository.findById(
+                                            routeDtoList.get(routeDtoList.size() - 1).getId()
+                                    ).orElseThrow(RouteNotFoundException::new)
+                            ).get(
+                                    routeDtoList.get(routeDtoList.size() - 1).getPresent()
+                            )
+                    )
+                    )
+            );
+
+        }
         return new RetrieveNewItemDetailDto(
-        classificationService.returnAttributesDtoList(targetItem.getClassification()),
-                NewItemDetailDto.toDto(targetItem, itemMakerRepository)
+                classificationService.returnAttributesDtoList(targetItem.getClassification()),
+                NewItemDetailDto.noRoutetoDto(
+                        targetItem,
+                        itemMakerRepository
+                )
                 );
-
     }
 
 
@@ -254,6 +287,57 @@ public class NewItemService {
                         i -> i.setDeleted(true)
                 );
     }
+//
+//        public ReadItemDto read(Long id) {
+//        NewItem targetItem = newItemRepository.findById(id).orElseThrow(ItemNotFoundException::new);
+//
+//        //아이템에 딸린 라우트가 없다면 라우트 없음 에러 던지기,
+//        // 라우트 없으면 읽기도 사실상 불가능
+//        List<RouteOrderingDto> routeDtoList = Optional.ofNullable(
+//                RouteOrderingDto.toDtoList(
+//                        routeOrderingRepository.findByNewItem(targetItem),
+//                        routeProductRepository,
+//                        routeOrderingRepository
+//                )
+//        ).orElseThrow(RouteNotFoundException::new);
+//
+//        if (routeDtoList.size() > 0) {//아이템에 딸린 routeDto가 존재할 때
+//            ReadItemDto readItemDto = ReadItemDto.toDto(
+//                    targetItem,
+//                    //최신 라우트에 딸린 라우트프로덕트 리스트 중,
+//                    // 라우트의 present 인덱스에 해당하는 타입을 데리고 오기
+//                    routeDtoList.get(routeDtoList.size() - 1),
+//                    RouteProductDto.toDto(
+//                            routeProductRepository.findAllByRouteOrdering(
+//                                    routeOrderingRepository.findById(
+//                                            routeDtoList.get(routeDtoList.size() - 1).getId()
+//                                    ).orElseThrow(RouteNotFoundException::new)
+//                            ).get(
+//                                    routeDtoList.get(routeDtoList.size() - 1).getPresent()
+//                            )
+//                    )
+//
+//            );
+//            return readItemDto;
+//        } else {
+//            //route 가 존재하지 않을 시
+//            ReadItemDto readItemDto = ReadItemDto.noRoutetoDto(
+//                    itemRepository.findById(id).orElseThrow(ItemNotFoundException::new),
+//                    ItemDto.toDto(
+//                            itemRepository.findById(id).orElseThrow(ItemNotFoundException::new)
+//                    ),
+//                    routeDtoList,
+//                    readPartNumber.readPartnumbers(targetItem),
+//                    attachmentDtoList,
+//                    routePreset
+//
+//            );
+//
+//            System.out.println(readItemDto.getThumbnail().toString());
+//
+//            return readItemDto;
+//        }
+//    }
 
 
 }
