@@ -86,8 +86,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET, "/item-candidates").authenticated()
                 .antMatchers(HttpMethod.POST, "/item").authenticated()
                 .antMatchers(HttpMethod.POST, "/item/temp").authenticated()
-                .antMatchers(HttpMethod.PUT, "/item/{id}").access("@itemGuard.check(#id)")
-                .antMatchers(HttpMethod.DELETE, "/item/{id}").access("@itemGuard.check(#id)")
+                .antMatchers(HttpMethod.PUT, "/item/{id}").access("@newItemGuard.check(#id)")
+                .antMatchers(HttpMethod.DELETE, "/item/{id}").access("@newItemGuard.check(#id)")
 
 
                 .antMatchers(HttpMethod.GET, "/**").permitAll()//위에 명시된 get 말고는 다 허용, 맨 밑으로 위치 변경

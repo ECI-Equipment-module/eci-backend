@@ -92,21 +92,21 @@ public class NewItemController {
 
 
 
-//    /**
-//     * 특정 아이템+딸린 썸네일 이미지 삭제
-//     *
-//     * @param id
-//     * @return 200 (success)
-//     */
-//    @CrossOrigin(origins = "https://localhost:3000")
-//    @DeleteMapping("/items/{id}")
-//    @ResponseStatus(HttpStatus.OK)
-//    public Response delete(
-//            @PathVariable Long id) {
-//
-//        itemService.delete(id);
-//        return Response.success();
-//    }
+    /**
+     * 특정 아이템+딸린 썸네일 이미지 삭제
+     *
+     * @param id
+     * @return 200 (success)
+     */
+    @CrossOrigin(origins = "https://localhost:3000")
+    @DeleteMapping("/item/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public Response delete(
+            @PathVariable Long id) {
+
+        newItemService.delete(id);
+        return Response.success();
+    }
 
     /**
      * 특정 아이템 수정

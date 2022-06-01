@@ -226,4 +226,34 @@ public class NewItemService {
 
     }
 
+
+    @Transactional
+    public void delete(Long id) {
+
+        NewItem item = newItemRepository.findById(id).orElseThrow(ItemNotFoundException::new);
+        deleteImages(item.getThumbnail());
+
+        newItemRepository.delete(item);
+    }
+
+
+    private void deleteImages(List<NewItemImage> images) {
+        images.
+                stream()
+                .forEach(
+                        i -> fileService.delete(
+                                i.getUniqueName()
+                        )
+                );
+    }
+
+    private void deleteAttachments(List<NewItemAttachment> attachments) {
+        attachments.
+                stream().
+                forEach(
+                        i -> i.setDeleted(true)
+                );
+    }
+
+
 }
