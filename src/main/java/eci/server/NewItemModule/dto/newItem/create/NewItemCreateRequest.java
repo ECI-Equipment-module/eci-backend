@@ -13,10 +13,7 @@ import eci.server.NewItemModule.entity.NewItem;
 import eci.server.NewItemModule.entity.NewItemAttachment;
 import eci.server.NewItemModule.entity.NewItemImage;
 import eci.server.NewItemModule.entity.classification.Classification;
-import eci.server.NewItemModule.exception.ClassificationNotFoundException;
-import eci.server.NewItemModule.exception.ClassificationRequiredException;
-import eci.server.NewItemModule.exception.CoatingNotFoundException;
-import eci.server.NewItemModule.exception.ItemTypeRequiredException;
+import eci.server.NewItemModule.exception.*;
 import eci.server.NewItemModule.repository.classification.Classification1Repository;
 import eci.server.NewItemModule.repository.classification.Classification2Repository;
 import eci.server.NewItemModule.repository.classification.Classification3Repository;
@@ -147,11 +144,18 @@ public class NewItemCreateRequest {
         if(req.classification1Id==null || req.classification2Id ==null || req.classification3Id==null){
             throw new ClassificationRequiredException();
         }
+        if(req.classification1Id==99999L && req.classification2Id ==99999L && req.classification3Id==99999L){
+            throw new ProperClassificationRequiredException();
+        }
         //아이템 타입 체크
         if(req.typeId==null){
             throw new ItemTypeRequiredException();
         }
 
+        //아이템 이름 체크
+        if(req.name.isBlank()){
+            throw new ItemNameRequiredException();
+        }
 
 
 

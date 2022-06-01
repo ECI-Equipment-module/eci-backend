@@ -4,6 +4,7 @@ import eci.server.ItemModule.dto.color.ColorReadCondition;
 import eci.server.ItemModule.dto.item.*;
 import eci.server.NewItemModule.dto.newItem.NewItemReadCondition;
 import eci.server.NewItemModule.dto.newItem.create.NewItemCreateRequest;
+import eci.server.NewItemModule.dto.newItem.create.NewItemTemporaryCreateRequest;
 import eci.server.NewItemModule.service.item.NewItemService;
 import eci.server.aop.AssignMemberId;
 import eci.server.ItemModule.dto.response.Response;
@@ -24,24 +25,24 @@ public class NewItemController {
 
     private final NewItemService newItemService;
 
-//    /**
-//     * 아이템 임시저장
-//     *
-//     * @param req
-//     * @return 200 (success)
-//     */
-//    @PostMapping("/item/temp")
-//    @ResponseStatus(HttpStatus.CREATED)
-//    @AssignMemberId // Aspect : 인증된 사용자 정보로 아이템 작성자 지정 가능
-//    public Response tempCreate(
-//            @Valid @ModelAttribute
-//                    ItemTemporaryCreateRequest req
-//    ) {
-//
-//        return Response.success(
-//
-//                itemService.tempCreate(req));
-//    }
+    /**
+     * 아이템 임시저장
+     *
+     * @param req
+     * @return 200 (success)
+     */
+    @PostMapping("/item/temp")
+    @ResponseStatus(HttpStatus.CREATED)
+    @AssignMemberId // Aspect : 인증된 사용자 정보로 아이템 작성자 지정 가능
+    public Response tempCreate(
+            @Valid @ModelAttribute
+                    NewItemTemporaryCreateRequest req
+    ) {
+
+        return Response.success(
+
+                newItemService.tempCreate(req));
+    }
 
     /**
      * 아이템 생성 (찐 저장)

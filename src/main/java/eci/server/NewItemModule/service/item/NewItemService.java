@@ -35,6 +35,7 @@ import eci.server.NewItemModule.dto.newItem.NewItemReadCondition;
 import eci.server.NewItemModule.dto.newItem.RetrieveNewItemDetailDto;
 import eci.server.NewItemModule.dto.newItem.create.NewItemCreateRequest;
 import eci.server.NewItemModule.dto.newItem.create.NewItemCreateResponse;
+import eci.server.NewItemModule.dto.newItem.create.NewItemTemporaryCreateRequest;
 import eci.server.NewItemModule.entity.NewItem;
 import eci.server.NewItemModule.entity.NewItemAttachment;
 import eci.server.NewItemModule.entity.NewItemImage;
@@ -106,26 +107,35 @@ public class NewItemService {
      * @param req
      * @return 생성된 아이템 번호
      */
-//
-//    @Transactional
-//    public NewItemCreateResponse tempCreate(NewItemTemporaryCreateRequest req) {
-//
-//        NewItem item = newItemRepository.save(
-//                NewItemTemporaryCreateRequest.toEntity(
-//                        req,
-//                        memberRepository,
-//                        colorRepository,
-//                        itemMakerRepository
-//                )
-//        );
-//
-//        uploadImages(item.getThumbnail(), req.getThumbnail());
-//
-//        uploadAttachments(item.getAttachments(), req.getAttachments());
-//
-//        return new ItemCreateResponse(item.getId());
-//    }
-//
+
+    @Transactional
+    public NewItemCreateResponse tempCreate(NewItemTemporaryCreateRequest req) {
+
+        NewItem item = newItemRepository.save(
+                NewItemTemporaryCreateRequest.toEntity(
+                        req,
+                        classification1Repository,
+                        classification2Repository,
+                        classification3Repository,
+                        itemTypesRepository,
+                        carTypeRepository,
+                        coatingWayRepository,
+                        coatingTypeRepository,
+                        clientOrganizationRepository,
+                        supplierRepository,
+                        memberRepository,
+                        colorRepository,
+                        makerRepository
+                )
+        );
+
+        uploadImages(item.getThumbnail(), req.getThumbnail());
+
+        uploadAttachments(item.getAttachments(), req.getAttachments());
+
+        return new NewItemCreateResponse(item.getId());
+    }
+
 
     /**
      * 아이템 create

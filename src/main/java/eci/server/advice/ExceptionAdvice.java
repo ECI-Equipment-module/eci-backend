@@ -19,10 +19,7 @@ import eci.server.ItemModule.exception.route.MemberNotAssignedException;
 import eci.server.ItemModule.exception.route.RejectImpossibleException;
 import eci.server.ItemModule.exception.route.RouteNotFoundException;
 import eci.server.ItemModule.exception.route.UpdateImpossibleException;
-import eci.server.NewItemModule.exception.ClassificationNotFoundException;
-import eci.server.NewItemModule.exception.ClassificationRequiredException;
-import eci.server.NewItemModule.exception.CoatingNotFoundException;
-import eci.server.NewItemModule.exception.ItemTypeRequiredException;
+import eci.server.NewItemModule.exception.*;
 import eci.server.ProjectModule.exception.CarTypeNotFoundException;
 import eci.server.ProjectModule.exception.IdNotAppropriateException;
 import eci.server.ProjectModule.exception.ProjectNotLinkedException;
@@ -308,6 +305,21 @@ public class ExceptionAdvice {
     public Response CoatingNotFoundException(CoatingNotFoundException e) {
         log.info("e = {}", e.getMessage());
         return Response.failure(400, "코팅 타입/ 방법이 없습니다");
+    }
+
+
+    @ExceptionHandler(ItemNameRequiredException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Response ItemNameRequiredException(ItemNameRequiredException e) {
+        log.info("e = {}", e.getMessage());
+        return Response.failure(400, "이름을 입력해주세요");
+    }
+
+    @ExceptionHandler(ProperClassificationRequiredException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Response ProperClassificationRequiredException(ProperClassificationRequiredException e) {
+        log.info("e = {}", e.getMessage());
+        return Response.failure(400, "유효한 Classification 을 지정해주세요");
     }
 
 }
