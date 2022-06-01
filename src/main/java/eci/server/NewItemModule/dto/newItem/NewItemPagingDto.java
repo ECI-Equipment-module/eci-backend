@@ -25,7 +25,7 @@ public class NewItemPagingDto {
     private String name;
     private ItemTypesDto type;
     private ClassificationDto classification;
-    private boolean share;
+    private boolean sharing;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime createdAt;
 

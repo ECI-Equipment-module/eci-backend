@@ -12,6 +12,7 @@ import eci.server.NewItemModule.dto.image.NewItemImageDto;
 import eci.server.NewItemModule.dto.supplier.SupplierDto;
 import eci.server.NewItemModule.entity.NewItem;
 import eci.server.NewItemModule.entity.classification.Classification;
+import eci.server.NewItemModule.repository.maker.NewItemMakerRepository;
 import eci.server.ProjectModule.dto.carType.CarTypeDto;
 import eci.server.ProjectModule.dto.clientOrg.ClientOrganizationDto;
 import lombok.AllArgsConstructor;
@@ -33,7 +34,8 @@ public class NewItemDetailDto {
     private String itemNumber;
     private NewItemImageDto thumbnail;
     private boolean sharing;
-    private CarTypeDto carTypeDto;
+    private CarTypeDto carTypeId;
+
     private String integrate;
     private String curve;
     private String width;
@@ -41,20 +43,21 @@ public class NewItemDetailDto {
     private String thickness;
     private String weight;
     private String importance;
-    private ColorDto color;
+    private ColorDto colorId;
     private String loadQuantity;
     private String forming;
-    private CoatingDto coatingWay;
-    private CoatingDto coatingType;
+    private CoatingDto coatingWayId;
+    private CoatingDto coatingTypeId;
     private String modulus;
     private String screw;
     private String cuttingType;
     private String lcd;
     private String displaySize;
     private String screwHeight;
-    private ClientOrganizationDto clientOrganizationDto;
-    private SupplierDto supplierOrganization;
-    private List<MakerSimpleDto> makerSimpleDtos;
+    private ClientOrganizationDto clientOrganizationId;
+    private SupplierDto supplierOrganizationId;
+    private List<MakerSimpleDto> makersId;
+    private String partnumbers;
     private boolean tempsave;
     private boolean revise_progress;
     private char revision;
@@ -62,8 +65,51 @@ public class NewItemDetailDto {
     private List<NewItemAttachmentDto> attachments;
 
 
-    public static NewItemDetailDto toDto(NewItem Item) {
+    public static NewItemDetailDto toDto(NewItem Item, NewItemMakerRepository newItemMakerRepository) {
 
+        if(Item.getMakers().size()>0) {
+            return new NewItemDetailDto(
+                    Item.getId(),
+                    ClassificationDto.toDto(Item.getClassification()),
+                    Item.getName(),
+                    ItemTypesDto.toDto(Item.getItemTypes()),
+                    Item.getItemNumber(),
+                    NewItemImageDto.toDto(Item.getThumbnail().get(0)),
+                    Item.isSharing(),
+                    CarTypeDto.toDto(Item.getCarType()),
+                    Item.getIntegrate(),
+                    Item.getCurve(),
+                    Item.getWidth(),
+                    Item.getHeight(),
+                    Item.getThickness(),
+                    Item.getWeight(),
+                    Item.getImportance(),
+                    ColorDto.toDto(Item.getColor()),
+                    Item.getLoadQuantity(),
+                    Item.getForming(),
+                    CoatingDto.toDto(Item.getCoatingWay()),
+                    CoatingDto.toDto(Item.getCoatingType()),
+                    Item.getModulus(),
+                    Item.getScrew(),
+                    Item.getCuttingType(),
+                    Item.getLcd(),
+                    Item.getDisplaySize(),
+                    Item.getScrewHeight(),
+                    ClientOrganizationDto.toDto(Item.getClientOrganization()),
+                    SupplierDto.toDto(Item.getSupplierOrganization()),
+                    MakerSimpleDto.toDtoList(Item.getMakers()),
+                    newItemMakerRepository.findByMaker(Item.getMakers().get(0).getMaker()).get(0).getPartnumber(),
+                    Item.isTempsave(),
+                    Item.isRevise_progress(),
+                    (char) Item.getRevision(),
+                    MemberDto.toDto(Item.getMember()),
+                    Item.getAttachments().
+                            stream().
+                            map(NewItemAttachmentDto::toDto)
+                            .collect(toList())
+
+            );
+        }
         return new NewItemDetailDto(
                 Item.getId(),
                 ClassificationDto.toDto(Item.getClassification()),
@@ -94,9 +140,10 @@ public class NewItemDetailDto {
                 ClientOrganizationDto.toDto(Item.getClientOrganization()),
                 SupplierDto.toDto(Item.getSupplierOrganization()),
                 MakerSimpleDto.toDtoList(Item.getMakers()),
+                "no partnum",
                 Item.isTempsave(),
                 Item.isRevise_progress(),
-                (char)Item.getRevision(),
+                (char) Item.getRevision(),
                 MemberDto.toDto(Item.getMember()),
                 Item.getAttachments().
                         stream().

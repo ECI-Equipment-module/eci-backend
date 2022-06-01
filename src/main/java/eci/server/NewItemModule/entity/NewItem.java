@@ -73,7 +73,7 @@ public class NewItem extends EntityDate {
     private boolean sharing;
 
     /**
-     * share 이 false 면 필수!
+     * sharing 이 false 면 필수!
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "carType_id")

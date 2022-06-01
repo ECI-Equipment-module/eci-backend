@@ -52,22 +52,27 @@ public class ClassificationService {
                 classification3Repository.findById(c3).orElseThrow(ClassificationNotFoundException::new);
         Classification classification
                 = classificationRepository.findByClassification1AndClassification2AndClassification3(classification1,classification2,classification3);
-        List<ClassifyActivate> classifyActivates
-                = classifyActivateRepository.findByClassification(classification);
 
 
-        List<ActivateAttributes> activateAttributes = new ArrayList<>();
-        for(ClassifyActivate classifyActivate : classifyActivates){
-            activateAttributes.add(classifyActivate.getActivateAttributes());
-        }
-
-        List<ActivateAttributesDto> attributesDtoList = ActivateAttributesDto.toDtoList(activateAttributes);
-
-
+        List<ActivateAttributesDto> attributesDtoList = returnAttributesDtoList(classification);
 
         return  RetrieveActivateAttributes.toDto(
                 attributesDtoList, classification1, itemTypesRepository, classification1AttachmentTagRepository
         );
     }
 
+    public List<ActivateAttributesDto> returnAttributesDtoList(Classification classification) {
+        List<ClassifyActivate> classifyActivates
+                = classifyActivateRepository.findByClassification(classification);
+
+        List<ActivateAttributes> activateAttributes = new ArrayList<>();
+
+        for (ClassifyActivate classifyActivate : classifyActivates) {
+            activateAttributes.add(classifyActivate.getActivateAttributes());
+        }
+
+        List<ActivateAttributesDto> attributesDtoList = ActivateAttributesDto.toDtoList(activateAttributes);
+
+        return attributesDtoList;
+    }
 }

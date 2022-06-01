@@ -66,7 +66,7 @@ public class NewItemCreateRequest {
     private String name;
 
     @NotNull(message = "아이템 타입을 입력해주세요.")
-    private boolean share;
+    private boolean sharing;
 
     private Long carTypeId;
 
@@ -185,10 +185,10 @@ public class NewItemCreateRequest {
                             toList()
                     ),
 
-                    req.share,
+                    req.sharing,
 
                     //전용일 때야 차종 생성
-                    (!req.isShare())?
+                    (!req.isSharing())?
                             carTypeRepository.findById(req.carTypeId).orElseThrow(CarTypeNotFoundException::new)
                     :carTypeRepository.findById(99999L).orElseThrow(CarTypeNotFoundException::new),
 
@@ -300,10 +300,10 @@ public class NewItemCreateRequest {
                         toList()
                 ),
 
-                req.share,
+                req.sharing,
 
                 //전용일 때야 차종 생성
-                (!req.isShare())?
+                (!req.isSharing())?
                         carTypeRepository.findById(req.carTypeId).orElseThrow(CarTypeNotFoundException::new)
                         :carTypeRepository.findById(99999L).orElseThrow(CarTypeNotFoundException::new),
 

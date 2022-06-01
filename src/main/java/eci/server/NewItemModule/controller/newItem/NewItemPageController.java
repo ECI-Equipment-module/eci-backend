@@ -42,7 +42,7 @@ public class NewItemPageController {
 
         List<NewItem> itemList1 =//06-01 false로 변경하기
                 itemListBefore.stream().filter(
-                        i->i.getTempsave().equals(true)
+                        i-> i.isTempsave()
                 ).collect(Collectors.toList());
 
         Page<NewItem> itemList = new PageImpl<>(itemList1);

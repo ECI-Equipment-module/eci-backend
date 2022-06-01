@@ -29,8 +29,10 @@ import eci.server.ItemModule.repository.newRoute.RouteOrderingRepository;
 import eci.server.ItemModule.repository.newRoute.RouteProductRepository;
 import eci.server.ItemModule.service.file.FileService;
 import eci.server.ItemModule.service.file.LocalFileService;
+import eci.server.NewItemModule.dto.newItem.NewItemDetailDto;
 import eci.server.NewItemModule.dto.newItem.NewItemPagingDtoList;
 import eci.server.NewItemModule.dto.newItem.NewItemReadCondition;
+import eci.server.NewItemModule.dto.newItem.RetrieveNewItemDetailDto;
 import eci.server.NewItemModule.dto.newItem.create.NewItemCreateRequest;
 import eci.server.NewItemModule.dto.newItem.create.NewItemCreateResponse;
 import eci.server.NewItemModule.entity.NewItem;
@@ -45,6 +47,10 @@ import eci.server.NewItemModule.repository.coatingWay.CoatingWayRepository;
 import eci.server.NewItemModule.repository.item.NewItemRepository;
 import eci.server.NewItemModule.repository.maker.NewItemMakerRepository;
 import eci.server.NewItemModule.repository.supplier.SupplierRepository;
+import eci.server.NewItemModule.service.classification.ClassificationService;
+import eci.server.ProjectModule.dto.project.ProjectDto;
+import eci.server.ProjectModule.entity.project.Project;
+import eci.server.ProjectModule.exception.ProjectNotFoundException;
 import eci.server.ProjectModule.repository.carType.CarTypeRepository;
 import eci.server.ProjectModule.repository.clientOrg.ClientOrganizationRepository;
 import eci.server.ProjectModule.repository.project.ProjectRepository;
@@ -87,6 +93,7 @@ public class NewItemService {
     private final ReadPartNumberService readPartNumber;
     private final FileService fileService;
     private final LocalFileService localFileService;
+    private final ClassificationService classificationService;
     private final AuthHelper authHelper;
     private final RoutePreset routePreset;
 
@@ -206,6 +213,17 @@ public class NewItemService {
         return NewItemPagingDtoList.toDto(
                 newItemRepository.findAllByCondition(cond)
         );
+    }
+
+    // read one project
+    public RetrieveNewItemDetailDto read(Long id){
+        NewItem targetItem = newItemRepository.findById(id).orElseThrow(ItemNotFoundException::new);
+
+        return new RetrieveNewItemDetailDto(
+        classificationService.returnAttributesDtoList(targetItem.getClassification()),
+                NewItemDetailDto.toDto(targetItem, itemMakerRepository)
+                );
+
     }
 
 }

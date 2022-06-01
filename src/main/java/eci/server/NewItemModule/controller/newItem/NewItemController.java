@@ -72,22 +72,23 @@ public class NewItemController {
                 newItemService.
                         readAll(cond));
     }
-//    /**
-//     * 특정 아이템 조회
-//     *
-//     * @param id
-//     * @return 200 (success)
-//     */
-//    @CrossOrigin(origins = "https://localhost:3000")
-//    @GetMapping(value = "/items/{id}")
-//    @ResponseStatus(HttpStatus.OK)
-//    public Response read(
-//            @PathVariable Long id) {
-//        return Response.success(
-//                itemService.read(id)
-//
-//        );
-//    }
+
+    /**
+     * 특정 아이템 조회
+     *
+     * @param id
+     * @return 200 (success)
+     */
+    @CrossOrigin(origins = "https://localhost:3000")
+    @GetMapping(value = "/item/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public Response read(
+            @PathVariable Long id) {
+        return Response.success(
+                newItemService.read(id)
+
+        );
+    }
 
 
 
