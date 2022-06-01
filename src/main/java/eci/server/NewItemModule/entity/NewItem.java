@@ -184,10 +184,10 @@ public class NewItem extends EntityDate {
 //    private List<NewItemMaker> makers;
 
     @Column(nullable = false)
-    private Boolean tempsave;
+    private boolean tempsave;
 
     @Column(nullable = false)
-    private Boolean revise_progress;
+    private boolean revise_progress;
 
     @Column
     private int revision;
@@ -219,7 +219,7 @@ public class NewItem extends EntityDate {
      * @param itemTypes
      * @param itemNumber
      * @param thumbnail
-     * @param sharinge
+     * @param sharing
      * @param carType
      * @param integrate
      * @param curve
@@ -254,7 +254,7 @@ public class NewItem extends EntityDate {
             ItemTypes itemTypes,
             String itemNumber,
             List<NewItemImage> thumbnail,
-            boolean sharinge,
+            boolean sharing,
             CarType carType,
             String integrate,
             String curve,
@@ -296,7 +296,7 @@ public class NewItem extends EntityDate {
         this.thumbnail = new ArrayList<>();
         addImages(thumbnail);
 
-        this.sharing = sharinge;
+        this.sharing = sharing;
 
         this.carType = carType;
 

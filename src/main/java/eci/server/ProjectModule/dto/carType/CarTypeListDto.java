@@ -1,6 +1,5 @@
 package eci.server.ProjectModule.dto.carType;
 
-import eci.server.NewItemModule.dto.coatingcommon.CoatingReadResponse;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.data.domain.Page;

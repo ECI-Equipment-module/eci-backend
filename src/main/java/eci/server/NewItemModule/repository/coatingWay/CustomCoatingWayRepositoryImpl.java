@@ -4,7 +4,7 @@ import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import eci.server.NewItemModule.dto.coatingcommon.CoatingReadResponse;
+import eci.server.NewItemModule.dto.coatingcommon.CoatingDto;
 import eci.server.NewItemModule.dto.coatingWay.CoatingWayReadCondition;
 import eci.server.NewItemModule.entity.coating.CoatingType;
 import org.springframework.data.domain.Page;
@@ -31,19 +31,19 @@ public class CustomCoatingWayRepositoryImpl extends QuerydslRepositorySupport im
     }
 
     @Override
-    public Page<CoatingReadResponse> findAllByCondition(CoatingWayReadCondition cond) {
+    public Page<CoatingDto> findAllByCondition(CoatingWayReadCondition cond) {
         Pageable pageable = PageRequest.of(cond.getPage(), cond.getSize());
         Predicate predicate = createPredicate(cond);
         return new PageImpl<>(fetchAll(predicate, pageable), pageable, fetchCount(predicate));
     }
 
 
-    private List<CoatingReadResponse> fetchAll(Predicate predicate, Pageable pageable) { // 6
+    private List<CoatingDto> fetchAll(Predicate predicate, Pageable pageable) { // 6
         return getQuerydsl().applyPagination(
                 pageable,
                 jpaQueryFactory
                         .select(constructor(
-                                CoatingReadResponse.class,
+                                CoatingDto.class,
                                 coatingWay.id,
                                 coatingWay.name))
                         .from(coatingWay)

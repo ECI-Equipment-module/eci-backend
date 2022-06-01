@@ -1,6 +1,8 @@
 package eci.server.NewItemModule.controller.newItem;
 
+import eci.server.ItemModule.dto.color.ColorReadCondition;
 import eci.server.ItemModule.dto.item.*;
+import eci.server.NewItemModule.dto.newItem.NewItemReadCondition;
 import eci.server.NewItemModule.dto.newItem.create.NewItemCreateRequest;
 import eci.server.NewItemModule.service.item.NewItemService;
 import eci.server.aop.AssignMemberId;
@@ -63,6 +65,13 @@ public class NewItemController {
                 newItemService.create(req));
     }
 
+    @GetMapping("/item")
+    @ResponseStatus(HttpStatus.OK)
+    public Response readAll(@Valid NewItemReadCondition cond) {
+        return Response.success(
+                newItemService.
+                        readAll(cond));
+    }
 //    /**
 //     * 특정 아이템 조회
 //     *

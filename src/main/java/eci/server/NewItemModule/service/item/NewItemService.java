@@ -2,6 +2,8 @@ package eci.server.NewItemModule.service.item;
 
 import eci.server.DashBoardModule.dto.itemTodo.ItemTodoResponse;
 import eci.server.DashBoardModule.dto.itemTodo.ItemTodoResponseList;
+import eci.server.ItemModule.dto.color.ColorListDto;
+import eci.server.ItemModule.dto.color.ColorReadCondition;
 import eci.server.ItemModule.dto.item.*;
 import eci.server.ItemModule.dto.manufacture.ReadPartNumberService;
 import eci.server.ItemModule.dto.newRoute.routeOrdering.RouteOrderingDto;
@@ -27,6 +29,8 @@ import eci.server.ItemModule.repository.newRoute.RouteOrderingRepository;
 import eci.server.ItemModule.repository.newRoute.RouteProductRepository;
 import eci.server.ItemModule.service.file.FileService;
 import eci.server.ItemModule.service.file.LocalFileService;
+import eci.server.NewItemModule.dto.newItem.NewItemPagingDtoList;
+import eci.server.NewItemModule.dto.newItem.NewItemReadCondition;
 import eci.server.NewItemModule.dto.newItem.create.NewItemCreateRequest;
 import eci.server.NewItemModule.dto.newItem.create.NewItemCreateResponse;
 import eci.server.NewItemModule.entity.NewItem;
@@ -198,5 +202,10 @@ public class NewItemService {
     }
 
 
+    public NewItemPagingDtoList readAll(NewItemReadCondition cond) {
+        return NewItemPagingDtoList.toDto(
+                newItemRepository.findAllByCondition(cond)
+        );
+    }
 
 }

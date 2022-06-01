@@ -1,12 +1,16 @@
 package eci.server.NewItemModule.dto.newItem;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import eci.server.ItemModule.entity.item.ItemType;
+import eci.server.NewItemModule.dto.ItemTypesDto;
+import eci.server.NewItemModule.dto.classification.ClassificationDto;
 import eci.server.NewItemModule.dto.image.NewItemImageDto;
 import eci.server.NewItemModule.entity.NewItem;
 import eci.server.NewItemModule.entity.classification.Classification;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
@@ -19,12 +23,15 @@ public class NewItemPagingDto {
     private List<NewItemImageDto> thumbnail;
     private String itemNumber;
     private String name;
-    private ItemType type;
-    private Classification classification;
+    private ItemTypesDto type;
+    private ClassificationDto classification;
     private boolean share;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "Asia/Seoul")
+    private LocalDateTime createdAt;
 
 
-    public static NewItemPagingDto toDto(NewItem newItem) {
+    public static NewItemPagingDto toDto(
+            NewItem newItem) {
 
         return new NewItemPagingDto(
 
@@ -38,11 +45,16 @@ public class NewItemPagingDto {
 
                 newItem.getName(),
 
-                newItem.getItemTypes().getItemType(),
+                ItemTypesDto.toDto(
+                        newItem.getItemTypes()
+                ),
 
-                newItem.getClassification(),
+                ClassificationDto.toDto(newItem.getClassification())
+                ,
 
-                newItem.isSharing()
+                newItem.isSharing(),
+
+                newItem.getCreatedAt()
         );
 
     }
