@@ -249,7 +249,8 @@ public class RouteOrdering extends EntityDate {
                     routeProductList.get(rejectedIndex).getType(),
                     "default",
                     false,
-                    true,
+                    false,
+                    true, //이전에 거절 당해서 만들어진 애라는 뜻
                     true,
                     false,
                     -1, //0527 - 거절당한 것, 거절자는 아니다
@@ -299,6 +300,7 @@ public class RouteOrdering extends EntityDate {
                         "default",
                         false, //passed
                         false, //rejected
+                        false, //preRejected 돼서 만들어진 것이 아니니깐
                         true,
                         false,
                         -1,
@@ -324,8 +326,6 @@ public class RouteOrdering extends EntityDate {
 
         System.out.println("추가적으로 생길 애들 길이");
         System.out.println(addedRouteProductList.size());
-
-
 
         return addedRouteProductList;
     }

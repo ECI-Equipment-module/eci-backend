@@ -230,8 +230,8 @@ public class RouteOrderingService {
                                             designRepository.findByNewItem(routeOrdering.getNewItem()).size() - 1
                                     );
                     //만약 지금 rejected 가 true였다면 , 이제 새로 다시 넣어주는 것이니깐 rejected풀어주기
-                    if (targetRoutProduct.isRejected()) {
-                        targetRoutProduct.setRejected(false);
+                    if (targetRoutProduct.isPreRejected()) {
+                        targetRoutProduct.setPreRejected(false); //06-01 손댐
                     }
                     //그 프로젝트를 라우트 프로덕트에 set 해주기
                     targetRoutProduct.setDesign(linkedDesign);
