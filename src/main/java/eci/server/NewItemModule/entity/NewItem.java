@@ -186,7 +186,7 @@ public class NewItem extends EntityDate {
     @Column(nullable = false)
     private boolean tempsave;
 
-    @Column(nullable = false)
+    @Column
     private boolean readonly;
 
     @Column(nullable = false)

@@ -1,8 +1,10 @@
 package eci.server.NewItemModule.controller.newItem;
 
+import eci.server.ItemModule.dto.item.ItemProjectCreateDto;
 import eci.server.NewItemModule.dto.newItem.NewItemPagingDto;
 import eci.server.NewItemModule.entity.NewItem;
 import eci.server.NewItemModule.repository.item.NewItemRepository;
+import eci.server.NewItemModule.service.item.NewItemService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -16,6 +18,8 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -55,31 +59,37 @@ public class NewItemPageController {
 
 
 
-//    /**
-//     * 링크되지 않은 아이템들, 나에게 기다리고 있는 아이템들 05-27 수정
-//     *
-//     * @return 200 (success)
-//     */
-//    @Autowired
-//    ItemService itemService;
-//    @CrossOrigin(origins = "https://localhost:3000")
-//    @GetMapping("/item-candidates")
-//    public Page<ItemProjectCreateDto> readItemCandidate(@PageableDefault(size=5)
-//                                      @SortDefault.SortDefaults({
-//                                              @SortDefault(
-//                                                      sort = "createdAt",
-//                                                      direction = Sort.Direction.DESC)
-//                                      })
-//                                              Pageable pageRequest) {
-//
-//        List<ItemProjectCreateDto> itemListReal =
-//                itemService.linkNeededItemsForProjectPage();
-//
-//        Page<ItemProjectCreateDto> itemList = new PageImpl<>(itemListReal);
-//
-//        return itemList;
-//
-//    }
+    /**
+     * 링크되지 않은 아이템들, 나에게 기다리고 있는 아이템들 05-27 수정
+     *
+     * @return 200 (success)
+     */
+    @Autowired
+    NewItemService itemService;
+    @CrossOrigin(origins = "https://localhost:3000")
+    @GetMapping("/item-candidates")
+    public Page<ItemProjectCreateDto> readItemCandidate(@PageableDefault(size=5)
+                                      @SortDefault.SortDefaults({
+                                              @SortDefault(
+                                                      sort = "createdAt",
+                                                      direction = Sort.Direction.DESC)
+                                      })
+                                              Pageable pageRequest) {
+
+        List<ItemProjectCreateDto> itemListReal =
+                itemService.linkNeededItemsForProjectPage();
+
+        List<String> indexes = new ArrayList<>(); // 인덱스 종류 추가
+        for(Field field : ItemProjectCreateDto.class.getDeclaredFields()){
+            indexes.add(field.getName());
+        }
+
+        Page<ItemProjectCreateDto> itemList = new PageImpl<>(itemListReal);
+
+        System.out.println(itemList.getContent());
+        return itemList;
+
+    }
 
 }
 

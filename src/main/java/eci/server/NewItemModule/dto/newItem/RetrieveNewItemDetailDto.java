@@ -11,6 +11,6 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class RetrieveNewItemDetailDto {
-    private List<ActivateAttributesDto> activateAttributes;
+    //private List<ActivateAttributesDto> activateAttributes;
     private NewItemDetailDto newItemDetail;
 }

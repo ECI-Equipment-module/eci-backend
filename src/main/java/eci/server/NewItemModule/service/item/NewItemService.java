@@ -241,7 +241,7 @@ public class NewItemService {
         if (routeDtoList.size() > 0) {//아이템에 딸린 routeDto가 존재할 때
 
             return new RetrieveNewItemDetailDto(
-                    classificationService.returnAttributesDtoList(targetItem.getClassification()),
+                    //classificationService.returnAttributesDtoList(targetItem.getClassification()),
                     NewItemDetailDto.toDto(
                     targetItem,
                     itemMakerRepository,
@@ -262,7 +262,7 @@ public class NewItemService {
 
         }
         return new RetrieveNewItemDetailDto(
-                classificationService.returnAttributesDtoList(targetItem.getClassification()),
+                //classificationService.returnAttributesDtoList(targetItem.getClassification()),
                 NewItemDetailDto.noRoutetoDto(
                         targetItem,
                         itemMakerRepository
@@ -298,57 +298,68 @@ public class NewItemService {
                         i -> i.setDeleted(true)
                 );
     }
-//
-//        public ReadItemDto read(Long id) {
-//        NewItem targetItem = newItemRepository.findById(id).orElseThrow(ItemNotFoundException::new);
-//
-//        //아이템에 딸린 라우트가 없다면 라우트 없음 에러 던지기,
-//        // 라우트 없으면 읽기도 사실상 불가능
-//        List<RouteOrderingDto> routeDtoList = Optional.ofNullable(
-//                RouteOrderingDto.toDtoList(
-//                        routeOrderingRepository.findByNewItem(targetItem),
-//                        routeProductRepository,
-//                        routeOrderingRepository
-//                )
-//        ).orElseThrow(RouteNotFoundException::new);
-//
-//        if (routeDtoList.size() > 0) {//아이템에 딸린 routeDto가 존재할 때
-//            ReadItemDto readItemDto = ReadItemDto.toDto(
-//                    targetItem,
-//                    //최신 라우트에 딸린 라우트프로덕트 리스트 중,
-//                    // 라우트의 present 인덱스에 해당하는 타입을 데리고 오기
-//                    routeDtoList.get(routeDtoList.size() - 1),
-//                    RouteProductDto.toDto(
-//                            routeProductRepository.findAllByRouteOrdering(
-//                                    routeOrderingRepository.findById(
-//                                            routeDtoList.get(routeDtoList.size() - 1).getId()
-//                                    ).orElseThrow(RouteNotFoundException::new)
-//                            ).get(
-//                                    routeDtoList.get(routeDtoList.size() - 1).getPresent()
-//                            )
-//                    )
-//
-//            );
-//            return readItemDto;
-//        } else {
-//            //route 가 존재하지 않을 시
-//            ReadItemDto readItemDto = ReadItemDto.noRoutetoDto(
-//                    itemRepository.findById(id).orElseThrow(ItemNotFoundException::new),
-//                    ItemDto.toDto(
-//                            itemRepository.findById(id).orElseThrow(ItemNotFoundException::new)
-//                    ),
-//                    routeDtoList,
-//                    readPartNumber.readPartnumbers(targetItem),
-//                    attachmentDtoList,
-//                    routePreset
-//
-//            );
-//
-//            System.out.println(readItemDto.getThumbnail().toString());
-//
-//            return readItemDto;
-//        }
-//    }
 
+        public List<ItemProjectCreateDto> linkNeededItemsForProjectPage() {
+
+        //0) 현재 로그인 된 유저
+        Member member1 = memberRepository.findById(authHelper.extractMemberId()).orElseThrow(
+                AuthenticationEntryPointException::new
+        );
+
+        //1) 현재 진행 중인 라우트 프로덕트 카드들
+        List<RouteProduct> routeProductList = routeProductRepository.findAll().stream().filter(
+                rp -> rp.getSequence().equals(
+                        rp.getRouteOrdering().getPresent()
+                )
+        ).collect(Collectors.toList());
+
+        //2) 라우트 프로덕트들 중 나에게 할당된 카드들 & 단계가 프로젝트와 Item(제품) Link(설계자) 인 것
+        List<RouteProduct> myRouteProductList = new ArrayList<>();
+
+        for (RouteProduct routeProduct : routeProductList) {
+            for (RouteProductMember routeProductMember : routeProduct.getMembers()) {
+                if (routeProductMember.getMember().getId().equals(member1.getId()) &&
+                        routeProduct.getRoute_name().equals("프로젝트와 Item(제품) Link(설계자)")) {
+                    myRouteProductList.add(routeProduct);
+                    break;
+                }
+
+            }
+        }
+
+        //3) 프로젝트 링크 안된 애만 담기
+
+        List<NewItem> unlinkedItemList = new ArrayList<>();
+
+        for (RouteProduct routeProduct : myRouteProductList){
+            if(projectRepository.findByNewItem(routeProduct.getRouteOrdering().getNewItem()).size()==0){
+
+                RouteOrdering routeOrdering = routeOrderingRepository.findByNewItem(
+                        routeProduct.getRouteOrdering().getNewItem()
+                ).get(
+                        routeOrderingRepository.findByNewItem(
+                                routeProduct.getRouteOrdering().getNewItem()
+                        ).size()-1
+                );
+
+                NewItem targetItem = routeProduct.getRouteOrdering().getNewItem();
+
+                unlinkedItemList.add(
+                        targetItem
+                );
+            }
+        }
+
+        List<ItemProjectCreateDto>  itemProjectCreateDtos =
+                unlinkedItemList.stream().map(
+                        i -> ItemProjectCreateDto.toDto(
+                                i,
+                                routeOrderingRepository
+                        )
+                ).collect(Collectors.toList());
+
+        return itemProjectCreateDtos;
+
+    }
 
 }
