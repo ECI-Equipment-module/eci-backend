@@ -36,9 +36,9 @@ import static java.util.stream.Collectors.toList;
 public class RouteOrdering extends EntityDate {
 
     @Id
-   @GeneratedValue(strategy = GenerationType.IDENTITY)
- //    @GeneratedValue(strategy= GenerationType.SEQUENCE, generator="SEQUENCE1")
-  //   @SequenceGenerator(name="SEQUENCE1", sequenceName="SEQUENCE1", allocationSize=1)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    //    @GeneratedValue(strategy= GenerationType.SEQUENCE, generator="SEQUENCE1")
+    //   @SequenceGenerator(name="SEQUENCE1", sequenceName="SEQUENCE1", allocationSize=1)
     private Long id;
 
     /**
@@ -167,7 +167,7 @@ public class RouteOrdering extends EntityDate {
 
 
     public void updateToComplete() {
-       this.lifecycleStatus="COMPLETE";
+        this.lifecycleStatus="COMPLETE";
     }
 
     public List<RouteProduct> rejectUpdate(
@@ -179,7 +179,7 @@ public class RouteOrdering extends EntityDate {
             RouteProductRepository routeProductRepository
 
     ) {
-      /**
+        /**
          * 현재 라우트에 딸린 라우트 생산물들
          */
         List<RouteProduct> routeProductList =
@@ -204,8 +204,8 @@ public class RouteOrdering extends EntityDate {
          * (수행 된거니깐)
          */
 
-            routeProductList.get(this.present - 2).setPassed(true);//05-23 없애고비
-            routeProductList.get(this.present - 1).setPassed(true);
+        routeProductList.get(this.present - 2).setPassed(true);//05-23 없애고비
+        routeProductList.get(this.present - 1).setPassed(true);
 
 
         /**
@@ -240,26 +240,26 @@ public class RouteOrdering extends EntityDate {
         Integer seq = this.present;
         RouteProduct rejectedRouteProduct =
                 new RouteProduct(
-                    seq,
-                    routeProductList.get(rejectedIndex).getOrigin_seq(),
+                        seq,
+                        routeProductList.get(rejectedIndex).getOrigin_seq(),
 
 
-                    routeProductList.get(rejectedIndex).getRoute_name(),
+                        routeProductList.get(rejectedIndex).getRoute_name(),
 
-                    routeProductList.get(rejectedIndex).getType(),
-                    "default",
-                    false,
-                    false,
-                    true, //이전에 거절 당해서 만들어진 애라는 뜻
-                    true,
-                    false,
-                    -1, //0527 - 거절당한 것, 거절자는 아니다
-                    routeProductList.get(rejectedIndex)
-                            .getMembers().stream().map(
-                                    RouteProductMember::getMember
-                    )
-                            .collect(toList()),
-                    routeProductList.get(rejectedIndex).getRouteOrdering(),
+                        routeProductList.get(rejectedIndex).getType(),
+                        "default",
+                        false,
+                        false,
+                        true, //이전에 거절 당해서 만들어진 애라는 뜻
+                        true,
+                        false,
+                        -1, //0527 - 거절당한 것, 거절자는 아니다
+                        routeProductList.get(rejectedIndex)
+                                .getMembers().stream().map(
+                                        RouteProductMember::getMember
+                                )
+                                .collect(toList()),
+                        routeProductList.get(rejectedIndex).getRouteOrdering(),
                         routeProductList.get(rejectedIndex).getProject(),
                         routeProductList.get(rejectedIndex).getDesign()
                 );
@@ -288,27 +288,27 @@ public class RouteOrdering extends EntityDate {
         List<RouteProduct> duplicateList = duplicateRouteProductList.stream().map(
                 i ->
                         new RouteProduct(
-                        //자기 복제대상보다 1이 더 커야해 다들
+                                //자기 복제대상보다 1이 더 커야해 다들
 
-                        sequence.updateAndGet(v -> v + 1),
+                                sequence.updateAndGet(v -> v + 1),
 
-                        i.getOrigin_seq(),
+                                i.getOrigin_seq(),
 
-                        i.getRoute_name(),
+                                i.getRoute_name(),
 
-                        i.getType(),
-                        "default",
-                        false, //passed
-                        false, //rejected
-                        false, //preRejected 돼서 만들어진 것이 아니니깐
-                        true,
-                        false,
-                        -1,
-                        i.getMembers().stream().map(
-                                m -> m.getMember()
-                        ).collect(toList()),
-                        i.getRouteOrdering()
-                )
+                                i.getType(),
+                                "default",
+                                false, //passed
+                                false, //rejected
+                                false, //preRejected 돼서 만들어진 것이 아니니깐
+                                true,
+                                false,
+                                -1,
+                                i.getMembers().stream().map(
+                                        m -> m.getMember()
+                                ).collect(toList()),
+                                i.getRouteOrdering()
+                        )
         ).collect(
                 toList()
         );
