@@ -83,6 +83,7 @@ public class RouteProductCreateRequest {
                         ).collect(toList()).get(0),
                 req.getRequestComment(),
                 false,
+                false,//reject
                 false,
                 true,
                 false,
@@ -119,6 +120,7 @@ public class RouteProductCreateRequest {
 
                     "default",
                     false,
+                    false,//reject
                     false,
                     true,
                     false,

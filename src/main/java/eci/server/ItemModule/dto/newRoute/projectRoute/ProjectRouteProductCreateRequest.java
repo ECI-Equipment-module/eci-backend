@@ -90,6 +90,7 @@ public class ProjectRouteProductCreateRequest {
                         ).collect(toList()).get(0),
                 req.getRequestComment(),
                 false,
+                false,//rejected
                 false,
                 true,
                 false,
@@ -120,6 +121,7 @@ public class ProjectRouteProductCreateRequest {
 
                                         "default",
                                         false,
+                                        false,//rejected
                                         false,
                                         true,
                                         false,

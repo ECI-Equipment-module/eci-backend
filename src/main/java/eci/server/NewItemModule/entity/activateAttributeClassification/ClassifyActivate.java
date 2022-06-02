@@ -25,4 +25,7 @@ public class ClassifyActivate {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "activate_id")
     private ActivateAttributes activateAttributes;
+
+    @Column
+    private boolean required;
 }

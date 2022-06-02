@@ -66,12 +66,14 @@ public class ClassificationService {
                 = classifyActivateRepository.findByClassification(classification);
 
         List<ActivateAttributes> activateAttributes = new ArrayList<>();
+        List<ClassifyActivate> classifyActivates1 = new ArrayList<>();
 
         for (ClassifyActivate classifyActivate : classifyActivates) {
             activateAttributes.add(classifyActivate.getActivateAttributes());
+            classifyActivates1.add(classifyActivate);
         }
 
-        List<ActivateAttributesDto> attributesDtoList = ActivateAttributesDto.toDtoList(activateAttributes);
+        List<ActivateAttributesDto> attributesDtoList = ActivateAttributesDto.toDtoList(activateAttributes,classifyActivates);
 
         return attributesDtoList;
     }
