@@ -1,14 +1,11 @@
 package eci.server.NewItemModule.controller.newItem;
 
-import eci.server.ItemModule.dto.color.ColorReadCondition;
-import eci.server.ItemModule.dto.item.*;
 import eci.server.NewItemModule.dto.newItem.NewItemReadCondition;
 import eci.server.NewItemModule.dto.newItem.create.NewItemCreateRequest;
 import eci.server.NewItemModule.dto.newItem.create.NewItemTemporaryCreateRequest;
 import eci.server.NewItemModule.service.item.NewItemService;
 import eci.server.aop.AssignMemberId;
 import eci.server.ItemModule.dto.response.Response;
-import eci.server.aop.AssignModifierId;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -31,6 +28,7 @@ public class NewItemController {
      * @param req
      * @return 200 (success)
      */
+    @CrossOrigin(origins = "https://localhost:3000")
     @PostMapping("/item/temp")
     @ResponseStatus(HttpStatus.CREATED)
     @AssignMemberId // Aspect : 인증된 사용자 정보로 아이템 작성자 지정 가능
@@ -64,6 +62,7 @@ public class NewItemController {
                 newItemService.create(req));
     }
 
+    @CrossOrigin(origins = "https://localhost:3000")
     @GetMapping("/item")
     @ResponseStatus(HttpStatus.OK)
     public Response readAll(@Valid NewItemReadCondition cond) {
