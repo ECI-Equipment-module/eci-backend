@@ -34,21 +34,17 @@ public class ActivateAttributes {
             fetch = FetchType.LAZY)
     private List<ChoiceField> choiceFields;
 
-    @Column
-    private String apiUri;
 
     public ActivateAttributes(
             String name,
             String inputType,
             String requestName,
-            String apiUri,
             List<ChoiceField> choiceFields
     ){
         this.name = name;
         this.inputType = inputType;
         this.requestName = requestName;
         this.choiceFields = choiceFields;
-        this.apiUri = apiUri;
 
 
     }
