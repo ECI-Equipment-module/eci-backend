@@ -3,17 +3,17 @@ package eci.server.ItemModule.entity.item;
 import eci.server.ItemModule.dto.item.ItemUpdateRequest;
 
 import eci.server.ItemModule.entity.entitycommon.EntityDate;
-import eci.server.ItemModule.entity.manufacture.ItemManufacture;
-import eci.server.ItemModule.entity.manufacture.Manufacture;
+import eci.server.ItemModule.entity.manufacture.ItemMaker;
+import eci.server.NewItemModule.entity.supplier.Maker;
 import eci.server.ItemModule.entity.material.ItemMaterial;
 import eci.server.ItemModule.entity.material.Material;
 import eci.server.ItemModule.entity.member.Member;
 import eci.server.ItemModule.exception.item.ColorNotFoundException;
 import eci.server.ItemModule.exception.member.sign.MemberNotFoundException;
 import eci.server.ItemModule.repository.color.ColorRepository;
-import eci.server.ItemModule.repository.item.ItemManufactureRepository;
+import eci.server.ItemModule.repository.item.ItemMakerRepository;
 import eci.server.ItemModule.repository.item.ItemMaterialRepository;
-import eci.server.ItemModule.repository.manufacture.ManufactureRepository;
+import eci.server.ItemModule.repository.manufacture.MakerRepository;
 import eci.server.ItemModule.repository.material.MaterialRepository;
 import eci.server.ItemModule.repository.member.MemberRepository;
 import lombok.*;
@@ -39,6 +39,7 @@ public class Item extends EntityDate {
 //  @GeneratedValue(strategy = GenerationType.IDENTITY)
    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQUENCE2")
    @SequenceGenerator(name="SEQUENCE2", sequenceName="SEQUENCE2", allocationSize=1)
+
     private Long id;
 
     @Column(nullable = false)
@@ -51,7 +52,7 @@ public class Item extends EntityDate {
     private String type;
 
     @Column(nullable = false)
-    private Integer itemNumber;
+    private String itemNumber;
     //save 할 시에 type + id 값으로 지정
 
     @Column(nullable = false)
@@ -88,7 +89,6 @@ public class Item extends EntityDate {
             cascade = CascadeType.PERSIST,
             orphanRemoval = true
     )
-
     private List<Attachment> attachments;
 
     @Column(nullable = false)
@@ -114,7 +114,7 @@ public class Item extends EntityDate {
             cascade = CascadeType.ALL,
             orphanRemoval = true,
             fetch = FetchType.LAZY)
-    private List<ItemManufacture> manufactures;
+    private List<ItemMaker> manufactures;
 
     @Column
     private int revision;
@@ -134,13 +134,13 @@ public class Item extends EntityDate {
      * @param thumbnail
      * @param attachments
      * @param materials
-     * @param manufactures
+     * @param makers
      * @param partnumbers
      */
     public Item(
             String name,
             String type,
-            Integer itemNumber,
+            String itemNumber,
             String width,
             String height,
             String weight,
@@ -156,7 +156,7 @@ public class Item extends EntityDate {
 
             List<Material> materials,
 
-            List<Manufacture> manufactures,
+            List<Maker> makers,
             List<String> partnumbers
 
 
@@ -187,11 +187,11 @@ public class Item extends EntityDate {
                         .collect(toList());
 
         this.manufactures =
-                manufactures.stream().map(
+                makers.stream().map(
 
                                 //다대다 관계를 만드는 구간
-                                r -> new ItemManufacture(
-                                        this, r, partnumbers.get(manufactures.indexOf(r))
+                                r -> new ItemMaker(
+                                        this, r, partnumbers.get(makers.indexOf(r))
                                 )
                         )
                         .collect(toList());
@@ -214,13 +214,13 @@ public class Item extends EntityDate {
      * @param color
      * @param thumbnail
      * @param materials
-     * @param manufactures
+     * @param makers
      * @param partnumbers
      */
     public Item(
             String name,
             String type,
-            Integer itemNumber,
+            String itemNumber,
             String width,
             String height,
             String weight,
@@ -235,7 +235,7 @@ public class Item extends EntityDate {
 
             List<Material> materials,
 
-            List<Manufacture> manufactures,
+            List<Maker> makers,
             List<String> partnumbers
 
 
@@ -265,11 +265,11 @@ public class Item extends EntityDate {
                         .collect(toList());
 
         this.manufactures =
-                manufactures.stream().map(
+                makers.stream().map(
 
                                 //다대다 관계를 만드는 구간
-                                r -> new ItemManufacture(
-                                        this, r, partnumbers.get(manufactures.indexOf(r))
+                                r -> new ItemMaker(
+                                        this, r, partnumbers.get(makers.indexOf(r))
                                 )
                         )
                         .collect(toList());
@@ -291,8 +291,8 @@ public class Item extends EntityDate {
             ColorRepository colorRepository,
             MemberRepository memberRepository,
             MaterialRepository materialRepository,
-            ManufactureRepository manufactureRepository,
-            ItemManufactureRepository itemManufactureRepository,
+            MakerRepository manufactureRepository,
+            ItemMakerRepository itemMakerRepository,
             ItemMaterialRepository itemMaterialRepository
     ) {
         AtomicInteger k = new AtomicInteger();
@@ -307,69 +307,6 @@ public class Item extends EntityDate {
 
         this.color = req.getColorId()==null?null:colorRepository.findById(Long.valueOf(req.getColorId()))
                 .orElseThrow(ColorNotFoundException::new);
-//
-//        if (req.getMaterials().size()>0) {
-//
-////            for(ItemMaterial itemMaterial : this.materials){
-////                ItemMaterial clearedItemMaterial =
-////                        itemMaterialRepository.findByItemAndMaterial(
-////                        itemMaterial.getItem(), itemMaterial.getMaterial()
-////                );
-////                itemMaterialRepository.delete(clearedItemMaterial);
-////            }
-//
-//            this.materials.clear();
-//
-//            this.materials.addAll(
-//                    req.getMaterials().stream().map(
-//                                    i ->
-//                                            materialRepository.
-//                                                    findById(i).orElseThrow(MaterialNotFoundException::new)
-//                            ).collect(
-//                                    toList()
-//                            )
-//                            .stream().map(
-//                                    r -> new ItemMaterial(
-//                                            this, r)
-//                            )
-//                            .collect(toList())
-//            );
-//        }
-//
-//
-//        if(req.getManufactures().size()>0){
-//
-////            for(ItemManufacture itemManufacture : this.manufactures){
-////                ItemManufacture clearedItemManufacture =
-////                        itemManufactureRepository.findByItemAndManufacture(
-////                                itemManufacture.getItem(), itemManufacture.getManufacture()
-////                        );
-////                itemManufactureRepository.delete(clearedItemManufacture);
-////            }
-//
-//            this.manufactures.clear();
-//
-//
-//            this.manufactures.addAll(
-//                    req.getManufactures().stream().map(
-//                                    i ->
-//                                            manufactureRepository.
-//                                                    findById(i).orElseThrow(ManufactureNotFoundException::new)
-//                            ).collect(
-//                                    toList()
-//                            ).stream().map(
-//
-//                                    //다대다 관계를 만드는 구간
-//                                    r -> new ItemManufacture(
-//                                            this, r, req.getPartnumbers().
-//                                            get(k.getAndIncrement())
-//                                    )
-//                            )
-//                            .collect(toList())
-//                    );
-//        }
-
-
 
         ImageUpdatedResult resultImage =
                 findImageUpdatedResult(

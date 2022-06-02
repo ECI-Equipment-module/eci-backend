@@ -3,18 +3,16 @@ package eci.server.ProjectModule.service;
 import eci.server.DashBoardModule.dto.myProject.ProjectDashboardDto;
 import eci.server.ItemModule.dto.item.ItemProjectDashboardDto;
 
-import eci.server.ItemModule.dto.item.ItemProjectDto;
-
 import eci.server.ItemModule.entity.newRoute.RouteOrdering;
 
 import eci.server.ItemModule.exception.member.MemberNotFoundException;
 
-import eci.server.ItemModule.repository.item.ItemRepository;
 import eci.server.ItemModule.repository.member.MemberRepository;
 import eci.server.ItemModule.repository.newRoute.RouteOrderingRepository;
 import eci.server.ItemModule.repository.newRoute.RouteProductRepository;
 import eci.server.ItemModule.service.file.FileService;
 
+import eci.server.NewItemModule.repository.item.NewItemRepository;
 import eci.server.ProjectModule.dto.carType.CarTypeDto;
 import eci.server.ProjectModule.dto.clientOrg.ClientOrganizationDto;
 import eci.server.ProjectModule.dto.produceOrg.ProduceOrganizationDto;
@@ -48,7 +46,7 @@ import java.util.stream.IntStream;
 public class ProjectService {
 
     private final MemberRepository memberRepository;
-    private final ItemRepository itemRepository;
+    private final NewItemRepository newItemRepository;
     private final ProjectTypeRepository projectTypeRepository;
     private final ProjectRepository projectRepository;
     private final ProjectLevelRepository projectLevelRepository;
@@ -79,7 +77,7 @@ public class ProjectService {
                 ProjectTemporaryCreateRequest.toEntity(
                         req,
                         memberRepository,
-                        itemRepository,
+                        newItemRepository,
                         projectTypeRepository,
                         projectLevelRepository,
                         produceOrganizationRepository,
@@ -102,7 +100,7 @@ public class ProjectService {
                 ProjectCreateRequest.toEntity(
                         req,
                         memberRepository,
-                        itemRepository,
+                        newItemRepository,
                         projectTypeRepository,
                         projectLevelRepository,
                         produceOrganizationRepository,
@@ -113,9 +111,9 @@ public class ProjectService {
         if(!(req.getTag().size()==0)) {
             uploadAttachments(project.getProjectAttachments(), req.getAttachments());
         }
-        List<RouteOrdering> routeOrdering = routeOrderingRepository.findByItem(project.getItem());
+        List<RouteOrdering> routeOrdering = routeOrderingRepository.findByNewItem(project.getNewItem());
         //프로젝트에 딸린 라우트
-        Long routeId = routeOrderingRepository.findByItem(project.getItem()).get(routeOrdering.size()-1).getId();
+        Long routeId = routeOrderingRepository.findByNewItem(project.getNewItem()).get(routeOrdering.size()-1).getId();
 
         return new ProjectCreateUpdateResponse(project.getId(), routeId);
     }
@@ -158,7 +156,7 @@ public class ProjectService {
 
         Project.FileUpdatedResult result = project.update(
                 req,
-                itemRepository,
+                newItemRepository,
                 projectTypeRepository,
                 projectLevelRepository,
                 produceOrganizationRepository,
@@ -248,7 +246,7 @@ public class ProjectService {
 
                         project.getClientItemNumber(),
 
-                        ItemProjectDashboardDto.toDto(project.getItem()),
+                        ItemProjectDashboardDto.toDto(project.getNewItem()),
 
                         project.getTempsave(),
 
@@ -256,29 +254,29 @@ public class ProjectService {
                         //현재 phase의 이름
 
                         routeProductRepository.findAllByRouteOrdering(
-                                        routeOrderingRepository.findByItem(
-                                                project.getItem()
+                                        routeOrderingRepository.findByNewItem(
+                                                project.getNewItem()
                                         ).get(
-                                                routeOrderingRepository.findByItem(
-                                                        project.getItem()
+                                                routeOrderingRepository.findByNewItem(
+                                                        project.getNewItem()
                                                 ).size()-1 //아이템의 라우트 오더링 중에서 최신 아이
                                         )
                                 ).get(
-                                        routeOrderingRepository.findByItem(
-                                                project.getItem()
+                                        routeOrderingRepository.findByNewItem(
+                                                project.getNewItem()
                                         ).get(
-                                                routeOrderingRepository.findByItem(
-                                                        project.getItem()
+                                                routeOrderingRepository.findByNewItem(
+                                                        project.getNewItem()
                                                 ).size()-1
                                         ).getPresent() //라우트 오더링 중에서 현재 진행중인 라우트프로덕트
                                 )
                                 .getRoute_name(),
 
-                        routeOrderingRepository.findByItem(
-                                project.getItem()
+                        routeOrderingRepository.findByNewItem(
+                                project.getNewItem()
                         ).get(
-                                routeOrderingRepository.findByItem(
-                                        project.getItem()
+                                routeOrderingRepository.findByNewItem(
+                                        project.getNewItem()
                                 ).size()-1
                         ).getLifecycleStatus(),//라우트 오더링 중에서 현재 진행중인 라우트프로덕트
 
@@ -303,7 +301,7 @@ public class ProjectService {
 
                         project.getClientItemNumber(),
 
-                        ItemProjectDashboardDto.toDto(project.getItem()),
+                        ItemProjectDashboardDto.toDto(project.getNewItem()),
 
 //                        project.getStartPeriod(),
 //                        project.getOverPeriod(),
@@ -313,11 +311,11 @@ public class ProjectService {
 
                         "complete",
 
-                        routeOrderingRepository.findByItem(
-                                project.getItem()
+                        routeOrderingRepository.findByNewItem(
+                                project.getNewItem()
                         ).get(
-                                routeOrderingRepository.findByItem(
-                                        project.getItem()
+                                routeOrderingRepository.findByNewItem(
+                                        project.getNewItem()
                                 ).size()-1
                         ).getLifecycleStatus(),//라우트 오더링 중에서 현재 진행중인 라우트프로덕트
                         //현재 phase의 sequence가
@@ -448,56 +446,56 @@ public class ProjectService {
                         CarTypeDto.toDto(project.getCarType()),
                         project.getClientItemNumber(),
 
-                        ItemProjectDashboardDto.toDto(project.getItem()),
+                        ItemProjectDashboardDto.toDto(project.getNewItem()),
 
                         project.getTempsave(),
 
 
                         //현재 phase의 이름
 
-                        routeOrderingRepository.findByItem(
-                                        project.getItem()
+                        routeOrderingRepository.findByNewItem(
+                                        project.getNewItem()
                                 ).get(
-                                        routeOrderingRepository.findByItem(
-                                                project.getItem()
+                                        routeOrderingRepository.findByNewItem(
+                                                project.getNewItem()
                                         ).size()-1
                                 )//아이템의 라우트 오더링 중에서 최신 아이
                                 .getPresent()
                 ==                         routeProductRepository.findAllByRouteOrdering(
-                                routeOrderingRepository.findByItem(
-                                        project.getItem()
+                                routeOrderingRepository.findByNewItem(
+                                        project.getNewItem()
                                 ).get(
-                                        routeOrderingRepository.findByItem(
-                                                project.getItem()
+                                        routeOrderingRepository.findByNewItem(
+                                                project.getNewItem()
                                         ).size()-1
                                 )//아이템의 라우트 오더링 중에서 최신 라우트오더링
                         ).size()
                                 ?"PROCESS COMPLETE":
                         routeProductRepository.findAllByRouteOrdering(
-                                        routeOrderingRepository.findByItem(
-                                                project.getItem()
+                                        routeOrderingRepository.findByNewItem(
+                                                project.getNewItem()
                                         ).get(
-                                                routeOrderingRepository.findByItem(
-                                                        project.getItem()
+                                                routeOrderingRepository.findByNewItem(
+                                                        project.getNewItem()
                                                 ).size()-1
                                         )//아이템의 라우트 오더링 중에서 최신 라우트오더링
                                 ).get(
-                                        routeOrderingRepository.findByItem(
-                                                        project.getItem()
+                                        routeOrderingRepository.findByNewItem(
+                                                        project.getNewItem()
                                                 ).get(
-                                                        routeOrderingRepository.findByItem(
-                                                                project.getItem()
+                                                        routeOrderingRepository.findByNewItem(
+                                                                project.getNewItem()
                                                         ).size()-1
                                                 )//아이템의 라우트 오더링 중에서 최신 아이
                                        .getPresent() //라우트 오더링 중에서 현재 진행중인 라우트프로덕트
                                 )
                                 .getRoute_name(),
 
-                        routeOrderingRepository.findByItem(
-                                                project.getItem()
+                        routeOrderingRepository.findByNewItem(
+                                                project.getNewItem()
                                         ).get(
-                                                routeOrderingRepository.findByItem(
-                                                        project.getItem()
+                                                routeOrderingRepository.findByNewItem(
+                                                        project.getNewItem()
                                                 ).size()-1
                                         ).getLifecycleStatus(),//라우트 오더링 중에서 현재 진행중인 라우트프로덕트
                         //현재 phase의 sequence가

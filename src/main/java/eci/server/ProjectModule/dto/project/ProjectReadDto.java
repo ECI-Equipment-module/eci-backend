@@ -25,7 +25,7 @@ public class ProjectReadDto {
     //제품명, 제품 번호
     //private ItemProjectDashboardDto itemProjectDashboardDto;
     private String itemName;
-    private Integer itemNumber;
+    private String itemNumber;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
     private LocalDate startPeriod;

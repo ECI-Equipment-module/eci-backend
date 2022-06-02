@@ -16,6 +16,7 @@ import eci.server.ItemModule.repository.member.MemberRepository;
 import eci.server.ItemModule.repository.newRoute.RouteOrderingRepository;
 import eci.server.ItemModule.repository.newRoute.RouteProductRepository;
 import eci.server.ItemModule.service.file.FileService;
+import eci.server.NewItemModule.repository.item.NewItemRepository;
 import eci.server.ProjectModule.dto.carType.CarTypeDto;
 import eci.server.ProjectModule.dto.project.*;
 import eci.server.ProjectModule.entity.project.Project;
@@ -46,7 +47,7 @@ import java.util.stream.IntStream;
 public class DesignService {
 
     private final MemberRepository memberRepository;
-    private final ItemRepository itemRepository;
+    private final NewItemRepository itemRepository;
 
     private final ProjectRepository projectRepository;
 
@@ -100,9 +101,9 @@ public class DesignService {
         if (!(req.getTag().size() == 0)) {
             uploadAttachments(design.getDesignAttachments(), req.getAttachments());
         }
-        List<RouteOrdering> routeOrdering = routeOrderingRepository.findByItem(design.getItem());
+        List<RouteOrdering> routeOrdering = routeOrderingRepository.findByNewItem(design.getNewItem());
         //프로젝트에 딸린 라우트
-        Long routeId = routeOrderingRepository.findByItem(design.getItem()).get(routeOrdering.size() - 1).getId();
+        Long routeId = routeOrderingRepository.findByNewItem(design.getNewItem()).get(routeOrdering.size() - 1).getId();
 
         return new DesignCreateUpdateResponse(design.getId(), routeId);
     }
@@ -192,8 +193,8 @@ public class DesignService {
 
                         design.getId(),
 
-                        design.getItem().getName(),
-                        design.getItem().getItemNumber(),
+                        design.getNewItem().getName(),
+                        design.getNewItem().getItemNumber(),
 
                         design.getTempsave(),
 
@@ -218,8 +219,8 @@ public class DesignService {
 
                         //project.getLifecycle(), //프로젝트의 라이프사이클
 
-                        routeOrderingRepository.findByItem(design.getItem()).get(
-                                routeOrderingRepository.findByItem(design.getItem()).size()-1
+                        routeOrderingRepository.findByNewItem(design.getNewItem()).get(
+                                routeOrderingRepository.findByNewItem(design.getNewItem()).size()-1
                         ).getLifecycleStatus(),
                         //아이템의 라이프 사이클
 

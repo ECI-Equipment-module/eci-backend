@@ -1,6 +1,5 @@
 package eci.server.ItemModule.service.item;
 
-import eci.server.ItemModule.dto.color.ColorCreateRequest;
 import eci.server.ItemModule.dto.color.ColorListDto;
 import eci.server.ItemModule.dto.color.ColorReadCondition;
 import eci.server.ItemModule.repository.color.ColorRepository;

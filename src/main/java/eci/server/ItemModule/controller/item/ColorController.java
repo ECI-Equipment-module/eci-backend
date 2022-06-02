@@ -18,7 +18,7 @@ import javax.validation.Valid;
 public class ColorController {
     private final ColorService colorService;
 
-    @GetMapping("/colors")
+    @GetMapping("/colorId")
     @ResponseStatus(HttpStatus.OK)
     public Response readAll(@Valid ColorReadCondition cond) {
         return Response.success(

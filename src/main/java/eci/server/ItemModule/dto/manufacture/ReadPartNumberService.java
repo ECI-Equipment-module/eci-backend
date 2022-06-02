@@ -1,8 +1,8 @@
 package eci.server.ItemModule.dto.manufacture;
 
 import eci.server.ItemModule.entity.item.Item;
-import eci.server.ItemModule.entity.manufacture.ItemManufacture;
-import eci.server.ItemModule.repository.item.ItemManufactureRepository;
+import eci.server.ItemModule.entity.manufacture.ItemMaker;
+import eci.server.ItemModule.repository.item.ItemMakerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -14,16 +14,16 @@ import static java.util.stream.Collectors.toList;
 @RequiredArgsConstructor
 public class ReadPartNumberService {
 
-    private final ItemManufactureRepository itemManufactureRepository;
+    private final ItemMakerRepository itemMakerRepository;
 
     public List<String> readPartnumbers(Item item) {
 
-        List<ItemManufacture> itemManufactures =
-                itemManufactureRepository.
+        List<ItemMaker> itemMakers =
+                itemMakerRepository.
                         findByItem(item);
 
         List<String> partnumbers =
-        itemManufactures.stream().map(
+        itemMakers.stream().map(
                 i -> i.getPartnumber()
         ).collect(
                 toList()

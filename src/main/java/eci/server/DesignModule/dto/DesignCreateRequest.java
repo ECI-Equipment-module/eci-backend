@@ -6,6 +6,7 @@ import eci.server.ItemModule.exception.item.ItemNotFoundException;
 import eci.server.ItemModule.exception.member.sign.MemberNotFoundException;
 import eci.server.ItemModule.repository.item.ItemRepository;
 import eci.server.ItemModule.repository.member.MemberRepository;
+import eci.server.NewItemModule.repository.item.NewItemRepository;
 import eci.server.ProjectModule.dto.project.ProjectCreateRequest;
 import eci.server.ProjectModule.entity.project.Project;
 import eci.server.ProjectModule.entity.projectAttachment.ProjectAttachment;
@@ -54,7 +55,7 @@ public class DesignCreateRequest {
     public static Design toEntity(
             DesignCreateRequest req,
             MemberRepository memberRepository,
-            ItemRepository itemRepository
+            NewItemRepository itemRepository
     ) {
 
         if (req.getTag().size() == 0) { //Project에 Attachment 존재하지 않을 시에 생성자

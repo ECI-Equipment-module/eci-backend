@@ -46,7 +46,7 @@ public class ProjectRouteOrderingCreateRequest {
         //아이템 타입에따라서 라우트 타입이 선택된다.
         // TODO 라벨 아니고 ITEM.ROUTE_TYPE으로 선택해준다
         Integer routeType =
-                ItemType.valueOf(targetProject.getItem().getType()).label();
+                ItemType.valueOf(targetProject.getNewItem().getItemTypes().getItemType().toString()).label();
 
         List routeProduct = List.of((routePreset.projectRouteName[routeType]));
 

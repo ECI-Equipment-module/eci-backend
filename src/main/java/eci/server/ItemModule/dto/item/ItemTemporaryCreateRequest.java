@@ -6,27 +6,21 @@ import eci.server.ItemModule.exception.item.ManufactureNotFoundException;
 import eci.server.ItemModule.exception.item.MaterialNotFoundException;
 import eci.server.ItemModule.exception.member.sign.MemberNotFoundException;
 import eci.server.ItemModule.repository.color.ColorRepository;
-import eci.server.ItemModule.repository.manufacture.ManufactureRepository;
+import eci.server.ItemModule.repository.manufacture.MakerRepository;
 import eci.server.ItemModule.repository.material.MaterialRepository;
 import eci.server.ItemModule.repository.member.MemberRepository;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.SequenceGenerator;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
-import static java.util.stream.Collectors.partitioningBy;
 import static java.util.stream.Collectors.toList;
 
 
@@ -34,7 +28,6 @@ import static java.util.stream.Collectors.toList;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ItemTemporaryCreateRequest {
-    private final Logger logger = LoggerFactory.getLogger(ItemCreateRequest.class);
 
     private ItemType itemType;
 
@@ -44,7 +37,7 @@ public class ItemTemporaryCreateRequest {
 
     @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="SEQUENCE1")
     @SequenceGenerator(name="SEQUENCE1", sequenceName="SEQUENCE1", allocationSize=1)
-    private Integer itemNumber;
+    private String itemNumber;
 
     private String width;
 
@@ -79,14 +72,13 @@ public class ItemTemporaryCreateRequest {
             MemberRepository memberRepository,
             ColorRepository colorRepository,
             MaterialRepository materialRepository,
-            ManufactureRepository manufactureRepository) {
+            MakerRepository manufactureRepository) {
 
 
         return new Item(
                 req.name.isBlank() ? "이름을 입력해주세요" : req.name,
                 req.type.isBlank() ? String.valueOf(ItemType.NONE) : req.type,
-                ItemType.valueOf(req.type.isBlank()? "NONE":req.type)
-                        .label()*1000000+(int)(Math.random()*1000),
+                "created when item is saved",
                 req.width.isBlank() ? "너비를 입력해주세요" : req.width,
                 req.height.isBlank() ? "높이를 입력해주세요" : req.height,
                 req.weight.isBlank() ? "무게를 입력해주세요" : req.weight,

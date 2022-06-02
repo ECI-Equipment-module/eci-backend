@@ -1,6 +1,7 @@
 package eci.server.ItemModule.dto.item;
 
 import eci.server.ItemModule.entity.item.Item;
+import eci.server.NewItemModule.entity.NewItem;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -12,17 +13,17 @@ public class ItemProjectDto {
     private Long id;
     private String name;
     private String type;
-    private Integer itemNumber;
+    private String itemNumber;
     private int revision;
 
 
-    public static ItemProjectDto toDto(Item Item) {
+    public static ItemProjectDto toDto(NewItem Item) {
 
         return new ItemProjectDto(
 
                 Item.getId(),
                 Item.getName(),
-                Item.getType(),
+                Item.getItemTypes().getItemType().toString(),
                 Item.getItemNumber(),
                 Item.getRevision()
 

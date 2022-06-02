@@ -12,7 +12,7 @@ public class ItemTodoResponse {
     Long itemId;
     String itemName;
     String itemType;
-    Integer itemNumber;
+    String itemNumber;
 
 
     public static ItemTodoResponse toDto(

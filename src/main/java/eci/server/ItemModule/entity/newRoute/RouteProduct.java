@@ -77,6 +77,12 @@ public class RouteProduct extends EntityDate {
     private boolean rejected;
 
     /**
+     * 06-01 : todo 에 rejected 띄우기 위한 용
+     */
+    @Column(nullable = false)
+    private boolean preRejected;
+
+    /**
      * 화면에 띄울 변수
      */
     @Column(nullable = false)
@@ -86,7 +92,7 @@ public class RouteProduct extends EntityDate {
     private boolean disabled;
 
     @Column
-    private boolean refusal;
+    private Integer refusal;
 
     @OneToMany(
             mappedBy = "routeProduct",
@@ -132,9 +138,10 @@ public class RouteProduct extends EntityDate {
             String comments,
             boolean passed,
             boolean rejected,
+            boolean preRejected,
             boolean show,
             boolean disabled,
-            boolean refusal,
+            Integer refusal,
             List<Member> member,
             RouteOrdering newRoute
 
@@ -150,6 +157,7 @@ public class RouteProduct extends EntityDate {
         this.comments = comments;
         this.passed = passed;
         this.rejected = rejected;
+        this.preRejected = preRejected;
         this.route_show = show;
         this.disabled = disabled;
         this.refusal = refusal;
@@ -172,9 +180,10 @@ public class RouteProduct extends EntityDate {
             String comments,
             boolean passed,
             boolean rejected,
+            boolean preRejected,
             boolean show,
             boolean disabled,
-            boolean refusal,
+            Integer refusal,
             List<Member> member,
             RouteOrdering newRoute,
             Project project,
@@ -190,6 +199,7 @@ public class RouteProduct extends EntityDate {
         this.comments = comments;
         this.passed = passed;
         this.rejected = rejected;
+        this.preRejected = preRejected;
         this.route_show = show;
         this.disabled = disabled;
         this.refusal = refusal;
@@ -230,7 +240,8 @@ public class RouteProduct extends EntityDate {
         this.comments = req.getComment();
         this.passed = true;
         this.rejected = false;
-        this.refusal = false;
+        this.refusal = -1;
+        this.preRejected = false; //true 였다가
 
         this.routeOrdering = routeProduct.getRouteOrdering();
 
@@ -251,7 +262,7 @@ public class RouteProduct extends EntityDate {
         this.comments = comment;
     }
 
-    public void updateRefusal(boolean refusal) {
+    public void updateRefusal(Integer refusal) {
         this.refusal = refusal;
     }
 
@@ -261,6 +272,10 @@ public class RouteProduct extends EntityDate {
 
     public void setDisabled(boolean disabled) {
         this.disabled = disabled;
+    }
+
+    public void setPreRejected(boolean preRejected) {
+        this.preRejected = preRejected;
     }
 
     public void setRejected(boolean rejected) {

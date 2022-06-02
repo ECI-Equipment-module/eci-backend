@@ -8,6 +8,8 @@ import eci.server.ItemModule.exception.item.ItemNotFoundException;
 import eci.server.ItemModule.exception.member.sign.MemberNotFoundException;
 import eci.server.ItemModule.repository.item.ItemRepository;
 import eci.server.ItemModule.repository.member.MemberRepository;
+import eci.server.NewItemModule.entity.NewItem;
+import eci.server.NewItemModule.repository.item.NewItemRepository;
 import eci.server.ProjectModule.dto.project.ProjectUpdateRequest;
 import eci.server.ProjectModule.entity.projectAttachment.ProjectAttachment;
 import eci.server.ProjectModule.exception.*;
@@ -39,8 +41,7 @@ import static java.util.stream.Collectors.toList;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Project extends EntityDate {
     @Id
-
-//  @GeneratedValue(strategy = GenerationType.IDENTITY)
+ // @GeneratedValue(strategy = GenerationType.IDENTITY)
    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQUENCE2")
    @SequenceGenerator(name="SEQUENCE2", sequenceName="SEQUENCE2", allocationSize=1)
 
@@ -84,8 +85,8 @@ public class Project extends EntityDate {
     private LocalDate sopOverPeriod;
 
     @OneToOne
-    @JoinColumn(name = "item_id")
-    private Item item;
+    @JoinColumn(name = "new_item_id")
+    private NewItem newItem;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(
@@ -165,7 +166,7 @@ public class Project extends EntityDate {
             LocalDate sopStartPeriod,
             LocalDate sopOverPeriod,
 
-            Item item,
+            NewItem item,
             Member member,
 
             Boolean tempsave,
@@ -208,7 +209,7 @@ public class Project extends EntityDate {
         this.produceOrganization = produceOrganization;
         this.clientOrganization = clientOrganizations;
 
-        this.item = item;
+        this.newItem = item;
         this.carType = carType;
 
         this.projectAttachments = new ArrayList<>();
@@ -263,7 +264,7 @@ public class Project extends EntityDate {
             LocalDate sopStartPeriod,
             LocalDate sopOverPeriod,
 
-            Item item,
+            NewItem item,
             Member member,
 
             Boolean tempsave,
@@ -305,7 +306,7 @@ public class Project extends EntityDate {
         this.produceOrganization = produceOrganization;
         this.clientOrganization = clientOrganizations;
 
-        this.item = item;
+        this.newItem = item;
         this.carType = carType;
 
 
@@ -331,7 +332,7 @@ public class Project extends EntityDate {
 
     public FileUpdatedResult update(
             ProjectUpdateRequest req,
-            ItemRepository itemRepository,
+            NewItemRepository newItemRepository,
             ProjectTypeRepository projectTypeRepository,
             ProjectLevelRepository projectLevelRepository,
             ProduceOrganizationRepository produceOrganizationRepository,
@@ -390,10 +391,10 @@ public class Project extends EntityDate {
                         this.sopOverPeriod:
                         LocalDate.parse(req.getOverPeriod(), DateTimeFormatter.ISO_DATE);
 
-        this.item =
+        this.newItem =
                 req.getItemId()==null?
-                        this.item:
-                        itemRepository.findById(req.getItemId())
+                        this.newItem:
+                        newItemRepository.findById(req.getItemId())
                                 .orElseThrow(ItemNotFoundException::new);
 
         this.projectLevel =

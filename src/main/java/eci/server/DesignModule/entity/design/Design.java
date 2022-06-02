@@ -9,6 +9,8 @@ import eci.server.ItemModule.exception.item.ItemNotFoundException;
 import eci.server.ItemModule.exception.member.sign.MemberNotFoundException;
 import eci.server.ItemModule.repository.item.ItemRepository;
 import eci.server.ItemModule.repository.member.MemberRepository;
+import eci.server.NewItemModule.entity.NewItem;
+import eci.server.NewItemModule.repository.item.NewItemRepository;
 import eci.server.ProjectModule.dto.project.ProjectUpdateRequest;
 import eci.server.ProjectModule.entity.project.*;
 import eci.server.ProjectModule.entity.projectAttachment.ProjectAttachment;
@@ -41,14 +43,14 @@ import static java.util.stream.Collectors.toList;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Design extends EntityDate {
     @Id
-//  @GeneratedValue(strategy = GenerationType.IDENTITY)
+ // @GeneratedValue(strategy = GenerationType.IDENTITY)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQUENCE2")
     @SequenceGenerator(name="SEQUENCE2", sequenceName="SEQUENCE2", allocationSize=1)
     private Long id;
 
     @OneToOne
-    @JoinColumn(name = "item_id")
-    private Item item;
+    @JoinColumn(name = "new_item_id")
+    private NewItem newItem;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(
@@ -79,13 +81,13 @@ public class Design extends EntityDate {
 
     public Design(
 
-            Item item,
+            NewItem item,
             Member member,
             boolean tempsave,
             boolean readonly
     ){
 
-        this.item =item;
+        this.newItem =item;
         this.member = member;
         this.tempsave = tempsave;
         this.readonly = readonly;
@@ -93,7 +95,7 @@ public class Design extends EntityDate {
 
     public Design(
 
-            Item item,
+            NewItem item,
 
             Member member,
 
@@ -101,7 +103,7 @@ public class Design extends EntityDate {
             Boolean readonly
 
     ) {
-        this.item = item;
+        this.newItem = item;
         this.member = member;
 
         this.tempsave = tempsave;
@@ -113,7 +115,7 @@ public class Design extends EntityDate {
 
 
     public Design(
-            Item item,
+            NewItem item,
 
             Member member,
 
@@ -124,7 +126,7 @@ public class Design extends EntityDate {
 
     ) {
 
-        this.item = item;
+        this.newItem = item;
         this.member = member;
 
         this.tempsave = tempsave;
@@ -150,13 +152,13 @@ public class Design extends EntityDate {
 
     public FileUpdatedResult update(
             DesignUpdateRequest req,
-            ItemRepository itemRepository,
+            NewItemRepository itemRepository,
             MemberRepository memberRepository
     )
 
 
     {
-            this.item=
+            this.newItem=
                 itemRepository.findById(req.getItemId())
                         .orElseThrow(ItemNotFoundException::new);
 

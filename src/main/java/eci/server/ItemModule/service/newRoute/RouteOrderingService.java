@@ -17,6 +17,7 @@ import eci.server.ItemModule.repository.member.MemberRepository;
 import eci.server.ItemModule.repository.newRoute.RouteOrderingRepository;
 import eci.server.ItemModule.repository.newRoute.RouteProductRepository;
 import eci.server.ItemModule.repository.newRoute.RouteTypeRepository;
+import eci.server.NewItemModule.repository.item.NewItemRepository;
 import eci.server.ProjectModule.entity.project.Project;
 import eci.server.ProjectModule.exception.ProjectNotLinkedException;
 import eci.server.ProjectModule.repository.project.ProjectRepository;
@@ -37,7 +38,7 @@ public class RouteOrderingService {
     private final ProjectRepository projectRepository;
     private final RouteProductRepository routeProductRepository;
     private final MemberRepository memberRepository;
-    private final ItemRepository itemRepository;
+    private final NewItemRepository newItemRepository;
     private final DesignRepository designRepository;
 
     private final RouteOrderingRepository routeOrderingRepository;
@@ -60,8 +61,8 @@ public class RouteOrderingService {
 
     public List<RouteOrderingDto> readAll(RouteOrderingReadCondition cond) {
 
-        List<RouteOrdering> newRoutes = routeOrderingRepository.findByItem(
-                itemRepository.findById(cond.getItemId())
+        List<RouteOrdering> newRoutes = routeOrderingRepository.findByNewItem(
+                newItemRepository.findById(cond.getItemId())
                         .orElseThrow(RouteNotFoundException::new)
         );
 
@@ -76,7 +77,7 @@ public class RouteOrderingService {
     public RouteOrderingCreateResponse createItemRoute(RouteOrderingCreateRequest req) {
         RouteOrdering newRoute = routeOrderingRepository.save(RouteOrderingCreateRequest.toEntity(
                         req,
-                        itemRepository,
+                        newItemRepository,
                         routePreset,
                         routeTypeRepository
                 )
@@ -101,6 +102,8 @@ public class RouteOrderingService {
             System.out.println(routeProduct1.getMembers().get(0).getRouteProduct());
         }
 
+        newRoute.getNewItem().updateTempsaveWhenMadeRoute();
+        //라우트 만들면 임시저장 해제
         return new RouteOrderingCreateResponse(newRoute.getId());
     }
 
@@ -197,13 +200,13 @@ public class RouteOrderingService {
                 //05-12 추가사항 : 이 라우트를 제작해줄 때야 비로소 프로젝트는 temp save = false 가 되는 것
 
                 //아이템에 링크된 맨 마지막 (최신) 프로젝트 데려오기
-                if (projectRepository.findByItem(routeOrdering.getItem()).size() == 0) {
+                if (projectRepository.findByNewItem(routeOrdering.getNewItem()).size() == 0) {
                     throw new ProjectNotLinkedException();
                 } else {
                     Project linkedProject =
-                            projectRepository.findByItem(routeOrdering.getItem())
+                            projectRepository.findByNewItem(routeOrdering.getNewItem())
                                     .get(
-                                            projectRepository.findByItem(routeOrdering.getItem()).size() - 1
+                                            projectRepository.findByNewItem(routeOrdering.getNewItem()).size() - 1
                                     );
                     //그 프로젝트를 라우트 프로덕트에 set 해주기
                     targetRoutProduct.setProject(linkedProject);
@@ -218,17 +221,17 @@ public class RouteOrderingService {
                 //05-12 추가사항 : 이 라우트를 제작해줄 때야 비로소 프로젝트는 temp save = false 가 되는 것
 
                 //아이템에 링크된 맨 마지막 (최신) 디자인 데려오기
-                if (designRepository.findByItem(routeOrdering.getItem()).size() == 0) {
+                if (designRepository.findByNewItem(routeOrdering.getNewItem()).size() == 0) {
                     throw new DesignNotLinkedException();
                 } else {
                     Design linkedDesign =
-                            designRepository.findByItem(routeOrdering.getItem())
+                            designRepository.findByNewItem(routeOrdering.getNewItem())
                                     .get(
-                                            designRepository.findByItem(routeOrdering.getItem()).size() - 1
+                                            designRepository.findByNewItem(routeOrdering.getNewItem()).size() - 1
                                     );
                     //만약 지금 rejected 가 true였다면 , 이제 새로 다시 넣어주는 것이니깐 rejected풀어주기
-                    if (targetRoutProduct.isRejected()) {
-                        targetRoutProduct.setRejected(false);
+                    if (targetRoutProduct.isPreRejected()) {
+                        targetRoutProduct.setPreRejected(false); //06-01 손댐
                     }
                     //그 프로젝트를 라우트 프로덕트에 set 해주기
                     targetRoutProduct.setDesign(linkedDesign);

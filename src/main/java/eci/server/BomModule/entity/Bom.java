@@ -3,6 +3,7 @@ package eci.server.BomModule.entity;
 import eci.server.ItemModule.entity.entitycommon.EntityDate;
 import eci.server.ItemModule.entity.item.Item;
 import eci.server.ItemModule.entity.member.Member;
+import eci.server.NewItemModule.entity.NewItem;
 import eci.server.ProjectModule.entity.projectAttachment.ProjectAttachment;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -18,15 +19,15 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Bom extends EntityDate {
     @Id
-//  @GeneratedValue(strategy = GenerationType.IDENTITY)
+ // @GeneratedValue(strategy = GenerationType.IDENTITY)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQUENCE2")
     @SequenceGenerator(name="SEQUENCE2", sequenceName="SEQUENCE2", allocationSize=1)
 
     private Long id;
 
     @OneToOne
-    @JoinColumn(name = "item_id")
-    private Item item;
+    @JoinColumn(name = "new_item_id")
+    private NewItem newItem;
 
     @Column(nullable = false)
     private Boolean tempsave;

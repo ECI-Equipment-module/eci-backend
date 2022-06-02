@@ -14,7 +14,7 @@ public class BomTodoResponse {
     Long bomId;
     String itemName;
     String itemType;
-    Integer itemNumber;
+    String itemNumber;
 
 
     public static BomTodoResponse toDto(

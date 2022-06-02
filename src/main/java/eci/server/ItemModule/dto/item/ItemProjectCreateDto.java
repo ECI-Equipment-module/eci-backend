@@ -2,6 +2,7 @@ package eci.server.ItemModule.dto.item;
 
 import eci.server.ItemModule.entity.item.Item;
 import eci.server.ItemModule.repository.newRoute.RouteOrderingRepository;
+import eci.server.NewItemModule.entity.NewItem;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -13,28 +14,29 @@ import lombok.Data;
 @AllArgsConstructor
 public class ItemProjectCreateDto {
 
-    private Long id;
-
-    private String name;
-    private String type;
-    private Integer itemNumber;
-    private Integer revision;
-    private String status;
+    private Long itemId;
+    private String itemName;
+    private String itemNumber;
+    private Integer itemRevision;
+    private String itemFamily; //classification
+    private String itemStatus;
 
 
     public static ItemProjectCreateDto toDto(
-            Item Item,
+            NewItem Item,
             RouteOrderingRepository routeOrderingRepository) {
 
         return new ItemProjectCreateDto(
 
                 Item.getId(),
                 Item.getName(),
-                Item.getType(),
                 Item.getItemNumber(),
                 Item.getRevision(),
-                routeOrderingRepository.findByItem(Item).get(
-                        routeOrderingRepository.findByItem(Item).size()-1
+                Item.getClassification().getClassification1().getName()+"/"
+                        +Item.getClassification().getClassification2().getName()+"/"
+                        +Item.getClassification().getClassification3().getName(),
+                routeOrderingRepository.findByNewItem(Item).get(
+                        routeOrderingRepository.findByNewItem(Item).size()-1
                 ).getLifecycleStatus()
 
         );

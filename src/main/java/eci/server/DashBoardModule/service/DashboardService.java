@@ -16,6 +16,7 @@ import eci.server.ItemModule.exception.member.auth.AuthenticationEntryPointExcep
 import eci.server.ItemModule.repository.member.MemberRepository;
 import eci.server.ItemModule.repository.newRoute.RouteOrderingRepository;
 import eci.server.ItemModule.repository.newRoute.RouteProductRepository;
+import eci.server.NewItemModule.entity.NewItem;
 import eci.server.ProjectModule.entity.project.Project;
 import eci.server.ProjectModule.repository.project.ProjectRepository;
 import eci.server.config.guard.AuthHelper;
@@ -23,10 +24,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -62,32 +60,32 @@ public class DashboardService {
         for (Project project : myProjectList) {
             if (!project.getTempsave()) {
                 if (
-                        routeOrderingRepository.findByItem(project.getItem()).get(
-                                routeOrderingRepository.findByItem(project.getItem()).size() - 1
+                        routeOrderingRepository.findByNewItem(project.getNewItem()).get(
+                                routeOrderingRepository.findByNewItem(project.getNewItem()).size() - 1
                         ).getLifecycleStatus().equals("WORKING")
                 ) {
                     working += 1;
                 } else if (
-                        routeOrderingRepository.findByItem(project.getItem()).get(
-                                routeOrderingRepository.findByItem(project.getItem()).size() - 1
+                        routeOrderingRepository.findByNewItem(project.getNewItem()).get(
+                                routeOrderingRepository.findByNewItem(project.getNewItem()).size() - 1
                         ).getLifecycleStatus().equals("COMPLETE")
                 ) {
                     complete += 1;
                 } else if (
-                        routeOrderingRepository.findByItem(project.getItem()).get(
-                                routeOrderingRepository.findByItem(project.getItem()).size() - 1
+                        routeOrderingRepository.findByNewItem(project.getNewItem()).get(
+                                routeOrderingRepository.findByNewItem(project.getNewItem()).size() - 1
                         ).getLifecycleStatus().equals("RELEASE")
                 ) {
                     release += 1;
                 } else if (
-                        routeOrderingRepository.findByItem(project.getItem()).get(
-                                routeOrderingRepository.findByItem(project.getItem()).size() - 1
+                        routeOrderingRepository.findByNewItem(project.getNewItem()).get(
+                                routeOrderingRepository.findByNewItem(project.getNewItem()).size() - 1
                         ).getLifecycleStatus().equals("PENDING")
                 ) {
                     pending += 1;
                 } else if (
-                        routeOrderingRepository.findByItem(project.getItem()).get(
-                                routeOrderingRepository.findByItem(project.getItem()).size() - 1
+                        routeOrderingRepository.findByNewItem(project.getNewItem()).get(
+                                routeOrderingRepository.findByNewItem(project.getNewItem()).size() - 1
                         ).getLifecycleStatus().equals("DROP")
                 ) {
                     drop += 1;
@@ -134,7 +132,12 @@ public class DashboardService {
         List<Project> tempSavedProjectList = new ArrayList<>();
 
         for (Project project : myProjectList) {
-            if (project.getTempsave()) {
+            if (project.getTempsave()
+                &&
+            Objects.equals(project.getId(), projectRepository.findByNewItem(project.getNewItem()).get(
+                    projectRepository.findByNewItem(project.getNewItem()).size() - 1
+            ).getId())
+            ) {
                 tempSavedProjectList.add(project);
                 //임시저장 진행 중인 것
             }
@@ -196,15 +199,15 @@ public class DashboardService {
         HashSet<TodoResponse> unlinkedItemTodoResponses = new HashSet<>();
 
         for (RouteProduct routeProduct : myRouteProductList) {
-            if (projectRepository.findByItem(routeProduct.getRouteOrdering().getItem()).size() == 0) {
+            if (projectRepository.findByNewItem(routeProduct.getRouteOrdering().getNewItem()).size() == 0) {
 
-                Item targetItem = routeProduct.getRouteOrdering().getItem();
+                NewItem targetItem = routeProduct.getRouteOrdering().getNewItem();
 
                 unlinkedItemTodoResponses.add(
                         new TodoResponse(
                                 targetItem.getId(),
                                 targetItem.getName(),
-                                targetItem.getType(),
+                                targetItem.getItemTypes().getItemType().toString(),
                                 targetItem.getItemNumber().toString()
                         )
                 );
@@ -238,7 +241,7 @@ public class DashboardService {
                 AuthenticationEntryPointException::new
         );
 
-        //1-1 temp save 용 ) 내가 작성자인 모든 프로젝트들 데려오기
+        //1-1 temp save 용 ) 내가 작성자인 모든 디자인 데려오기
         List<Design> myDesignList = designRepository.findByMember(member1);
         Iterator<Design> myDesignListItr = myDesignList.iterator();
 
@@ -246,7 +249,13 @@ public class DashboardService {
         List<Design> tempSavedDesignList = new ArrayList<>();
 
         for (Design design : myDesignList) {
-            if (design.getTempsave()) {
+            if (design.getTempsave()
+                &&
+            Objects.equals(design.getId(), designRepository.findByNewItem(design.getNewItem()).get(
+                    designRepository.findByNewItem(design.getNewItem()).size() - 1
+            ).getId())){
+            //05-30 - 이 아이가 최신 아이일 때만! (최신 아니고 옛날 거면 필요 없음)
+
                 tempSavedDesignList.add(design);
                 //임시저장 진행 중인 것
             }
@@ -273,9 +282,9 @@ public class DashboardService {
                         projectTodoResponse =
                         new TodoResponse(
                                 d.getId(),
-                                d.getItem().getName(),
-                                d.getItem().getType(),
-                                d.getItem().getItemNumber().toString()
+                                d.getNewItem().getName(),
+                                d.getNewItem().getItemTypes().getItemType().toString(),
+                                d.getNewItem().getItemNumber().toString()
                         );
                 TEMP_SAVE.add(projectTodoResponse);
             }
@@ -307,15 +316,15 @@ public class DashboardService {
         HashSet<TodoResponse> unlinkedItemTodoResponses = new HashSet<>();
 
         for (RouteProduct routeProduct : myRouteProductList) {
-            if (designRepository.findByItem(routeProduct.getRouteOrdering().getItem()).size() == 0) {
+            if (designRepository.findByNewItem(routeProduct.getRouteOrdering().getNewItem()).size() == 0) {
 
-                Item targetItem = routeProduct.getRouteOrdering().getItem();
+                NewItem targetItem = routeProduct.getRouteOrdering().getNewItem();
 
                 unlinkedItemTodoResponses.add(
                         new TodoResponse(
                                 targetItem.getId(),
                                 targetItem.getName(),
-                                targetItem.getType(),
+                                targetItem.getItemTypes().getItemType().toString(),
                                 targetItem.getItemNumber().toString()
                         )
                 );
@@ -325,22 +334,24 @@ public class DashboardService {
         List<TodoResponse> NEW_DESIGN = new ArrayList<>(unlinkedItemTodoResponses);
 
         //3) REJECT - 라우트 프로덕트들 중에서 현재이고,
+
         // 디자인 설계이고,
         // 라우트프로덕트 멤버가 나이고,
         // REJECTED=TRUE 인 것
         HashSet<TodoResponse> rejectedDesignTodoResponses = new HashSet<>();
 
         for (RouteProduct routeProduct : myRouteProductList) { //myRoute-> 내꺼 + 현재
-            if (routeProduct.isRejected() && routeProduct.getRoute_name().equals("기구Design생성[설계자]")) {
+            //06-01 수정
+            if (routeProduct.isPreRejected() && routeProduct.getRoute_name().equals("기구Design생성[설계자]")) {
 
                 Design targetDesign = routeProduct.getDesign();
 
                 rejectedDesignTodoResponses.add(
                         new TodoResponse(
                                 targetDesign.getId(),
-                                targetDesign.getItem().getName(),
-                                targetDesign.getItem().getType(),
-                                targetDesign.getItem().getItemNumber().toString()
+                                targetDesign.getNewItem().getName(),
+                                targetDesign.getNewItem().getItemTypes().getItemType().toString(),
+                                targetDesign.getNewItem().getItemNumber().toString()
                         )
                 );
             }
@@ -380,9 +391,9 @@ public class DashboardService {
             needReviewDesignTodoResponses.add(
                     new TodoResponse(
                             targetDesign.getId(),
-                            targetDesign.getItem().getName(),
-                            targetDesign.getItem().getType(),
-                            targetDesign.getItem().getItemNumber().toString()
+                            targetDesign.getNewItem().getName(),
+                            targetDesign.getNewItem().getItemTypes().getItemType().toString(),
+                            targetDesign.getNewItem().getItemNumber().toString()
                     )
             );
         }
@@ -443,15 +454,15 @@ public class DashboardService {
         HashSet<TodoResponse> unlinkedItemTodoResponses = new HashSet<>();
 
         for (RouteProduct routeProduct : myRouteProductList) {
-            if (bomRepository.findByItem(routeProduct.getRouteOrdering().getItem()).size() == 0) {
+            if (bomRepository.findByNewItem(routeProduct.getRouteOrdering().getNewItem()).size() == 0) {
 
-                Item targetItem = routeProduct.getRouteOrdering().getItem();
+                NewItem targetItem = routeProduct.getRouteOrdering().getNewItem();
 
                 unlinkedItemTodoResponses.add(
                         new TodoResponse(
                                 targetItem.getId(),
                                 targetItem.getName(),
-                                targetItem.getType(),
+                                targetItem.getItemTypes().getItemType().toString(),
                                 targetItem.getItemNumber().toString()
                         )
                 );

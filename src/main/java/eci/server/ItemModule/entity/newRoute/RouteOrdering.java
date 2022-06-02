@@ -7,6 +7,7 @@ import eci.server.ItemModule.exception.route.RejectImpossibleException;
 import eci.server.ItemModule.exception.route.UpdateImpossibleException;
 import eci.server.ItemModule.repository.newRoute.RouteOrderingRepository;
 import eci.server.ItemModule.repository.newRoute.RouteProductRepository;
+import eci.server.NewItemModule.entity.NewItem;
 import eci.server.ProjectModule.entity.project.Project;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -71,10 +72,11 @@ public class RouteOrdering extends EntityDate {
     /**
      * null 가능, 아이템에서 라우트 생성 시 지정
      */
+
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "item_id")
+    @JoinColumn(name = "new_item_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
-    private Item item;
+    private NewItem newItem;
 
 //    /**
 //     * null 가능, 플젝에서 라우트 생성 시 지정
@@ -87,14 +89,14 @@ public class RouteOrdering extends EntityDate {
     //아이템 라우트용 생성자
     public RouteOrdering(
             String type,
-            Item item
+            NewItem newItem
 
     ){
         this.type = type;
         this.lifecycleStatus = "WORKING";
         this.revisedCnt = 0;
         this.present = 1;
-        this.item = item;
+        this.newItem = newItem;
     }
     //프로젝트 라우트용 생성자
     public RouteOrdering(
@@ -106,7 +108,6 @@ public class RouteOrdering extends EntityDate {
         this.lifecycleStatus = "WORKING";
         this.revisedCnt = 0;
         this.present = 1;
-//        this.project = project;
     }
 
     public void setPresent(Integer present) {
@@ -228,7 +229,7 @@ public class RouteOrdering extends EntityDate {
         routeProductList.get(rejectedIndex).setRejected(true);
         routeProductList.get(rejectedIndex).setDisabled(true);
         routeProductList.get(this.present-1).setComment(rejectedComment);
-        routeProductList.get(this.present-1).updateRefusal(true);
+        routeProductList.get(this.present-1).updateRefusal(rejectedIndex); //06-01 : reject 된 seq을 전달
         //routeProductList.get(this.present).setShow(false);
         /**
          * 거부된 라우트 하나 먼저 복제
@@ -248,10 +249,11 @@ public class RouteOrdering extends EntityDate {
                     routeProductList.get(rejectedIndex).getType(),
                     "default",
                     false,
-                    true,
+                    false,
+                    true, //이전에 거절 당해서 만들어진 애라는 뜻
                     true,
                     false,
-                    false, //0527 - 거절당한 것, 거절자는 아니다
+                    -1, //0527 - 거절당한 것, 거절자는 아니다
                     routeProductList.get(rejectedIndex)
                             .getMembers().stream().map(
                                     RouteProductMember::getMember
@@ -298,9 +300,10 @@ public class RouteOrdering extends EntityDate {
                         "default",
                         false, //passed
                         false, //rejected
+                        false, //preRejected 돼서 만들어진 것이 아니니깐
                         true,
                         false,
-                        false,
+                        -1,
                         i.getMembers().stream().map(
                                 m -> m.getMember()
                         ).collect(toList()),
@@ -323,8 +326,6 @@ public class RouteOrdering extends EntityDate {
 
         System.out.println("추가적으로 생길 애들 길이");
         System.out.println(addedRouteProductList.size());
-
-
 
         return addedRouteProductList;
     }

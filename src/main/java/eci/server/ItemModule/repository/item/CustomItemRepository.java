@@ -11,6 +11,6 @@ import org.springframework.data.domain.Page;
  * 페이징 결과에 대한 각종 정보 확인
  */
 public interface CustomItemRepository {
-    Page<ItemProjectCreateDto> findAllByCondition(ItemProjectCreateReadCondition cond);
+    //Page<ItemProjectCreateDto> findAllByCondition(ItemProjectCreateReadCondition cond);
 
 }

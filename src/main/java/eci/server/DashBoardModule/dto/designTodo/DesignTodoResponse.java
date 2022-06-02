@@ -13,7 +13,7 @@ public class DesignTodoResponse {
     Long designId;
     String itemName;
     String itemType;
-    Integer itemNumber;
+    String itemNumber;
 
 
     public static DesignTodoResponse toDto(

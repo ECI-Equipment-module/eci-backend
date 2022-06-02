@@ -69,7 +69,7 @@ public class CustomDesignRepositoryImpl extends QuerydslRepositorySupport implem
                         ))
                         .from(design)
 
-                        .join(item).on(design.item.id.eq(item.id))
+                        .join(item).on(design.newItem.id.eq(item.id))
 
                         .join(routeProduct).on(design.id.eq(routeProduct.project.id))
 

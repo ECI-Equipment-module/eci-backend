@@ -3,7 +3,7 @@ package eci.server.ItemModule.dto.item;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import eci.server.ItemModule.dto.color.ColorDto;
-import eci.server.ItemModule.dto.manufacture.ManufactureSimpleDto;
+import eci.server.ItemModule.dto.manufacture.MakerSimpleDto;
 import eci.server.ItemModule.dto.material.MaterialSimpleDto;
 import eci.server.ItemModule.dto.member.MemberDto;
 import eci.server.ItemModule.dto.newRoute.routeOrdering.RouteOrderingDto;
@@ -31,7 +31,7 @@ public class ReadItemDto {
     private String name;
     private String type;
 
-    private Integer itemNumber;
+    private String itemNumber;
 
     private String width;
     private String height;
@@ -45,7 +45,7 @@ public class ReadItemDto {
     private ColorDto color;
     private List<MaterialSimpleDto> material;
 
-    private List<ManufactureSimpleDto> manufactures;
+    private List<MakerSimpleDto> manufactures;
     private List<String> partnumbers;
 
 
@@ -101,7 +101,7 @@ public class ReadItemDto {
                 itemDto.getColor(),
 
                 itemDto.getMaterialDto(),
-                itemDto.getManufactureSimpleDtos(),
+                itemDto.getMakerSimpleDtos(),
 
                 partNumbers,
 
@@ -164,7 +164,7 @@ public class ReadItemDto {
                 itemDto.getColor(),
 
                 itemDto.getMaterialDto(),
-                itemDto.getManufactureSimpleDtos(),
+                itemDto.getMakerSimpleDtos(),
 
                 partnumbers,
 
