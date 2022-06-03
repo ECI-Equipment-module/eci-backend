@@ -1,11 +1,14 @@
 package eci.server.NewItemModule.controller.newItem;
 
+import eci.server.NewItemModule.dto.item.ItemUpdateRequest;
 import eci.server.NewItemModule.dto.newItem.NewItemReadCondition;
 import eci.server.NewItemModule.dto.newItem.create.NewItemCreateRequest;
 import eci.server.NewItemModule.dto.newItem.create.NewItemTemporaryCreateRequest;
+import eci.server.NewItemModule.dto.newItem.update.NewItemUpdateRequest;
 import eci.server.NewItemModule.service.item.NewItemService;
 import eci.server.aop.AssignMemberId;
 import eci.server.ItemModule.dto.response.Response;
+import eci.server.aop.AssignModifierId;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -113,17 +116,17 @@ public class NewItemController {
      * @param req
      * @return
      */
-//    @CrossOrigin(origins = "https://localhost:3000")
-//    @PutMapping("/items/{id}")
-//    @ResponseStatus(HttpStatus.OK)
-//    @AssignModifierId
-//    public Response update(
-//            @PathVariable Long id,
-//            @Valid @ModelAttribute ItemUpdateRequest req) {
-//
-//
-//        return Response.success(itemService.update(id, req));
-//    }
+    @CrossOrigin(origins = "https://localhost:3000")
+    @PutMapping("/item/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    @AssignModifierId
+    public Response update(
+            @PathVariable Long id,
+            @Valid @ModelAttribute NewItemUpdateRequest req) {
+
+
+        return Response.success(newItemService.update(id, req));
+    }
 
     /**
      * 아이템 전부 읽어오기긴 한데 페이징 needed

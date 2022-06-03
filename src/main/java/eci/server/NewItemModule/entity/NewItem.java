@@ -21,6 +21,7 @@ import eci.server.NewItemModule.exception.CoatingNotFoundException;
 import eci.server.NewItemModule.exception.SupplierNotFoundException;
 import eci.server.NewItemModule.repository.coatingType.CoatingTypeRepository;
 import eci.server.NewItemModule.repository.coatingWay.CoatingWayRepository;
+import eci.server.NewItemModule.repository.maker.NewItemMakerRepository;
 import eci.server.NewItemModule.repository.supplier.SupplierRepository;
 import eci.server.ProjectModule.entity.project.CarType;
 import eci.server.ProjectModule.entity.project.ClientOrganization;
@@ -722,7 +723,7 @@ public class NewItem extends EntityDate {
             MemberRepository memberRepository,
             ClientOrganizationRepository clientOrganizationRepository,
             SupplierRepository supplierRepository,
-            ItemMakerRepository itemMakerRepository,
+            NewItemMakerRepository itemMakerRepository,
             ItemTypesRepository itemTypesRepository,
             CoatingWayRepository coatingWayRepository,
             CoatingTypeRepository coatingTypeRepository
