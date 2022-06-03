@@ -20,6 +20,7 @@ import javax.validation.Valid;
 public class CarTypeController {
     private final CarTypeService carTypeService;
 
+    @CrossOrigin(origins = "https://localhost:3000")
     @GetMapping("/carType")
     @ResponseStatus(HttpStatus.OK)
     public Response readAll(@Valid CarTypeReadCondition cond) {

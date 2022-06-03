@@ -47,6 +47,8 @@ public class C1SelectDto {
             Classification2Repository classification2Repository,
             Classification3Repository classification3Repository
     ) {
+        System.out.println("여기ㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣ이야ㅑㅑㅑㅑㅑㅑㅑㅑㅑㅑㅑㅑ");
+        System.out.println(classification1List);
         List<C1SelectDto> c1SelectDtoList
                 = classification1List.stream().map(
                 c -> new C1SelectDto(
