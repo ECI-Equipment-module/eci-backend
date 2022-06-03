@@ -24,13 +24,13 @@ public class RoutePreset {
             //type 0 - 자가결재
             {
                 "Item(원재료) Request(설계자)",
-                    "Item(원재료) Request Review(설계팀장)",
+                    "Item Request Review(설계팀장)",
                     "Item(원재료) Complete"
             },
             //type 1 - 원재료
             {
                 "Item(외주구매품 단순)신청 Request(설계자)",
-                    "Item(원재료) Request Review(설계팀장)", //05-23 추가
+                    "Item Request Review(설계팀장)", //05-23 추가
                     "기구Design생성[설계자]",
                     "기구Design Review[설계팀장]",
                     "Item(외주구매품 단순) Complete"
@@ -39,7 +39,7 @@ public class RoutePreset {
             //type 2 - 외주구매품(단순)
             {
                 "Item(사내가공품/외주구매품-시방)등록 Request(설계자)",
-                    "Item(원재료) Request Review(설계팀장)", //05-23 추가
+                    "Item Request Review(설계팀장)", //05-23 추가
                     "기구Design생성[설계자]",
                     "기구Design Review[설계팀장]",
                     "개발BOM생성[설계자]",
