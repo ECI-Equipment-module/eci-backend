@@ -3,6 +3,7 @@ package eci.server.NewItemModule.controller.newItem;
 import eci.server.ItemModule.dto.item.ItemProjectCreateDto;
 import eci.server.NewItemModule.dto.newItem.NewItemPagingDto;
 import eci.server.NewItemModule.entity.NewItem;
+import eci.server.NewItemModule.entity.page.CustomPageImpl;
 import eci.server.NewItemModule.repository.item.NewItemRepository;
 import eci.server.NewItemModule.service.item.NewItemService;
 import lombok.RequiredArgsConstructor;
@@ -84,9 +85,9 @@ public class NewItemPageController {
             indexes.add(field.getName());
         }
 
-        Page<ItemProjectCreateDto> itemList = new PageImpl<>(itemListReal);
+        Page<ItemProjectCreateDto> itemList = new CustomPageImpl<>(itemListReal, indexes);
 
-        System.out.println(itemList.getContent());
+        //System.out.println(itemList.getContent());
         return itemList;
 
     }
