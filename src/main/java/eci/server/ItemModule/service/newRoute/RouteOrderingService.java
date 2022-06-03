@@ -134,7 +134,8 @@ public class RouteOrderingService {
         }
 
         // 처음으로 복제된 애는 거부대상 아이의 복제품 => 얘의 set reject=true로 변경
-        addedProducts.get(0).setRejected(true);
+        //06-03 얘는 rejected false로 해놔야 됨, pre-rejected가 true고
+        addedProducts.get(0).setRejected(false);
 
         //0517 : show= False 인 애들 삭제할건데 검사범위는 끝까지 (라우트 프로덕트 기존 길이의)
         // 0519 에러의 원인 : 이 기존 길이가 넘 짧지,,, 새로 생기고 난리 났는데,, => 삭제가 안되는 에러
