@@ -51,6 +51,7 @@ public class RouteOrderingController {
      * @param id
      * @return
      */
+    @CrossOrigin(origins = "https://localhost:3000")
     @GetMapping("/routeByItem/{id}")
     @ResponseStatus(HttpStatus.OK)
     public Response readRouteByItem(@PathVariable Long id) {
