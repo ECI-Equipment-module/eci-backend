@@ -28,4 +28,5 @@ public class ColorListDto {
 
         return new ColorListDto(indexes, page.getTotalElements(), page.getTotalPages(), page.hasNext(), page.getContent());
     }
+
 }

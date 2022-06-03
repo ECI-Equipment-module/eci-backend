@@ -22,7 +22,7 @@ public class ProfileImage extends EntityDate {
 
     @Id
    @GeneratedValue(strategy = GenerationType.IDENTITY)
- //    @GeneratedValue(strategy= GenerationType.SEQUENCE, generator="SEQUENCE1")
+  //   @GeneratedValue(strategy= GenerationType.SEQUENCE, generator="SEQUENCE1")
   //   @SequenceGenerator(name="SEQUENCE1", sequenceName="SEQUENCE1", allocationSize=1)
 
     private Long id;

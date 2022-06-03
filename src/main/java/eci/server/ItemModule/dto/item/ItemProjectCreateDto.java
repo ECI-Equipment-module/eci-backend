@@ -14,9 +14,10 @@ import lombok.Data;
 @AllArgsConstructor
 public class ItemProjectCreateDto {
 
-    private Long itemId;
-    private String itemName;
     private String itemNumber;
+    private String itemName;
+
+    private Long itemId;
     private Integer itemRevision;
     private String itemFamily; //classification
     private String itemStatus;
@@ -27,10 +28,10 @@ public class ItemProjectCreateDto {
             RouteOrderingRepository routeOrderingRepository) {
 
         return new ItemProjectCreateDto(
+                Item.getItemNumber(),
+                Item.getName(),
 
                 Item.getId(),
-                Item.getName(),
-                Item.getItemNumber(),
                 Item.getRevision(),
                 Item.getClassification().getClassification1().getName()+"/"
                         +Item.getClassification().getClassification2().getName()+"/"
