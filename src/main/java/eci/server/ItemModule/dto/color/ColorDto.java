@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 public class ColorDto {
     private Long id;
     private String code;
-    private String color;
+    private String name;
 
     public static ColorDto toDto(Color color) {
         return new ColorDto(

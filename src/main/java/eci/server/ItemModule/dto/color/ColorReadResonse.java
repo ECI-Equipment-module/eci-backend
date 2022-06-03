@@ -10,5 +10,5 @@ import lombok.NoArgsConstructor;
 public class ColorReadResonse {
     private Long id;
     private String code;
-    private String color;
+    private String name;
 }

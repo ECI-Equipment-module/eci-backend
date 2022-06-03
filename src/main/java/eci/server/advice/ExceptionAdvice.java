@@ -322,4 +322,11 @@ public class ExceptionAdvice {
         return Response.failure(400, "유효한 Classification 을 지정해주세요");
     }
 
+    @ExceptionHandler(SupplierNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Response SupplierNotFoundException(SupplierNotFoundException e) {
+        log.info("e = {}", e.getMessage());
+        return Response.failure(400, "유효한 supplier 을 지정해주세요");
+    }
+
 }

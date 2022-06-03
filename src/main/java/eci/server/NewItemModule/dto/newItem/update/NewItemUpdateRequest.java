@@ -1,3 +1,4 @@
+
 package eci.server.NewItemModule.dto.newItem.update;
 
 import lombok.AllArgsConstructor;
@@ -72,12 +73,35 @@ public class NewItemUpdateRequest {
 
     private Long supplierOrganizationId;
 
+    @Null
+    private Long modifierId;
+
 
     private List<MultipartFile> thumbnail = new ArrayList<>();
 
-    private List<MultipartFile> attachments = new ArrayList<>();
-    private List<String> tag = new ArrayList<>();
-    private List<String> attachmentComment = new ArrayList<>();
+
+    /**
+     * 추가된 이미지를 첨부
+     */
+    private List<MultipartFile> addedImages = new ArrayList<>();
+
+
+    /**
+     * 추가된 파일을 첨부
+     */
+    private List<MultipartFile> addedAttachments = new ArrayList<>();
+    private List<String> addedTag = new ArrayList<>();
+    private List<String> addedAttachmentComment = new ArrayList<>();
+
+    /**
+     * 삭제될 사진 아이디 입력 - 실제 삭제 예정
+     */
+
+    private List<Long> deletedImages = new ArrayList<>();
+    /**
+     * 삭제될 파일 아이디 입력 - is deleted 만 true
+     */
+    private List<Long> deletedAttachments = new ArrayList<>();
 
 
     private List<Long> makersId = new ArrayList<>();
@@ -87,3 +111,4 @@ public class NewItemUpdateRequest {
     @Null
     private Long memberId;
 }
+

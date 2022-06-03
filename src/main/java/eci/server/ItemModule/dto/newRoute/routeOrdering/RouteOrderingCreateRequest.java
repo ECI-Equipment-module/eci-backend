@@ -56,7 +56,10 @@ public class RouteOrderingCreateRequest {
         //아이템 타입에따라서 라우트 타입이 선택된다.
 
         // TODO 라벨 아니고 ITEM.ROUTE_TYPE.ID 로 선택해준다
-        Integer routeType =  ItemType.valueOf(targetItem.getItemTypes().getItemType().name()).label();
+        Integer routeType =
+                ItemType.valueOf(
+                        targetItem.getItemTypes().getItemType().name()
+                ).label();
 
         List routeProduct = List.of((routePreset.itemRouteName[routeType]));
 
