@@ -46,6 +46,19 @@ public class RouteOrderingController {
         );
     }
 
+    /**
+     * 아이템 타입 넘겨주면
+     * @param id
+     * @return
+     */
+    @GetMapping("/routeByItem/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public Response readRouteByItem(@PathVariable Long id) {
+        return Response.success(
+                newRouteService.readRouteByItem(id)
+        );
+    }
+
     @PutMapping("/approveRoute/{id}")
     @ResponseStatus(HttpStatus.OK)
     public Response update(

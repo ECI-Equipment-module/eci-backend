@@ -6,17 +6,20 @@ import eci.server.DesignModule.repository.DesignRepository;
 import eci.server.ItemModule.dto.newRoute.routeOrdering.*;
 import eci.server.ItemModule.dto.newRoute.routeProduct.RouteProductCreateRequest;
 import eci.server.ItemModule.dto.newRoute.routeProduct.RouteProductDto;
+import eci.server.ItemModule.entity.item.ItemType;
 import eci.server.ItemModule.entity.newRoute.RouteOrdering;
 import eci.server.ItemModule.entity.newRoute.RoutePreset;
 import eci.server.ItemModule.entity.newRoute.RouteProduct;
 import eci.server.ItemModule.exception.route.RouteNotFoundException;
 import eci.server.ItemModule.exception.route.UpdateImpossibleException;
 import eci.server.ItemModule.repository.item.ItemRepository;
+import eci.server.ItemModule.repository.item.ItemTypesRepository;
 import eci.server.ItemModule.repository.member.MemberRepository;
 
 import eci.server.ItemModule.repository.newRoute.RouteOrderingRepository;
 import eci.server.ItemModule.repository.newRoute.RouteProductRepository;
 import eci.server.ItemModule.repository.newRoute.RouteTypeRepository;
+import eci.server.NewItemModule.exception.ItemTypeRequiredException;
 import eci.server.NewItemModule.repository.item.NewItemRepository;
 import eci.server.ProjectModule.entity.project.Project;
 import eci.server.ProjectModule.exception.ProjectNotLinkedException;
@@ -45,6 +48,7 @@ public class RouteOrderingService {
     private final RoutePreset routePreset;
 
     private final RouteTypeRepository routeTypeRepository;
+    private final ItemTypesRepository itemTypesRepository;
 
     public RouteOrderingDto read(Long id) {
 
@@ -56,6 +60,27 @@ public class RouteOrderingService {
                 routeOrderingRepository,
                 routeRejectPossibleResponse
         );
+
+    }
+
+    public List readRouteByItem(Long id) {
+
+        List<String> typeList = new ArrayList<>();
+
+        //아이템 타입에따라서 라우트 타입이 선택된다.
+
+        // TODO 라벨 아니고 ITEM.ROUTE_TYPE.ID 로 선택해준다
+        Integer routeType =  ItemType.valueOf(
+                itemTypesRepository.findById(id).orElseThrow(ItemTypeRequiredException::new)
+                        .getItemType().name()).label();
+
+        List routeProduct = List.of((routePreset.itemRouteName[routeType]));
+
+        for(Object type : routeProduct){
+            typeList.add(type.toString());
+            System.out.println(type);
+        }
+        return typeList;
 
     }
 
