@@ -3,6 +3,15 @@ package eci.server.NewItemModule.entity;
 import eci.server.ItemModule.dto.item.ItemUpdateRequest;
 import eci.server.ItemModule.entity.entitycommon.EntityDate;
 import eci.server.ItemModule.entity.item.*;
+import eci.server.ItemModule.exception.item.ColorNotFoundException;
+import eci.server.ItemModule.exception.member.sign.MemberNotFoundException;
+import eci.server.ItemModule.repository.color.ColorRepository;
+import eci.server.ItemModule.repository.item.ItemMakerRepository;
+import eci.server.ItemModule.repository.item.ItemMaterialRepository;
+import eci.server.ItemModule.repository.manufacture.MakerRepository;
+import eci.server.ItemModule.repository.material.MaterialRepository;
+import eci.server.ItemModule.repository.member.MemberRepository;
+import eci.server.NewItemModule.dto.newItem.update.NewItemUpdateRequest;
 import eci.server.NewItemModule.entity.supplier.Maker;
 import eci.server.ItemModule.entity.member.Member;
 import eci.server.NewItemModule.entity.classification.Classification;
@@ -26,6 +35,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static java.util.stream.Collectors.toList;
 
@@ -543,7 +553,7 @@ public class NewItem extends EntityDate {
         });
     }
 
-    private void addUpdatedAttachments(ItemUpdateRequest req, List<NewItemAttachment> added) {
+    private void addUpdatedAttachments(NewItemUpdateRequest req, List<NewItemAttachment> added) {
         SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date now = new Date();
 
@@ -694,4 +704,73 @@ public class NewItem extends EntityDate {
     public void updateReadOnlyWhenSaved() {
         this.readonly = true;
     }
+
+    /**
+     * postupdaterequest 받아서 update 수행
+     *
+     * @param req
+     * @return 새로 수정된 이미지
+     */
+    public NewItemFileUpdatedResult update(
+            NewItemUpdateRequest req,
+            ColorRepository colorRepository,
+            MemberRepository memberRepository,
+            MaterialRepository materialRepository,
+            MakerRepository manufactureRepository,
+            ItemMakerRepository itemMakerRepository,
+            ItemMaterialRepository itemMaterialRepository
+    ) {
+        AtomicInteger k = new AtomicInteger();
+
+        //TODO update할 때 사용자가 기존 값 없애고 보낼 수도 있자나 => fix needed
+        //isBlank 랑 isNull로 판단해서 기존 값 / req 값 채워넣기
+        this.name = req.getName();
+        this.type = req.getType();
+        this.width = req.getWidth();
+        this.height = req.getHeight();
+        this.weight = req.getWeight();
+
+        this.color = req.getColorId()==null?null:colorRepository.findById(Long.valueOf(req.getColorId()))
+                .orElseThrow(ColorNotFoundException::new);
+
+        NewItemImageUpdatedResult resultImage =
+                findImageUpdatedResult(
+                        req.getAddedImages(),
+                        req.getDeletedImages()
+                );
+
+        addImages(resultImage.getAddedImages());
+        deleteImages(resultImage.getDeletedImages());
+
+        NewItemAttachmentUpdatedResult resultAttachment =
+
+                findAttachmentUpdatedResult(
+                        req.getAddedAttachments(),
+                        req.getDeletedAttachments()
+                );
+        addUpdatedAttachments(req, resultAttachment.getAddedAttachments());
+
+        deleteAttachments(resultAttachment.getDeletedAttachments());
+
+        Item.FileUpdatedResult fileUpdatedResult = new Item.FileUpdatedResult(resultAttachment,resultImage);
+
+        this.modifier =
+                memberRepository.findById(
+                        req.getModifierId()
+                ).orElseThrow(MemberNotFoundException::new);//05 -22 생성자 추가
+
+
+
+        return fileUpdatedResult;
+    }
+
+
+    @Getter
+    @AllArgsConstructor
+    public static class NewItemFileUpdatedResult {
+        private NewItemAttachmentUpdatedResult attachmentUpdatedResult;
+        private NewItemImageUpdatedResult imageUpdatedResult;
+    }
+
+
 }
