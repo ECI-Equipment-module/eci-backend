@@ -125,6 +125,8 @@ public class NewItemCreateRequest {
     @Null
     private Long memberId;
 
+
+
     public static NewItem toEntity(
             NewItemCreateRequest req,
             Classification1Repository classification1Repository,
