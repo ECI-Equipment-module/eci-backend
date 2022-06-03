@@ -20,7 +20,7 @@ import javax.validation.Valid;
 public class CarTypeController {
     private final CarTypeService carTypeService;
 
-    @GetMapping("/car-type")
+    @GetMapping("/carTypeId")
     @ResponseStatus(HttpStatus.OK)
     public Response readAll(@Valid CarTypeReadCondition cond) {
         return Response.success(

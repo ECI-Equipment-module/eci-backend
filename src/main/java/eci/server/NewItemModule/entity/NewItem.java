@@ -19,8 +19,10 @@ import eci.server.NewItemModule.entity.coating.CoatingType;
 import eci.server.NewItemModule.entity.coating.CoatingWay;
 import eci.server.NewItemModule.entity.maker.NewItemMaker;
 import eci.server.NewItemModule.entity.supplier.Supplier;
+import eci.server.NewItemModule.repository.supplier.SupplierRepository;
 import eci.server.ProjectModule.entity.project.CarType;
 import eci.server.ProjectModule.entity.project.ClientOrganization;
+import eci.server.ProjectModule.repository.clientOrg.ClientOrganizationRepository;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -715,7 +717,8 @@ public class NewItem extends EntityDate {
             NewItemUpdateRequest req,
             ColorRepository colorRepository,
             MemberRepository memberRepository,
-            MaterialRepository materialRepository,
+            ClientOrganizationRepository clientOrganizationRepository,
+            SupplierRepository supplierRepository,
             MakerRepository manufactureRepository,
             ItemMakerRepository itemMakerRepository,
             ItemMaterialRepository itemMaterialRepository
