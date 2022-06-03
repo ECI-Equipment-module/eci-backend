@@ -36,6 +36,7 @@ import eci.server.NewItemModule.dto.newItem.RetrieveNewItemDetailDto;
 import eci.server.NewItemModule.dto.newItem.create.NewItemCreateRequest;
 import eci.server.NewItemModule.dto.newItem.create.NewItemCreateResponse;
 import eci.server.NewItemModule.dto.newItem.create.NewItemTemporaryCreateRequest;
+import eci.server.NewItemModule.dto.newItem.update.NewItemUpdateRequest;
 import eci.server.NewItemModule.entity.NewItem;
 import eci.server.NewItemModule.entity.NewItemAttachment;
 import eci.server.NewItemModule.entity.NewItemImage;
@@ -361,5 +362,47 @@ public class NewItemService {
         return itemProjectCreateDtos;
 
     }
+
+    @Transactional
+    public ItemUpdateResponse update(Long id, NewItemUpdateRequest req) {
+
+        NewItem item = newItemRepository.findById(id).orElseThrow(ItemNotFoundException::new);
+
+        if (!item.isTempsave()) { //true면 임시저장 상태, false면 찐 저장 상태
+            //찐 저장 상태라면 UPDATE 불가, 임시저장 일때만 가능
+            throw new ItemUpdateImpossibleException();
+        }
+
+        NewItem.NewItemFileUpdatedResult result = item.update(
+                req,
+                colorRepository,
+                memberRepository,
+                clientOrganizationRepository,
+                supplierRepository,
+                itemMakerRepository,
+                itemTypesRepository,
+                coatingWayRepository,
+                coatingTypeRepository
+                );
+
+        uploadImages(
+                result.getImageUpdatedResult().getAddedImages(),
+                result.getImageUpdatedResult().getAddedImageFiles()
+        );
+        deleteImages(
+                result.getImageUpdatedResult().getDeletedImages()
+        );
+
+        uploadAttachments(
+                result.getAttachmentUpdatedResult().getAddedAttachments(),
+                result.getAttachmentUpdatedResult().getAddedAttachmentFiles()
+        );
+        deleteAttachments(
+                result.getAttachmentUpdatedResult().getDeletedAttachments()
+        );
+
+        return new ItemUpdateResponse(id);
+    }
+
 
 }
