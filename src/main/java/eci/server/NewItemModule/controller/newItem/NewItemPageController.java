@@ -80,10 +80,15 @@ public class NewItemPageController {
         List<ItemProjectCreateDto> itemListReal =
                 itemService.linkNeededItemsForProjectPage();
 
-        List<String> indexes = new ArrayList<>(); // 인덱스 종류 추가
-        for(Field field : ItemProjectCreateDto.class.getDeclaredFields()){
-            indexes.add(field.getName());
-        }
+        //06-03 item-candidates는 인덱스 예외
+//        List<String> indexes = new ArrayList<>(); // 인덱스 종류 추가
+//        for(Field field : ItemProjectCreateDto.class.getDeclaredFields()){
+//            indexes.add(field.getName());
+//        }
+
+        List<String> indexes = new ArrayList<>();
+        indexes.add("itemNumber");
+        indexes.add("itemName");
 
         Page<ItemProjectCreateDto> itemList = new CustomPageImpl<>(itemListReal, indexes);
 
