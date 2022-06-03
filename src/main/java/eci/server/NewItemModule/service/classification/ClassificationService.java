@@ -37,7 +37,7 @@ public class ClassificationService {
     public List<C1SelectDto> readAllClassification1() {
         return  C1SelectDto.toDtoList(
                 //classification1Repository.findAll(),
-                classification1Repository.findAllByClassification1(),
+                classification1Repository.findAll(),
                 classification2Repository,
                 classification3Repository
         );
