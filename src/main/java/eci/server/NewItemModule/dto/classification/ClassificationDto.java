@@ -13,7 +13,8 @@ import static java.util.stream.Collectors.toList;
 @Data
 @AllArgsConstructor
 public class ClassificationDto {
-    private String name;
+    private String value;
+    private String classification;
 
     public static ClassificationDto toDto(Classification classification) {
 
@@ -24,7 +25,15 @@ public class ClassificationDto {
                         (classification.getClassification3().getId().equals(99999L)?
                                 "":
                         "/" +classification.getClassification3().getName()
+                        ),
+                classification.getClassification1().getId()
+                        +"/"+classification.getClassification2().getId()
+                        +
+                        (classification.getClassification3().getId().equals(99999L)?
+                                "/99999":
+                                "/" +classification.getClassification3().getId()
                         )
+
         );
 
     }
