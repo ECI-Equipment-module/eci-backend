@@ -257,17 +257,21 @@ public class ProjectService {
                                         routeOrderingRepository.findByNewItem(
                                                 project.getNewItem()
                                         ).get(
-                                                routeOrderingRepository.findByNewItem(
+                                                (
+                                                        (routeOrderingRepository.findByNewItem(
                                                         project.getNewItem()
-                                                ).size()-1 //아이템의 라우트 오더링 중에서 최신 아이
+                                                ).size())-1 //아이템의 라우트 오더링 중에서 최신 아이
+                                                )
                                         )
                                 ).get(
+                                (
                                         routeOrderingRepository.findByNewItem(
                                                 project.getNewItem()
                                         ).get(
                                                 routeOrderingRepository.findByNewItem(
                                                         project.getNewItem()
                                                 ).size()-1
+                                        )
                                         ).getPresent() //라우트 오더링 중에서 현재 진행중인 라우트프로덕트
                                 )
                                 .getRoute_name(),
@@ -275,9 +279,11 @@ public class ProjectService {
                         routeOrderingRepository.findByNewItem(
                                 project.getNewItem()
                         ).get(
+                                (
                                 routeOrderingRepository.findByNewItem(
                                         project.getNewItem()
                                 ).size()-1
+                                )
                         ).getLifecycleStatus(),//라우트 오더링 중에서 현재 진행중인 라우트프로덕트
 
                         project.getCreatedAt()
