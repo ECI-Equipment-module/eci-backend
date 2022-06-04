@@ -67,6 +67,7 @@ public class NewItemController {
 
     @CrossOrigin(origins = "https://localhost:3000")
     @GetMapping("/item")
+
     @ResponseStatus(HttpStatus.OK)
     public Response readAll(@Valid NewItemReadCondition cond) {
         return Response.success(

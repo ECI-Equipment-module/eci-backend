@@ -74,7 +74,7 @@ public class RouteOrderingService {
                 itemTypesRepository.findById(id).orElseThrow(ItemTypeRequiredException::new)
                         .getItemType().name()).label();
 
-        List routeProduct = List.of((routePreset.itemRouteName[routeType]));
+        List routeProduct = List.of((routePreset.routeByItemName[routeType]));
 
         for(Object type : routeProduct){
             typeList.add(type.toString());
