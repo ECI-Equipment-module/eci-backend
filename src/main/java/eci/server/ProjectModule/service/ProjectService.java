@@ -252,7 +252,18 @@ public class ProjectService {
 
 
                         //현재 phase의 이름
-
+                        //0604 에러 : complete는 인덱스 길이가 10일 때 present 도 10 (인덱스에러 발생)
+                        //=> 그래서 complete라면 route_name 에 route_item_complete 반환
+                        routeOrderingRepository.findByNewItem(
+                                project.getNewItem()
+                        ).get(
+                                (
+                                        routeOrderingRepository.findByNewItem(
+                                                project.getNewItem()
+                                        ).size()-1
+                                )
+                        ).getLifecycleStatus().equals("COMPLETE")?
+                        "ITEM_COMPLETE" :
                         routeProductRepository.findAllByRouteOrdering(
                                         routeOrderingRepository.findByNewItem(
                                                 project.getNewItem()
