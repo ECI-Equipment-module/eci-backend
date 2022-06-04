@@ -228,7 +228,7 @@ public class NewItemService {
     }
 
     // read one project
-    public RetrieveNewItemDetailDto read(Long id){
+    public NewItemDetailDto read(Long id){
         NewItem targetItem = newItemRepository.findById(id).orElseThrow(ItemNotFoundException::new);
         List<RouteOrderingDto> routeDtoList = Optional.ofNullable(
                 RouteOrderingDto.toDtoList(
@@ -241,9 +241,7 @@ public class NewItemService {
 
         if (routeDtoList.size() > 0) {//아이템에 딸린 routeDto가 존재할 때
 
-            return new RetrieveNewItemDetailDto(
-                    //classificationService.returnAttributesDtoList(targetItem.getClassification()),
-                    NewItemDetailDto.toDto(
+            return NewItemDetailDto.toDto(
                     targetItem,
                     itemMakerRepository,
                     //최신 라우트에 딸린 라우트프로덕트 리스트 중,
@@ -258,16 +256,13 @@ public class NewItemService {
                                     routeDtoList.get(routeDtoList.size() - 1).getPresent()
                             )
                     )
-                    )
+
             );
 
         }
-        return new RetrieveNewItemDetailDto(
-                //classificationService.returnAttributesDtoList(targetItem.getClassification()),
-                NewItemDetailDto.noRoutetoDto(
+        return NewItemDetailDto.noRoutetoDto(
                         targetItem,
                         itemMakerRepository
-                )
                 );
     }
 
