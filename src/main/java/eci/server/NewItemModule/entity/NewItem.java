@@ -2,6 +2,7 @@ package eci.server.NewItemModule.entity;
 
 import eci.server.ItemModule.entity.entitycommon.EntityDate;
 import eci.server.ItemModule.entity.item.*;
+import eci.server.ItemModule.exception.item.AttachmentNotFoundException;
 import eci.server.ItemModule.exception.item.ColorNotFoundException;
 import eci.server.ItemModule.exception.item.ItemNotFoundException;
 import eci.server.ItemModule.exception.member.sign.MemberNotFoundException;
@@ -19,6 +20,7 @@ import eci.server.NewItemModule.entity.maker.NewItemMaker;
 import eci.server.NewItemModule.entity.supplier.Supplier;
 import eci.server.NewItemModule.exception.CoatingNotFoundException;
 import eci.server.NewItemModule.exception.SupplierNotFoundException;
+import eci.server.NewItemModule.repository.attachment.AttachmentTagRepository;
 import eci.server.NewItemModule.repository.coatingType.CoatingTypeRepository;
 import eci.server.NewItemModule.repository.coatingWay.CoatingWayRepository;
 import eci.server.NewItemModule.repository.maker.NewItemMakerRepository;
@@ -364,7 +366,7 @@ public class NewItem extends EntityDate {
 
                                 //다대다 관계를 만드는 구간
                                 r -> new NewItemMaker(
-                                        this, r, partnumbers.get(makers.indexOf(r))
+                                        this, r, partnumbers.get(makers.indexOf(r)).isBlank()?"":partnumbers.get(makers.indexOf(r))
                                 )
                         )
                         .collect(toList());
@@ -516,7 +518,7 @@ public class NewItem extends EntityDate {
 
                                 //다대다 관계를 만드는 구간
                                 r -> new NewItemMaker(
-                                        this, r, partnumbers.get(makers.indexOf(r))
+                                        this, r, partnumbers.get(makers.indexOf(r)).isBlank()?"":partnumbers.get(makers.indexOf(r))
                                 )
                         )
                         .collect(toList());
@@ -559,7 +561,8 @@ public class NewItem extends EntityDate {
         });
     }
 
-    private void addUpdatedAttachments(NewItemUpdateRequest req, List<NewItemAttachment> added) {
+
+    private void addUpdatedAttachments(NewItemUpdateRequest req, List<NewItemAttachment> added, AttachmentTagRepository attachmentTagRepository) {
         SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date now = new Date();
 
@@ -567,7 +570,12 @@ public class NewItem extends EntityDate {
             attachments.add(i);
             i.initNewItem(this);
             i.setAttach_comment(req.getAddedAttachmentComment().get((added.indexOf(i))));
-            i.setTag(req.getAddedTag().get((added.indexOf(i))));
+            System.out.println("ddddddddddd"+attachmentTagRepository
+                    .findById(req.getAddedTag().get(req.getAddedAttachments().indexOf(i))).
+                    orElseThrow(AttachmentNotFoundException::new).getName());
+            i.setTag(attachmentTagRepository
+                    .findById(req.getAddedTag().get(req.getAddedAttachments().indexOf(i))).
+                    orElseThrow(AttachmentNotFoundException::new).getName());
             i.setAttachmentaddress(
                     "src/main/prodmedia/image/" +
                             sdf1.format(now).substring(0,10)
@@ -726,7 +734,8 @@ public class NewItem extends EntityDate {
             NewItemMakerRepository itemMakerRepository,
             ItemTypesRepository itemTypesRepository,
             CoatingWayRepository coatingWayRepository,
-            CoatingTypeRepository coatingTypeRepository
+            CoatingTypeRepository coatingTypeRepository,
+            AttachmentTagRepository attachmentTagRepository
     ) {
         AtomicInteger k = new AtomicInteger();
 
@@ -817,7 +826,7 @@ public class NewItem extends EntityDate {
                         req.getAddedAttachments(),
                         req.getDeletedAttachments()
                 );
-        addUpdatedAttachments(req, resultAttachment.getAddedAttachments());
+        addUpdatedAttachments(req, resultAttachment.getAddedAttachments(), attachmentTagRepository);
 
         deleteAttachments(resultAttachment.getDeletedAttachments());
 

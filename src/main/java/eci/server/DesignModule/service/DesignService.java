@@ -16,6 +16,7 @@ import eci.server.ItemModule.repository.member.MemberRepository;
 import eci.server.ItemModule.repository.newRoute.RouteOrderingRepository;
 import eci.server.ItemModule.repository.newRoute.RouteProductRepository;
 import eci.server.ItemModule.service.file.FileService;
+import eci.server.NewItemModule.repository.attachment.AttachmentTagRepository;
 import eci.server.NewItemModule.repository.item.NewItemRepository;
 import eci.server.ProjectModule.dto.carType.CarTypeDto;
 import eci.server.ProjectModule.dto.project.*;
@@ -54,7 +55,7 @@ public class DesignService {
     private final FileService fileService;
     private final RouteOrderingRepository routeOrderingRepository;
     private final RouteProductRepository routeProductRepository;
-
+    private final AttachmentTagRepository attachmentTagRepository;
     private final DesignRepository designRepository;
 
 //    public ProjectListDto readDashboardAll(ProjectReadCondition cond) {
@@ -77,7 +78,8 @@ public class DesignService {
                 DesignTempCreateRequest.toEntity(
                         req,
                         memberRepository,
-                        itemRepository
+                        itemRepository,
+                        attachmentTagRepository
                 )
         );
         if (!(req.getTag().size() == 0)) {
@@ -95,7 +97,8 @@ public class DesignService {
                 DesignCreateRequest.toEntity(
                         req,
                         memberRepository,
-                        itemRepository
+                        itemRepository,
+                        attachmentTagRepository
                 )
         );
         if (!(req.getTag().size() == 0)) {

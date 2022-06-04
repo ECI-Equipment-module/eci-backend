@@ -4,6 +4,7 @@ import eci.server.ItemModule.dto.item.ItemUpdateRequest;
 
 import eci.server.ItemModule.entity.entitycommon.EntityDate;
 import eci.server.ItemModule.entity.manufacture.ItemMaker;
+import eci.server.ItemModule.exception.item.AttachmentNotFoundException;
 import eci.server.NewItemModule.entity.supplier.Maker;
 import eci.server.ItemModule.entity.material.ItemMaterial;
 import eci.server.ItemModule.entity.material.Material;
@@ -16,6 +17,7 @@ import eci.server.ItemModule.repository.item.ItemMaterialRepository;
 import eci.server.ItemModule.repository.manufacture.MakerRepository;
 import eci.server.ItemModule.repository.material.MaterialRepository;
 import eci.server.ItemModule.repository.member.MemberRepository;
+import eci.server.NewItemModule.repository.attachment.AttachmentTagRepository;
 import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -366,12 +368,15 @@ public class Item extends EntityDate {
     private void addUpdatedAttachments(ItemUpdateRequest req, List<Attachment> added) {
         SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date now = new Date();
+        AttachmentTagRepository attachmentTagRepository = null;
 
         added.stream().forEach(i -> {
             attachments.add(i);
             i.initItem(this);
             i.setAttach_comment(req.getAddedAttachmentComment().get((added.indexOf(i))));
-            i.setTag(req.getAddedTag().get((added.indexOf(i))));
+            i.setTag(attachmentTagRepository
+                    .findById(req.getAddedTag().get(req.getAddedAttachments().indexOf(i))).
+                    orElseThrow(AttachmentNotFoundException::new).getName());
             i.setAttachmentaddress(
                     "src/main/prodmedia/image/" +
                             sdf1.format(now).substring(0,10)

@@ -15,6 +15,7 @@ import eci.server.NewItemModule.entity.NewItemImage;
 import eci.server.NewItemModule.entity.classification.Classification;
 import eci.server.NewItemModule.exception.ClassificationNotFoundException;
 import eci.server.NewItemModule.exception.CoatingNotFoundException;
+import eci.server.NewItemModule.repository.attachment.AttachmentTagRepository;
 import eci.server.NewItemModule.repository.classification.Classification1Repository;
 import eci.server.NewItemModule.repository.classification.Classification2Repository;
 import eci.server.NewItemModule.repository.classification.Classification3Repository;
@@ -132,7 +133,8 @@ public class NewItemTemporaryCreateRequest {
             SupplierRepository supplierRepository,
             MemberRepository memberRepository,
             ColorRepository colorRepository,
-            MakerRepository makerRepository) {
+            MakerRepository makerRepository,
+            AttachmentTagRepository attachmentTagRepository) {
 
         if (req.getTag().size() == 0) {
 

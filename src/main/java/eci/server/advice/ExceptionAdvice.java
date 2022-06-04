@@ -326,7 +326,13 @@ public class ExceptionAdvice {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public Response SupplierNotFoundException(SupplierNotFoundException e) {
         log.info("e = {}", e.getMessage());
-        return Response.failure(400, "유효한 supplier 을 지정해주세요");
+        return Response.failure(400, "유효한 supplier 을 지정해주세요.");
     }
 
+    @ExceptionHandler(AttachmentTagNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Response AttachmentTagNotFoundException(AttachmentTagNotFoundException e) {
+        log.info("e = {}", e.getMessage());
+        return Response.failure(400, "유효한 attachment tag가 아닙니다.");
+    }
 }

@@ -26,7 +26,7 @@ public class DesignUpdateRequest {
      * 추가된 파일을 첨부
      */
     private List<MultipartFile> addedAttachments = new ArrayList<>();
-    private List<String> addedTag = new ArrayList<>();
+    private List<Long> addedTag = new ArrayList<>();
     private List<String> addedAttachmentComment = new ArrayList<>();
 
     /**

@@ -40,6 +40,7 @@ import eci.server.NewItemModule.dto.newItem.update.NewItemUpdateRequest;
 import eci.server.NewItemModule.entity.NewItem;
 import eci.server.NewItemModule.entity.NewItemAttachment;
 import eci.server.NewItemModule.entity.NewItemImage;
+import eci.server.NewItemModule.repository.attachment.AttachmentTagRepository;
 import eci.server.NewItemModule.repository.attachment.NewItemAttachmentRepository;
 import eci.server.NewItemModule.repository.classification.Classification1Repository;
 import eci.server.NewItemModule.repository.classification.Classification2Repository;
@@ -98,6 +99,7 @@ public class NewItemService {
     private final ClassificationService classificationService;
     private final AuthHelper authHelper;
     private final RoutePreset routePreset;
+    private final AttachmentTagRepository attachmentTagRepository;
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -126,7 +128,8 @@ public class NewItemService {
                         supplierRepository,
                         memberRepository,
                         colorRepository,
-                        makerRepository
+                        makerRepository,
+                        attachmentTagRepository
                 )
         );
 
@@ -162,7 +165,8 @@ public class NewItemService {
                         supplierRepository,
                         memberRepository,
                         colorRepository,
-                        makerRepository
+                        makerRepository,
+                        attachmentTagRepository
                 )
 
         );
@@ -377,7 +381,8 @@ public class NewItemService {
                 itemMakerRepository,
                 itemTypesRepository,
                 coatingWayRepository,
-                coatingTypeRepository
+                coatingTypeRepository,
+                attachmentTagRepository
                 );
 
         uploadImages(
