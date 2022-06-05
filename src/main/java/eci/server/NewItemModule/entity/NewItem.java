@@ -566,8 +566,8 @@ public class NewItem extends EntityDate {
         added.stream().forEach(i -> {
             attachments.add(i);
             i.initNewItem(this);
-            i.setAttach_comment(req.getAddedAttachmentComment().get((added.indexOf(i))));
-            i.setTag(req.getAddedTag().get((added.indexOf(i))));
+            i.setAttach_comment(req.getAddedAttachmentComment().get((req.getAddedAttachments().indexOf(i))));
+            i.setTag(req.getAddedTag().get((req.getAddedAttachments().indexOf(i))));
             i.setAttachmentaddress(
                     "src/main/prodmedia/image/" +
                             sdf1.format(now).substring(0,10)
@@ -827,9 +827,14 @@ public class NewItem extends EntityDate {
                         req.getAddedAttachments(),
                         req.getDeletedAttachments()
                 );
-        addUpdatedAttachments(req, resultAttachment.getAddedAttachments());
 
-        deleteAttachments(resultAttachment.getDeletedAttachments());
+        if(req.getAddedTag().size()>0) {
+            addUpdatedAttachments(req, resultAttachment.getAddedAttachments());
+        }
+
+        if(req.getDeletedAttachments().size()>0) {
+            deleteAttachments(resultAttachment.getDeletedAttachments());
+        }
 
         NewItemFileUpdatedResult fileUpdatedResult =
                 new NewItemFileUpdatedResult(resultAttachment,resultImage);
@@ -959,9 +964,14 @@ public class NewItem extends EntityDate {
                         req.getAddedAttachments(),
                         req.getDeletedAttachments()
                 );
-        addUpdatedAttachments(req, resultAttachment.getAddedAttachments());
 
-        deleteAttachments(resultAttachment.getDeletedAttachments());
+        if(req.getAddedTag().size()>0) {
+            addUpdatedAttachments(req, resultAttachment.getAddedAttachments());
+        }
+
+        if(req.getDeletedAttachments().size()>0) {
+            deleteAttachments(resultAttachment.getDeletedAttachments());
+        }
 
         NewItemFileUpdatedResult fileUpdatedResult =
                 new NewItemFileUpdatedResult(resultAttachment,resultImage);
