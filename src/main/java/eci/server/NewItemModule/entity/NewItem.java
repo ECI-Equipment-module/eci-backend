@@ -768,10 +768,7 @@ public class NewItem extends EntityDate {
         this.itemTypes = req.getTypeId()==null?this.itemTypes:
                 itemTypesRepository.findById(req.getTypeId()).orElseThrow(ItemNotFoundException::new);
 
-        this.itemNumber =
-                req.getClassification1Id() + String.valueOf(ItemType.valueOf(
-                        itemTypesRepository.findById(req.getTypeId()).get().getItemType().name()
-                ).label() * 1000000 + (int) (Math.random() * 1000));
+
 
         this.sharing = req.isSharing();
 
@@ -926,6 +923,11 @@ public class NewItem extends EntityDate {
 
         this.itemTypes = req.getTypeId()==null?this.itemTypes:
                 itemTypesRepository.findById(req.getTypeId()).orElseThrow(ItemNotFoundException::new);
+
+        this.itemNumber =
+                req.getClassification1Id() + String.valueOf(ItemType.valueOf(
+                        itemTypesRepository.findById(req.getTypeId()).get().getItemType().name()
+                ).label() * 1000000 + (int) (Math.random() * 1000));
 
         this.sharing = req.isSharing();
 
