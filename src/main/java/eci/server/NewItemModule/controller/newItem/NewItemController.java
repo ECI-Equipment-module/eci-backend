@@ -1,9 +1,7 @@
 package eci.server.NewItemModule.controller.newItem;
 
-import eci.server.NewItemModule.dto.item.ItemUpdateRequest;
 import eci.server.NewItemModule.dto.newItem.NewItemReadCondition;
 import eci.server.NewItemModule.dto.newItem.create.NewItemCreateRequest;
-import eci.server.NewItemModule.dto.newItem.create.NewItemTemporaryContinueRequest;
 import eci.server.NewItemModule.dto.newItem.create.NewItemTemporaryCreateRequest;
 import eci.server.NewItemModule.dto.newItem.update.NewItemUpdateRequest;
 import eci.server.NewItemModule.service.item.NewItemService;

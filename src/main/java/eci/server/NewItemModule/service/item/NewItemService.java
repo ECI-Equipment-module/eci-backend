@@ -234,20 +234,20 @@ public class NewItemService {
             return new RetrieveNewItemDetailDto(
                     //classificationService.returnAttributesDtoList(targetItem.getClassification()),
                     NewItemDetailDto.toDto(
-                    targetItem,
-                    itemMakerRepository,
-                    //최신 라우트에 딸린 라우트프로덕트 리스트 중,
-                    // 라우트의 present 인덱스에 해당하는 타입을 데리고 오기
-                    routeDtoList.get(routeDtoList.size() - 1),
-                    RouteProductDto.toDto(
-                            routeProductRepository.findAllByRouteOrdering(
-                                    routeOrderingRepository.findById(
-                                            routeDtoList.get(routeDtoList.size() - 1).getId()
-                                    ).orElseThrow(RouteNotFoundException::new)
-                            ).get(
-                                    routeDtoList.get(routeDtoList.size() - 1).getPresent()
+                            targetItem,
+                            itemMakerRepository,
+                            //최신 라우트에 딸린 라우트프로덕트 리스트 중,
+                            // 라우트의 present 인덱스에 해당하는 타입을 데리고 오기
+                            routeDtoList.get(routeDtoList.size() - 1),
+                            RouteProductDto.toDto(
+                                    routeProductRepository.findAllByRouteOrdering(
+                                            routeOrderingRepository.findById(
+                                                    routeDtoList.get(routeDtoList.size() - 1).getId()
+                                            ).orElseThrow(RouteNotFoundException::new)
+                                    ).get(
+                                            routeDtoList.get(routeDtoList.size() - 1).getPresent()
+                                    )
                             )
-                    )
                     )
             );
 
@@ -258,7 +258,7 @@ public class NewItemService {
                         targetItem,
                         itemMakerRepository
                 )
-                );
+        );
     }
 
 
@@ -290,7 +290,7 @@ public class NewItemService {
                 );
     }
 
-        public List<ItemProjectCreateDto> linkNeededItemsForProjectPage() {
+    public List<ItemProjectCreateDto> linkNeededItemsForProjectPage() {
 
         //0) 현재 로그인 된 유저
         Member member1 = memberRepository.findById(authHelper.extractMemberId()).orElseThrow(
@@ -373,7 +373,7 @@ public class NewItemService {
                 itemTypesRepository,
                 coatingWayRepository,
                 coatingTypeRepository
-                );
+        );
 
         uploadImages(
                 result.getImageUpdatedResult().getAddedImages(),

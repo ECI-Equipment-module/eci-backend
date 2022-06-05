@@ -73,19 +73,19 @@ public class DashboardController {
     }
 
 
-//    /**
-//     * item to-do api
-//     *
-//     * @return 200 (success)
-//     */
-//    @CrossOrigin(origins = "https://localhost:3000")
-//    @GetMapping("/dashboard/item/to-do")
-//    @ResponseStatus(HttpStatus.OK)
-//    public Response itemTodo() {
-//        return Response.success(
-//                dashboardService.readItemTodo()
-//        );
-//    }
+    /**
+     * item to-do api
+     *
+     * @return 200 (success)
+     */
+    @CrossOrigin(origins = "https://localhost:3000")
+    @GetMapping("/dashboard/item/todo")
+    @ResponseStatus(HttpStatus.OK)
+    public Response itemTodo() {
+        return Response.success(
+                dashboardService.readItemTodo()
+        );
+    }
 
 //    /**
 //     * BOM to-do api
@@ -93,7 +93,7 @@ public class DashboardController {
 //     * @return 200 (success)
 //     */
 //    @CrossOrigin(origins = "https://localhost:3000")
-//    @GetMapping("/dashboard/bom/todo")
+//    @GetMapping("/dashboard/bom/to-do")
 //    @ResponseStatus(HttpStatus.OK)
 //    public Response bomTodo() {
 //        return Response.success(
