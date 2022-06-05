@@ -25,7 +25,9 @@ import eci.server.NewItemModule.repository.maker.NewItemMakerRepository;
 import eci.server.NewItemModule.repository.supplier.SupplierRepository;
 import eci.server.ProjectModule.entity.project.CarType;
 import eci.server.ProjectModule.entity.project.ClientOrganization;
+import eci.server.ProjectModule.exception.CarTypeNotFoundException;
 import eci.server.ProjectModule.exception.ClientOrganizationNotFoundException;
+import eci.server.ProjectModule.repository.carType.CarTypeRepository;
 import eci.server.ProjectModule.repository.clientOrg.ClientOrganizationRepository;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -736,7 +738,8 @@ public class NewItem extends EntityDate {
             NewItemMakerRepository itemMakerRepository,
             ItemTypesRepository itemTypesRepository,
             CoatingWayRepository coatingWayRepository,
-            CoatingTypeRepository coatingTypeRepository
+            CoatingTypeRepository coatingTypeRepository,
+            CarTypeRepository carTypeRepository
     ) {
         AtomicInteger k = new AtomicInteger();
 
@@ -748,6 +751,21 @@ public class NewItem extends EntityDate {
                 itemTypesRepository.findById(req.getTypeId()).orElseThrow(ItemNotFoundException::new);
 
         this.sharing = req.isSharing();
+
+        this.carType =
+                this.carType =                 //전용일 때야 차종 생성
+                        (!req.isSharing())?
+                                //1. 전용이라면
+                                req.getCarTypeId()==null?
+                                        //1-1 : 아이디 없으면 (무조건 에러 튕기도록
+                                        carTypeRepository.findById(0L).orElseThrow(CarTypeNotFoundException::new):
+                                        //null 아니면 입력받은 것
+                                        carTypeRepository.findById(req.getCarTypeId()).orElseThrow(CarTypeNotFoundException::new)
+
+                                :
+                                //2. 공용이라면
+                                carTypeRepository.findById(99999L).orElseThrow(CarTypeNotFoundException::new);
+
 
         this.integrate = req.getIntegrate().isBlank()?this.integrate:req.getIntegrate();
 
@@ -857,7 +875,8 @@ public class NewItem extends EntityDate {
             NewItemMakerRepository itemMakerRepository,
             ItemTypesRepository itemTypesRepository,
             CoatingWayRepository coatingWayRepository,
-            CoatingTypeRepository coatingTypeRepository
+            CoatingTypeRepository coatingTypeRepository,
+            CarTypeRepository carTypeRepository
     ) {
 
         if(req.getClassification1Id()==null || req.getClassification2Id() ==null || req.getClassification3Id()==null){
@@ -886,7 +905,21 @@ public class NewItem extends EntityDate {
 
         this.sharing = req.isSharing();
 
-        this.integrate = req.getIntegrate().isBlank()?this.integrate:req.getIntegrate();
+        this.carType =                 //전용일 때야 차종 생성
+                (!req.isSharing())?
+                        //1. 전용이라면
+                        req.getCarTypeId()==null?
+                                //1-1 : 아이디 없으면 (무조건 에러 튕기도록
+                                carTypeRepository.findById(0L).orElseThrow(CarTypeNotFoundException::new):
+                                //null 아니면 입력받은 것
+                                carTypeRepository.findById(req.getCarTypeId()).orElseThrow(CarTypeNotFoundException::new)
+
+                        :
+                        //2. 공용이라면
+                        carTypeRepository.findById(99999L).orElseThrow(CarTypeNotFoundException::new);
+
+
+                this.integrate = req.getIntegrate().isBlank()?this.integrate:req.getIntegrate();
 
         this.curve = req.getCurve().isBlank()?this.curve:req.getCurve();
 

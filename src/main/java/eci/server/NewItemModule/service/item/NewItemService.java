@@ -367,7 +367,8 @@ public class NewItemService {
                 itemMakerRepository,
                 itemTypesRepository,
                 coatingWayRepository,
-                coatingTypeRepository
+                coatingTypeRepository,
+                carTypeRepository
         );
 
         uploadImages(
@@ -410,7 +411,8 @@ public class NewItemService {
                 itemMakerRepository,
                 itemTypesRepository,
                 coatingWayRepository,
-                coatingTypeRepository
+                coatingTypeRepository,
+                carTypeRepository
         );
 
         uploadImages(

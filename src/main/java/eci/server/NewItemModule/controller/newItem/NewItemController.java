@@ -48,7 +48,7 @@ public class NewItemController {
     @CrossOrigin(origins = "https://localhost:3000")
     @PutMapping("/item/temp/end/{id}")
     @ResponseStatus(HttpStatus.CREATED)
-    @AssignMemberId // Aspect : 인증된 사용자 정보로 아이템 작성자 지정 가능
+    @AssignModifierId //0605 : 수정 시에는 글쓴이 아디 주입 아니고, 수정자 아이디 주입
     public Response tempEnd(
             @PathVariable Long id,
             @Valid @ModelAttribute

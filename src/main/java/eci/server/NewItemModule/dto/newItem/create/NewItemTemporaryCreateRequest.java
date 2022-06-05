@@ -289,13 +289,13 @@ public class NewItemTemporaryCreateRequest {
                 (!req.isSharing())?
                         //1. 전용이라면
                         req.getCarTypeId()==null?
-                                //1-1 : 아이디 없으면 (아이디 0은 없음) 무조건 에러 튕기도록
+                                //1-1 : 아이디 없으면 (무조건 에러 튕기도록
                                 carTypeRepository.findById(0L).orElseThrow(CarTypeNotFoundException::new):
-                                //null 아니면 입력받은 것으로 차종 입력
+                                //null 아니면 입력받은 것
                         carTypeRepository.findById(req.carTypeId).orElseThrow(CarTypeNotFoundException::new)
 
                         :
-                        //2. 공용이라면 없음 처리
+                        //2. 공용이라면
                         carTypeRepository.findById(99999L).orElseThrow(CarTypeNotFoundException::new),
 
 
