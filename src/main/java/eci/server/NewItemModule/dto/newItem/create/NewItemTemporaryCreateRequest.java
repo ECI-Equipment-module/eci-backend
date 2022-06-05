@@ -276,9 +276,8 @@ public class NewItemTemporaryCreateRequest {
                         :
                         itemTypesRepository.findById(req.getTypeId()).orElseThrow(ItemNotFoundException::new),
 
-                req.classification1Id + String.valueOf(ItemType.valueOf(
-                        itemTypesRepository.findById(req.typeId).get().getItemType().name()
-                ).label() * 1000000 + (int) (Math.random() * 1000)),
+
+                "made when saved",
 
                 req.thumbnail.stream().map(
                         i -> new NewItemImage(
