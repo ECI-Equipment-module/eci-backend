@@ -218,7 +218,7 @@ public class NewItemService {
     }
 
     // read one project
-    public RetrieveNewItemDetailDto read(Long id){
+    public NewItemDetailDto read(Long id){
         NewItem targetItem = newItemRepository.findById(id).orElseThrow(ItemNotFoundException::new);
         List<RouteOrderingDto> routeDtoList = Optional.ofNullable(
                 RouteOrderingDto.toDtoList(
@@ -231,33 +231,28 @@ public class NewItemService {
 
         if (routeDtoList.size() > 0) {//아이템에 딸린 routeDto가 존재할 때
 
-            return new RetrieveNewItemDetailDto(
-                    //classificationService.returnAttributesDtoList(targetItem.getClassification()),
-                    NewItemDetailDto.toDto(
-                            targetItem,
-                            itemMakerRepository,
-                            //최신 라우트에 딸린 라우트프로덕트 리스트 중,
-                            // 라우트의 present 인덱스에 해당하는 타입을 데리고 오기
-                            routeDtoList.get(routeDtoList.size() - 1),
-                            RouteProductDto.toDto(
-                                    routeProductRepository.findAllByRouteOrdering(
-                                            routeOrderingRepository.findById(
-                                                    routeDtoList.get(routeDtoList.size() - 1).getId()
-                                            ).orElseThrow(RouteNotFoundException::new)
-                                    ).get(
-                                            routeDtoList.get(routeDtoList.size() - 1).getPresent()
-                                    )
+            return NewItemDetailDto.toDto(
+                    targetItem,
+                    itemMakerRepository,
+                    //최신 라우트에 딸린 라우트프로덕트 리스트 중,
+                    // 라우트의 present 인덱스에 해당하는 타입을 데리고 오기
+                    routeDtoList.get(routeDtoList.size() - 1),
+                    RouteProductDto.toDto(
+                            routeProductRepository.findAllByRouteOrdering(
+                                    routeOrderingRepository.findById(
+                                            routeDtoList.get(routeDtoList.size() - 1).getId()
+                                    ).orElseThrow(RouteNotFoundException::new)
+                            ).get(
+                                    routeDtoList.get(routeDtoList.size() - 1).getPresent()
                             )
                     )
+
             );
 
         }
-        return new RetrieveNewItemDetailDto(
-                //classificationService.returnAttributesDtoList(targetItem.getClassification()),
-                NewItemDetailDto.noRoutetoDto(
-                        targetItem,
-                        itemMakerRepository
-                )
+        return NewItemDetailDto.noRoutetoDto(
+                targetItem,
+                itemMakerRepository
         );
     }
 
