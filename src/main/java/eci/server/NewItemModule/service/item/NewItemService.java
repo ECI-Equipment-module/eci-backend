@@ -1,22 +1,15 @@
 package eci.server.NewItemModule.service.item;
 
-import eci.server.DashBoardModule.dto.itemTodo.ItemTodoResponse;
-import eci.server.DashBoardModule.dto.itemTodo.ItemTodoResponseList;
-import eci.server.ItemModule.dto.color.ColorListDto;
-import eci.server.ItemModule.dto.color.ColorReadCondition;
 import eci.server.ItemModule.dto.item.*;
 import eci.server.ItemModule.dto.manufacture.ReadPartNumberService;
 import eci.server.ItemModule.dto.newRoute.routeOrdering.RouteOrderingDto;
 import eci.server.ItemModule.dto.newRoute.routeProduct.RouteProductDto;
-import eci.server.ItemModule.entity.item.Attachment;
-import eci.server.ItemModule.entity.item.Image;
-import eci.server.ItemModule.entity.item.Item;
+
 import eci.server.ItemModule.entity.member.Member;
 import eci.server.ItemModule.entity.newRoute.RouteOrdering;
 import eci.server.ItemModule.entity.newRoute.RoutePreset;
 import eci.server.ItemModule.entity.newRoute.RouteProduct;
 import eci.server.ItemModule.entity.newRoute.RouteProductMember;
-import eci.server.ItemModule.exception.item.AttachmentNotFoundException;
 import eci.server.ItemModule.exception.item.ItemNotFoundException;
 import eci.server.ItemModule.exception.item.ItemUpdateImpossibleException;
 import eci.server.ItemModule.exception.member.auth.AuthenticationEntryPointException;
@@ -50,9 +43,6 @@ import eci.server.NewItemModule.repository.item.NewItemRepository;
 import eci.server.NewItemModule.repository.maker.NewItemMakerRepository;
 import eci.server.NewItemModule.repository.supplier.SupplierRepository;
 import eci.server.NewItemModule.service.classification.ClassificationService;
-import eci.server.ProjectModule.dto.project.ProjectDto;
-import eci.server.ProjectModule.entity.project.Project;
-import eci.server.ProjectModule.exception.ProjectNotFoundException;
 import eci.server.ProjectModule.repository.carType.CarTypeRepository;
 import eci.server.ProjectModule.repository.clientOrg.ClientOrganizationRepository;
 import eci.server.ProjectModule.repository.project.ProjectRepository;
@@ -63,7 +53,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -87,7 +76,6 @@ public class NewItemService {
     private final ColorRepository colorRepository;
     private final MakerRepository makerRepository;
     private final NewItemRepository newItemRepository;
-    private final NewItemAttachmentRepository newItemAttachmentRepository;
     private final RouteOrderingRepository routeOrderingRepository;
     private final RouteProductRepository routeProductRepository;
     private final NewItemMakerRepository itemMakerRepository;
@@ -136,6 +124,8 @@ public class NewItemService {
 
         return new NewItemCreateResponse(item.getId());
     }
+
+
 
 
     /**
@@ -403,6 +393,51 @@ public class NewItemService {
 
         return new ItemUpdateResponse(id);
     }
+
+    @Transactional
+    public NewItemCreateResponse tempEnd(Long id, NewItemUpdateRequest req) {
+
+        NewItem item = newItemRepository.findById(id).orElseThrow(ItemNotFoundException::new);
+
+        if (!item.isTempsave() || item.isReadonly()) {
+            //tempsave가 false면 찐 저장 상태
+            //찐 저장 상태라면 UPDATE 불가, 임시저장 일때만 가능
+            //readonly가 true라면 수정 불가상태
+            throw new ItemUpdateImpossibleException();
+        }
+
+        NewItem.NewItemFileUpdatedResult result = item.tempEnd(
+                req,
+                colorRepository,
+                memberRepository,
+                clientOrganizationRepository,
+                supplierRepository,
+                itemMakerRepository,
+                itemTypesRepository,
+                coatingWayRepository,
+                coatingTypeRepository
+        );
+
+        uploadImages(
+                result.getImageUpdatedResult().getAddedImages(),
+                result.getImageUpdatedResult().getAddedImageFiles()
+        );
+        deleteImages(
+                result.getImageUpdatedResult().getDeletedImages()
+        );
+
+        uploadAttachments(
+                result.getAttachmentUpdatedResult().getAddedAttachments(),
+                result.getAttachmentUpdatedResult().getAddedAttachmentFiles()
+        );
+        deleteAttachments(
+                result.getAttachmentUpdatedResult().getDeletedAttachments()
+        );
+
+        return new NewItemCreateResponse(id);
+
+    }
+
 
 
 }

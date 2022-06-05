@@ -1,5 +1,4 @@
-
-package eci.server.NewItemModule.dto.newItem.update;
+package eci.server.NewItemModule.dto.newItem.create;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,10 +8,11 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.validation.constraints.Null;
 import java.util.ArrayList;
 import java.util.List;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class NewItemUpdateRequest {
+public class NewItemTemporaryContinueRequest {
 
     private Long classification1Id;
 
@@ -76,10 +76,6 @@ public class NewItemUpdateRequest {
     @Null
     private Long modifierId;
 
-
-    private List<MultipartFile> thumbnail = new ArrayList<>();
-
-
     /**
      * 추가된 이미지를 첨부
      */
@@ -109,5 +105,6 @@ public class NewItemUpdateRequest {
 
     @Null
     private Long memberId;
+
 }
 

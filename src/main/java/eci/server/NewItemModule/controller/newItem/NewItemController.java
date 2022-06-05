@@ -3,6 +3,7 @@ package eci.server.NewItemModule.controller.newItem;
 import eci.server.NewItemModule.dto.item.ItemUpdateRequest;
 import eci.server.NewItemModule.dto.newItem.NewItemReadCondition;
 import eci.server.NewItemModule.dto.newItem.create.NewItemCreateRequest;
+import eci.server.NewItemModule.dto.newItem.create.NewItemTemporaryContinueRequest;
 import eci.server.NewItemModule.dto.newItem.create.NewItemTemporaryCreateRequest;
 import eci.server.NewItemModule.dto.newItem.update.NewItemUpdateRequest;
 import eci.server.NewItemModule.service.item.NewItemService;
@@ -26,7 +27,7 @@ public class NewItemController {
     private final NewItemService newItemService;
 
     /**
-     * 아이템 임시저장
+     * 아이템 임시저장 생성
      *
      * @param req
      * @return 200 (success)
@@ -42,6 +43,22 @@ public class NewItemController {
 
         return Response.success(
                 newItemService.tempCreate(req));
+    }
+
+
+    //06-05 임시저장 the end 컨트롤러 (임시저장 된 것을 찐 저장 시)
+    @CrossOrigin(origins = "https://localhost:3000")
+    @PutMapping("/item/temp/end/{id")
+    @ResponseStatus(HttpStatus.CREATED)
+    @AssignMemberId // Aspect : 인증된 사용자 정보로 아이템 작성자 지정 가능
+    public Response tempEnd(
+            @PathVariable Long id,
+            @Valid @ModelAttribute
+                    NewItemUpdateRequest req
+    ) {
+
+        return Response.success(
+                newItemService.tempEnd(id, req));
     }
 
     /**
@@ -128,47 +145,5 @@ public class NewItemController {
         return Response.success(newItemService.update(id, req));
     }
 
-    /**
-     * 아이템 전부 읽어오기긴 한데 페이징 needed
-     * @param cond
-     * @return
-     */
-//
-//    @CrossOrigin(origins = "https://localhost:3000")
-//    @GetMapping("/items")
-//    @ResponseStatus(HttpStatus.OK)
-//    public Response readAll(@Valid ItemReadCondition cond) {
-//        return Response.success(itemService.readAll(cond));
-//    }
-
-    /**
-     * 특정 사진 조회
-     *
-     * @return 200 (success)
-     */
-
-//    @CrossOrigin(origins = "https://localhost:3000")
-//    @GetMapping(value=  "/images/{id}", produces= MediaType.IMAGE_PNG_VALUE)
-//    @ResponseStatus(HttpStatus.OK)
-//    public byte[] img(
-//            @PathVariable Long id) {
-//        {
-//            byte[] image = itemService.readImg(id);
-//            return image;
-//
-//        }
-//    }
-
-
-//    @CrossOrigin(origins = "https://localhost:3000")
-//    @GetMapping("/item-candidates"xxxx)
-//    @ResponseStatus(HttpStatus.OK)
-//    public Response linkNeededItemForProject(
-//            @Valid ItemProjectCreateReadCondition cond
-//    ) {
-//        return Response.success(
-//                itemService.readItemCandidatesAll(cond)
-//        );
-//    }
 
 }
