@@ -46,7 +46,7 @@ public class NewItemController {
 
     //06-05 임시저장 the end 컨트롤러 (임시저장 된 것을 찐 저장 시)
     @CrossOrigin(origins = "https://localhost:3000")
-    @PutMapping("/item/temp/end/{id")
+    @PutMapping("/item/temp/end/{id}")
     @ResponseStatus(HttpStatus.CREATED)
     @AssignMemberId // Aspect : 인증된 사용자 정보로 아이템 작성자 지정 가능
     public Response tempEnd(
