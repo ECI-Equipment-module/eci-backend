@@ -252,22 +252,37 @@ public class ProjectService {
 
 
                         //현재 phase의 이름
-
+                        //0604 에러 : complete는 인덱스 길이가 10일 때 present 도 10 (인덱스에러 발생)
+                        //=> 그래서 complete라면 route_name 에 route_item_complete 반환
+                        routeOrderingRepository.findByNewItem(
+                                project.getNewItem()
+                        ).get(
+                                (
+                                        routeOrderingRepository.findByNewItem(
+                                                project.getNewItem()
+                                        ).size()-1
+                                )
+                        ).getLifecycleStatus().equals("COMPLETE")?
+                        "ITEM_COMPLETE" :
                         routeProductRepository.findAllByRouteOrdering(
                                         routeOrderingRepository.findByNewItem(
                                                 project.getNewItem()
                                         ).get(
-                                                routeOrderingRepository.findByNewItem(
+                                                (
+                                                        (routeOrderingRepository.findByNewItem(
                                                         project.getNewItem()
-                                                ).size()-1 //아이템의 라우트 오더링 중에서 최신 아이
+                                                ).size())-1 //아이템의 라우트 오더링 중에서 최신 아이
+                                                )
                                         )
                                 ).get(
+                                (
                                         routeOrderingRepository.findByNewItem(
                                                 project.getNewItem()
                                         ).get(
                                                 routeOrderingRepository.findByNewItem(
                                                         project.getNewItem()
                                                 ).size()-1
+                                        )
                                         ).getPresent() //라우트 오더링 중에서 현재 진행중인 라우트프로덕트
                                 )
                                 .getRoute_name(),
@@ -275,9 +290,11 @@ public class ProjectService {
                         routeOrderingRepository.findByNewItem(
                                 project.getNewItem()
                         ).get(
+                                (
                                 routeOrderingRepository.findByNewItem(
                                         project.getNewItem()
                                 ).size()-1
+                                )
                         ).getLifecycleStatus(),//라우트 오더링 중에서 현재 진행중인 라우트프로덕트
 
                         project.getCreatedAt()
