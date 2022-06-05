@@ -7,10 +7,11 @@ import eci.server.ItemModule.exception.item.ColorNotFoundException;
 import eci.server.ItemModule.exception.item.ItemNotFoundException;
 import eci.server.ItemModule.exception.member.sign.MemberNotFoundException;
 import eci.server.ItemModule.repository.color.ColorRepository;
-import eci.server.ItemModule.repository.item.ItemMakerRepository;
 import eci.server.ItemModule.repository.item.ItemTypesRepository;
 import eci.server.ItemModule.repository.member.MemberRepository;
+import eci.server.NewItemModule.dto.newItem.create.NewItemTemporaryContinueRequest;
 import eci.server.NewItemModule.dto.newItem.update.NewItemUpdateRequest;
+import eci.server.NewItemModule.entity.attachment.AttachmentTag;
 import eci.server.NewItemModule.entity.supplier.Maker;
 import eci.server.ItemModule.entity.member.Member;
 import eci.server.NewItemModule.entity.classification.Classification;
@@ -21,13 +22,16 @@ import eci.server.NewItemModule.entity.supplier.Supplier;
 import eci.server.NewItemModule.exception.CoatingNotFoundException;
 import eci.server.NewItemModule.exception.SupplierNotFoundException;
 import eci.server.NewItemModule.repository.attachment.AttachmentTagRepository;
+import eci.server.NewItemModule.exception.*;
 import eci.server.NewItemModule.repository.coatingType.CoatingTypeRepository;
 import eci.server.NewItemModule.repository.coatingWay.CoatingWayRepository;
 import eci.server.NewItemModule.repository.maker.NewItemMakerRepository;
 import eci.server.NewItemModule.repository.supplier.SupplierRepository;
 import eci.server.ProjectModule.entity.project.CarType;
 import eci.server.ProjectModule.entity.project.ClientOrganization;
+import eci.server.ProjectModule.exception.CarTypeNotFoundException;
 import eci.server.ProjectModule.exception.ClientOrganizationNotFoundException;
+import eci.server.ProjectModule.repository.carType.CarTypeRepository;
 import eci.server.ProjectModule.repository.clientOrg.ClientOrganizationRepository;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -562,13 +566,16 @@ public class NewItem extends EntityDate {
     }
 
 
-    private void addUpdatedAttachments(NewItemUpdateRequest req, List<NewItemAttachment> added, AttachmentTagRepository attachmentTagRepository) {
+    private void addUpdatedAttachments
+            (NewItemUpdateRequest req, List<NewItemAttachment> added,
+             AttachmentTagRepository attachmentTagRepository) {
         SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date now = new Date();
 
         added.stream().forEach(i -> {
             attachments.add(i);
             i.initNewItem(this);
+
             i.setAttach_comment(req.getAddedAttachmentComment().get((added.indexOf(i))));
             System.out.println("ddddddddddd"+attachmentTagRepository
                     .findById(req.getAddedTag().get(req.getAddedAttachments().indexOf(i))).
@@ -576,6 +583,10 @@ public class NewItem extends EntityDate {
             i.setTag(attachmentTagRepository
                     .findById(req.getAddedTag().get(req.getAddedAttachments().indexOf(i))).
                     orElseThrow(AttachmentNotFoundException::new).getName());
+
+//            i.setAttach_comment(req.getAddedAttachmentComment().get((req.getAddedAttachments().indexOf(i))));
+//            i.setTag(req.getAddedTag().get((req.getAddedAttachments().indexOf(i))));
+
             i.setAttachmentaddress(
                     "src/main/prodmedia/image/" +
                             sdf1.format(now).substring(0,10)
@@ -719,6 +730,16 @@ public class NewItem extends EntityDate {
         this.readonly = true;
     }
 
+
+
+    @Getter
+    @AllArgsConstructor
+    public static class NewItemFileUpdatedResult {
+        private NewItemAttachmentUpdatedResult attachmentUpdatedResult;
+        private NewItemImageUpdatedResult imageUpdatedResult;
+    }
+
+
     /**
      * postupdaterequest 받아서 update 수행
      *
@@ -735,6 +756,7 @@ public class NewItem extends EntityDate {
             ItemTypesRepository itemTypesRepository,
             CoatingWayRepository coatingWayRepository,
             CoatingTypeRepository coatingTypeRepository,
+            CarTypeRepository carTypeRepository,
             AttachmentTagRepository attachmentTagRepository
     ) {
         AtomicInteger k = new AtomicInteger();
@@ -747,6 +769,21 @@ public class NewItem extends EntityDate {
                 itemTypesRepository.findById(req.getTypeId()).orElseThrow(ItemNotFoundException::new);
 
         this.sharing = req.isSharing();
+
+        this.carType =
+                this.carType =                 //전용일 때야 차종 생성
+                        (!req.isSharing())?
+                                //1. 전용이라면
+                                req.getCarTypeId()==null?
+                                        //1-1 : 아이디 없으면 (무조건 에러 튕기도록
+                                        carTypeRepository.findById(0L).orElseThrow(CarTypeNotFoundException::new):
+                                        //null 아니면 입력받은 것
+                                        carTypeRepository.findById(req.getCarTypeId()).orElseThrow(CarTypeNotFoundException::new)
+
+                                :
+                                //2. 공용이라면
+                                carTypeRepository.findById(99999L).orElseThrow(CarTypeNotFoundException::new);
+
 
         this.integrate = req.getIntegrate().isBlank()?this.integrate:req.getIntegrate();
 
@@ -762,7 +799,7 @@ public class NewItem extends EntityDate {
 
         this.importance = req.getImportance().isBlank()?this.importance:req.getImportance();
 
-        this.color = req.getColorId()==null?this.color:colorRepository.findById(Long.valueOf(req.getColorId()))
+        this.color = req.getColorId()==null?this.color:colorRepository.findById(req.getColorId())
                 .orElseThrow(ColorNotFoundException::new);
 
         this.loadQuantity = req.getLoadQuantity().isBlank()?this.loadQuantity:req.getLoadQuantity();
@@ -826,9 +863,14 @@ public class NewItem extends EntityDate {
                         req.getAddedAttachments(),
                         req.getDeletedAttachments()
                 );
-        addUpdatedAttachments(req, resultAttachment.getAddedAttachments(), attachmentTagRepository);
 
-        deleteAttachments(resultAttachment.getDeletedAttachments());
+        if(req.getAddedTag().size()>0) {
+            addUpdatedAttachments(req, resultAttachment.getAddedAttachments(),attachmentTagRepository);
+        }
+
+        if(req.getDeletedAttachments().size()>0) {
+            deleteAttachments(resultAttachment.getDeletedAttachments());
+        }
 
         NewItemFileUpdatedResult fileUpdatedResult =
                 new NewItemFileUpdatedResult(resultAttachment,resultImage);
@@ -842,12 +884,156 @@ public class NewItem extends EntityDate {
     }
 
 
-    @Getter
-    @AllArgsConstructor
-    public static class NewItemFileUpdatedResult {
-        private NewItemAttachmentUpdatedResult attachmentUpdatedResult;
-        private NewItemImageUpdatedResult imageUpdatedResult;
-    }
+    public NewItemFileUpdatedResult tempEnd(
+            NewItemUpdateRequest req,
+            ColorRepository colorRepository,
+            MemberRepository memberRepository,
+            ClientOrganizationRepository clientOrganizationRepository,
+            SupplierRepository supplierRepository,
+            NewItemMakerRepository itemMakerRepository,
+            ItemTypesRepository itemTypesRepository,
+            CoatingWayRepository coatingWayRepository,
+            CoatingTypeRepository coatingTypeRepository,
+            CarTypeRepository carTypeRepository,
+            AttachmentTagRepository attachmentTagRepository
+    ) {
 
+        if(req.getClassification1Id()==null || req.getClassification2Id() ==null || req.getClassification3Id()==null){
+            throw new ClassificationRequiredException();
+        }
+        if(req.getClassification1Id()==99999L || req.getClassification2Id() == 99999L || req.getClassification3Id()== 99999L){
+            throw new ProperClassificationRequiredException();
+        }
+        //아이템 타입 체크
+        if(req.getTypeId()==null){
+            throw new ItemTypeRequiredException();
+        }
+
+        //아이템 이름 체크
+        if(req.getName().isBlank()){
+            throw new ItemNameRequiredException();
+        }
+        AtomicInteger k = new AtomicInteger();
+
+        //TODO update할 때 사용자가 기존 값 없애고 보낼 수도 있자나 => fix needed
+        //isBlank 랑 isNull로 판단해서 기존 값 / req 값 채워넣기
+        this.name = req.getName().isBlank()?this.name:req.getName();
+
+        this.itemTypes = req.getTypeId()==null?this.itemTypes:
+                itemTypesRepository.findById(req.getTypeId()).orElseThrow(ItemNotFoundException::new);
+
+        this.sharing = req.isSharing();
+
+        this.carType =                 //전용일 때야 차종 생성
+                (!req.isSharing())?
+                        //1. 전용이라면
+                        req.getCarTypeId()==null?
+                                //1-1 : 아이디 없으면 (무조건 에러 튕기도록
+                                carTypeRepository.findById(0L).orElseThrow(CarTypeNotFoundException::new):
+                                //null 아니면 입력받은 것
+                                carTypeRepository.findById(req.getCarTypeId()).orElseThrow(CarTypeNotFoundException::new)
+
+                        :
+                        //2. 공용이라면
+                        carTypeRepository.findById(99999L).orElseThrow(CarTypeNotFoundException::new);
+
+
+                this.integrate = req.getIntegrate().isBlank()?this.integrate:req.getIntegrate();
+
+        this.curve = req.getCurve().isBlank()?this.curve:req.getCurve();
+
+        this.width = req.getWidth().isBlank()?this.width:req.getWidth();
+
+        this.height= req.getHeight().isBlank()?this.height:req.getHeight();
+
+        this.thickness = req.getThickness().isBlank()?this.thickness:req.getThickness();
+
+        this.weight = req.getWeight().isBlank()?this.weight:req.getWeight();
+
+        this.importance = req.getImportance().isBlank()?this.importance:req.getImportance();
+
+        this.color = req.getColorId()==null?this.color:colorRepository.findById(req.getColorId())
+                .orElseThrow(ColorNotFoundException::new);
+
+        this.loadQuantity = req.getLoadQuantity().isBlank()?this.loadQuantity:req.getLoadQuantity();
+
+        this.forming = req.getForming().isBlank()?this.forming:req.getForming();
+
+        this.coatingWay = req.getCoatingWayId()==null?this.coatingWay:
+                coatingWayRepository.findById
+                        (req.getCoatingWayId()).orElseThrow(CoatingNotFoundException::new);
+
+        this.coatingType = req.getCoatingTypeId()==null?this.coatingType:
+                coatingTypeRepository.findById
+                        (req.getCarTypeId()).orElseThrow(CoatingNotFoundException::new);
+
+
+        this.modulus = req.getModulus().isBlank()?this.modulus:req.getModulus();
+
+        this.screw = req.getScrew().isBlank()?this.screw:req.getScrew();
+
+        this.cuttingType = req.getCuttingType().isBlank()?this.cuttingType:req.getCuttingType();
+
+        this.lcd = req.getLcd().isBlank()?this.lcd:req.getLcd();
+
+        this.displaySize = req.getDisplaySize().isBlank()?this.displaySize:req.getDisplaySize();
+
+        this.screwHeight = req.getScrewHeight().isBlank()?this.screwHeight:req.getScrewHeight();
+
+        this.clientOrganization = req.getClientOrganizationId()==null?this.clientOrganization:
+                clientOrganizationRepository.findById(req.getClientOrganizationId())
+                        .orElseThrow(ClientOrganizationNotFoundException::new);
+
+        this.supplierOrganization = req.getSupplierOrganizationId()==null?this.supplierOrganization:
+                supplierRepository.findById(req.getSupplierOrganizationId())
+                        .orElseThrow(SupplierNotFoundException::new);
+
+//        this.makers =
+//                makers.stream().map(
+//
+//                                //다대다 관계를 만드는 구간
+//                                r -> new NewItemMaker(
+//                                        this, r, partnumbers.get(makers.indexOf(r))
+//                                )
+//                        )
+//                        .collect(toList());
+
+        this.tempsave = true;
+        this.readonly = true; //0605- 이 부분하나가 변경, 이 것은 얘를 false 에서 true로 변경 !
+
+        NewItemImageUpdatedResult resultImage =
+                findImageUpdatedResult(
+                        req.getAddedImages(),
+                        req.getDeletedImages()
+                );
+
+        addImages(resultImage.getAddedImages());
+        deleteImages(resultImage.getDeletedImages());
+
+        NewItemAttachmentUpdatedResult resultAttachment =
+
+                findAttachmentUpdatedResult(
+                        req.getAddedAttachments(),
+                        req.getDeletedAttachments()
+                );
+
+        if(req.getAddedTag().size()>0) {
+            addUpdatedAttachments(req, resultAttachment.getAddedAttachments(), attachmentTagRepository);
+        }
+
+        if(req.getDeletedAttachments().size()>0) {
+            deleteAttachments(resultAttachment.getDeletedAttachments());
+        }
+
+        NewItemFileUpdatedResult fileUpdatedResult =
+                new NewItemFileUpdatedResult(resultAttachment,resultImage);
+
+        this.modifier =
+                memberRepository.findById(
+                        req.getModifierId()
+                ).orElseThrow(MemberNotFoundException::new);//05 -22 생성자 추가
+
+        return fileUpdatedResult;
+    }
 
 }

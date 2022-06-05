@@ -515,8 +515,9 @@ public class DashboardService {
         List<NewItem> tempSavedNewItemList = new ArrayList<>();
 
         for (NewItem newItem : NewItemList) {
-            if (newItem.isTempsave() && newItem.isReadonly()){
-                //06-04 : 임시저장 이고 읽기 전용이라면 임시저장에 뜨도록
+            if (newItem.isTempsave() //&& !(newItem.isReadonly())
+            ){
+                //06-04 : 임시저장 이고 읽기 전용이 아니라면 임시저장에 뜨도록
                 tempSavedNewItemList.add(newItem);
                 //임시저장 진행 중인 것
             }

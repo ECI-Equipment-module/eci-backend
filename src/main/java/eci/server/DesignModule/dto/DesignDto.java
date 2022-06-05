@@ -25,7 +25,7 @@ public class DesignDto {
 
     private ItemDesignDto item;
     private MemberDto member;
-    private Boolean tempsave;
+
     private List<DesignAttachmentDto> designAttachments;
 
     private Long routeId;
@@ -38,6 +38,10 @@ public class DesignDto {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd hh:mm:ss.SSS", timezone = "Asia/Seoul")
     private LocalDateTime modifiedAt;
     private MemberDto modifier;
+
+
+    private Boolean tempsave;
+    private boolean readonly;
 
 
     public static DesignDto toDto(
@@ -58,7 +62,6 @@ public class DesignDto {
                 design.getId(),
                 ItemDesignDto.toDto(design.getNewItem()),
                 MemberDto.toDto(design.getMember()),
-                design.getTempsave(),
 
                 design.getDesignAttachments().
                         stream().
@@ -76,7 +79,10 @@ public class DesignDto {
                 MemberDto.toDto(design.getMember()),
 
                 design.getModifier()==null?null:design.getModifiedAt(),
-                design.getModifier()==null?null:MemberDto.toDto(design.getModifier())
+                design.getModifier()==null?null:MemberDto.toDto(design.getModifier()),
+
+                design.getTempsave(),
+                design.getReadonly()
 
 
         );
