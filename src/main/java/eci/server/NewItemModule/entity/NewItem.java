@@ -18,8 +18,7 @@ import eci.server.NewItemModule.entity.coating.CoatingType;
 import eci.server.NewItemModule.entity.coating.CoatingWay;
 import eci.server.NewItemModule.entity.maker.NewItemMaker;
 import eci.server.NewItemModule.entity.supplier.Supplier;
-import eci.server.NewItemModule.exception.CoatingNotFoundException;
-import eci.server.NewItemModule.exception.SupplierNotFoundException;
+import eci.server.NewItemModule.exception.*;
 import eci.server.NewItemModule.repository.coatingType.CoatingTypeRepository;
 import eci.server.NewItemModule.repository.coatingWay.CoatingWayRepository;
 import eci.server.NewItemModule.repository.maker.NewItemMakerRepository;
@@ -855,6 +854,22 @@ public class NewItem extends EntityDate {
             CoatingWayRepository coatingWayRepository,
             CoatingTypeRepository coatingTypeRepository
     ) {
+
+        if(req.getClassification1Id()==null || req.getClassification2Id() ==null || req.getClassification3Id()==null){
+            throw new ClassificationRequiredException();
+        }
+        if(req.getClassification1Id()==99999L || req.getClassification2Id() == 99999L || req.getClassification3Id()== 99999L){
+            throw new ProperClassificationRequiredException();
+        }
+        //아이템 타입 체크
+        if(req.getTypeId()==null){
+            throw new ItemTypeRequiredException();
+        }
+
+        //아이템 이름 체크
+        if(req.getName().isBlank()){
+            throw new ItemNameRequiredException();
+        }
         AtomicInteger k = new AtomicInteger();
 
         //TODO update할 때 사용자가 기존 값 없애고 보낼 수도 있자나 => fix needed
