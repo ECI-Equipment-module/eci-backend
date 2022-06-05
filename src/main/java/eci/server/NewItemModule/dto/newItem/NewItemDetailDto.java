@@ -62,7 +62,6 @@ public class NewItemDetailDto {
     private SupplierDto supplierOrganizationId;
     private List<MakerSimpleDto> makersId;
     private String partnumbers;
-    private boolean tempsave;
     private boolean revise_progress;
 
     private List<NewItemAttachmentDto> attachments;
@@ -81,6 +80,9 @@ public class NewItemDetailDto {
     private LocalDateTime modifiedAt;
     private MemberDto modifier;
 
+
+    private Boolean tempsave;
+    private boolean readonly;
 
 
     public static NewItemDetailDto toDto(
@@ -122,7 +124,6 @@ public class NewItemDetailDto {
                     SupplierDto.toDto(Item.getSupplierOrganization()),
                     MakerSimpleDto.toDtoList(Item.getMakers()),
                     newItemMakerRepository.findByMaker(Item.getMakers().get(0).getMaker()).get(0).getPartnumber(),
-                    Item.isTempsave(),
                     Item.isRevise_progress(),
 
                     Item.getAttachments().
@@ -137,7 +138,10 @@ public class NewItemDetailDto {
                     MemberDto.toDto(Item.getMember()),
 
                     Item.getModifier()==null?null:Item.getModifiedAt(),
-                    Item.getModifier()==null?null:MemberDto.toDto(Item.getModifier())
+                    Item.getModifier()==null?null:MemberDto.toDto(Item.getModifier()),
+
+                    Item.isTempsave(),
+                    Item.isReadonly()
 
 
             );
@@ -172,8 +176,8 @@ public class NewItemDetailDto {
                 ClientOrganizationDto.toDto(Item.getClientOrganization()),
                 SupplierDto.toDto(Item.getSupplierOrganization()),
                 MakerSimpleDto.toDtoList(Item.getMakers()),
-                "no partnum",
-                Item.isTempsave(),
+                "",
+
                 Item.isRevise_progress(),
 
                 Item.getAttachments().
@@ -188,7 +192,10 @@ public class NewItemDetailDto {
                 MemberDto.toDto(Item.getMember()),
 
                 Item.getModifier()==null?null:Item.getModifiedAt(),
-                Item.getModifier()==null?null:MemberDto.toDto(Item.getModifier())
+                Item.getModifier()==null?null:MemberDto.toDto(Item.getModifier()),
+
+                Item.isTempsave(),
+                Item.isReadonly()
 
         );
     }
@@ -230,7 +237,6 @@ public class NewItemDetailDto {
                     SupplierDto.toDto(Item.getSupplierOrganization()),
                     MakerSimpleDto.toDtoList(Item.getMakers()),
                     newItemMakerRepository.findByMaker(Item.getMakers().get(0).getMaker()).get(0).getPartnumber(),
-                    Item.isTempsave(),
                     Item.isRevise_progress(),
 
                     Item.getAttachments().
@@ -244,7 +250,10 @@ public class NewItemDetailDto {
                     MemberDto.toDto(Item.getMember()),
 
                     Item.getModifier()==null?null:Item.getModifiedAt(),
-                    Item.getModifier()==null?null:MemberDto.toDto(Item.getModifier())
+                    Item.getModifier()==null?null:MemberDto.toDto(Item.getModifier()),
+
+                    Item.isTempsave(),
+                    Item.isReadonly()
 
 
             );
@@ -280,7 +289,6 @@ public class NewItemDetailDto {
                 SupplierDto.toDto(Item.getSupplierOrganization()),
                 MakerSimpleDto.toDtoList(Item.getMakers()),
                 "no partnum",
-                Item.isTempsave(),
                 Item.isRevise_progress(),
 
                 Item.getAttachments().
@@ -295,7 +303,10 @@ public class NewItemDetailDto {
                 MemberDto.toDto(Item.getMember()),
 
                 Item.getModifier()==null?null:Item.getModifiedAt(),
-                Item.getModifier()==null?null:MemberDto.toDto(Item.getModifier())
+                Item.getModifier()==null?null:MemberDto.toDto(Item.getModifier()),
+
+                Item.isTempsave(),
+                Item.isReadonly()
 
         );
     }

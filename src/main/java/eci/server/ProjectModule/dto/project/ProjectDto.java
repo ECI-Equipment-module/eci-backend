@@ -59,7 +59,7 @@ public class ProjectDto {
 
     private ItemProjectDto item;
     private MemberDto member;
-    private Boolean tempsave;
+
     private ProjectTypeDto projectType;
     private ProjectLevelDto projectLevel;
     private ProduceOrganizationDto produceOrganization;
@@ -79,6 +79,9 @@ public class ProjectDto {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd hh:mm:ss.SSS", timezone = "Asia/Seoul")
     private LocalDateTime modifiedAt;
     private MemberDto modifier;
+
+    private Boolean tempsave;
+    private boolean readonly;
 
 
 
@@ -115,7 +118,7 @@ public class ProjectDto {
 
                 ItemProjectDto.toDto(project.getNewItem()),
                 MemberDto.toDto(project.getMember()),
-                project.getTempsave(),
+
                 ProjectTypeDto.toDto(project.getProjectType()),
                 ProjectLevelDto.toDto(project.getProjectLevel()),
                 project.getProduceOrganization()==null?null:ProduceOrganizationDto.toDto(project.getProduceOrganization()),
@@ -140,7 +143,10 @@ public class ProjectDto {
                 MemberDto.toDto(project.getMember()),
 
                 project.getModifier()==null?null:project.getModifiedAt(),
-                project.getModifier()==null?null:MemberDto.toDto(project.getModifier())
+                project.getModifier()==null?null:MemberDto.toDto(project.getModifier()),
+
+                project.getTempsave(),
+                project.getReadonly()
 
 
         );
