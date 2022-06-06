@@ -56,7 +56,7 @@ import static java.util.stream.Collectors.toList;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class NewItem extends EntityDate {
     @Id
- // @GeneratedValue(strategy = GenerationType.IDENTITY)
+ //@GeneratedValue(strategy = GenerationType.IDENTITY)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQUENCE3")
     @SequenceGenerator(name="SEQUENCE3", sequenceName="SEQUENCE3", allocationSize=1)
     private Long id;
@@ -577,9 +577,7 @@ public class NewItem extends EntityDate {
             i.initNewItem(this);
 
             i.setAttach_comment(req.getAddedAttachmentComment().get((added.indexOf(i))));
-            System.out.println("ddddddddddd"+attachmentTagRepository
-                    .findById(req.getAddedTag().get(req.getAddedAttachments().indexOf(i))).
-                    orElseThrow(AttachmentNotFoundException::new).getName());
+
             i.setTag(attachmentTagRepository
                     .findById(req.getAddedTag().get(req.getAddedAttachments().indexOf(i))).
                     orElseThrow(AttachmentNotFoundException::new).getName());
@@ -768,6 +766,8 @@ public class NewItem extends EntityDate {
         this.itemTypes = req.getTypeId()==null?this.itemTypes:
                 itemTypesRepository.findById(req.getTypeId()).orElseThrow(ItemNotFoundException::new);
 
+
+
         this.sharing = req.isSharing();
 
         this.carType =
@@ -922,6 +922,12 @@ public class NewItem extends EntityDate {
         this.itemTypes = req.getTypeId()==null?this.itemTypes:
                 itemTypesRepository.findById(req.getTypeId()).orElseThrow(ItemNotFoundException::new);
 
+        this.itemNumber =
+                req.getClassification1Id() + String.valueOf(ItemType.valueOf(
+                        itemTypesRepository.findById(req.getTypeId()).get().getItemType().name()
+                ).label() * 1000000 + (int) (Math.random() * 1000));
+
+
         this.sharing = req.isSharing();
 
         this.carType =                 //전용일 때야 차종 생성
@@ -951,6 +957,7 @@ public class NewItem extends EntityDate {
         this.weight = req.getWeight().isBlank()?this.weight:req.getWeight();
 
         this.importance = req.getImportance().isBlank()?this.importance:req.getImportance();
+
 
         this.color = req.getColorId()==null?this.color:colorRepository.findById(req.getColorId())
                 .orElseThrow(ColorNotFoundException::new);
@@ -1018,7 +1025,9 @@ public class NewItem extends EntityDate {
                 );
 
         if(req.getAddedTag().size()>0) {
+
             addUpdatedAttachments(req, resultAttachment.getAddedAttachments(), attachmentTagRepository);
+
         }
 
         if(req.getDeletedAttachments().size()>0) {
