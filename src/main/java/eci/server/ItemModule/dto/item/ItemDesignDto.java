@@ -27,7 +27,7 @@ public class ItemDesignDto {
                 Item.getName(),
                 Item.getItemTypes().getItemType().toString(),
                 Item.getItemNumber(),
-                Item.getThumbnail().get(0).getImageaddress(),
+                Item.getThumbnail().getImageaddress(),
                 Item.getRevision()
 
         );

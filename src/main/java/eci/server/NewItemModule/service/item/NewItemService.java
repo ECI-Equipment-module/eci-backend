@@ -121,9 +121,13 @@ public class NewItemService {
                 )
         );
 
-        uploadImages(item.getThumbnail(), req.getThumbnail());
+        if(req.getThumbnail().getSize()>0) {
+            uploadImages(item.getThumbnail(), req.getThumbnail());
+        }
 
-        uploadAttachments(item.getAttachments(), req.getAttachments());
+        if(req.getTag().size()>0) {
+            uploadAttachments(item.getAttachments(), req.getAttachments());
+        }
 
         return new NewItemCreateResponse(item.getId());
     }
@@ -161,12 +165,13 @@ public class NewItemService {
 
         );
 
-        uploadImages(item.getThumbnail(), req.getThumbnail());
-        if (!(req.getTag().size() == 0)) {//TODO : 나중에 함수로 빼기 (Attachment 유무 판단)
-            //attachment가 존재할 땜나
-            uploadAttachments(item.getAttachments(), req.getAttachments());
+        if(req.getThumbnail().getSize()>0) {
+            uploadImages(item.getThumbnail(), req.getThumbnail());
+            if (!(req.getTag().size() == 0)) {//TODO : 나중에 함수로 빼기 (Attachment 유무 판단)
+                //attachment가 존재할 땜나
+                uploadAttachments(item.getAttachments(), req.getAttachments());
+            }
         }
-
         item.updateReadOnlyWhenSaved(); //저장하면 readonly = true
         return new NewItemCreateResponse(item.getId());
     }
@@ -178,16 +183,26 @@ public class NewItemService {
      * @param fileImages
      */
 
-    private void uploadImages(List<NewItemImage> images, List<MultipartFile> fileImages) {
+//    private void uploadImages(List<NewItemImage> images, List<MultipartFile> fileImages) {
+//        // 실제 이미지 파일을 가지고 있는 Multipart 파일을
+//        // 이미지가 가지는 uniquename을 파일명으로 해서 파일저장소 업로드
+//        IntStream.range(0, images.size())
+//                .forEach(
+//                        i -> fileService.upload
+//                                (
+//                                        fileImages.get(i),
+//                                        images.get(i).getUniqueName()
+//                                )
+//                );
+//    }
+
+    private void uploadImages(NewItemImage images, MultipartFile fileImages) {
         // 실제 이미지 파일을 가지고 있는 Multipart 파일을
         // 이미지가 가지는 uniquename을 파일명으로 해서 파일저장소 업로드
-        IntStream.range(0, images.size())
-                .forEach(
-                        i -> fileService.upload
+        fileService.upload
                                 (
-                                        fileImages.get(i),
-                                        images.get(i).getUniqueName()
-                                )
+                                        fileImages,
+                                        images.getUniqueName()
                 );
     }
 
@@ -208,8 +223,7 @@ public class NewItemService {
         NewItem targetItem = newItemRepository.findById(id).orElseThrow(ItemNotFoundException::new);
         byte[] image = localFileService.getImage(
                 targetItem.getCreatedAt().toString(),
-                targetItem.getThumbnail().get(0).
-                        getUniqueName()
+                targetItem.getThumbnail().getUniqueName()
         );
         return image;
     }
@@ -271,13 +285,9 @@ public class NewItemService {
     }
 
 
-    private void deleteImages(List<NewItemImage> images) {
-        images.
-                stream()
-                .forEach(
-                        i -> fileService.delete(
-                                i.getUniqueName()
-                        )
+    private void deleteImages(NewItemImage images) {
+        fileService.delete(
+                images.getUniqueName()
                 );
     }
 
@@ -377,13 +387,18 @@ public class NewItemService {
         );
 
 
-        uploadImages(
-                result.getImageUpdatedResult().getAddedImages(),
-                result.getImageUpdatedResult().getAddedImageFiles()
-        );
-        deleteImages(
-                result.getImageUpdatedResult().getDeletedImages()
-        );
+        if(
+                result.getImageUpdatedResult()!=null &&
+                result.getImageUpdatedResult().getAddedImages()!=null
+        ){
+            uploadImages(
+                    result.getImageUpdatedResult().getAddedImages(),
+                    result.getImageUpdatedResult().getAddedImageFiles()
+            );
+            deleteImages(
+                    result.getImageUpdatedResult().getAddedImages()
+            );
+        }
 
         uploadAttachments(
                 result.getAttachmentUpdatedResult().getAddedAttachments(),
@@ -422,13 +437,19 @@ public class NewItemService {
                 attachmentTagRepository
         );
 
-        uploadImages(
-                result.getImageUpdatedResult().getAddedImages(),
-                result.getImageUpdatedResult().getAddedImageFiles()
-        );
-        deleteImages(
-                result.getImageUpdatedResult().getDeletedImages()
-        );
+        if(
+                result.getImageUpdatedResult()!=null &&
+                        result.getImageUpdatedResult().getAddedImages()!=null
+        ){
+            uploadImages(
+                    result.getImageUpdatedResult().getAddedImages(),
+                    result.getImageUpdatedResult().getAddedImageFiles()
+            );
+            deleteImages(
+                    result.getImageUpdatedResult().getAddedImages()
+            );
+        }
+
 
         uploadAttachments(
                 result.getAttachmentUpdatedResult().getAddedAttachments(),
