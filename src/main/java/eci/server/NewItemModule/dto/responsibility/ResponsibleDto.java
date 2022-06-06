@@ -11,6 +11,7 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class ResponsibleDto {
+    private Long id;
     private String name;
     private String range;
 
@@ -20,6 +21,7 @@ public class ResponsibleDto {
 
     ) {
         return new ResponsibleDto(
+                id,
                 name,
                 range
         );

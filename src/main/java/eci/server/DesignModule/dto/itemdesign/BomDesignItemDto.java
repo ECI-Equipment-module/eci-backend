@@ -31,18 +31,21 @@ public class BomDesignItemDto {
             if(bomGuard.reviewState(newItem.getId()).equals("before")){
                 responsibleDtoList.add(
                         new ResponsibleDto(
+                                0L,
                                 "preliminary",
                                 "editable"
                         )
                 );
                 responsibleDtoList.add(
                         new ResponsibleDto(
+                                -1L,
                                 "development",
                                 "readonly"
                         )
                 );
                 responsibleDtoList.add(
                         new ResponsibleDto(
+                                -1L,
                                 "compare",
                                 "readonly"
                         )
@@ -51,18 +54,21 @@ public class BomDesignItemDto {
             else if(bomGuard.reviewState(newItem.getId()).equals("now")){
                 responsibleDtoList.add(
                         new ResponsibleDto(
+                                0L,
                                 "preliminary",
                                 "readonly"
                         )
                 );
                 responsibleDtoList.add(
                         new ResponsibleDto(
+                                -1L,
                                 "development",
                                 "readonly"
                         )
                 );
                 responsibleDtoList.add(
                         new ResponsibleDto(
+                                -1L,
                                 "compare",
                                 "readonly"
                         )
@@ -71,18 +77,21 @@ public class BomDesignItemDto {
             else{
                 responsibleDtoList.add(
                         new ResponsibleDto(
+                                -1L,
                                 "preliminary",
                                 "readonly"
                         )
                 );
                 responsibleDtoList.add(
                         new ResponsibleDto(
+                                -1L,
                                 "development",
                                 "readonly"
                         )
                 );
                 responsibleDtoList.add(
                         new ResponsibleDto(
+                                -1L,
                                 "compare",
                                 "readonly"
                         )
@@ -96,18 +105,21 @@ public class BomDesignItemDto {
             if(bomGuard.reviewState(newItem.getId()).equals("before")){
                 responsibleDtoList.add(
                         new ResponsibleDto(
+                                -1L,
                                 "preliminary",
                                 "readonly"
                         )
                 );
                 responsibleDtoList.add(
                         new ResponsibleDto(
+                                -1L,
                                 "development",
                                 "readonly"
                         )
                 );
                 responsibleDtoList.add(
                         new ResponsibleDto(
+                                -1L,
                                 "compare",
                                 "readonly"
                         )
@@ -118,18 +130,21 @@ public class BomDesignItemDto {
                 //프릴리머리, 디블롭, 컴패얼 따라서 ,,
                 responsibleDtoList.add(
                         new ResponsibleDto(
+                                -1L,
                                 "preliminary",
                                 "readonly"
                         )
                 );
                 responsibleDtoList.add(
                         new ResponsibleDto(
+                                -1L,
                                 "development",
                                 "edit"
                         )
                 );
                 responsibleDtoList.add(
                         new ResponsibleDto(
+                                -1L,
                                 "compare",
                                 "readonly"
                         )
@@ -138,18 +153,21 @@ public class BomDesignItemDto {
             else{
                 responsibleDtoList.add(
                         new ResponsibleDto(
+                                -1L,
                                 "preliminary",
                                 "readonly"
                         )
                 );
                 responsibleDtoList.add(
                         new ResponsibleDto(
+                                -1L,
                                 "development",
                                 "readonly"
                         )
                 );
                 responsibleDtoList.add(
                         new ResponsibleDto(
+                                -1L,
                                 "compare",
                                 "readonly"
                         )
@@ -161,18 +179,21 @@ public class BomDesignItemDto {
         else{
             responsibleDtoList.add(
                     new ResponsibleDto(
+                            -1L,
                             "preliminary",
                             "readonly"
                     )
             );
             responsibleDtoList.add(
                     new ResponsibleDto(
+                            -1L,
                             "development",
                             "readonly"
                     )
             );
             responsibleDtoList.add(
                     new ResponsibleDto(
+                            -1L,
                             "compare",
                             "readonly"
                     )
@@ -194,6 +215,7 @@ public class BomDesignItemDto {
         if (designGuard.isResponsible(newItem.getId()).equals("creator")) {
             responsibleDtoList.add(
                     new ResponsibleDto(
+                            -1L,
                             "design",
                             "readonly"
                     )
@@ -206,6 +228,7 @@ public class BomDesignItemDto {
 
                 responsibleDtoList.add(
                         new ResponsibleDto(
+                                -1L,
                                 "development",
                                 "readonly"
                         )
@@ -217,6 +240,7 @@ public class BomDesignItemDto {
                 if (designGuard.isEdit(newItem.getId())) {
                     responsibleDtoList.add(
                             new ResponsibleDto(
+                                    0L,
                                     "development",
                                     "edit"
                             )
@@ -224,6 +248,7 @@ public class BomDesignItemDto {
                 } else {
                     responsibleDtoList.add(
                             new ResponsibleDto(
+                                    0L,
                                     "development",
                                     "post"
                             )
@@ -235,6 +260,7 @@ public class BomDesignItemDto {
             else{
                     responsibleDtoList.add(
                             new ResponsibleDto(
+                                    -1L,
                                     "design",
                                     "readonly"
                             )
@@ -246,6 +272,7 @@ public class BomDesignItemDto {
             else {
                 responsibleDtoList.add(
                         new ResponsibleDto(
+                                -1L,
                                 "design",
                                 "readonly"
                         )
