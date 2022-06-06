@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Null;
 
 @RestController
 @RequiredArgsConstructor
@@ -95,6 +96,7 @@ public class NewItemController {
      * @param id
      * @return 200 (success)
      */
+    @AssignMemberId
     @CrossOrigin(origins = "https://localhost:3000")
     @GetMapping(value = "/item/{id}")
     @ResponseStatus(HttpStatus.OK)

@@ -1,20 +1,19 @@
 package eci.server.config.guard;
 
-import eci.server.DesignModule.entity.design.Design;
-import eci.server.DesignModule.exception.DesignNotFoundException;
-import eci.server.DesignModule.repository.DesignRepository;
+import eci.server.BomModule.repository.BomRepository;
 import eci.server.ItemModule.entity.member.Member;
 import eci.server.ItemModule.entity.member.RoleType;
 import eci.server.ItemModule.entity.newRoute.RouteOrdering;
 import eci.server.ItemModule.entity.newRoute.RouteProduct;
 import eci.server.ItemModule.entity.newRoute.RouteProductMember;
 import eci.server.ItemModule.exception.item.ItemNotFoundException;
-import eci.server.ItemModule.repository.item.ItemRepository;
 import eci.server.ItemModule.repository.newRoute.RouteOrderingRepository;
 import eci.server.ItemModule.repository.newRoute.RouteProductRepository;
+import eci.server.NewItemModule.entity.NewItem;
 import eci.server.NewItemModule.repository.item.NewItemRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -24,16 +23,16 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 /**
- * 프로젝트 수정은 작성자 및 관리자만 가능
+ * 아이템 삭제, 수정은 작성자 및 관리자만 가능
  */
-public class DesignGuard  {
+public class BomGuard {
 
     private final AuthHelper authHelper;
-    private final DesignRepository designRepository;
+    private final NewItemRepository ItemRepository;
     private final RouteOrderingRepository routeOrderingRepository;
     private final RouteProductRepository routeProductRepository;
     private final NewItemRepository newItemRepository;
-
+    private final BomRepository bomRepository;
 
     public boolean check(Long id) {
 
@@ -49,21 +48,20 @@ public class DesignGuard  {
 
     private boolean isResourceOwner(Long id) {
 
-        Design design = designRepository.findById(id).orElseThrow(
-                () -> { throw new DesignNotFoundException();
-                }
+        NewItem Item = ItemRepository.findById(id).orElseThrow(
+                () -> { throw new AccessDeniedException(""); }
         );
         //해당 아이템이 존재 유무 확인
         Long memberId = authHelper.extractMemberId();
         //요청자의 아이디 확인
 
-        return design.getMember().getId().equals(memberId);
+        return Item.getMember().getId().equals(memberId);
     }
-
 
     private boolean hasAdminRole() {
         return authHelper.extractMemberRoles().contains(RoleType.ROLE_ADMIN);
     }
+
 
     public String isResponsible(Long itemId) { //봄 생성 라우트 담당자인지
         routeOrderingRepository.findByNewItem(
@@ -86,7 +84,7 @@ public class DesignGuard  {
         String result = null;
 
         for(RouteProduct routeProduct : routeProductList){
-            if(routeProduct.getType().getModule().equals("DESIGN")
+            if(routeProduct.getType().getModule().equals("BOM")
                     && routeProduct.getType().getName().equals("CREATE")){
                 targetMem = routeProduct.getMembers();
             }
@@ -100,6 +98,7 @@ public class DesignGuard  {
                 result = "anyone";
             }
         }else{
+            result = "anyone";
             Long memberId = authHelper.extractMemberId();
             for(RouteProductMember routeProductMember:targetMem){
                 if(routeProductMember.getMember().getId().equals(memberId)){
@@ -107,6 +106,8 @@ public class DesignGuard  {
                     break;
                 }
             }
+
+
         }
 
         return result;
@@ -135,55 +136,43 @@ public class DesignGuard  {
 
 
         if(
-                (isItem(routeOrdering, routeProductList))
+                !(isBom(routeOrdering, routeProductList))
 
         ){
             result = "before"; //프릴리미너리 가능
         }else if(
-                isDesign(routeOrdering, routeProductList)
-            //봄 생성 전단계~봄 리뷰
+                isBom(routeOrdering, routeProductList)
+                //봄 생성 전단계~봄 리뷰
         ) {
             result = "now";
         }
         else { //봄 리뷰 후
             result = "after";
         }
-        return result;
+    return result;
     }
 
-    private boolean isDesign(RouteOrdering routeOrdering, List<RouteProduct> routeProductList){
+    private boolean isBom(RouteOrdering routeOrdering, List<RouteProduct> routeProductList){
         return routeProductList.get(
                 routeOrdering.getPresent()
-        ).getType().getModule().equals("DESIGN")
-                &&
-                routeProductList.get(
-                        routeOrdering.getPresent()
-                ).getType().getName().equals("CREATE")
-                ;
-    }
-
-    private boolean isItem(RouteOrdering routeOrdering, List<RouteProduct> routeProductList){
-        return routeProductList.get(
-                routeOrdering.getPresent()
-        ).getType().getModule().equals("ITEM");
+        ).getType().getModule().equals("BOM");
     }
 
     public boolean isEdit(Long itemId){
-        return designRepository.findByNewItem(
+        return bomRepository.findByNewItem(
                 newItemRepository.findById(itemId).orElseThrow(ItemNotFoundException::new)
         ).size()>0;
         //사이즈가 0보다 크면 edit
     }
 
-    public Long editDesignId(Long itemId){
-        return designRepository.findByNewItem(
+    public Long editBomId(Long itemId){
+        return bomRepository.findByNewItem(
                 newItemRepository.findById(itemId).orElseThrow(ItemNotFoundException::new)
         ).get(
-                designRepository.findByNewItem(
+                bomRepository.findByNewItem(
                         newItemRepository.findById(itemId).orElseThrow(ItemNotFoundException::new)
                 ).size()-1
         ).getId();
         //사이즈가 0보다 크면 edit
     }
 }
-
