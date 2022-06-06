@@ -372,9 +372,11 @@ public class NewItemService {
                 itemTypesRepository,
                 coatingWayRepository,
                 coatingTypeRepository,
+
                 carTypeRepository,
                 attachmentTagRepository
         );
+
 
 
         uploadImages(
@@ -420,6 +422,7 @@ public class NewItemService {
                 coatingTypeRepository,
                 carTypeRepository,
                 attachmentTagRepository
+
         );
 
         uploadImages(

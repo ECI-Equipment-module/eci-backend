@@ -576,8 +576,8 @@ public class NewItem extends EntityDate {
             attachments.add(i);
             i.initNewItem(this);
 
+
             i.setAttach_comment(req.getAddedAttachmentComment().get((added.indexOf(i))));
-            System.out.println("ddddddddddd"+attachmentTagRepository
                     .findById(req.getAddedTag().get(req.getAddedAttachments().indexOf(i))).
                     orElseThrow(AttachmentNotFoundException::new).getName());
             i.setTag(attachmentTagRepository
@@ -586,6 +586,7 @@ public class NewItem extends EntityDate {
 
 //            i.setAttach_comment(req.getAddedAttachmentComment().get((req.getAddedAttachments().indexOf(i))));
 //            i.setTag(req.getAddedTag().get((req.getAddedAttachments().indexOf(i))));
+
 
             i.setAttachmentaddress(
                     "src/main/prodmedia/image/" +
@@ -966,9 +967,11 @@ public class NewItem extends EntityDate {
 
         this.forming = req.getForming().isBlank()?this.forming:req.getForming();
 
+
         this.coatingWay = req.getCoatingWayId()==null?this.coatingWay:
                 coatingWayRepository.findById
                         (req.getCoatingWayId()).orElseThrow(CoatingNotFoundException::new);
+
 
         this.coatingType = req.getCoatingTypeId()==null?this.coatingType:
                 coatingTypeRepository.findById
@@ -1025,7 +1028,9 @@ public class NewItem extends EntityDate {
                 );
 
         if(req.getAddedTag().size()>0) {
+
             addUpdatedAttachments(req, resultAttachment.getAddedAttachments(), attachmentTagRepository);
+
         }
 
         if(req.getDeletedAttachments().size()>0) {
