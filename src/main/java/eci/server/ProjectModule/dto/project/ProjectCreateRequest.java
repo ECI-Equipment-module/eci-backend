@@ -4,6 +4,7 @@ import eci.server.ItemModule.exception.item.*;
 import eci.server.ItemModule.exception.member.sign.MemberNotFoundException;
 import eci.server.ItemModule.repository.item.ItemRepository;
 import eci.server.ItemModule.repository.member.MemberRepository;
+import eci.server.NewItemModule.repository.attachment.AttachmentTagRepository;
 import eci.server.NewItemModule.repository.item.NewItemRepository;
 import eci.server.ProjectModule.entity.project.Project;
 import eci.server.ProjectModule.entity.projectAttachment.ProjectAttachment;
@@ -63,7 +64,7 @@ public class ProjectCreateRequest {
     private List<MultipartFile> attachments = new ArrayList<>();
 
     //attachment tags
-    private List<String> tag = new ArrayList<>();
+    private List<Long> tag = new ArrayList<>();
 
     private List<String> attachmentComment = new ArrayList<>();
 
@@ -89,7 +90,8 @@ public class ProjectCreateRequest {
             ProjectLevelRepository projectLevelRepository,
             ProduceOrganizationRepository produceOrganizationRepository,
             ClientOrganizationRepository clientOrganizationRepository,
-            CarTypeRepository carTypeRepository
+            CarTypeRepository carTypeRepository,
+            AttachmentTagRepository attachmentTagRepository
             ) {
 
 
@@ -250,7 +252,9 @@ public class ProjectCreateRequest {
                     req.attachments.stream().map(
                             i -> new ProjectAttachment(
                                     i.getOriginalFilename(),
-                                    req.getTag().get(req.attachments.indexOf(i)),
+                                    attachmentTagRepository
+                                            .findById(req.getTag().get(req.attachments.indexOf(i))).
+                                            orElseThrow(AttachmentNotFoundException::new).getName(),
                                     req.getAttachmentComment().isEmpty()?
                                             "":
                                     req.getAttachmentComment().

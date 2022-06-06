@@ -12,6 +12,7 @@ import eci.server.ItemModule.repository.newRoute.RouteOrderingRepository;
 import eci.server.ItemModule.repository.newRoute.RouteProductRepository;
 import eci.server.ItemModule.service.file.FileService;
 
+import eci.server.NewItemModule.repository.attachment.AttachmentTagRepository;
 import eci.server.NewItemModule.repository.item.NewItemRepository;
 import eci.server.ProjectModule.dto.carType.CarTypeDto;
 import eci.server.ProjectModule.dto.clientOrg.ClientOrganizationDto;
@@ -56,6 +57,7 @@ public class ProjectService {
     private final RouteOrderingRepository routeOrderingRepository;
     private final RouteProductRepository routeProductRepository;
     private final CarTypeRepository carTypeRepository;
+    private final AttachmentTagRepository attachmentTagRepository;
 
 //    public ProjectListDto readDashboardAll(ProjectReadCondition cond) {
 //        return ProjectListDto.toDto(
@@ -82,7 +84,8 @@ public class ProjectService {
                         projectLevelRepository,
                         produceOrganizationRepository,
                         clientOrganizationRepository,
-                        carTypeRepository
+                        carTypeRepository,
+                        attachmentTagRepository
                 )
         );
         if(!(req.getTag().size()==0)) {
@@ -105,7 +108,8 @@ public class ProjectService {
                         projectLevelRepository,
                         produceOrganizationRepository,
                         clientOrganizationRepository,
-                        carTypeRepository
+                        carTypeRepository,
+                        attachmentTagRepository
                 )
         );
         if(!(req.getTag().size()==0)) {

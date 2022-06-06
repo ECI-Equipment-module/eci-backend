@@ -5,11 +5,13 @@ import eci.server.DesignModule.entity.designfile.DesignAttachment;
 import eci.server.ItemModule.entity.entitycommon.EntityDate;
 import eci.server.ItemModule.entity.item.Item;
 import eci.server.ItemModule.entity.member.Member;
+import eci.server.ItemModule.exception.item.AttachmentNotFoundException;
 import eci.server.ItemModule.exception.item.ItemNotFoundException;
 import eci.server.ItemModule.exception.member.sign.MemberNotFoundException;
 import eci.server.ItemModule.repository.item.ItemRepository;
 import eci.server.ItemModule.repository.member.MemberRepository;
 import eci.server.NewItemModule.entity.NewItem;
+import eci.server.NewItemModule.repository.attachment.AttachmentTagRepository;
 import eci.server.NewItemModule.repository.item.NewItemRepository;
 import eci.server.ProjectModule.dto.project.ProjectUpdateRequest;
 import eci.server.ProjectModule.entity.project.*;
@@ -43,7 +45,7 @@ import static java.util.stream.Collectors.toList;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Design extends EntityDate {
     @Id
- //   @GeneratedValue(strategy = GenerationType.IDENTITY)
+//    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQUENCE2")
     @SequenceGenerator(name="SEQUENCE2", sequenceName="SEQUENCE2", allocationSize=1)
     private Long id;
@@ -193,6 +195,7 @@ public class Design extends EntityDate {
     private void addUpdatedDesignAttachments(DesignUpdateRequest req, List<DesignAttachment> added) {
         SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date now = new Date();
+        AttachmentTagRepository attachmentTagRepository = null;
 
         added.forEach(i -> {
             designAttachments.add(i);
@@ -203,7 +206,9 @@ public class Design extends EntityDate {
                             (added.indexOf(i))
                     )
             );
-            i.setTag(req.getAddedTag().get((added.indexOf(i))));
+            i.setTag(attachmentTagRepository
+                    .findById(req.getAddedTag().get(req.getAddedAttachments().indexOf(i))).
+                    orElseThrow(AttachmentNotFoundException::new).getName());
             i.setAttachmentaddress(
                     "src/main/prodmedia/image/" +
                             sdf1.format(now).substring(0,10)

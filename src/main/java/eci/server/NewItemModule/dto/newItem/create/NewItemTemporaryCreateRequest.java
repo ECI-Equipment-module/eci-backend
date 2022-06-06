@@ -15,6 +15,7 @@ import eci.server.NewItemModule.entity.NewItemImage;
 import eci.server.NewItemModule.entity.classification.Classification;
 import eci.server.NewItemModule.exception.ClassificationNotFoundException;
 import eci.server.NewItemModule.exception.CoatingNotFoundException;
+import eci.server.NewItemModule.repository.attachment.AttachmentTagRepository;
 import eci.server.NewItemModule.repository.classification.Classification1Repository;
 import eci.server.NewItemModule.repository.classification.Classification2Repository;
 import eci.server.NewItemModule.repository.classification.Classification3Repository;
@@ -132,7 +133,8 @@ public class NewItemTemporaryCreateRequest {
             SupplierRepository supplierRepository,
             MemberRepository memberRepository,
             ColorRepository colorRepository,
-            MakerRepository makerRepository) {
+            MakerRepository makerRepository,
+            AttachmentTagRepository attachmentTagRepository) {
 
         if (req.getTag().size() == 0) {
 
@@ -269,11 +271,13 @@ public class NewItemTemporaryCreateRequest {
                 ),
                 req.name,
 
-                itemTypesRepository.findById(req.getTypeId()).orElseThrow(ItemNotFoundException::new),
+                req.getTypeId()==null?
+                        itemTypesRepository.findById(99999L).orElseThrow(ItemNotFoundException::new)
+                        :
+                        itemTypesRepository.findById(req.getTypeId()).orElseThrow(ItemNotFoundException::new),
 
-                req.classification1Id + String.valueOf(ItemType.valueOf(
-                        itemTypesRepository.findById(req.typeId).get().getItemType().name()
-                ).label() * 1000000 + (int) (Math.random() * 1000)),
+
+                "made when saved",
 
                 req.thumbnail.stream().map(
                         i -> new NewItemImage(

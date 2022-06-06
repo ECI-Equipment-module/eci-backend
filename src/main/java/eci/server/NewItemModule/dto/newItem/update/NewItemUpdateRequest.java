@@ -77,7 +77,7 @@ public class NewItemUpdateRequest {
     private Long modifierId;
 
 
-    private List<MultipartFile> thumbnail = new ArrayList<>();
+    //private List<MultipartFile> thumbnail = new ArrayList<>();
 
 
     /**
@@ -90,7 +90,7 @@ public class NewItemUpdateRequest {
      * 추가된 파일을 첨부
      */
     private List<MultipartFile> addedAttachments = new ArrayList<>();
-    private List<String> addedTag = new ArrayList<>();
+    private List<Long> addedTag = new ArrayList<>();
     private List<String> addedAttachmentComment = new ArrayList<>();
 
     /**

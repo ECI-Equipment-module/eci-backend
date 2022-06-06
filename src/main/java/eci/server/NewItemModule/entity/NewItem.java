@@ -2,15 +2,16 @@ package eci.server.NewItemModule.entity;
 
 import eci.server.ItemModule.entity.entitycommon.EntityDate;
 import eci.server.ItemModule.entity.item.*;
+import eci.server.ItemModule.exception.item.AttachmentNotFoundException;
 import eci.server.ItemModule.exception.item.ColorNotFoundException;
 import eci.server.ItemModule.exception.item.ItemNotFoundException;
 import eci.server.ItemModule.exception.member.sign.MemberNotFoundException;
 import eci.server.ItemModule.repository.color.ColorRepository;
-import eci.server.ItemModule.repository.item.ItemMakerRepository;
 import eci.server.ItemModule.repository.item.ItemTypesRepository;
 import eci.server.ItemModule.repository.member.MemberRepository;
 import eci.server.NewItemModule.dto.newItem.create.NewItemTemporaryContinueRequest;
 import eci.server.NewItemModule.dto.newItem.update.NewItemUpdateRequest;
+import eci.server.NewItemModule.entity.attachment.AttachmentTag;
 import eci.server.NewItemModule.entity.supplier.Maker;
 import eci.server.ItemModule.entity.member.Member;
 import eci.server.NewItemModule.entity.classification.Classification;
@@ -18,6 +19,9 @@ import eci.server.NewItemModule.entity.coating.CoatingType;
 import eci.server.NewItemModule.entity.coating.CoatingWay;
 import eci.server.NewItemModule.entity.maker.NewItemMaker;
 import eci.server.NewItemModule.entity.supplier.Supplier;
+import eci.server.NewItemModule.exception.CoatingNotFoundException;
+import eci.server.NewItemModule.exception.SupplierNotFoundException;
+import eci.server.NewItemModule.repository.attachment.AttachmentTagRepository;
 import eci.server.NewItemModule.exception.*;
 import eci.server.NewItemModule.repository.coatingType.CoatingTypeRepository;
 import eci.server.NewItemModule.repository.coatingWay.CoatingWayRepository;
@@ -52,7 +56,7 @@ import static java.util.stream.Collectors.toList;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class NewItem extends EntityDate {
     @Id
- // @GeneratedValue(strategy = GenerationType.IDENTITY)
+ //@GeneratedValue(strategy = GenerationType.IDENTITY)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQUENCE3")
     @SequenceGenerator(name="SEQUENCE3", sequenceName="SEQUENCE3", allocationSize=1)
     private Long id;
@@ -366,7 +370,7 @@ public class NewItem extends EntityDate {
 
                                 //다대다 관계를 만드는 구간
                                 r -> new NewItemMaker(
-                                        this, r, partnumbers.get(makers.indexOf(r))
+                                        this, r, partnumbers.get(makers.indexOf(r)).isBlank()?"":partnumbers.get(makers.indexOf(r))
                                 )
                         )
                         .collect(toList());
@@ -518,7 +522,7 @@ public class NewItem extends EntityDate {
 
                                 //다대다 관계를 만드는 구간
                                 r -> new NewItemMaker(
-                                        this, r, partnumbers.get(makers.indexOf(r))
+                                        this, r, partnumbers.get(makers.indexOf(r)).isBlank()?"":partnumbers.get(makers.indexOf(r))
                                 )
                         )
                         .collect(toList());
@@ -561,15 +565,29 @@ public class NewItem extends EntityDate {
         });
     }
 
-    private void addUpdatedAttachments(NewItemUpdateRequest req, List<NewItemAttachment> added) {
+
+    private void addUpdatedAttachments
+            (NewItemUpdateRequest req, List<NewItemAttachment> added,
+             AttachmentTagRepository attachmentTagRepository) {
         SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date now = new Date();
 
         added.stream().forEach(i -> {
             attachments.add(i);
             i.initNewItem(this);
-            i.setAttach_comment(req.getAddedAttachmentComment().get((req.getAddedAttachments().indexOf(i))));
-            i.setTag(req.getAddedTag().get((req.getAddedAttachments().indexOf(i))));
+
+
+            i.setAttach_comment(req.getAddedAttachmentComment().get((added.indexOf(i))));
+                    .findById(req.getAddedTag().get(req.getAddedAttachments().indexOf(i))).
+                    orElseThrow(AttachmentNotFoundException::new).getName());
+            i.setTag(attachmentTagRepository
+                    .findById(req.getAddedTag().get(req.getAddedAttachments().indexOf(i))).
+                    orElseThrow(AttachmentNotFoundException::new).getName());
+
+//            i.setAttach_comment(req.getAddedAttachmentComment().get((req.getAddedAttachments().indexOf(i))));
+//            i.setTag(req.getAddedTag().get((req.getAddedAttachments().indexOf(i))));
+
+
             i.setAttachmentaddress(
                     "src/main/prodmedia/image/" +
                             sdf1.format(now).substring(0,10)
@@ -739,7 +757,8 @@ public class NewItem extends EntityDate {
             ItemTypesRepository itemTypesRepository,
             CoatingWayRepository coatingWayRepository,
             CoatingTypeRepository coatingTypeRepository,
-            CarTypeRepository carTypeRepository
+            CarTypeRepository carTypeRepository,
+            AttachmentTagRepository attachmentTagRepository
     ) {
         AtomicInteger k = new AtomicInteger();
 
@@ -749,6 +768,8 @@ public class NewItem extends EntityDate {
 
         this.itemTypes = req.getTypeId()==null?this.itemTypes:
                 itemTypesRepository.findById(req.getTypeId()).orElseThrow(ItemNotFoundException::new);
+
+
 
         this.sharing = req.isSharing();
 
@@ -847,7 +868,7 @@ public class NewItem extends EntityDate {
                 );
 
         if(req.getAddedTag().size()>0) {
-            addUpdatedAttachments(req, resultAttachment.getAddedAttachments());
+            addUpdatedAttachments(req, resultAttachment.getAddedAttachments(),attachmentTagRepository);
         }
 
         if(req.getDeletedAttachments().size()>0) {
@@ -876,7 +897,8 @@ public class NewItem extends EntityDate {
             ItemTypesRepository itemTypesRepository,
             CoatingWayRepository coatingWayRepository,
             CoatingTypeRepository coatingTypeRepository,
-            CarTypeRepository carTypeRepository
+            CarTypeRepository carTypeRepository,
+            AttachmentTagRepository attachmentTagRepository
     ) {
 
         if(req.getClassification1Id()==null || req.getClassification2Id() ==null || req.getClassification3Id()==null){
@@ -902,6 +924,11 @@ public class NewItem extends EntityDate {
 
         this.itemTypes = req.getTypeId()==null?this.itemTypes:
                 itemTypesRepository.findById(req.getTypeId()).orElseThrow(ItemNotFoundException::new);
+
+        this.itemNumber =
+                req.getClassification1Id() + String.valueOf(ItemType.valueOf(
+                        itemTypesRepository.findById(req.getTypeId()).get().getItemType().name()
+                ).label() * 1000000 + (int) (Math.random() * 1000));
 
         this.sharing = req.isSharing();
 
@@ -940,9 +967,11 @@ public class NewItem extends EntityDate {
 
         this.forming = req.getForming().isBlank()?this.forming:req.getForming();
 
+
         this.coatingWay = req.getCoatingWayId()==null?this.coatingWay:
                 coatingWayRepository.findById
                         (req.getCoatingWayId()).orElseThrow(CoatingNotFoundException::new);
+
 
         this.coatingType = req.getCoatingTypeId()==null?this.coatingType:
                 coatingTypeRepository.findById
@@ -999,7 +1028,9 @@ public class NewItem extends EntityDate {
                 );
 
         if(req.getAddedTag().size()>0) {
-            addUpdatedAttachments(req, resultAttachment.getAddedAttachments());
+
+            addUpdatedAttachments(req, resultAttachment.getAddedAttachments(), attachmentTagRepository);
+
         }
 
         if(req.getDeletedAttachments().size()>0) {

@@ -2,9 +2,11 @@ package eci.server.DesignModule.dto;
 
 import eci.server.DesignModule.entity.design.Design;
 import eci.server.DesignModule.entity.designfile.DesignAttachment;
+import eci.server.ItemModule.exception.item.AttachmentNotFoundException;
 import eci.server.ItemModule.exception.item.ItemNotFoundException;
 import eci.server.ItemModule.exception.member.sign.MemberNotFoundException;
 import eci.server.ItemModule.repository.member.MemberRepository;
+import eci.server.NewItemModule.repository.attachment.AttachmentTagRepository;
 import eci.server.NewItemModule.repository.item.NewItemRepository;
 import eci.server.ProjectModule.exception.*;
 
@@ -31,14 +33,15 @@ public class DesignTempCreateRequest {
     private Long memberId;
 
     private List<MultipartFile> attachments = new ArrayList<>();
-    private List<String> tag = new ArrayList<>();
+    private List<Long> tag = new ArrayList<>();
     private List<String> attachmentComment = new ArrayList<>();
 
 
     public static Design toEntity(
             DesignTempCreateRequest req,
             MemberRepository memberRepository,
-            NewItemRepository itemRepository
+            NewItemRepository itemRepository,
+            AttachmentTagRepository attachmentTagRepository
     ) {
 
 
@@ -61,7 +64,9 @@ public class DesignTempCreateRequest {
                     req.attachments.stream().map(
                             i -> new DesignAttachment(
                                     i.getOriginalFilename(),
-                                    req.getTag().get(req.attachments.indexOf(i)),
+                                    attachmentTagRepository
+                                            .findById(req.getTag().get(req.attachments.indexOf(i))).
+                                            orElseThrow(AttachmentNotFoundException::new).getName(),
                                     req.getAttachmentComment().get(req.attachments.indexOf(i))
                             )
                     ).collect(

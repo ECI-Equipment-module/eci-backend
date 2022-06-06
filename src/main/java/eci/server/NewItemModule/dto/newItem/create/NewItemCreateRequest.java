@@ -14,6 +14,7 @@ import eci.server.NewItemModule.entity.NewItemAttachment;
 import eci.server.NewItemModule.entity.NewItemImage;
 import eci.server.NewItemModule.entity.classification.Classification;
 import eci.server.NewItemModule.exception.*;
+import eci.server.NewItemModule.repository.attachment.AttachmentTagRepository;
 import eci.server.NewItemModule.repository.classification.Classification1Repository;
 import eci.server.NewItemModule.repository.classification.Classification2Repository;
 import eci.server.NewItemModule.repository.classification.Classification3Repository;
@@ -114,7 +115,8 @@ public class NewItemCreateRequest {
     private List<MultipartFile> thumbnail = new ArrayList<>();
 
     private List<MultipartFile> attachments = new ArrayList<>();
-    private List<String> tag = new ArrayList<>();
+    //private List<String> tag = new ArrayList<>();
+    private List<Long> tag = new ArrayList<>();
     private List<String> attachmentComment = new ArrayList<>();
 
 
@@ -140,7 +142,8 @@ public class NewItemCreateRequest {
             SupplierRepository supplierRepository,
             MemberRepository memberRepository,
             ColorRepository colorRepository,
-            MakerRepository makerRepository) {
+            MakerRepository makerRepository,
+            AttachmentTagRepository attachmentTagRepository) {
 
         //분류 체크
         if(req.classification1Id==null || req.classification2Id ==null || req.classification3Id==null){
@@ -398,7 +401,9 @@ public class NewItemCreateRequest {
                 req.attachments.stream().map(
                         i -> new NewItemAttachment(
                                 i.getOriginalFilename(),
-                                req.getTag().get(req.attachments.indexOf(i)),
+                                attachmentTagRepository
+                                        .findById(req.getTag().get(req.attachments.indexOf(i))).
+                                        orElseThrow(AttachmentNotFoundException::new).getName(),
                                 req.getAttachmentComment().get(req.attachments.indexOf(i))
                         )
                 ).collect(
