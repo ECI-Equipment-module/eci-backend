@@ -112,7 +112,7 @@ public class NewItemCreateRequest {
     private Long supplierOrganizationId;
 
 
-    private List<MultipartFile> thumbnail = new ArrayList<>();
+    private MultipartFile thumbnail;
 
     private List<MultipartFile> attachments = new ArrayList<>();
     //private List<String> tag = new ArrayList<>();
@@ -186,13 +186,8 @@ public class NewItemCreateRequest {
                             itemTypesRepository.findById(req.typeId).get().getItemType().name()
                     ).label() * 1000000 + (int) (Math.random() * 1000)),
 
-                    req.thumbnail.stream().map(
-                            i -> new NewItemImage(
-                                    i.getOriginalFilename()
-                            )
-                    ).collect(
-                            toList()
-                    ),
+                    new NewItemImage(req.thumbnail.getOriginalFilename()), //새로운 관계 형성
+
 
                     req.sharing,
 
@@ -301,12 +296,8 @@ public class NewItemCreateRequest {
                         itemTypesRepository.findById(req.typeId).get().getItemType().name()
                 ).label() * 1000000 + (int) (Math.random() * 1000)),
 
-                req.thumbnail.stream().map(
-                        i -> new NewItemImage(
-                                i.getOriginalFilename()
-                        )
-                ).collect(
-                        toList()
+                new NewItemImage(
+                                req.thumbnail.getOriginalFilename()
                 ),
 
                 req.sharing,

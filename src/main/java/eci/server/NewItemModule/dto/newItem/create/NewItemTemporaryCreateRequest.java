@@ -106,7 +106,7 @@ public class NewItemTemporaryCreateRequest {
     private Long supplierOrganizationId;
 
 
-    private List<MultipartFile> thumbnail = new ArrayList<>();
+    private MultipartFile thumbnail;
 
     private List<MultipartFile> attachments = new ArrayList<>();
     private List<String> tag = new ArrayList<>();
@@ -162,13 +162,7 @@ public class NewItemTemporaryCreateRequest {
 
                     "made when saved",
 
-                    req.thumbnail.stream().map(
-                            i -> new NewItemImage(
-                                    i.getOriginalFilename()
-                            )
-                    ).collect(
-                            toList()
-                    ),
+                    new NewItemImage(req.getThumbnail().getOriginalFilename()),
 
                     req.sharing,
 
@@ -279,13 +273,10 @@ public class NewItemTemporaryCreateRequest {
 
                 "made when saved",
 
-                req.thumbnail.stream().map(
-                        i -> new NewItemImage(
-                                i.getOriginalFilename()
+                new NewItemImage(
+                        req.thumbnail.getOriginalFilename()
                         )
-                ).collect(
-                        toList()
-                ),
+                ,
 
                 req.sharing,
 

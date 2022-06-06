@@ -20,7 +20,7 @@ import static java.util.stream.Collectors.toList;
 public class NewItemPagingDto {
 
     private Long id;
-    private List<NewItemImageDto> thumbnail;
+    private NewItemImageDto thumbnail;
     private String itemNumber;
     private String name;
     private ItemTypesDto type;
@@ -37,9 +37,9 @@ public class NewItemPagingDto {
 
                 newItem.getId(),
 
-                newItem.getThumbnail().
-                        stream().
-                        map(NewItemImageDto::toDto).collect(toList()),
+                NewItemImageDto.toDto(
+                        newItem.getThumbnail()
+                ),
 
                 newItem.getItemNumber(),
 

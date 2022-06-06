@@ -9,9 +9,7 @@ import eci.server.ItemModule.exception.member.sign.MemberNotFoundException;
 import eci.server.ItemModule.repository.color.ColorRepository;
 import eci.server.ItemModule.repository.item.ItemTypesRepository;
 import eci.server.ItemModule.repository.member.MemberRepository;
-import eci.server.NewItemModule.dto.newItem.create.NewItemTemporaryContinueRequest;
 import eci.server.NewItemModule.dto.newItem.update.NewItemUpdateRequest;
-import eci.server.NewItemModule.entity.attachment.AttachmentTag;
 import eci.server.NewItemModule.entity.supplier.Maker;
 import eci.server.ItemModule.entity.member.Member;
 import eci.server.NewItemModule.entity.classification.Classification;
@@ -33,10 +31,7 @@ import eci.server.ProjectModule.exception.CarTypeNotFoundException;
 import eci.server.ProjectModule.exception.ClientOrganizationNotFoundException;
 import eci.server.ProjectModule.repository.carType.CarTypeRepository;
 import eci.server.ProjectModule.repository.clientOrg.ClientOrganizationRepository;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.web.multipart.MultipartFile;
@@ -53,6 +48,7 @@ import static java.util.stream.Collectors.toList;
 
 @Getter
 @Entity
+@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class NewItem extends EntityDate {
     @Id
@@ -81,12 +77,15 @@ public class NewItem extends EntityDate {
     @Column(nullable = false)
     private String itemNumber;
 
-    @OneToMany(
-            mappedBy = "newItem",
-            cascade = CascadeType.PERSIST,
-            orphanRemoval = true
-    )
-    private List<NewItemImage> thumbnail;
+    @OneToOne(
+            fetch = FetchType.LAZY,
+            cascade = CascadeType.ALL,
+            orphanRemoval = true,
+            mappedBy = "newItem"
+    ) //이렇게 관계 설정해놓으면
+    // Item과 NewItemImage간의 fk 가 null이 되면
+    // (관계 끊어지면) image 삭제
+    private NewItemImage thumbnail;
 
     /**
      * true면 공용, false면 전용
@@ -278,7 +277,7 @@ public class NewItem extends EntityDate {
             String name,
             ItemTypes itemTypes,
             String itemNumber,
-            List<NewItemImage> thumbnail,
+            NewItemImage thumbnail,
             boolean sharing,
             CarType carType,
             String integrate,
@@ -318,7 +317,7 @@ public class NewItem extends EntityDate {
 
         this.itemNumber = itemNumber;
 
-        this.thumbnail = new ArrayList<>();
+        this.thumbnail = thumbnail;
         addImages(thumbnail);
 
         this.sharing = sharing;
@@ -431,7 +430,7 @@ public class NewItem extends EntityDate {
             String name,
             ItemTypes itemTypes,
             String itemNumber,
-            List<NewItemImage> thumbnail,
+            NewItemImage thumbnail,
             boolean sharinge,
             CarType carType,
             String integrate,
@@ -470,7 +469,7 @@ public class NewItem extends EntityDate {
 
         this.itemNumber = itemNumber;
 
-        this.thumbnail = new ArrayList<>();
+        this.thumbnail = thumbnail;
         addImages(thumbnail);
 
         this.sharing = sharinge;
@@ -546,11 +545,9 @@ public class NewItem extends EntityDate {
      *
      * @param added
      */
-    private void addImages(List<NewItemImage> added) {
-        added.stream().forEach(i -> {
-            thumbnail.add(i);
-            i.initNewItem(this);
-        });
+    private void addImages(NewItemImage added) {
+            added.initNewItem(this);
+            this.thumbnail=added;
     }
 
     /**
@@ -599,11 +596,10 @@ public class NewItem extends EntityDate {
      *
      * @param deleted
      */
-    private void deleteImages(List<NewItemImage> deleted) {
-        deleted.stream().
-                forEach(di ->
-                        this.thumbnail.remove(di)
-                );
+    private void deleteImages(NewItemImage deleted) {
+        this.thumbnail.initNewItem(null); //이렇게 부모를 null로 해주면 알아서 삭제 처리(관계 끊어져서)
+        //this.getThumbnail().initNewItem(null);
+        this.setThumbnail(null);
     }
 
 
@@ -622,34 +618,30 @@ public class NewItem extends EntityDate {
 
     /**
      * 압데이트 돼야 할 이미지 정보 만들어줌
-     *
-     * @param addedImageFiles
-     * @param deletedImageIds
+
      * @return
      */
-    private NewItemImageUpdatedResult findImageUpdatedResult(List<MultipartFile> addedImageFiles, List<Long> deletedImageIds) {
-        List<NewItemImage> addedImages
+    private NewItemImageUpdatedResult findImageUpdatedResult(MultipartFile addedImageFiles) {
+        NewItemImage addedImages
                 = convertImageFilesToImages(addedImageFiles);
-        List<NewItemImage> deletedImages
-                = convertImageIdsToImages(deletedImageIds);
-        return new NewItemImageUpdatedResult(addedImageFiles, addedImages, deletedImages);
+        return new NewItemImageUpdatedResult(addedImageFiles, addedImages);
     }
 
 
-    private List<NewItemImage> convertImageIdsToImages(List<Long> imageIds) {
-        return imageIds.stream()
-                .map(id -> convertImageIdToImage(id))
-                .filter(i -> i.isPresent())
-                .map(i -> i.get())
-                .collect(toList());
-    }
+//    private List<NewItemImage> convertImageIdsToImages(List<Long> imageIds) {
+//        return imageIds.stream()
+//                .map(id -> convertImageIdToImage(id))
+//                .filter(i -> i.isPresent())
+//                .map(i -> i.get())
+//                .collect(toList());
+//    }
 
-    private Optional<NewItemImage> convertImageIdToImage(Long id) {
-        return this.thumbnail.stream().filter(i -> i.getId().equals(id)).findAny();
-    }
+//    private Optional<NewItemImage> convertImageIdToImage(Long id) {
+//        return this.thumbnail.stream().filter(i -> i.getId().equals(id)).findAny();
+//    }
 
-    private List<NewItemImage> convertImageFilesToImages(List<MultipartFile> imageFiles) {
-        return imageFiles.stream().map(imageFile -> new NewItemImage(imageFile.getOriginalFilename())).collect(toList());
+    private NewItemImage convertImageFilesToImages(MultipartFile imageFile) {
+        return new NewItemImage(imageFile.getOriginalFilename());
     }
 
     /**
@@ -696,9 +688,8 @@ public class NewItem extends EntityDate {
     @Getter
     @AllArgsConstructor
     public static class NewItemImageUpdatedResult {
-        private List<MultipartFile> addedImageFiles;
-        private List<NewItemImage> addedImages;
-        private List<NewItemImage> deletedImages;
+        private MultipartFile addedImageFiles;
+        private NewItemImage addedImages;
     }
 
     /**
@@ -761,22 +752,21 @@ public class NewItem extends EntityDate {
 
         //TODO update할 때 사용자가 기존 값 없애고 보낼 수도 있자나 => fix needed
         //isBlank 랑 isNull로 판단해서 기존 값 / req 값 채워넣기
-        this.name = req.getName().isBlank()?this.name:req.getName();
+        this.name = req.getName().isBlank() ? this.name : req.getName();
 
-        this.itemTypes = req.getTypeId()==null?this.itemTypes:
+        this.itemTypes = req.getTypeId() == null ? this.itemTypes :
                 itemTypesRepository.findById(req.getTypeId()).orElseThrow(ItemNotFoundException::new);
-
 
 
         this.sharing = req.isSharing();
 
         this.carType =
                 this.carType =                 //전용일 때야 차종 생성
-                        (!req.isSharing())?
+                        (!req.isSharing()) ?
                                 //1. 전용이라면
-                                req.getCarTypeId()==null?
+                                req.getCarTypeId() == null ?
                                         //1-1 : 아이디 없으면 (무조건 에러 튕기도록
-                                        carTypeRepository.findById(0L).orElseThrow(CarTypeNotFoundException::new):
+                                        carTypeRepository.findById(0L).orElseThrow(CarTypeNotFoundException::new) :
                                         //null 아니면 입력받은 것
                                         carTypeRepository.findById(req.getCarTypeId()).orElseThrow(CarTypeNotFoundException::new)
 
@@ -785,53 +775,53 @@ public class NewItem extends EntityDate {
                                 carTypeRepository.findById(99999L).orElseThrow(CarTypeNotFoundException::new);
 
 
-        this.integrate = req.getIntegrate().isBlank()?this.integrate:req.getIntegrate();
+        this.integrate = req.getIntegrate().isBlank() ? this.integrate : req.getIntegrate();
 
-        this.curve = req.getCurve().isBlank()?this.curve:req.getCurve();
+        this.curve = req.getCurve().isBlank() ? this.curve : req.getCurve();
 
-        this.width = req.getWidth().isBlank()?this.width:req.getWidth();
+        this.width = req.getWidth().isBlank() ? this.width : req.getWidth();
 
-        this.height= req.getHeight().isBlank()?this.height:req.getHeight();
+        this.height = req.getHeight().isBlank() ? this.height : req.getHeight();
 
-        this.thickness = req.getThickness().isBlank()?this.thickness:req.getThickness();
+        this.thickness = req.getThickness().isBlank() ? this.thickness : req.getThickness();
 
-        this.weight = req.getWeight().isBlank()?this.weight:req.getWeight();
+        this.weight = req.getWeight().isBlank() ? this.weight : req.getWeight();
 
-        this.importance = req.getImportance().isBlank()?this.importance:req.getImportance();
+        this.importance = req.getImportance().isBlank() ? this.importance : req.getImportance();
 
-        this.color = req.getColorId()==null?this.color:colorRepository.findById(req.getColorId())
+        this.color = req.getColorId() == null ? this.color : colorRepository.findById(req.getColorId())
                 .orElseThrow(ColorNotFoundException::new);
 
-        this.loadQuantity = req.getLoadQuantity().isBlank()?this.loadQuantity:req.getLoadQuantity();
+        this.loadQuantity = req.getLoadQuantity().isBlank() ? this.loadQuantity : req.getLoadQuantity();
 
-        this.forming = req.getForming().isBlank()?this.forming:req.getForming();
+        this.forming = req.getForming().isBlank() ? this.forming : req.getForming();
 
-        this.coatingWay = req.getCoatingWayId()==null?this.coatingWay:
+        this.coatingWay = req.getCoatingWayId() == null ? this.coatingWay :
                 coatingWayRepository.findById
                         (req.getCoatingWayId()).orElseThrow(CoatingNotFoundException::new);
 
-        this.coatingType = req.getCoatingTypeId()==null?this.coatingType:
+        this.coatingType = req.getCoatingTypeId() == null ? this.coatingType :
                 coatingTypeRepository.findById
                         (req.getCarTypeId()).orElseThrow(CoatingNotFoundException::new);
 
 
-        this.modulus = req.getModulus().isBlank()?this.modulus:req.getModulus();
+        this.modulus = req.getModulus().isBlank() ? this.modulus : req.getModulus();
 
-        this.screw = req.getScrew().isBlank()?this.screw:req.getScrew();
+        this.screw = req.getScrew().isBlank() ? this.screw : req.getScrew();
 
-        this.cuttingType = req.getCuttingType().isBlank()?this.cuttingType:req.getCuttingType();
+        this.cuttingType = req.getCuttingType().isBlank() ? this.cuttingType : req.getCuttingType();
 
-        this.lcd = req.getLcd().isBlank()?this.lcd:req.getLcd();
+        this.lcd = req.getLcd().isBlank() ? this.lcd : req.getLcd();
 
-        this.displaySize = req.getDisplaySize().isBlank()?this.displaySize:req.getDisplaySize();
+        this.displaySize = req.getDisplaySize().isBlank() ? this.displaySize : req.getDisplaySize();
 
-        this.screwHeight = req.getScrewHeight().isBlank()?this.screwHeight:req.getScrewHeight();
+        this.screwHeight = req.getScrewHeight().isBlank() ? this.screwHeight : req.getScrewHeight();
 
-        this.clientOrganization = req.getClientOrganizationId()==null?this.clientOrganization:
+        this.clientOrganization = req.getClientOrganizationId() == null ? this.clientOrganization :
                 clientOrganizationRepository.findById(req.getClientOrganizationId())
                         .orElseThrow(ClientOrganizationNotFoundException::new);
 
-        this.supplierOrganization = req.getSupplierOrganizationId()==null?this.supplierOrganization:
+        this.supplierOrganization = req.getSupplierOrganizationId() == null ? this.supplierOrganization :
                 supplierRepository.findById(req.getSupplierOrganizationId())
                         .orElseThrow(SupplierNotFoundException::new);
 
@@ -848,14 +838,12 @@ public class NewItem extends EntityDate {
         this.tempsave = true;
         this.readonly = false;
 
-        NewItemImageUpdatedResult resultImage =
-                findImageUpdatedResult(
-                        req.getAddedImages(),
-                        req.getDeletedImages()
-                );
+        this.modifier =
+                memberRepository.findById(
+                        req.getModifierId()
+                ).orElseThrow(MemberNotFoundException::new);//05 -22 생성자 추가
 
-        addImages(resultImage.getAddedImages());
-        deleteImages(resultImage.getDeletedImages());
+        //첨부파일 시작
 
         NewItemAttachmentUpdatedResult resultAttachment =
 
@@ -864,25 +852,47 @@ public class NewItem extends EntityDate {
                         req.getDeletedAttachments()
                 );
 
-        if(req.getAddedTag().size()>0) {
-            addUpdatedAttachments(req, resultAttachment.getAddedAttachments(),attachmentTagRepository);
+        if (req.getAddedTag().size() > 0) {
+            addUpdatedAttachments(req, resultAttachment.getAddedAttachments(), attachmentTagRepository);
         }
 
-        if(req.getDeletedAttachments().size()>0) {
+        if (req.getDeletedAttachments().size() > 0) {
             deleteAttachments(resultAttachment.getDeletedAttachments());
         }
 
-        NewItemFileUpdatedResult fileUpdatedResult =
-                new NewItemFileUpdatedResult(resultAttachment,resultImage);
+        NewItemFileUpdatedResult fileUpdatedResult = null;
 
-        this.modifier =
-                memberRepository.findById(
-                        req.getModifierId()
-                ).orElseThrow(MemberNotFoundException::new);//05 -22 생성자 추가
+        if (req.getThumbnail().getSize() > 0) {
+            System.out.println("업데이트된 썸네일이 있네," +
+                    "기존걸 삭제하고ㅡ 이걸 넣자! ");
 
+            if (this.getThumbnail() != null) {
+                //기존 이미지 삭제
+                System.out.println("기존 이미지 삭제할게잉 ");
+
+                deleteImages(this.thumbnail);
+            }
+
+                NewItemImageUpdatedResult resultImage =
+                        findImageUpdatedResult(
+                                req.getThumbnail()
+                        );
+
+                addImages(new NewItemImage(req.getThumbnail().getOriginalFilename()));
+                fileUpdatedResult =
+                        new NewItemFileUpdatedResult(resultAttachment, resultImage);
+
+
+        }
+        else {
+
+            fileUpdatedResult =
+                    new NewItemFileUpdatedResult(resultAttachment, null);
+
+        }
         return fileUpdatedResult;
-    }
 
+    }
 
     public NewItemFileUpdatedResult tempEnd(
             NewItemUpdateRequest req,
@@ -1008,14 +1018,11 @@ public class NewItem extends EntityDate {
         this.tempsave = true;
         this.readonly = true; //0605- 이 부분하나가 변경, 이 것은 얘를 false 에서 true로 변경 !
 
-        NewItemImageUpdatedResult resultImage =
-                findImageUpdatedResult(
-                        req.getAddedImages(),
-                        req.getDeletedImages()
-                );
+        this.modifier =
+                memberRepository.findById(
+                        req.getModifierId()
+                ).orElseThrow(MemberNotFoundException::new);//05 -22 생성자 추가
 
-        addImages(resultImage.getAddedImages());
-        deleteImages(resultImage.getDeletedImages());
 
         NewItemAttachmentUpdatedResult resultAttachment =
 
@@ -1024,24 +1031,44 @@ public class NewItem extends EntityDate {
                         req.getDeletedAttachments()
                 );
 
-        if(req.getAddedTag().size()>0) {
-
+        if (req.getAddedTag().size() > 0) {
             addUpdatedAttachments(req, resultAttachment.getAddedAttachments(), attachmentTagRepository);
-
         }
 
-        if(req.getDeletedAttachments().size()>0) {
+        if (req.getDeletedAttachments().size() > 0) {
             deleteAttachments(resultAttachment.getDeletedAttachments());
         }
 
-        NewItemFileUpdatedResult fileUpdatedResult =
-                new NewItemFileUpdatedResult(resultAttachment,resultImage);
+        NewItemFileUpdatedResult fileUpdatedResult = null;
 
-        this.modifier =
-                memberRepository.findById(
-                        req.getModifierId()
-                ).orElseThrow(MemberNotFoundException::new);//05 -22 생성자 추가
+        if (req.getThumbnail().getSize() > 0) {
+            System.out.println("업데이트된 썸네일이 있네," +
+                    "기존걸 삭제하고ㅡ 이걸 넣자! ");
 
+            if (this.getThumbnail() != null) {
+                //기존 이미지 삭제
+                System.out.println("기존 이미지 삭제할게잉 ");
+
+                deleteImages(this.thumbnail);
+            }
+
+            NewItemImageUpdatedResult resultImage =
+                    findImageUpdatedResult(
+                            req.getThumbnail()
+                    );
+
+            addImages(new NewItemImage(req.getThumbnail().getOriginalFilename()));
+            fileUpdatedResult =
+                    new NewItemFileUpdatedResult(resultAttachment, resultImage);
+
+
+        }
+        else {
+
+            fileUpdatedResult =
+                    new NewItemFileUpdatedResult(resultAttachment, null);
+
+        }
         return fileUpdatedResult;
     }
 

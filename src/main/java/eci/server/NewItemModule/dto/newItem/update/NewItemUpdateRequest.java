@@ -77,13 +77,10 @@ public class NewItemUpdateRequest {
     private Long modifierId;
 
 
-    //private List<MultipartFile> thumbnail = new ArrayList<>();
+    private MultipartFile thumbnail;
 
 
-    /**
-     * 추가된 이미지를 첨부
-     */
-    private List<MultipartFile> addedImages = new ArrayList<>();
+    //private MultipartFile addedImages = new ArrayList<>();
 
 
     /**
@@ -93,11 +90,9 @@ public class NewItemUpdateRequest {
     private List<Long> addedTag = new ArrayList<>();
     private List<String> addedAttachmentComment = new ArrayList<>();
 
-    /**
-     * 삭제될 사진 아이디 입력 - 실제 삭제 예정
-     */
+    //새로 thumbnail이 들어오게 된다면 기존 애를 삭제처리 진행하면 됨 (그 아이의 new_item을 null로 처리)
+    //private List<Long> deletedImages = new ArrayList<>();
 
-    private List<Long> deletedImages = new ArrayList<>();
     /**
      * 삭제될 파일 아이디 입력 - is deleted 만 true
      */

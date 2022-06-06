@@ -1,6 +1,5 @@
 package eci.server.NewItemModule.entity;
 
-import eci.server.ItemModule.entity.item.Item;
 import eci.server.ItemModule.entitycommon.EntityDate;
 import eci.server.ItemModule.exception.image.UnsupportedImageFormatException;
 import lombok.AccessLevel;
@@ -47,7 +46,7 @@ public class NewItemImage extends EntityDate {
      * 아이템 사라지면 삭제됨
      */
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne
     @JoinColumn(name = "new_item_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private NewItem newItem;
