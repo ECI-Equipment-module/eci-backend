@@ -1,5 +1,9 @@
 package eci.server.ItemModule.service.newRoute;
 
+import eci.server.BomModule.entity.Bom;
+import eci.server.BomModule.entity.PreliminaryBom;
+import eci.server.BomModule.repository.BomRepository;
+import eci.server.BomModule.repository.PreliminaryBomRepository;
 import eci.server.DesignModule.entity.design.Design;
 import eci.server.DesignModule.exception.DesignNotLinkedException;
 import eci.server.DesignModule.repository.DesignRepository;
@@ -49,6 +53,8 @@ public class RouteOrderingService {
 
     private final RouteTypeRepository routeTypeRepository;
     private final ItemTypesRepository itemTypesRepository;
+    private final BomRepository bomRepository;
+    private final PreliminaryBomRepository preliminaryBomRepository;
 
     public RouteOrderingDto read(Long id) {
 
@@ -94,7 +100,9 @@ public class RouteOrderingService {
         return RouteOrderingDto.toDtoList(
                 newRoutes,
                 routeProductRepository,
-                routeOrderingRepository
+                routeOrderingRepository,
+                bomRepository,
+                preliminaryBomRepository
         );
     }
 
@@ -127,8 +135,24 @@ public class RouteOrderingService {
             System.out.println(routeProduct1.getMembers().get(0).getRouteProduct());
         }
 
+        //봄 생성
+        Bom bom = bomRepository.save(
+                new Bom(
+                        newRoute.getNewItem()
+                )
+        );
+        //프릴리미너리 봄 생성
+        PreliminaryBom preliminaryBom = preliminaryBomRepository.save(
+                new PreliminaryBom(
+                        bom
+                )
+        );
+
         newRoute.getNewItem().updateTempsaveWhenMadeRoute();
         //라우트 만들면 임시저장 해제
+
+        //0607 BOM + PRELIMINARY BOM 생성되게 하기
+
         return new RouteOrderingCreateResponse(newRoute.getId());
     }
 

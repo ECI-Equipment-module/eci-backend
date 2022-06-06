@@ -27,4 +27,11 @@ public class PreliminaryBom {
     @Column(nullable = false)
     private Boolean readonly; //05-12반영
 
+    public PreliminaryBom(
+            Bom bom
+    ){
+        this.bom = bom;
+        this.tempsave = true;
+        this.readonly = false;
+    }
 }
