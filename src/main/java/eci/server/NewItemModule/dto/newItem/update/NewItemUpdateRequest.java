@@ -77,7 +77,7 @@ public class NewItemUpdateRequest {
     private Long modifierId;
 
 
-    private List<MultipartFile> thumbnail = new ArrayList<>();
+    //private List<MultipartFile> thumbnail = new ArrayList<>();
 
 
     /**
