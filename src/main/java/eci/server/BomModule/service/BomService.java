@@ -1,19 +1,12 @@
 package eci.server.BomModule.service;
 
 import eci.server.BomModule.dto.PreliminaryBomCardCreateRequest;
-import eci.server.BomModule.entity.Bom;
 import eci.server.BomModule.entity.PreliminaryBom;
 import eci.server.BomModule.entity.PreliminaryBomCard;
 import eci.server.BomModule.repository.BomRepository;
 import eci.server.BomModule.repository.PreliminaryBomCardRepository;
 import eci.server.BomModule.repository.PreliminaryBomRepository;
-import eci.server.ItemModule.dto.newRoute.routeOrdering.RouteOrderingCreateRequest;
 import eci.server.ItemModule.dto.newRoute.routeOrdering.RouteOrderingCreateResponse;
-import eci.server.ItemModule.dto.newRoute.routeProduct.RouteProductCreateRequest;
-import eci.server.ItemModule.entity.newRoute.RouteOrdering;
-import eci.server.ItemModule.entity.newRoute.RouteProduct;
-import eci.server.ItemModule.exception.member.MemberNotFoundException;
-import eci.server.ItemModule.repository.item.ItemTypesRepository;
 import eci.server.ItemModule.repository.newRoute.RouteTypeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -62,8 +55,7 @@ public class BomService {
             PreliminaryBom preliminaryBom,
             PreliminaryBomCardRepository preliminaryBomCardRepository
     ) {
-        System.out.println("도오ㅗㅗㅗㅗㅗㅗㅗㅗㅗㅗㅗㅗㅗㅗ");
-        System.out.println(childrenList);
+
         if (childrenList!=null && childrenList.size() > 0) {
             List<PreliminaryBomCard> toChildrenList =
                     PreliminaryBomCardCreateRequest.toChildrenList(
@@ -90,7 +82,7 @@ public class BomService {
                         toChildrenList.indexOf(p)
                 ).getChildren().size() > 0
                 ) {
-                    System.out.println("여기까지도 왔어어ㅓㅓㅓㅓㅓㅓㅓㅓ");
+
                     recursiveChildrenMaking(
                             p.getId(),
                             childrenList.get(
