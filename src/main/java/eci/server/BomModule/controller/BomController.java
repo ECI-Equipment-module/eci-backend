@@ -1,6 +1,7 @@
 package eci.server.BomModule.controller;
 
 import eci.server.BomModule.dto.PreliminaryBomCardCreateRequest;
+import eci.server.BomModule.dto.cond.PreliminaryBomReadCondition;
 import eci.server.BomModule.service.BomService;
 import eci.server.ItemModule.dto.response.Response;
 import eci.server.aop.AssignMemberId;
@@ -25,24 +26,20 @@ public class BomController {
     @PostMapping("/preliminary")
     @ResponseStatus(HttpStatus.CREATED)
     @AssignMemberId
+
     public Response createPreliminary(
             @Valid PreliminaryBomCardCreateRequest req) {
 
         return Response.success(
-                bomService.createCard(req)
+                bomService.createPreliminaryCard(req)
         );
     }
 
-        @PostMapping("/preliminaryy")
-        @ResponseStatus(HttpStatus.CREATED)
-        @AssignMemberId
-        public Response createPreliminaryy(
-                @RequestBody PreliminaryBomCardCreateRequest req) {
 
-            return Response.success(
-                    bomService.createCard(req)
-            );
-
+    @GetMapping("/preliminary")
+    @ResponseStatus(HttpStatus.OK)
+    public Response readAll(@Valid PreliminaryBomReadCondition cond) {
+        return Response.success(bomService.readPreliminaryAll(cond));
     }
 
 }

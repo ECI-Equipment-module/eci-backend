@@ -1,8 +1,11 @@
 package eci.server.BomModule.service;
 
 import eci.server.BomModule.dto.PreliminaryBomCardCreateRequest;
+import eci.server.BomModule.dto.PreliminaryBomCardDto;
+import eci.server.BomModule.dto.cond.PreliminaryBomReadCondition;
 import eci.server.BomModule.entity.PreliminaryBom;
 import eci.server.BomModule.entity.PreliminaryBomCard;
+import eci.server.BomModule.exception.PreliminaryBomCardNotFoundException;
 import eci.server.BomModule.repository.BomRepository;
 import eci.server.BomModule.repository.PreliminaryBomCardRepository;
 import eci.server.BomModule.repository.PreliminaryBomRepository;
@@ -25,7 +28,7 @@ public class BomService {
 
     @Transactional
     //최초 카드의 아이디만 돌려주면 된다.
-    public RouteOrderingCreateResponse createCard(PreliminaryBomCardCreateRequest req) {
+    public RouteOrderingCreateResponse createPreliminaryCard(PreliminaryBomCardCreateRequest req) {
 
         PreliminaryBomCard first = preliminaryBomCardRepository.save(
                 PreliminaryBomCardCreateRequest.toParentEntity(
@@ -95,6 +98,27 @@ public class BomService {
 
             }
         }
+    }
+
+    public List<PreliminaryBomCardDto> readPreliminaryAll(PreliminaryBomReadCondition cond) {
+        return PreliminaryBomCardDto.toDtoList(
+                preliminaryBomCardRepository.
+                        findAllWithParentByPreliminaryBomIdOrderByParentIdAscNullsFirstPreliminaryBomIdAsc(
+                                cond.getPreliminaryBomId()
+                        )
+        );
+    }
+
+
+    @Transactional
+//    1) findDeletabl~ 조회된 결과가 있다면 DB 실제로 제거
+//    2) delete를 호출하여 삭제 표시
+    public void delete(Long id) {
+        PreliminaryBomCard preliminaryBomCard = preliminaryBomCardRepository.findById(id).orElseThrow(PreliminaryBomCardNotFoundException::new);
+        preliminaryBomCard.findDeletablePreliminaryBomCard().ifPresentOrElse(
+                preliminaryBomCardRepository::delete,
+                preliminaryBomCard::delete
+        );
     }
 
 }

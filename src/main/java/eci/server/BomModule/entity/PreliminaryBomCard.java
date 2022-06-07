@@ -74,6 +74,8 @@ public class PreliminaryBomCard {
         return hasChildren() ? Optional.empty() : Optional.of(findDeletablePreliminaryBomCardByParent());
     }
 
+    //실제로 삭제하는 것이 아니라 삭제 표시
+    //하위 댓글이 남아있어서 실제로 제거할 수 없는 댓글
     public void delete() {
         this.deleted = true;
     }
