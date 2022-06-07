@@ -62,7 +62,7 @@ public class BomService {
             PreliminaryBom preliminaryBom,
             PreliminaryBomCardRepository preliminaryBomCardRepository
     ) {
-        if (childrenList.size() > 0) {
+        if (childrenList!=null && childrenList.size() > 0) {
             List<PreliminaryBomCard> toChildrenList =
                     PreliminaryBomCardCreateRequest.toChildrenList(
                             parentId,
