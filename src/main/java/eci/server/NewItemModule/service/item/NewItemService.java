@@ -1,6 +1,7 @@
 package eci.server.NewItemModule.service.item;
 
 import eci.server.BomModule.repository.BomRepository;
+import eci.server.BomModule.repository.PreliminaryBomRepository;
 import eci.server.DesignModule.repository.DesignRepository;
 import eci.server.ItemModule.dto.item.*;
 import eci.server.ItemModule.dto.manufacture.ReadPartNumberService;
@@ -96,6 +97,7 @@ public class NewItemService {
     private final BomRepository bomRepository;
     private final DesignGuard designGuard;
     private final BomGuard bomGuard;
+    private final PreliminaryBomRepository preliminaryBomRepository;
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -251,7 +253,9 @@ public class NewItemService {
                 RouteOrderingDto.toDtoList(
                         routeOrderingRepository.findByNewItem(targetItem),
                         routeProductRepository,
-                        routeOrderingRepository
+                        routeOrderingRepository,
+                        bomRepository,
+                        preliminaryBomRepository
 
                 )
         ).orElseThrow(RouteNotFoundException::new);

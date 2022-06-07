@@ -40,13 +40,22 @@ public class Bom extends EntityDate {
     @Column
     private char revision;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(
+            name = "member_id",
+            nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private Member member;
+
     public Bom(
-            NewItem newItem
+            NewItem newItem,
+            Member member
     ){
         this.newItem = newItem;
         this.tempsave = false;
         this.readonly = false;
         this.revision = 'A';
+        this.member = member;
     }
 
 }

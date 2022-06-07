@@ -22,16 +22,16 @@ public class PreliminaryBomCard {
     private Long id;
 
     @Column(nullable = false)
-    private String number;
+    private String cardNumber;
 
     @Column(nullable = false)
-    private String name;
+    private String cardName;
 
     @Column(nullable = false)
     private String classification;
 
     @Column(nullable = false)
-    private String type;
+    private String cardType;
 
     @Column(nullable = false)
     private String sharing;
@@ -60,10 +60,10 @@ public class PreliminaryBomCard {
             String sharing,
             PreliminaryBom preliminaryBom,
             PreliminaryBomCard parent) {
-        this.number = number;
-        this.name = name;
+        this.cardNumber = number;
+        this.cardName = name;
         this.classification = classification;
-        this.type = type;
+        this.cardType = type;
         this.sharing = sharing;
         this.preliminaryBom = preliminaryBom;
         this.parent = parent;

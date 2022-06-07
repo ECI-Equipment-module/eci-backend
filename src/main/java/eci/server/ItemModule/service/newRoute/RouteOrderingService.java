@@ -14,6 +14,8 @@ import eci.server.ItemModule.entity.item.ItemType;
 import eci.server.ItemModule.entity.newRoute.RouteOrdering;
 import eci.server.ItemModule.entity.newRoute.RoutePreset;
 import eci.server.ItemModule.entity.newRoute.RouteProduct;
+import eci.server.ItemModule.exception.member.MemberNotFoundException;
+import eci.server.ItemModule.exception.route.MemberNotAssignedException;
 import eci.server.ItemModule.exception.route.RouteNotFoundException;
 import eci.server.ItemModule.exception.route.UpdateImpossibleException;
 import eci.server.ItemModule.repository.item.ItemRepository;
@@ -138,7 +140,8 @@ public class RouteOrderingService {
         //봄 생성
         Bom bom = bomRepository.save(
                 new Bom(
-                        newRoute.getNewItem()
+                        newRoute.getNewItem(),
+                        memberRepository.findById(req.getMemberId()).orElseThrow(MemberNotFoundException::new)
                 )
         );
         //프릴리미너리 봄 생성
