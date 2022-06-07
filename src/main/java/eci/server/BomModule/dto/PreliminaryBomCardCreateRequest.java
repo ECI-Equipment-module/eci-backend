@@ -111,6 +111,7 @@ public class PreliminaryBomCardCreateRequest {
                 = new ArrayList<>(); //여기에 생성된 모든 라우트들 ADD할거야
 
         for(PreliminaryBomCardCreateRequest req : childrenList){
+
             willBeSavedChildrenList.add(
                     new PreliminaryBomCard(
                             req.getCardNumber(),

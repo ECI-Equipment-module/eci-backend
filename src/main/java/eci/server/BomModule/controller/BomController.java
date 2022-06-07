@@ -9,10 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
@@ -34,6 +31,18 @@ public class BomController {
         return Response.success(
                 bomService.createCard(req)
         );
+    }
+
+        @PostMapping("/preliminaryy")
+        @ResponseStatus(HttpStatus.CREATED)
+        @AssignMemberId
+        public Response createPreliminaryy(
+                @RequestBody PreliminaryBomCardCreateRequest req) {
+
+            return Response.success(
+                    bomService.createCard(req)
+            );
+
     }
 
 }

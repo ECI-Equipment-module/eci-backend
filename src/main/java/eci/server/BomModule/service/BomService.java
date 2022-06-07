@@ -62,6 +62,8 @@ public class BomService {
             PreliminaryBom preliminaryBom,
             PreliminaryBomCardRepository preliminaryBomCardRepository
     ) {
+        System.out.println("도오ㅗㅗㅗㅗㅗㅗㅗㅗㅗㅗㅗㅗㅗㅗ");
+        System.out.println(childrenList);
         if (childrenList!=null && childrenList.size() > 0) {
             List<PreliminaryBomCard> toChildrenList =
                     PreliminaryBomCardCreateRequest.toChildrenList(
@@ -74,9 +76,21 @@ public class BomService {
             for (PreliminaryBomCard p : toChildrenList) {
                 PreliminaryBomCard child =
                         preliminaryBomCardRepository.save(p);
-                if (childrenList.get(
+
+                if (
+                        childrenList.get(
                         toChildrenList.indexOf(p)
-                ).getChildren().size() > 0) {
+                        )!=null
+                                &&
+                                childrenList.get(
+                                        toChildrenList.indexOf(p)
+                                ).getChildren()!=null
+                    &&
+                                childrenList.get(
+                        toChildrenList.indexOf(p)
+                ).getChildren().size() > 0
+                ) {
+                    System.out.println("여기까지도 왔어어ㅓㅓㅓㅓㅓㅓㅓㅓ");
                     recursiveChildrenMaking(
                             p.getId(),
                             childrenList.get(
