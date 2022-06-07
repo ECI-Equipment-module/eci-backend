@@ -38,8 +38,15 @@ public class BomController {
 
     @GetMapping("/preliminary")
     @ResponseStatus(HttpStatus.OK)
-    public Response readAll(@Valid PreliminaryBomReadCondition cond) {
+    public Response readPreliminaryAll(@Valid PreliminaryBomReadCondition cond) {
         return Response.success(bomService.readPreliminaryAll(cond));
+    }
+
+    @GetMapping("/preliminary/card/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public Response deletePreliminaryCard(@PathVariable Long id) {
+        bomService.delete(id); //삭제할 카드 아이디 건네주기
+        return Response.success();
     }
 
 }
