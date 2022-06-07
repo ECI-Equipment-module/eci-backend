@@ -90,6 +90,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.DELETE, "/item/{id}").access("@newItemGuard.check(#id)")
                 .antMatchers(HttpMethod.PUT, "/item/temp/end/{id}").access("@newItemGuard.check(#id)")
 
+                .antMatchers(HttpMethod.POST, "/preliminary").authenticated()
+                .antMatchers(HttpMethod.PUT, "/preliminary").authenticated()
+                .antMatchers(HttpMethod.PUT, "/preliminary/temp").authenticated()
+                .antMatchers(HttpMethod.PUT, "/preliminary/temp/end/{id}").authenticated()
+                .antMatchers(HttpMethod.GET, "/preliminary/{id}").authenticated()
+                .antMatchers(HttpMethod.DELETE, "/preliminary").authenticated()
 
                 .antMatchers(HttpMethod.GET, "/**").permitAll()//위에 명시된 get 말고는 다 허용, 맨 밑으로 위치 변경
 
