@@ -12,6 +12,7 @@ import javax.persistence.*;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+
 public class JsonSave {
     @Id
 //    @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,4 +28,11 @@ public class JsonSave {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private PreliminaryBom preliminaryBom;
 
+    public JsonSave(
+            String s,
+            PreliminaryBom preliminaryBom
+    ){
+        this.jsonText = s;
+        this.preliminaryBom = preliminaryBom;
+    }
 }
