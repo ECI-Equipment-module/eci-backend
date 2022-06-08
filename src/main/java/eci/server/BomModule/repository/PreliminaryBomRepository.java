@@ -8,6 +8,6 @@ import java.util.List;
 
 public interface PreliminaryBomRepository extends JpaRepository<PreliminaryBom, Long> {
 
-    List<PreliminaryBom> findByBom(Bom bom);
+    PreliminaryBom findByBom(Bom bom);
 
 }

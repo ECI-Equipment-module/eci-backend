@@ -232,25 +232,6 @@ public class BomGuard {
         return module.equals("BOM")&&name.equals("REVIEW");
     }
 
-    /**
-     * bomId 의 pre 의 card 갯수가 한개 초과라면 edit, 아니면 add
-     * @param bomId
-     * @return
-     */
-    //이건 DTO에서 판단
-    public boolean isPreliminaryEdit(Long bomId){
-
-        return preliminaryBomCardRepository.findByPreliminaryBom(
-
-                preliminaryBomRepository.findByBom(
-                        bomRepository.findById(
-                        bomId
-                ).orElseThrow(BomNotFoundException::new)
-                ).get(0)
-
-        ).size()>1;
-
-    }
 
     public boolean isBomComplete(RouteOrdering routeOrdering){
 
