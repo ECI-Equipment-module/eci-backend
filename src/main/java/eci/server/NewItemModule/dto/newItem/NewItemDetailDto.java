@@ -1,28 +1,31 @@
 package eci.server.NewItemModule.dto.newItem;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import eci.server.BomModule.repository.BomRepository;
+import eci.server.DesignModule.dto.itemdesign.BomDesignItemDto;
+import eci.server.DesignModule.repository.DesignRepository;
 import eci.server.ItemModule.dto.color.ColorDto;
 import eci.server.ItemModule.dto.manufacture.MakerSimpleDto;
 import eci.server.ItemModule.dto.member.MemberDto;
 import eci.server.ItemModule.dto.newRoute.routeOrdering.RouteOrderingDto;
-import eci.server.ItemModule.dto.newRoute.routeProduct.RouteProductDto;
-import eci.server.ItemModule.entity.item.ItemTypes;
 import eci.server.NewItemModule.dto.ItemTypesDto;
 import eci.server.NewItemModule.dto.attachment.NewItemAttachmentDto;
 import eci.server.NewItemModule.dto.classification.ClassificationDto;
 import eci.server.NewItemModule.dto.coatingcommon.CoatingDto;
 import eci.server.NewItemModule.dto.image.NewItemImageDto;
+import eci.server.NewItemModule.dto.responsibility.ResponsibleDto;
 import eci.server.NewItemModule.dto.supplier.SupplierDto;
 import eci.server.NewItemModule.entity.NewItem;
-import eci.server.NewItemModule.entity.classification.Classification;
 import eci.server.NewItemModule.repository.maker.NewItemMakerRepository;
 import eci.server.ProjectModule.dto.carType.CarTypeDto;
 import eci.server.ProjectModule.dto.clientOrg.ClientOrganizationDto;
+import eci.server.config.guard.BomGuard;
+import eci.server.config.guard.DesignGuard;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
-import javax.persistence.Column;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
@@ -84,13 +87,22 @@ public class NewItemDetailDto {
     private Boolean tempsave;
     private boolean readonly;
 
+    //private BomDesignItemDto bom;
+    private Long bomId;
+    private BomDesignItemDto design;
+
 
     public static NewItemDetailDto toDto(
             NewItem Item,
             NewItemMakerRepository newItemMakerRepository,
             RouteOrderingDto routeOrderingDto,
-            RouteProductDto routeProductDto
+            DesignRepository designRepository,
+            BomRepository bomRepository,
+            BomGuard bomGuard,
+            DesignGuard designGuard
     ) {
+
+        List<ResponsibleDto> tmpResponsibleDtoList = new ArrayList<>();
 
         if(Item.getMakers().size()>0) {
             return new NewItemDetailDto(
@@ -141,7 +153,25 @@ public class NewItemDetailDto {
                     Item.getModifier()==null?null:MemberDto.toDto(Item.getModifier()),
 
                     Item.isTempsave(),
-                    Item.isReadonly()
+                    Item.isReadonly(),
+
+                    bomRepository.findByNewItem(Item).get(0).getId(),
+
+                    designRepository.findByNewItem(Item).size()>0?
+                        BomDesignItemDto.toDesignDto(
+                                Item,
+                                designRepository.findByNewItem(Item).get(
+                                        designRepository.findByNewItem(Item).size() - 1
+                                ),
+                                designGuard
+                        ) :
+                            //디자인 없을 지도 모름
+                            new BomDesignItemDto(
+                                    designRepository.findByNewItem(Item).get(
+                                            designRepository.findByNewItem(Item).size() - 1
+                                    ).getId(),
+                                    tmpResponsibleDtoList
+                            )
 
 
             );
@@ -195,7 +225,31 @@ public class NewItemDetailDto {
                 Item.getModifier()==null?null:MemberDto.toDto(Item.getModifier()),
 
                 Item.isTempsave(),
-                Item.isReadonly()
+                Item.isReadonly(),
+
+//                BomDesignItemDto.toBomDto(
+//                        Item,
+//                        bomRepository.findByNewItem(Item).get(
+//                                designRepository.findByNewItem(Item).size()-1
+//                        ),
+//                        bomGuard
+//                ),
+
+                bomRepository.findByNewItem(Item).get(0).getId(),
+
+                designRepository.findByNewItem(Item).size()>0?
+                        BomDesignItemDto.toDesignDto(
+                                Item,
+                                designRepository.findByNewItem(Item).get(
+                                        designRepository.findByNewItem(Item).size() - 1
+                                ),
+                                designGuard
+                        ) :
+                        //디자인 없을 지도 모름
+                        new BomDesignItemDto(
+                                99999L,
+                                tmpResponsibleDtoList
+                        )
 
         );
     }
@@ -203,8 +257,12 @@ public class NewItemDetailDto {
 
     public static NewItemDetailDto noRoutetoDto(
             NewItem Item,
-            NewItemMakerRepository newItemMakerRepository
+            NewItemMakerRepository newItemMakerRepository,
+            BomRepository bomRepository
     ){
+
+        List<ResponsibleDto> tmpResponsibleDtoList = new ArrayList<>();
+
         if(Item.getMakers().size()>0) {
             return new NewItemDetailDto(
                     Item.getId(),
@@ -253,8 +311,15 @@ public class NewItemDetailDto {
                     Item.getModifier()==null?null:MemberDto.toDto(Item.getModifier()),
 
                     Item.isTempsave(),
-                    Item.isReadonly()
+                    Item.isReadonly(),
 
+
+                    bomRepository.findByNewItem(Item).get(0).getId()
+                    ,
+                    new BomDesignItemDto(
+                            99999L,
+                            tmpResponsibleDtoList
+                    )
 
             );
         }
@@ -306,8 +371,14 @@ public class NewItemDetailDto {
                 Item.getModifier()==null?null:MemberDto.toDto(Item.getModifier()),
 
                 Item.isTempsave(),
-                Item.isReadonly()
+                Item.isReadonly(),
 
+                bomRepository.findByNewItem(Item).get(0).getId(),
+
+                new BomDesignItemDto(
+                        99999L,
+                        tmpResponsibleDtoList
+                )
         );
     }
 

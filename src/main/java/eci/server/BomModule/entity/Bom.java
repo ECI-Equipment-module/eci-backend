@@ -4,6 +4,7 @@ import eci.server.ItemModule.entity.entitycommon.EntityDate;
 import eci.server.ItemModule.entity.item.Item;
 import eci.server.ItemModule.entity.member.Member;
 import eci.server.NewItemModule.entity.NewItem;
+import eci.server.ProjectModule.entity.project.Project;
 import eci.server.ProjectModule.entity.projectAttachment.ProjectAttachment;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -27,6 +28,7 @@ public class Bom extends EntityDate {
 
     @OneToOne
     @JoinColumn(name = "new_item_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private NewItem newItem;
 
     @Column(nullable = false)
@@ -35,6 +37,9 @@ public class Bom extends EntityDate {
     @Column(nullable = false)
     private Boolean readonly; //05-12반영
 
+    @Column
+    private char revision;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(
             name = "member_id",
@@ -42,13 +47,15 @@ public class Bom extends EntityDate {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Member member;
 
-//    @OneToMany(
-//            mappedBy = "project",
-//            cascade = CascadeType.PERSIST,
-//            orphanRemoval = true
-//    )
-//    private List<BomAttachment> projectAttachments;
+    public Bom(
+            NewItem newItem,
+            Member member
+    ){
+        this.newItem = newItem;
+        this.tempsave = false;
+        this.readonly = false;
+        this.revision = 'A';
+        this.member = member;
+    }
 
-    @Column
-    private char revision;
 }

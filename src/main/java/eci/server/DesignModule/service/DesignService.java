@@ -1,5 +1,7 @@
 package eci.server.DesignModule.service;
 
+import eci.server.BomModule.repository.BomRepository;
+import eci.server.BomModule.repository.PreliminaryBomRepository;
 import eci.server.DashBoardModule.dto.myProject.ProjectDashboardDto;
 import eci.server.DesignModule.dto.*;
 import eci.server.DesignModule.entity.design.Design;
@@ -49,7 +51,8 @@ public class DesignService {
 
     private final MemberRepository memberRepository;
     private final NewItemRepository itemRepository;
-
+    private final BomRepository bomRepository;
+    private final PreliminaryBomRepository preliminaryBomRepository;
     private final ProjectRepository projectRepository;
 
     private final FileService fileService;
@@ -172,7 +175,9 @@ public class DesignService {
         return DesignDto.toDto(
                 targetDesign,
                 routeOrderingRepository,
-                routeProductRepository
+                routeProductRepository,
+                bomRepository,
+                preliminaryBomRepository
         );
     }
 

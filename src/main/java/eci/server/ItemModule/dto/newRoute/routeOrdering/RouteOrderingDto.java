@@ -2,6 +2,8 @@ package eci.server.ItemModule.dto.newRoute.routeOrdering;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import eci.server.BomModule.repository.BomRepository;
+import eci.server.BomModule.repository.PreliminaryBomRepository;
 import eci.server.ItemModule.dto.newRoute.routeProduct.RouteProductDto;
 import eci.server.ItemModule.entity.newRoute.RouteOrdering;
 import eci.server.ItemModule.repository.newRoute.RouteOrderingRepository;
@@ -39,7 +41,9 @@ public class RouteOrderingDto {
     public static List <RouteOrderingDto> toDtoList(
             List <RouteOrdering> NewRoutes,
             RouteProductRepository routeProductRepository,
-            RouteOrderingRepository routeOrderingRepository
+            RouteOrderingRepository routeOrderingRepository,
+            BomRepository bomRepository,
+            PreliminaryBomRepository preliminaryBomRepository
     ) {
 
         List<SeqAndName> tmpList = new ArrayList<>();

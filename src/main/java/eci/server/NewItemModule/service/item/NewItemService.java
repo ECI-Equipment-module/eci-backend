@@ -1,5 +1,8 @@
 package eci.server.NewItemModule.service.item;
 
+import eci.server.BomModule.repository.BomRepository;
+import eci.server.BomModule.repository.PreliminaryBomRepository;
+import eci.server.DesignModule.repository.DesignRepository;
 import eci.server.ItemModule.dto.item.*;
 import eci.server.ItemModule.dto.manufacture.ReadPartNumberService;
 import eci.server.ItemModule.dto.newRoute.routeOrdering.RouteOrderingDto;
@@ -48,6 +51,8 @@ import eci.server.ProjectModule.repository.carType.CarTypeRepository;
 import eci.server.ProjectModule.repository.clientOrg.ClientOrganizationRepository;
 import eci.server.ProjectModule.repository.project.ProjectRepository;
 import eci.server.config.guard.AuthHelper;
+import eci.server.config.guard.BomGuard;
+import eci.server.config.guard.DesignGuard;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -88,6 +93,12 @@ public class NewItemService {
     private final AuthHelper authHelper;
     private final RoutePreset routePreset;
     private final AttachmentTagRepository attachmentTagRepository;
+    private final DesignRepository designRepository;
+    private final BomRepository bomRepository;
+    private final DesignGuard designGuard;
+    private final BomGuard bomGuard;
+    private final PreliminaryBomRepository preliminaryBomRepository;
+
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -242,9 +253,16 @@ public class NewItemService {
                 RouteOrderingDto.toDtoList(
                         routeOrderingRepository.findByNewItem(targetItem),
                         routeProductRepository,
-                        routeOrderingRepository
+                        routeOrderingRepository,
+                        bomRepository,
+                        preliminaryBomRepository
+
                 )
         ).orElseThrow(RouteNotFoundException::new);
+
+        Member currentMember = memberRepository.findById(authHelper.extractMemberId()).orElseThrow(
+                AuthenticationEntryPointException::new
+        );
 
 
         if (routeDtoList.size() > 0) {//아이템에 딸린 routeDto가 존재할 때
@@ -255,22 +273,17 @@ public class NewItemService {
                     //최신 라우트에 딸린 라우트프로덕트 리스트 중,
                     // 라우트의 present 인덱스에 해당하는 타입을 데리고 오기
                     routeDtoList.get(routeDtoList.size() - 1),
-                    RouteProductDto.toDto(
-                            routeProductRepository.findAllByRouteOrdering(
-                                    routeOrderingRepository.findById(
-                                            routeDtoList.get(routeDtoList.size() - 1).getId()
-                                    ).orElseThrow(RouteNotFoundException::new)
-                            ).get(
-                                    routeDtoList.get(routeDtoList.size() - 1).getPresent()
-                            )
-                    )
-
+                    designRepository,
+                    bomRepository,
+                    bomGuard,
+                    designGuard
             );
 
         }
         return NewItemDetailDto.noRoutetoDto(
                 targetItem,
-                itemMakerRepository
+                itemMakerRepository,
+                bomRepository
         );
     }
 

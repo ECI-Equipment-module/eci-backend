@@ -1,6 +1,8 @@
 package eci.server.DesignModule.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import eci.server.BomModule.repository.BomRepository;
+import eci.server.BomModule.repository.PreliminaryBomRepository;
 import eci.server.DesignModule.entity.design.Design;
 import eci.server.ItemModule.dto.item.ItemDesignDto;
 import eci.server.ItemModule.dto.item.ItemProjectDto;
@@ -47,13 +49,17 @@ public class DesignDto {
     public static DesignDto toDto(
             Design design,
             RouteOrderingRepository routeOrderingRepository,
-            RouteProductRepository routeProductRepository
+            RouteProductRepository routeProductRepository,
+            BomRepository bomRepository,
+            PreliminaryBomRepository preliminaryBomRepository
     ) {
         List<RouteOrderingDto> routeDtoList = Optional.ofNullable(
                 RouteOrderingDto.toDtoList(
                         routeOrderingRepository.findByNewItem(design.getNewItem()),
                         routeProductRepository,
-                        routeOrderingRepository
+                        routeOrderingRepository,
+                        bomRepository,
+                        preliminaryBomRepository
                 )
         ).orElseThrow(RouteNotFoundException::new);
 

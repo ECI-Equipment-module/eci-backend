@@ -1,5 +1,7 @@
 package eci.server.ProjectModule.service;
 
+import eci.server.BomModule.repository.BomRepository;
+import eci.server.BomModule.repository.PreliminaryBomRepository;
 import eci.server.DashBoardModule.dto.myProject.ProjectDashboardDto;
 import eci.server.ItemModule.dto.item.ItemProjectDashboardDto;
 
@@ -58,6 +60,8 @@ public class ProjectService {
     private final RouteProductRepository routeProductRepository;
     private final CarTypeRepository carTypeRepository;
     private final AttachmentTagRepository attachmentTagRepository;
+    private final BomRepository bomRepository;
+    private final PreliminaryBomRepository preliminaryBomRepository;
 
 //    public ProjectListDto readDashboardAll(ProjectReadCondition cond) {
 //        return ProjectListDto.toDto(
@@ -188,7 +192,9 @@ public class ProjectService {
         return ProjectDto.toDto(
                 targetProject,
                 routeOrderingRepository,
-                routeProductRepository
+                routeProductRepository,
+                bomRepository,
+                preliminaryBomRepository
                 );
     }
 

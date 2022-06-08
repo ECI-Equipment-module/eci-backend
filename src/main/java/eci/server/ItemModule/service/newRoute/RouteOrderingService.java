@@ -1,5 +1,9 @@
 package eci.server.ItemModule.service.newRoute;
 
+import eci.server.BomModule.entity.Bom;
+import eci.server.BomModule.entity.PreliminaryBom;
+import eci.server.BomModule.repository.BomRepository;
+import eci.server.BomModule.repository.PreliminaryBomRepository;
 import eci.server.DesignModule.entity.design.Design;
 import eci.server.DesignModule.exception.DesignNotLinkedException;
 import eci.server.DesignModule.repository.DesignRepository;
@@ -10,9 +14,9 @@ import eci.server.ItemModule.entity.item.ItemType;
 import eci.server.ItemModule.entity.newRoute.RouteOrdering;
 import eci.server.ItemModule.entity.newRoute.RoutePreset;
 import eci.server.ItemModule.entity.newRoute.RouteProduct;
+import eci.server.ItemModule.exception.member.MemberNotFoundException;
 import eci.server.ItemModule.exception.route.RouteNotFoundException;
 import eci.server.ItemModule.exception.route.UpdateImpossibleException;
-import eci.server.ItemModule.repository.item.ItemRepository;
 import eci.server.ItemModule.repository.item.ItemTypesRepository;
 import eci.server.ItemModule.repository.member.MemberRepository;
 
@@ -43,12 +47,14 @@ public class RouteOrderingService {
     private final MemberRepository memberRepository;
     private final NewItemRepository newItemRepository;
     private final DesignRepository designRepository;
-
     private final RouteOrderingRepository routeOrderingRepository;
-    private final RoutePreset routePreset;
-
     private final RouteTypeRepository routeTypeRepository;
     private final ItemTypesRepository itemTypesRepository;
+    private final BomRepository bomRepository;
+    private final PreliminaryBomRepository preliminaryBomRepository;
+
+
+    private final RoutePreset routePreset;
 
     public RouteOrderingDto read(Long id) {
 
@@ -94,7 +100,9 @@ public class RouteOrderingService {
         return RouteOrderingDto.toDtoList(
                 newRoutes,
                 routeProductRepository,
-                routeOrderingRepository
+                routeOrderingRepository,
+                bomRepository,
+                preliminaryBomRepository
         );
     }
 
@@ -127,8 +135,27 @@ public class RouteOrderingService {
             System.out.println(routeProduct1.getMembers().get(0).getRouteProduct());
         }
 
+        //봄 생성
+        Bom bom = bomRepository.save(
+                new Bom(
+                        newRoute.getNewItem(),
+                        memberRepository.findById(req.getMemberId()).orElseThrow(MemberNotFoundException::new)
+                )
+        );
+        //프릴리미너리 봄 생성
+        PreliminaryBom preliminaryBom = preliminaryBomRepository.save(
+                new PreliminaryBom(
+                        bom
+                )
+        );
+
+
+
         newRoute.getNewItem().updateTempsaveWhenMadeRoute();
         //라우트 만들면 임시저장 해제
+
+        //0607 BOM + PRELIMINARY BOM 생성되게 하기
+
         return new RouteOrderingCreateResponse(newRoute.getId());
     }
 

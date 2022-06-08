@@ -1,5 +1,8 @@
 package eci.server.advice;
 
+import eci.server.BomModule.exception.BomNotFoundException;
+import eci.server.BomModule.exception.PreliminaryBomCardNotFoundException;
+import eci.server.BomModule.exception.PreliminaryBomNotFoundException;
 import eci.server.DesignModule.exception.DesignNotFoundException;
 import eci.server.DesignModule.exception.DesignNotLinkedException;
 import eci.server.DesignModule.exception.DesignUpdateImpossibleException;
@@ -334,5 +337,26 @@ public class ExceptionAdvice {
     public Response AttachmentTagNotFoundException(AttachmentTagNotFoundException e) {
         log.info("e = {}", e.getMessage());
         return Response.failure(400, "유효한 attachment tag가 아닙니다.");
+    }
+
+    @ExceptionHandler(PreliminaryBomNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Response PreliminaryBomNotFoundException(PreliminaryBomNotFoundException e) {
+        log.info("e = {}", e.getMessage());
+        return Response.failure(400, "해당하는 프릴리머리 봄이 존재하지 않습니다.");
+    }
+
+    @ExceptionHandler(PreliminaryBomCardNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Response PreliminaryBomCardNotFoundException(PreliminaryBomCardNotFoundException e) {
+        log.info("e = {}", e.getMessage());
+        return Response.failure(400, "해당하는 프릴리머리 봄 카드가 존재하지 않습니다.");
+    }
+
+    @ExceptionHandler(BomNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Response BomNotFoundException(BomNotFoundException e) {
+        log.info("e = {}", e.getMessage());
+        return Response.failure(400, "봄이 존재하지 않습니다.");
     }
 }
