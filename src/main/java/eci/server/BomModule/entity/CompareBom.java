@@ -9,7 +9,8 @@ import javax.persistence.*;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class PreliminaryBom {
+public class CompareBom{
+
     @Id
 //    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQUENCE2")
@@ -26,11 +27,13 @@ public class PreliminaryBom {
     @Column(nullable = false)
     private Boolean readonly; //05-12반영
 
-    public PreliminaryBom(
+    public CompareBom(
             Bom bom
     ){
         this.bom = bom;
         this.tempsave = true;
         this.readonly = false;
     }
+
 }
+
