@@ -1,11 +1,8 @@
 package eci.server.ItemModule.service.newRoute;
 
-import eci.server.BomModule.dto.PreliminaryBomCardDto;
 import eci.server.BomModule.entity.Bom;
 import eci.server.BomModule.entity.PreliminaryBom;
-import eci.server.BomModule.entity.PreliminaryBomCard;
 import eci.server.BomModule.repository.BomRepository;
-import eci.server.BomModule.repository.PreliminaryBomCardRepository;
 import eci.server.BomModule.repository.PreliminaryBomRepository;
 import eci.server.DesignModule.entity.design.Design;
 import eci.server.DesignModule.exception.DesignNotLinkedException;
@@ -55,7 +52,7 @@ public class RouteOrderingService {
     private final ItemTypesRepository itemTypesRepository;
     private final BomRepository bomRepository;
     private final PreliminaryBomRepository preliminaryBomRepository;
-    private final PreliminaryBomCardRepository preliminaryBomCardRepository;
+
 
     private final RoutePreset routePreset;
 
@@ -151,28 +148,8 @@ public class RouteOrderingService {
                         bom
                 )
         );
-        //0608 : 프릴리미너리 봄이 생성될 때 봄의 차상위 아이템의 카드도 생성되게 할거야
-        PreliminaryBomCard preliminaryBomCard =
-                preliminaryBomCardRepository.save(
-                        new PreliminaryBomCard(
-                                bom.getNewItem().getItemNumber(),
-                                bom.getNewItem().getName(),
-                                bom.getNewItem().getClassification().getClassification1().getName()
-                                +"/"
-                                +bom.getNewItem().getClassification().getClassification2().getName()
-                                +
-                                        (bom.getNewItem().getClassification().getClassification3().getId().equals(99999L)?
-                                                "" :
-                                                "/" + bom.getNewItem().getClassification().getClassification3().getName()
-                                                )
-                                ,
-                                bom.getNewItem().getItemTypes().getItemType().name(),
-                                bom.getNewItem().isSharing()?"공용":"전용",
-                                preliminaryBom,
-                                null
 
-                        )
-                );
+
 
         newRoute.getNewItem().updateTempsaveWhenMadeRoute();
         //라우트 만들면 임시저장 해제

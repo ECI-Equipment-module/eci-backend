@@ -1,10 +1,7 @@
 package eci.server.config.guard;
 
-import eci.server.BomModule.exception.BomNotFoundException;
 import eci.server.BomModule.repository.BomRepository;
-import eci.server.BomModule.repository.PreliminaryBomCardRepository;
 import eci.server.BomModule.repository.PreliminaryBomRepository;
-import eci.server.ItemModule.entity.member.Member;
 import eci.server.ItemModule.entity.member.RoleType;
 import eci.server.ItemModule.entity.newRoute.RouteOrdering;
 import eci.server.ItemModule.entity.newRoute.RouteProduct;
@@ -36,7 +33,7 @@ public class BomGuard {
     private final RouteProductRepository routeProductRepository;
     private final NewItemRepository newItemRepository;
     private final BomRepository bomRepository;
-    private final PreliminaryBomCardRepository preliminaryBomCardRepository;
+
     private final PreliminaryBomRepository preliminaryBomRepository;
 
     public boolean check(Long id) {
