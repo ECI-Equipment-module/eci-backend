@@ -1,18 +1,18 @@
 package eci.server.BomModule.service;
 
 import eci.server.BomModule.dto.prelimianry.JsonSaveCreateRequest;
-import eci.server.BomModule.exception.PreliminaryBomNotFoundException;
 import eci.server.BomModule.repository.BomRepository;
 import eci.server.BomModule.repository.JsonSaveRepository;
 import eci.server.BomModule.repository.PreliminaryBomRepository;
 import eci.server.ItemModule.repository.newRoute.RouteTypeRepository;
-import eci.server.NewItemModule.dto.newItem.create.NewItemCreateRequest;
 import eci.server.NewItemModule.dto.newItem.create.NewItemCreateResponse;
 import eci.server.NewItemModule.entity.JsonSave;
 import eci.server.config.guard.BomGuard;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -24,9 +24,17 @@ public class BomService {
     private final BomGuard bomGuard;
     private final JsonSaveRepository jsonSaveRepository;
 
-
     public NewItemCreateResponse createPreliminary(JsonSaveCreateRequest req) {
-
+        if(
+                //기존에 있는 것 있다면 삭제해버리기
+                jsonSaveRepository.findByPreliminaryBomId(req.getPreliminaryId()).size()>0
+        ){
+            List<JsonSave> willBeDeletedJsonSave = jsonSaveRepository.findByPreliminaryBomId(req.getPreliminaryId());
+            for(JsonSave jsonSave : willBeDeletedJsonSave){
+                jsonSaveRepository.delete(jsonSave);
+            }
+        }
+        //새로 생성하기
         if (
                 req.getContent().length()<29999
         ) {
@@ -37,26 +45,21 @@ public class BomService {
                     )
             );
         }
-
         else{
             String origin = req.getContent();
-
             while(origin.length()>29999){
-                String tempo = origin.substring(0,29999);
-
                 JsonSave jsonSave = jsonSaveRepository.save(
                         req.toEntity(
                                 req.getContent(),
                                 preliminaryBomRepository
                         )
                 );
-
                 origin = origin.substring(29999);
-
             }
         }
-
             return new NewItemCreateResponse(req.getPreliminaryId());
     }
+
+
 
 }
