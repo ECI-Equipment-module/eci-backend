@@ -212,72 +212,165 @@ public class BomDesignItemDto {
     ) {
         List<ResponsibleDto> responsibleDtoList = new ArrayList<>();
 
-        if (designGuard.isResponsible(newItem.getId()).equals("creator")) {
-            responsibleDtoList.add(
-                    new ResponsibleDto(
-                            -1L,
-                            "design",
-                            "readonly"
-                    )
-            );
-        }
-///////////////////////creator
-        else if (designGuard.isResponsible(newItem.getId()).equals("responsible")) {
+        //1) 디자인 생성 담당자
+        if (designGuard.isDesginCreator(newItem.getId())) {
 
-            if (designGuard.reviewState(newItem.getId()).equals("before")) {
+            if (designGuard.reviewState(newItem.getId()).equals("beforeDesign")) {
 
                 responsibleDtoList.add(
                         new ResponsibleDto(
                                 -1L,
                                 "development",
-                                "readonly"
+                                "disable"
                         )
                 );
 
 
-            } else if (designGuard.reviewState(newItem.getId()).equals("now")) {
+            } else if (designGuard.reviewState(newItem.getId()).equals("designAdd")) {
 
-                if (designGuard.isEdit(newItem.getId())) {
-                    responsibleDtoList.add(
-                            new ResponsibleDto(
-                                    0L,
-                                    "development",
-                                    "edit"
-                            )
-                    );
-                } else {
-                    responsibleDtoList.add(
-                            new ResponsibleDto(
-                                    0L,
-                                    "development",
-                                    "post"
-                            )
-                    );
-                }
-
-            }
-
-            else{
-                    responsibleDtoList.add(
-                            new ResponsibleDto(
-                                    -1L,
-                                    "design",
-                                    "readonly"
-                            )
-                    );
-                }
-
-            }
-/////////////////////////////////라우트 담당자
-            else {
+                Long targetDesignId = designGuard.editDesignId(newItem.getId());
                 responsibleDtoList.add(
                         new ResponsibleDto(
                                 -1L,
                                 "design",
+                                "add"
+                        )
+                );
+            } else if (designGuard.reviewState(newItem.getId()).equals("designEdit")) {
+
+                Long targetDesignId = designGuard.editDesignId(newItem.getId());
+                responsibleDtoList.add(
+                        new ResponsibleDto(
+                                targetDesignId,
+                                "design",
+                                "edit"
+                        )
+                );
+
+            }
+
+            else if (designGuard.reviewState(newItem.getId()).equals("designReview")) {
+
+                Long targetDesignId = designGuard.editDesignId(newItem.getId());
+                responsibleDtoList.add(
+                        new ResponsibleDto(
+                                targetDesignId,
+                                "design",
                                 "readonly"
                         )
                 );
+
             }
+
+            else {
+
+                Long targetDesignId = designGuard.editDesignId(newItem.getId());
+                responsibleDtoList.add(
+                        new ResponsibleDto(
+                                targetDesignId,
+                                "design",
+                                "readonly"
+                        )
+                );
+
+            }
+
+        }
+
+        //2) 디자인 리뷰 담당자
+        else if (designGuard.isDesignReviewer(newItem.getId())) {
+
+            if (designGuard.reviewState(newItem.getId()).equals("beforeDesign")) {
+
+                responsibleDtoList.add(
+                        new ResponsibleDto(
+                                -1L,
+                                "development",
+                                "disable"
+                        )
+                );
+
+
+            } else if (designGuard.reviewState(newItem.getId()).equals("designAdd")) {
+
+                Long targetDesignId = designGuard.editDesignId(newItem.getId());
+                responsibleDtoList.add(
+                        new ResponsibleDto(
+                                -1L,
+                                "design",
+                                "disable"
+                        )
+                );
+            } else if (designGuard.reviewState(newItem.getId()).equals("designEdit")) {
+
+                Long targetDesignId = designGuard.editDesignId(newItem.getId());
+                responsibleDtoList.add(
+                        new ResponsibleDto(
+                                targetDesignId,
+                                "design",
+                                "disable"
+                        )
+                );
+
+            }
+
+            else if (designGuard.reviewState(newItem.getId()).equals("designReview")) {
+
+                Long targetDesignId = designGuard.editDesignId(newItem.getId());
+                responsibleDtoList.add(
+                        new ResponsibleDto(
+                                targetDesignId,
+                                "design",
+                                "review"
+                        )
+                );
+
+            }
+
+            else {
+
+                Long targetDesignId = designGuard.editDesignId(newItem.getId());
+                responsibleDtoList.add(
+                        new ResponsibleDto(
+                                targetDesignId,
+                                "design",
+                                "readonly"
+                        )
+                );
+
+            }
+        }
+
+        else{ // 3) 일반인
+
+            if (designGuard.reviewState(newItem.getId()).equals("beforeDesign")
+            || designGuard.reviewState(newItem.getId()).equals("beforeAdd")
+            || designGuard.reviewState(newItem.getId()).equals("beforeEdit")
+            ) {
+
+                responsibleDtoList.add(
+                        new ResponsibleDto(
+                                -1L,
+                                "development",
+                                "disable"
+                        )
+                );
+
+            }
+
+            else {
+
+                Long targetDesignId = designGuard.editDesignId(newItem.getId());
+                responsibleDtoList.add(
+                        new ResponsibleDto(
+                                targetDesignId,
+                                "design",
+                                "readonly"
+                        )
+                );
+
+            }
+        }
 
             return new BomDesignItemDto(
                     design.getId(),

@@ -1,5 +1,6 @@
 package eci.server.advice;
 
+import eci.server.BomModule.exception.BomNotFoundException;
 import eci.server.BomModule.exception.PreliminaryBomCardNotFoundException;
 import eci.server.BomModule.exception.PreliminaryBomNotFoundException;
 import eci.server.DesignModule.exception.DesignNotFoundException;
@@ -352,4 +353,10 @@ public class ExceptionAdvice {
         return Response.failure(400, "해당하는 프릴리머리 봄 카드가 존재하지 않습니다.");
     }
 
+    @ExceptionHandler(BomNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Response BomNotFoundException(BomNotFoundException e) {
+        log.info("e = {}", e.getMessage());
+        return Response.failure(400, "봄이 존재하지 않습니다.");
+    }
 }

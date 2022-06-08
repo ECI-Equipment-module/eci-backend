@@ -1,5 +1,6 @@
 package eci.server.BomModule.repository;
 
+import eci.server.BomModule.entity.PreliminaryBom;
 import eci.server.BomModule.entity.PreliminaryBomCard;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -20,5 +21,7 @@ public interface PreliminaryBomCardRepository extends JpaRepository<PreliminaryB
                 "order by c.parent.id asc nulls first, c.id asc")
         List<PreliminaryBomCard> findAllWithParentByPreliminaryBomIdOrderByParentIdAscNullsFirstPreliminaryBomIdAsc
                 (@Param("preliminaryBomId") Long preliminaryBomId);
-    }
+
+        List<PreliminaryBomCard> findByPreliminaryBom(PreliminaryBom preliminaryBom);
+}
 

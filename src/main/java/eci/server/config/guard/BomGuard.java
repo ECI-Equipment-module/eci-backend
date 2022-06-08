@@ -1,6 +1,9 @@
 package eci.server.config.guard;
 
+import eci.server.BomModule.exception.BomNotFoundException;
 import eci.server.BomModule.repository.BomRepository;
+import eci.server.BomModule.repository.PreliminaryBomCardRepository;
+import eci.server.BomModule.repository.PreliminaryBomRepository;
 import eci.server.ItemModule.entity.member.Member;
 import eci.server.ItemModule.entity.member.RoleType;
 import eci.server.ItemModule.entity.newRoute.RouteOrdering;
@@ -33,6 +36,8 @@ public class BomGuard {
     private final RouteProductRepository routeProductRepository;
     private final NewItemRepository newItemRepository;
     private final BomRepository bomRepository;
+    private final PreliminaryBomCardRepository preliminaryBomCardRepository;
+    private final PreliminaryBomRepository preliminaryBomRepository;
 
     public boolean check(Long id) {
 
@@ -106,10 +111,7 @@ public class BomGuard {
                     break;
                 }
             }
-
-
         }
-
         return result;
     }
 
@@ -136,33 +138,90 @@ public class BomGuard {
 
 
         if(
-                !(isBom(routeOrdering, routeProductList))
+                !(isBeforeDesignReview(routeOrdering, routeProductList))
 
         ){
-            result = "before"; //프릴리미너리 가능
-        }else if(
-                isBom(routeOrdering, routeProductList)
+            result = "beforeReview"; //프릴리미너리 가능
+        }
+
+        else if(
+                isBomCreate(routeOrdering, routeProductList)
                 //봄 생성 전단계~봄 리뷰
         ) {
-            result = "now";
+            result = "bomCreate";
         }
-        else { //봄 리뷰 후
-            result = "after";
+
+        else if(
+                isBomReview(routeOrdering, routeProductList)
+            // 봄 리뷰
+        ) {
+            result = "bomReview";
+        }
+
+        else {
+            result = "complete";
+            // 봄 리뷰 후
         }
     return result;
     }
 
-    private boolean isBom(RouteOrdering routeOrdering, List<RouteProduct> routeProductList){
-        return routeProductList.get(
+    private boolean isBeforeDesignReview(RouteOrdering routeOrdering, List<RouteProduct> routeProductList){
+        String module = routeProductList.get(
                 routeOrdering.getPresent()
-        ).getType().getModule().equals("BOM");
+        ).getType().getModule();
+
+        return (module.equals("ITEM") || module.equals("PROJECT") || module.equals("DESIGN") );
+
     }
 
-    public boolean isEdit(Long itemId){
-        return bomRepository.findByNewItem(
-                newItemRepository.findById(itemId).orElseThrow(ItemNotFoundException::new)
-        ).size()>0;
-        //사이즈가 0보다 크면 edit
+
+    private boolean isBomCreate(RouteOrdering routeOrdering, List<RouteProduct> routeProductList){
+        String module = routeProductList.get(
+                routeOrdering.getPresent()
+        ).getType().getModule();
+
+        String name = routeProductList.get(
+                routeOrdering.getPresent()
+        ).getType().getName();
+
+        return module.equals("BOM")&&name.equals("CREATE");
+    }
+
+    private boolean isBomReview(RouteOrdering routeOrdering, List<RouteProduct> routeProductList){
+        String module = routeProductList.get(
+                routeOrdering.getPresent()
+        ).getType().getModule();
+
+        String name = routeProductList.get(
+                routeOrdering.getPresent()
+        ).getType().getName();
+
+        return module.equals("BOM")&&name.equals("REVIEW");
+    }
+
+    /**
+     * bomId 의 pre 의 card 갯수가 한개 초과라면 edit, 아니면 add
+     * @param bomId
+     * @return
+     */
+    public boolean isPreliminaryEdit(Long bomId){
+
+        return preliminaryBomCardRepository.findByPreliminaryBom(
+
+                preliminaryBomRepository.findByBom(
+                        bomRepository.findById(
+                        bomId
+                ).orElseThrow(BomNotFoundException::new)
+                ).get(0)
+
+        ).size()>1;
+
+    }
+
+    public boolean isBomComplete(RouteOrdering routeOrdering){
+
+        return routeOrdering.getLifecycleStatus().equals("COMPLETE");
+
     }
 
     public Long editBomId(Long itemId){
@@ -175,4 +234,5 @@ public class BomGuard {
         ).getId();
         //사이즈가 0보다 크면 edit
     }
+
 }

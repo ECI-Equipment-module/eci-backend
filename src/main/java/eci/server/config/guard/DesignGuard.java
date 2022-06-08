@@ -65,7 +65,7 @@ public class DesignGuard  {
         return authHelper.extractMemberRoles().contains(RoleType.ROLE_ADMIN);
     }
 
-    public String isResponsible(Long itemId) { //봄 생성 라우트 담당자인지
+    public boolean isDesginCreator(Long itemId) { //디자인 생성 라우트 담당자인지
         routeOrderingRepository.findByNewItem(
                 newItemRepository.findById(itemId).orElseThrow(ItemNotFoundException::new)
         );
@@ -83,7 +83,7 @@ public class DesignGuard  {
                 routeProductRepository.findAllByRouteOrdering(routeOrdering);
 
         List<RouteProductMember> targetMem = new ArrayList<>();
-        String result = null;
+        boolean result = false;
 
         for(RouteProduct routeProduct : routeProductList){
             if(routeProduct.getType().getModule().equals("DESIGN")
@@ -92,18 +92,52 @@ public class DesignGuard  {
             }
         }
 
-        if(targetMem.size()==0){
-            if(isResourceOwner(itemId)){
-                result = "creator";
-            }
-            else{
-                result = "anyone";
-            }
-        }else{
+        if(!(targetMem.size()==0)){
             Long memberId = authHelper.extractMemberId();
             for(RouteProductMember routeProductMember:targetMem){
                 if(routeProductMember.getMember().getId().equals(memberId)){
-                    result = "responsible";
+                    result = true;
+                    break;
+                }
+            }
+        }
+
+        return result;
+    }
+
+
+    public boolean isDesignReviewer(Long itemId) { //디자인 리뷰 라우트 담당자인지
+        routeOrderingRepository.findByNewItem(
+                newItemRepository.findById(itemId).orElseThrow(ItemNotFoundException::new)
+        );
+
+        RouteOrdering routeOrdering =
+                routeOrderingRepository.findByNewItem(
+                        newItemRepository.findById(itemId).orElseThrow(ItemNotFoundException::new)
+                ).get(
+                        routeOrderingRepository.findByNewItem(
+                                newItemRepository.findById(itemId).orElseThrow(ItemNotFoundException::new)
+                        ).size()-1
+                );
+
+        List<RouteProduct> routeProductList =
+                routeProductRepository.findAllByRouteOrdering(routeOrdering);
+
+        List<RouteProductMember> targetMem = new ArrayList<>();
+        boolean result = false;
+
+        for(RouteProduct routeProduct : routeProductList){
+            if(routeProduct.getType().getModule().equals("DESIGN")
+                    && routeProduct.getType().getName().equals("REVIEW")){
+                targetMem = routeProduct.getMembers();
+            }
+        }
+
+        if(!(targetMem.size()==0)){
+            Long memberId = authHelper.extractMemberId();
+            for(RouteProductMember routeProductMember:targetMem){
+                if(routeProductMember.getMember().getId().equals(memberId)){
+                    result = true;
                     break;
                 }
             }
@@ -135,23 +169,44 @@ public class DesignGuard  {
 
 
         if(
-                (isItem(routeOrdering, routeProductList))
+                (isBeforeDesign(routeOrdering, routeProductList))
 
         ){
-            result = "before"; //프릴리미너리 가능
-        }else if(
-                isDesign(routeOrdering, routeProductList)
-            //봄 생성 전단계~봄 리뷰
-        ) {
-            result = "now";
+            result = "beforeDesign"; //프릴리미너리 가능
         }
-        else { //봄 리뷰 후
-            result = "after";
+        else if(
+                isDesignCreate(routeOrdering, routeProductList)
+        ) {
+
+            if(isEdit(itemId)){
+                result = "designEdit";
+            }
+            else{
+                result="designAdd";
+            }
+        }
+        else if(
+                isDesignReview(routeOrdering, routeProductList)
+
+        ) {
+            result = "designReview";
+        }
+        else {
+            result = "complete";
         }
         return result;
     }
 
-    private boolean isDesign(RouteOrdering routeOrdering, List<RouteProduct> routeProductList){
+    private boolean isBeforeDesign(RouteOrdering routeOrdering, List<RouteProduct> routeProductList){
+
+        String module = routeProductList.get(
+                routeOrdering.getPresent()
+        ).getType().getModule();
+
+        return module.equals("ITEM") || module.equals("PROJECT");
+    }
+
+    private boolean isDesignCreate(RouteOrdering routeOrdering, List<RouteProduct> routeProductList){
         return routeProductList.get(
                 routeOrdering.getPresent()
         ).getType().getModule().equals("DESIGN")
@@ -162,12 +217,16 @@ public class DesignGuard  {
                 ;
     }
 
-    private boolean isItem(RouteOrdering routeOrdering, List<RouteProduct> routeProductList){
+    private boolean isDesignReview(RouteOrdering routeOrdering, List<RouteProduct> routeProductList){
         return routeProductList.get(
                 routeOrdering.getPresent()
-        ).getType().getModule().equals("ITEM");
+        ).getType().getModule().equals("DESIGN")
+                &&
+                routeProductList.get(
+                        routeOrdering.getPresent()
+                ).getType().getName().equals("REVIEW")
+                ;
     }
-
     public boolean isEdit(Long itemId){
         return designRepository.findByNewItem(
                 newItemRepository.findById(itemId).orElseThrow(ItemNotFoundException::new)
@@ -175,6 +234,7 @@ public class DesignGuard  {
         //사이즈가 0보다 크면 edit
     }
 
+    // isEdit이라면 이거 돌려주기  !
     public Long editDesignId(Long itemId){
         return designRepository.findByNewItem(
                 newItemRepository.findById(itemId).orElseThrow(ItemNotFoundException::new)
