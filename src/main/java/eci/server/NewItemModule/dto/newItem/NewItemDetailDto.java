@@ -208,6 +208,7 @@ public class NewItemDetailDto {
                 MakerSimpleDto.toDtoList(Item.getMakers()),
                 "",
 
+
                 Item.isRevise_progress(),
 
                 Item.getAttachments().
