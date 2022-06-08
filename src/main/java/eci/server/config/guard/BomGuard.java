@@ -68,7 +68,7 @@ public class BomGuard {
     }
 
 
-    public String isResponsible(Long itemId) { //봄 생성 라우트 담당자인지
+    public boolean isBomCreator(Long itemId) { //디자인 생성 라우트 담당자인지
         routeOrderingRepository.findByNewItem(
                 newItemRepository.findById(itemId).orElseThrow(ItemNotFoundException::new)
         );
@@ -86,32 +86,66 @@ public class BomGuard {
                 routeProductRepository.findAllByRouteOrdering(routeOrdering);
 
         List<RouteProductMember> targetMem = new ArrayList<>();
-        String result = null;
+        boolean result = false;
 
         for(RouteProduct routeProduct : routeProductList){
-            if(routeProduct.getType().getModule().equals("BOM")
+            if(routeProduct.getType().getModule().equals("DESIGN")
                     && routeProduct.getType().getName().equals("CREATE")){
                 targetMem = routeProduct.getMembers();
             }
         }
 
-        if(targetMem.size()==0){
-            if(isResourceOwner(itemId)){
-                result = "creator";
-            }
-            else{
-                result = "anyone";
-            }
-        }else{
-            result = "anyone";
+        if(!(targetMem.size()==0)){
             Long memberId = authHelper.extractMemberId();
             for(RouteProductMember routeProductMember:targetMem){
                 if(routeProductMember.getMember().getId().equals(memberId)){
-                    result = "responsible";
+                    result = true;
                     break;
                 }
             }
         }
+
+        return result;
+    }
+
+
+    public boolean isBomReviewer(Long itemId) { //디자인 리뷰 라우트 담당자인지
+        routeOrderingRepository.findByNewItem(
+                newItemRepository.findById(itemId).orElseThrow(ItemNotFoundException::new)
+        );
+
+        RouteOrdering routeOrdering =
+                routeOrderingRepository.findByNewItem(
+                        newItemRepository.findById(itemId).orElseThrow(ItemNotFoundException::new)
+                ).get(
+                        routeOrderingRepository.findByNewItem(
+                                newItemRepository.findById(itemId).orElseThrow(ItemNotFoundException::new)
+                        ).size()-1
+                );
+
+        List<RouteProduct> routeProductList =
+                routeProductRepository.findAllByRouteOrdering(routeOrdering);
+
+        List<RouteProductMember> targetMem = new ArrayList<>();
+        boolean result = false;
+
+        for(RouteProduct routeProduct : routeProductList){
+            if(routeProduct.getType().getModule().equals("BOM")
+                    && routeProduct.getType().getName().equals("REVIEW")){
+                targetMem = routeProduct.getMembers();
+            }
+        }
+
+        if(!(targetMem.size()==0)){
+            Long memberId = authHelper.extractMemberId();
+            for(RouteProductMember routeProductMember:targetMem){
+                if(routeProductMember.getMember().getId().equals(memberId)){
+                    result = true;
+                    break;
+                }
+            }
+        }
+
         return result;
     }
 
@@ -174,7 +208,6 @@ public class BomGuard {
 
     }
 
-
     private boolean isBomCreate(RouteOrdering routeOrdering, List<RouteProduct> routeProductList){
         String module = routeProductList.get(
                 routeOrdering.getPresent()
@@ -204,6 +237,7 @@ public class BomGuard {
      * @param bomId
      * @return
      */
+    //이건 DTO에서 판단
     public boolean isPreliminaryEdit(Long bomId){
 
         return preliminaryBomCardRepository.findByPreliminaryBom(

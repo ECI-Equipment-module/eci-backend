@@ -89,7 +89,8 @@ public class NewItemDetailDto {
     private Boolean tempsave;
     private boolean readonly;
 
-    private BomDesignItemDto bom;
+    //private BomDesignItemDto bom;
+    private Long bomId;
     private BomDesignItemDto design;
 
 
@@ -156,21 +157,7 @@ public class NewItemDetailDto {
                     Item.isTempsave(),
                     Item.isReadonly(),
 
-                    //bom
-                    //design 추가
-
-                    bomRepository.findByNewItem(Item).size()>0?
-                    BomDesignItemDto.toBomDto(
-                            Item,
-                            bomRepository.findByNewItem(Item).get(
-                                    designRepository.findByNewItem(Item).size()-1
-                            ),
-                            bomGuard
-                    ):                            //디자인 없을 지도 모름
-                            new BomDesignItemDto(
-                                    99999L,
-                                    tmpResponsibleDtoList
-                            ),
+                    bomRepository.findByNewItem(Item).get(0).getId(),
 
                     designRepository.findByNewItem(Item).size()>0?
                         BomDesignItemDto.toDesignDto(
@@ -240,13 +227,15 @@ public class NewItemDetailDto {
                 Item.isTempsave(),
                 Item.isReadonly(),
 
-                BomDesignItemDto.toBomDto(
-                        Item,
-                        bomRepository.findByNewItem(Item).get(
-                                designRepository.findByNewItem(Item).size()-1
-                        ),
-                        bomGuard
-                ),
+//                BomDesignItemDto.toBomDto(
+//                        Item,
+//                        bomRepository.findByNewItem(Item).get(
+//                                designRepository.findByNewItem(Item).size()-1
+//                        ),
+//                        bomGuard
+//                ),
+
+                bomRepository.findByNewItem(Item).get(0).getId(),
 
                 designRepository.findByNewItem(Item).size()>0?
                         BomDesignItemDto.toDesignDto(
@@ -268,7 +257,8 @@ public class NewItemDetailDto {
 
     public static NewItemDetailDto noRoutetoDto(
             NewItem Item,
-            NewItemMakerRepository newItemMakerRepository
+            NewItemMakerRepository newItemMakerRepository,
+            BomRepository bomRepository
     ){
 
         List<ResponsibleDto> tmpResponsibleDtoList = new ArrayList<>();
@@ -324,10 +314,8 @@ public class NewItemDetailDto {
                     Item.isReadonly(),
 
 
-                    new BomDesignItemDto(
-                            99999L,
-                            tmpResponsibleDtoList
-                    ),
+                    bomRepository.findByNewItem(Item).get(0).getId()
+                    ,
                     new BomDesignItemDto(
                             99999L,
                             tmpResponsibleDtoList
@@ -385,11 +373,7 @@ public class NewItemDetailDto {
                 Item.isTempsave(),
                 Item.isReadonly(),
 
-               new BomDesignItemDto(
-                       99999L,
-                       tmpResponsibleDtoList
-               ),
-
+                bomRepository.findByNewItem(Item).get(0).getId(),
 
                 new BomDesignItemDto(
                         99999L,

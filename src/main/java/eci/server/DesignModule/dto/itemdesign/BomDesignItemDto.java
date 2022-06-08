@@ -40,14 +40,14 @@ public class BomDesignItemDto {
                         new ResponsibleDto(
                                 -1L,
                                 "development",
-                                "readonly"
+                                "detail"
                         )
                 );
                 responsibleDtoList.add(
                         new ResponsibleDto(
                                 -1L,
                                 "compare",
-                                "readonly"
+                                "detail"
                         )
                 );
             }
@@ -56,21 +56,21 @@ public class BomDesignItemDto {
                         new ResponsibleDto(
                                 0L,
                                 "preliminary",
-                                "readonly"
+                                "detail"
                         )
                 );
                 responsibleDtoList.add(
                         new ResponsibleDto(
                                 -1L,
                                 "development",
-                                "readonly"
+                                "detail"
                         )
                 );
                 responsibleDtoList.add(
                         new ResponsibleDto(
                                 -1L,
                                 "compare",
-                                "readonly"
+                                "detail"
                         )
                 );
             }
@@ -79,21 +79,21 @@ public class BomDesignItemDto {
                         new ResponsibleDto(
                                 -1L,
                                 "preliminary",
-                                "readonly"
+                                "detail"
                         )
                 );
                 responsibleDtoList.add(
                         new ResponsibleDto(
                                 -1L,
                                 "development",
-                                "readonly"
+                                "detail"
                         )
                 );
                 responsibleDtoList.add(
                         new ResponsibleDto(
                                 -1L,
                                 "compare",
-                                "readonly"
+                                "detail"
                         )
                 );
             }
@@ -107,21 +107,21 @@ public class BomDesignItemDto {
                         new ResponsibleDto(
                                 -1L,
                                 "preliminary",
-                                "readonly"
+                                "detail"
                         )
                 );
                 responsibleDtoList.add(
                         new ResponsibleDto(
                                 -1L,
                                 "development",
-                                "readonly"
+                                "detail"
                         )
                 );
                 responsibleDtoList.add(
                         new ResponsibleDto(
                                 -1L,
                                 "compare",
-                                "readonly"
+                                "detail"
                         )
                 );
 
@@ -132,7 +132,7 @@ public class BomDesignItemDto {
                         new ResponsibleDto(
                                 -1L,
                                 "preliminary",
-                                "readonly"
+                                "detail"
                         )
                 );
                 responsibleDtoList.add(
@@ -146,7 +146,7 @@ public class BomDesignItemDto {
                         new ResponsibleDto(
                                 -1L,
                                 "compare",
-                                "readonly"
+                                "detail"
                         )
                 );
             }
@@ -155,21 +155,21 @@ public class BomDesignItemDto {
                         new ResponsibleDto(
                                 -1L,
                                 "preliminary",
-                                "readonly"
+                                "detail"
                         )
                 );
                 responsibleDtoList.add(
                         new ResponsibleDto(
                                 -1L,
                                 "development",
-                                "readonly"
+                                "detail"
                         )
                 );
                 responsibleDtoList.add(
                         new ResponsibleDto(
                                 -1L,
                                 "compare",
-                                "readonly"
+                                "detail"
                         )
                 );
             }
@@ -181,21 +181,21 @@ public class BomDesignItemDto {
                     new ResponsibleDto(
                             -1L,
                             "preliminary",
-                            "readonly"
+                            "detail"
                     )
             );
             responsibleDtoList.add(
                     new ResponsibleDto(
                             -1L,
                             "development",
-                            "readonly"
+                            "detail"
                     )
             );
             responsibleDtoList.add(
                     new ResponsibleDto(
                             -1L,
                             "compare",
-                            "readonly"
+                            "detail"
                     )
             );
         }
@@ -256,7 +256,7 @@ public class BomDesignItemDto {
                         new ResponsibleDto(
                                 targetDesignId,
                                 "design",
-                                "readonly"
+                                "detail"
                         )
                 );
 
@@ -269,7 +269,7 @@ public class BomDesignItemDto {
                         new ResponsibleDto(
                                 targetDesignId,
                                 "design",
-                                "readonly"
+                                "detail"
                         )
                 );
 
@@ -334,7 +334,7 @@ public class BomDesignItemDto {
                         new ResponsibleDto(
                                 targetDesignId,
                                 "design",
-                                "readonly"
+                                "detail"
                         )
                 );
 
@@ -365,7 +365,7 @@ public class BomDesignItemDto {
                         new ResponsibleDto(
                                 targetDesignId,
                                 "design",
-                                "readonly"
+                                "detail"
                         )
                 );
 

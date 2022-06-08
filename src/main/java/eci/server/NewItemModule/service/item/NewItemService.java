@@ -282,7 +282,8 @@ public class NewItemService {
         }
         return NewItemDetailDto.noRoutetoDto(
                 targetItem,
-                itemMakerRepository
+                itemMakerRepository,
+                bomRepository
         );
     }
 
