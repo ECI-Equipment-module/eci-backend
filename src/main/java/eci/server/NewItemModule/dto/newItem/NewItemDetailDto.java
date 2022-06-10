@@ -371,8 +371,7 @@ public class NewItemDetailDto {
 
                 Item.isTempsave(),
                 Item.isReadonly(),
-
-                bomRepository.findByNewItem(Item).get(0).getId(),
+                -1L, //라우트 없으면 봄 안만들어짐
 
                 new BomDesignItemDto(
                         99999L,
