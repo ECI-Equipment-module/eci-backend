@@ -1,9 +1,6 @@
 package eci.server.DesignModule.dto.itemdesign;
 
 import eci.server.BomModule.entity.Bom;
-import eci.server.BomModule.entity.CompareBom;
-import eci.server.BomModule.entity.DevelopmentBom;
-import eci.server.BomModule.entity.PreliminaryBom;
 import eci.server.BomModule.repository.CompareBomRepository;
 import eci.server.BomModule.repository.DevelopmentBomRepository;
 import eci.server.BomModule.repository.PreliminaryBomRepository;
@@ -42,7 +39,7 @@ public class BomDesignItemDto {
 
         //1) 봄 생성 담당자
         if(bomGuard.isBomCreator(newItem.getId())){
-            if (bomGuard.reviewState(newItem.getId()).equals("beforeBom")) {
+            if (bomGuard.reviewState(newItem.getId()).equals("beforeReview")) {
                 //1) 봄 생성 담당자
                 responsibleDtoList.add(
                         new ResponsibleDto(
@@ -160,7 +157,9 @@ public class BomDesignItemDto {
 
         //2) 봄 리뷰 담당자
         else if(bomGuard.isBomReviewer(newItem.getId())) {
-            if (bomGuard.reviewState(newItem.getId()).equals("beforeBom")) {
+            System.out.println("ewerwerwerwerrrrrrrrrrrrrrrrrr");
+            System.out.println(bomGuard.reviewState(newItem.getId()));
+            if (bomGuard.reviewState(newItem.getId()).equals("beforeReview")) {
                 //2) 봄 리뷰 담당자
                 responsibleDtoList.add(
                         new ResponsibleDto(
@@ -278,7 +277,7 @@ public class BomDesignItemDto {
             //3) 일반인
         else{
 
-            if (bomGuard.reviewState(newItem.getId()).equals("beforeBom")) {
+            if (bomGuard.reviewState(newItem.getId()).equals("beforeReview")) {
                 //3) 일반인
                 responsibleDtoList.add(
                         new ResponsibleDto(

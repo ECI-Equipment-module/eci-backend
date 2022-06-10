@@ -1,12 +1,13 @@
 package eci.server.BomModule.service;
 
+import eci.server.BomModule.dto.BomDto;
 import eci.server.BomModule.dto.prelimianry.JsonSaveCreateRequest;
 import eci.server.BomModule.dto.prelimianry.PreliminaryBomDto;
+import eci.server.BomModule.entity.Bom;
 import eci.server.BomModule.entity.PreliminaryBom;
+import eci.server.BomModule.exception.BomNotFoundException;
 import eci.server.BomModule.exception.PreliminaryBomNotFoundException;
-import eci.server.BomModule.repository.BomRepository;
-import eci.server.BomModule.repository.JsonSaveRepository;
-import eci.server.BomModule.repository.PreliminaryBomRepository;
+import eci.server.BomModule.repository.*;
 import eci.server.ItemModule.dto.newRoute.routeOrdering.RouteOrderingDto;
 import eci.server.ItemModule.entity.member.Member;
 import eci.server.ItemModule.exception.item.ItemNotFoundException;
@@ -31,10 +32,29 @@ import java.util.List;
 public class BomService {
     private final RouteTypeRepository routeTypeRepository;
     private final BomRepository bomRepository;
-    private final PreliminaryBomRepository preliminaryBomRepository;
-    private final BomGuard bomGuard;
     private final JsonSaveRepository jsonSaveRepository;
+    private final PreliminaryBomRepository preliminaryBomRepository;
+    private final DevelopmentBomRepository developmentBomRepository;
+    private final CompareBomRepository compareBomRepository;
+    private final BomGuard bomGuard;
 
+    // 0) BOM
+    public BomDto readBom(Long bomId){
+
+        Bom targetBom = bomRepository.findById(bomId).
+                orElseThrow(BomNotFoundException::new);
+        return BomDto.toDto(
+                targetBom.getNewItem(),
+                targetBom,
+                bomGuard,
+                preliminaryBomRepository,
+                developmentBomRepository,
+                compareBomRepository
+        );
+
+    }
+
+    // 1) Preliminary
     @Transactional
     public NewItemCreateResponse createPreliminary(JsonSaveCreateRequest req) {
         if(
@@ -81,9 +101,8 @@ public class BomService {
     }
 
     public PreliminaryBomDto readPreliminary(Long preliminaryId){
-        PreliminaryBom targetBom = preliminaryBomRepository.findById(preliminaryId).orElseThrow(ItemNotFoundException::new);
-        List<JsonSave> jsonSaveList = jsonSaveRepository.findByPreliminaryBomId(preliminaryId);
-        System.out.println(preliminaryBomRepository.findByBom(targetBom.getBom()));
+        PreliminaryBom targetBom = preliminaryBomRepository.
+                findById(preliminaryId).orElseThrow(PreliminaryBomNotFoundException::new);
         return PreliminaryBomDto.toDto(targetBom);
     }
 

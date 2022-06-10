@@ -19,6 +19,16 @@ public class BomController {
 
     private final BomService bomService;
 
+    // 0) BOM
+    @GetMapping("/bom/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public Response getBom(@PathVariable Long id) {
+        return Response.success(
+                bomService.readBom(id)
+        );
+    }
+
+    // 1) Preliminary BOM
     @CrossOrigin(origins = "https://localhost:3000")
     @PostMapping("/preliminary")
     @ResponseStatus(HttpStatus.CREATED)
