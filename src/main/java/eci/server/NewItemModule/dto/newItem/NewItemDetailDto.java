@@ -167,9 +167,7 @@ public class NewItemDetailDto {
                         ) :
                             //디자인 없을 지도 모름
                             new BomDesignItemDto(
-                                    designRepository.findByNewItem(Item).get(
-                                            designRepository.findByNewItem(Item).size() - 1
-                                    ).getId(),
+                                    -1L,
                                     tmpResponsibleDtoList
                             )
 

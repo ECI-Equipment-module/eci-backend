@@ -30,14 +30,7 @@ public class BomController {
                 bomService.createPreliminary(req)
         );
     }
-//
-//
-//    @GetMapping("/preliminary")
-//    @ResponseStatus(HttpStatus.OK)
-//    public Response readPreliminaryAll(@Valid PreliminaryBomReadCondition cond) {
-//        return Response.success(bomService.readPreliminaryAll(cond));
-//    }
-//
+
         @GetMapping("/preliminary/{id}")
         @ResponseStatus(HttpStatus.OK)
         public Response getPreliminary(@PathVariable Long id) {

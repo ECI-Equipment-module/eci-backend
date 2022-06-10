@@ -24,7 +24,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
@@ -52,13 +51,7 @@ public class BomService {
         if (
                 req.getContent().length()<29999
         ) {
-            System.out.println("저장주우웅ㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇ우");
-
             jsonSaveList.add(jsonSaveRepository.save(
-//                    new JsonSave(
-//                            req.getContent(),
-//                            preliminaryBomRepository.findById(req.getPreliminaryId()).orElseThrow(PreliminaryBomNotFoundException::new)
-//                    )
                     req.toEntity(
                             req,
                             req.getContent(),
@@ -84,13 +77,6 @@ public class BomService {
             }
         }
 
-//        JsonSave jsonSave = jsonSaveRepository.save(                                 req.toEntity(
-//                        req,
-//                        req.getContent(),
-//                        preliminaryBomRepository
-//                )
-//        );
-
         return new NewItemCreateResponse(req.getPreliminaryId());
     }
 
@@ -99,9 +85,6 @@ public class BomService {
         List<JsonSave> jsonSaveList = jsonSaveRepository.findByPreliminaryBomId(preliminaryId);
         System.out.println(preliminaryBomRepository.findByBom(targetBom.getBom()));
         return PreliminaryBomDto.toDto(targetBom);
-
-
-
     }
 
 
