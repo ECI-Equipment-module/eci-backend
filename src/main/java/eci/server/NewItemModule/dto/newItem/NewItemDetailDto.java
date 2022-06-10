@@ -372,7 +372,7 @@ public class NewItemDetailDto {
                 Item.isTempsave(),
                 Item.isReadonly(),
 
-                bomRepository.findByNewItem(Item).get(0).getId(),
+                -1L,
 
                 new BomDesignItemDto(
                         99999L,
