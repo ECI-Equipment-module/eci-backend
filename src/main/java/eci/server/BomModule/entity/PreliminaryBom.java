@@ -14,9 +14,9 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class PreliminaryBom {
     @Id
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQUENCE2")
-    @SequenceGenerator(name="SEQUENCE2", sequenceName="SEQUENCE2", allocationSize=1)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+//    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQUENCE2")
+//    @SequenceGenerator(name="SEQUENCE2", sequenceName="SEQUENCE2", allocationSize=1)
     private Long id;
 
     @OneToOne
