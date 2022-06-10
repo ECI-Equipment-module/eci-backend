@@ -234,7 +234,9 @@ public class NewItemDetailDto {
 //                        bomGuard
 //                ),
 
-                bomRepository.findByNewItem(Item).get(0).getId(),
+                bomRepository.findByNewItem(Item).size()>0?
+                        bomRepository.findByNewItem(Item).get(0).getId()
+                :-1,
 
                 designRepository.findByNewItem(Item).size()>0?
                         BomDesignItemDto.toDesignDto(
