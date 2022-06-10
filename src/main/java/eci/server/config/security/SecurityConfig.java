@@ -97,6 +97,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET, "/preliminary/{id}").authenticated()
                 .antMatchers(HttpMethod.DELETE, "/preliminary").authenticated()
 
+                .antMatchers(HttpMethod.POST, "/bom").authenticated()
+                .antMatchers(HttpMethod.PUT, "/bom/{id}").authenticated()
+                .antMatchers(HttpMethod.GET, "/bom/{id}").authenticated()
+                .antMatchers(HttpMethod.DELETE, "/bom").authenticated()
+
                 .antMatchers(HttpMethod.GET, "/**").permitAll()//위에 명시된 get 말고는 다 허용, 맨 밑으로 위치 변경
 
                 .anyRequest().hasAnyRole("ADMIN")//멤버의 역할이 관리자인 경우에는 모든 것을 허용

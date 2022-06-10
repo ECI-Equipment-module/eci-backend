@@ -343,20 +343,20 @@ public class ExceptionAdvice {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public Response PreliminaryBomNotFoundException(PreliminaryBomNotFoundException e) {
         log.info("e = {}", e.getMessage());
-        return Response.failure(400, "해당하는 프릴리머리 봄이 존재하지 않습니다.");
+        return Response.failure(404, "해당하는 프릴리머리 봄이 존재하지 않습니다.");
     }
 
     @ExceptionHandler(PreliminaryBomCardNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public Response PreliminaryBomCardNotFoundException(PreliminaryBomCardNotFoundException e) {
         log.info("e = {}", e.getMessage());
-        return Response.failure(400, "해당하는 프릴리머리 봄 카드가 존재하지 않습니다.");
+        return Response.failure(404, "해당하는 프릴리머리 봄 카드가 존재하지 않습니다.");
     }
 
     @ExceptionHandler(BomNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public Response BomNotFoundException(BomNotFoundException e) {
         log.info("e = {}", e.getMessage());
-        return Response.failure(400, "봄이 존재하지 않습니다.");
+        return Response.failure(404, "봄이 존재하지 않습니다.");
     }
 }

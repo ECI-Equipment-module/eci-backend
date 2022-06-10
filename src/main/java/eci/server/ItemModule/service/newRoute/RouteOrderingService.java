@@ -1,8 +1,12 @@
 package eci.server.ItemModule.service.newRoute;
 
 import eci.server.BomModule.entity.Bom;
+import eci.server.BomModule.entity.CompareBom;
+import eci.server.BomModule.entity.DevelopmentBom;
 import eci.server.BomModule.entity.PreliminaryBom;
 import eci.server.BomModule.repository.BomRepository;
+import eci.server.BomModule.repository.CompareBomRepository;
+import eci.server.BomModule.repository.DevelopmentBomRepository;
 import eci.server.BomModule.repository.PreliminaryBomRepository;
 import eci.server.DesignModule.entity.design.Design;
 import eci.server.DesignModule.exception.DesignNotLinkedException;
@@ -52,6 +56,8 @@ public class RouteOrderingService {
     private final ItemTypesRepository itemTypesRepository;
     private final BomRepository bomRepository;
     private final PreliminaryBomRepository preliminaryBomRepository;
+    private final DevelopmentBomRepository developmentBomRepository;
+    private final CompareBomRepository compareBomRepository;
 
 
     private final RoutePreset routePreset;
@@ -149,6 +155,17 @@ public class RouteOrderingService {
                 )
         );
 
+        DevelopmentBom developmentBom = developmentBomRepository.save(
+                new DevelopmentBom(
+                        bom
+                )
+        );
+
+            CompareBom compareBom = compareBomRepository.save(
+                new CompareBom(
+                        bom
+                )
+        );
 
 
         newRoute.getNewItem().updateTempsaveWhenMadeRoute();

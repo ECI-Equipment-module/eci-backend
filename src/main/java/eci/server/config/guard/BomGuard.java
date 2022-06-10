@@ -166,10 +166,13 @@ public class BomGuard {
 
         List<RouteProduct> routeProductList =
                 routeProductRepository.findAllByRouteOrdering(routeOrdering);
+        if(isBomComplete(routeOrdering)) {
+            result = "complete";
+            // 봄 리뷰 후
+        }
 
-
-        if(
-                !(isBeforeDesignReview(routeOrdering, routeProductList))
+        else if(
+                (isBeforeDesignReview(routeOrdering, routeProductList))
 
         ){
             result = "beforeReview"; //프릴리미너리 가능
@@ -189,10 +192,7 @@ public class BomGuard {
             result = "bomReview";
         }
 
-        else {
-            result = "complete";
-            // 봄 리뷰 후
-        }
+
     return result;
     }
 
@@ -231,7 +231,6 @@ public class BomGuard {
 
 
     public boolean isBomComplete(RouteOrdering routeOrdering){
-
         return routeOrdering.getLifecycleStatus().equals("COMPLETE");
 
     }
