@@ -31,8 +31,8 @@ public class PreliminaryBom {
 
     @OneToMany(
             mappedBy = "preliminaryBom",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true,
+            //cascade = CascadeType.ALL,
+            //orphanRemoval = true,
             fetch = FetchType.LAZY)
     private List<JsonSave> jsonList;
 
@@ -51,5 +51,9 @@ public class PreliminaryBom {
         this.bom = bom;
         this.tempsave = true;
         this.readonly = false;
+    }
+
+    public void setJsonList(List<JsonSave> jsonList) {
+        this.jsonList = jsonList;
     }
 }

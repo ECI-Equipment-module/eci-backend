@@ -2,6 +2,7 @@ package eci.server.NewItemModule.entity;
 
 import eci.server.BomModule.entity.PreliminaryBom;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.OnDelete;
@@ -12,7 +13,7 @@ import javax.persistence.*;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-
+@AllArgsConstructor
 public class JsonSave {
     @Id
 //    @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,7 +25,7 @@ public class JsonSave {
     private String jsonText;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "preliminaryBom_id", nullable = false)
+    @JoinColumn(name = "preliminaryBom_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private PreliminaryBom preliminaryBom;
 

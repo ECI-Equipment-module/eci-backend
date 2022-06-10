@@ -14,15 +14,15 @@ import java.util.List;
 public class PreliminaryBomDto {
     String info;
 
-    public PreliminaryBomDto toDto(PreliminaryBom preliminaryBom){
-        String res="";
+    public static PreliminaryBomDto toDto(PreliminaryBom preliminaryBom){
+        StringBuilder res= new StringBuilder();
         List<JsonSave> all = preliminaryBom.getJsonList();
         for(JsonSave s : all){
-            res+=s.getJsonText();
+            res.append(s.getJsonText());
         }
 
         return new PreliminaryBomDto(
-                res
+                res.toString()
         );
     }
 
