@@ -177,7 +177,8 @@ public class DesignService {
                 routeOrderingRepository,
                 routeProductRepository,
                 bomRepository,
-                preliminaryBomRepository
+                preliminaryBomRepository,
+                attachmentTagRepository
         );
     }
 
