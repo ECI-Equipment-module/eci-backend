@@ -38,7 +38,7 @@ public class ProjectAttachmentDto  {
                 AttachmentTagDto.toDto(
                         attachmentTagRepository.findByName(
                                 attachment.getTag()
-                )
+                        )
                 ),
                 "src/main/prodmedia/image/"
                         +
