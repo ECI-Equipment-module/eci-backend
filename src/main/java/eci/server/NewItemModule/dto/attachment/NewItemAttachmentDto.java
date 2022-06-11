@@ -2,6 +2,7 @@ package eci.server.NewItemModule.dto.attachment;
 
 import eci.server.ItemModule.entity.item.Attachment;
 import eci.server.NewItemModule.entity.NewItemAttachment;
+import eci.server.NewItemModule.repository.attachment.AttachmentTagRepository;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -17,19 +18,25 @@ public class NewItemAttachmentDto {
     private String uniqueName;
     private String attach_comment;
     private boolean deleted;
-    private String tag;
+    private AttachmentTagDto tag;
     private String attachmentaddress;
     private String date;
     private String upload;
 
-    public static NewItemAttachmentDto toDto(NewItemAttachment attachment) {
+    public static NewItemAttachmentDto toDto(
+            NewItemAttachment attachment,
+            AttachmentTagRepository attachmentTagRepository
+    ) {
         return new NewItemAttachmentDto(
                 attachment.getId(),
                 attachment.getOriginName(),
                 attachment.getUniqueName(),
                 attachment.getAttach_comment(),
                 attachment.isDeleted(),
-                attachment.getTag(),
+
+                AttachmentTagDto.toDto(
+                        attachmentTagRepository.findByName(attachment.getTag())
+                ),
 
                 "src/main/prodmedia/image/"
                         +
@@ -49,7 +56,10 @@ public class NewItemAttachmentDto {
     }
 
 
-    public static List<NewItemAttachmentDto> toDtoList(List<Attachment> Attachments) {
+    public static List<NewItemAttachmentDto> toDtoList(
+            List<Attachment> Attachments,
+            AttachmentTagRepository attachmentTagRepository
+    ) {
 
         List<NewItemAttachmentDto> attachmentDtoList =
                 Attachments.stream().map(
@@ -59,7 +69,10 @@ public class NewItemAttachmentDto {
                                 i.getUniqueName(),
                                 i.getAttach_comment(),
                                 i.isDeleted(),
-                                i.getTag(),
+
+                                AttachmentTagDto.toDto(
+                                        attachmentTagRepository.findByName(i.getTag())
+                                ),
 
                                 "src/main/prodmedia/image/"
                                         +
