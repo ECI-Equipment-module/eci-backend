@@ -11,6 +11,7 @@ import eci.server.ItemModule.dto.newRoute.routeOrdering.RouteOrderingDto;
 import eci.server.ItemModule.exception.route.RouteNotFoundException;
 import eci.server.ItemModule.repository.newRoute.RouteOrderingRepository;
 import eci.server.ItemModule.repository.newRoute.RouteProductRepository;
+import eci.server.NewItemModule.repository.attachment.AttachmentTagRepository;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -51,7 +52,8 @@ public class DesignDto {
             RouteOrderingRepository routeOrderingRepository,
             RouteProductRepository routeProductRepository,
             BomRepository bomRepository,
-            PreliminaryBomRepository preliminaryBomRepository
+            PreliminaryBomRepository preliminaryBomRepository,
+            AttachmentTagRepository attachmentTagRepository
     ) {
         List<RouteOrderingDto> routeDtoList = Optional.ofNullable(
                 RouteOrderingDto.toDtoList(
@@ -71,7 +73,10 @@ public class DesignDto {
 
                 design.getDesignAttachments().
                         stream().
-                        map(i -> DesignAttachmentDto.toDto(i))
+                        map(i -> DesignAttachmentDto.toDto(
+                                i,
+                                attachmentTagRepository
+                        ))
                         .collect(toList()),
 
                 //routeDtoList
