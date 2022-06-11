@@ -103,7 +103,11 @@ public class NewItemDetailDto {
     ) {
 
         List<ResponsibleDto> tmpResponsibleDtoList = new ArrayList<>();
-
+        System.out.println("dlrjtdl 문제아다아아아아ㅏ");
+        System.out.println(bomRepository.findByNewItem(Item).size());
+        //bomRepository.findByNewItem(Item).size()>0?
+//                bomRepository.findByNewItem(Item).get(0).getId()
+//                :-1L
         if(Item.getMakers().size()>0) {
             return new NewItemDetailDto(
                     Item.getId(),
@@ -155,7 +159,9 @@ public class NewItemDetailDto {
                     Item.isTempsave(),
                     Item.isReadonly(),
 
-                    bomRepository.findByNewItem(Item).get(0).getId(),
+                    bomRepository.findByNewItem(Item).size()>0?
+                            bomRepository.findByNewItem(Item).get(0).getId()
+                            :-1L,
 
                     designRepository.findByNewItem(Item).size()>0?
                         BomDesignItemDto.toDesignDto(
@@ -236,7 +242,7 @@ public class NewItemDetailDto {
 
                 bomRepository.findByNewItem(Item).size()>0?
                         bomRepository.findByNewItem(Item).get(0).getId()
-                :-1,
+                :-1L,
 
                 designRepository.findByNewItem(Item).size()>0?
                         BomDesignItemDto.toDesignDto(
@@ -248,7 +254,7 @@ public class NewItemDetailDto {
                         ) :
                         //디자인 없을 지도 모름
                         new BomDesignItemDto(
-                                99999L,
+                                -1L,
                                 tmpResponsibleDtoList
                         )
 
