@@ -16,6 +16,7 @@ import eci.server.NewItemModule.dto.image.NewItemImageDto;
 import eci.server.NewItemModule.dto.responsibility.ResponsibleDto;
 import eci.server.NewItemModule.dto.supplier.SupplierDto;
 import eci.server.NewItemModule.entity.NewItem;
+import eci.server.NewItemModule.repository.attachment.AttachmentTagRepository;
 import eci.server.NewItemModule.repository.maker.NewItemMakerRepository;
 import eci.server.ProjectModule.dto.carType.CarTypeDto;
 import eci.server.ProjectModule.dto.clientOrg.ClientOrganizationDto;
@@ -99,7 +100,8 @@ public class NewItemDetailDto {
             DesignRepository designRepository,
             BomRepository bomRepository,
             BomGuard bomGuard,
-            DesignGuard designGuard
+            DesignGuard designGuard,
+            AttachmentTagRepository attachmentTagRepository
     ) {
 
         List<ResponsibleDto> tmpResponsibleDtoList = new ArrayList<>();
@@ -144,7 +146,10 @@ public class NewItemDetailDto {
 
                     Item.getAttachments().
                             stream().
-                            map(NewItemAttachmentDto::toDto)
+                            map( i->
+                                    NewItemAttachmentDto.toDto
+                                            (i,attachmentTagRepository)
+                            )
                             .collect(toList()),
                     (char) Item.getRevision(),
                     routeOrderingDto.getLifecycleStatus(),
@@ -217,7 +222,10 @@ public class NewItemDetailDto {
 
                 Item.getAttachments().
                         stream().
-                        map(NewItemAttachmentDto::toDto)
+                        map( i->
+                                NewItemAttachmentDto.toDto
+                                        (i,attachmentTagRepository)
+                        )
                         .collect(toList()),
 
                 (char) Item.getRevision(),
@@ -265,7 +273,8 @@ public class NewItemDetailDto {
     public static NewItemDetailDto noRoutetoDto(
             NewItem Item,
             NewItemMakerRepository newItemMakerRepository,
-            BomRepository bomRepository
+            BomRepository bomRepository,
+            AttachmentTagRepository attachmentTagRepository
     ){
 
         List<ResponsibleDto> tmpResponsibleDtoList = new ArrayList<>();
@@ -306,8 +315,12 @@ public class NewItemDetailDto {
 
                     Item.getAttachments().
                             stream().
-                            map(NewItemAttachmentDto::toDto)
+                            map( i->
+                                    NewItemAttachmentDto.toDto
+                                            (i,attachmentTagRepository)
+                            )
                             .collect(toList()),
+
                     (char) Item.getRevision(),
                     "LIFECYCLE_NONE",
                     0L,
@@ -365,7 +378,10 @@ public class NewItemDetailDto {
 
                 Item.getAttachments().
                         stream().
-                        map(NewItemAttachmentDto::toDto)
+                        map( i->
+                                NewItemAttachmentDto.toDto
+                                        (i,attachmentTagRepository)
+                        )
                         .collect(toList()),
 
                 (char) Item.getRevision(),

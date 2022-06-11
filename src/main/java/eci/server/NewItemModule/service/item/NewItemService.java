@@ -276,14 +276,16 @@ public class NewItemService {
                     designRepository,
                     bomRepository,
                     bomGuard,
-                    designGuard
+                    designGuard,
+                    attachmentTagRepository
             );
 
         }
         return NewItemDetailDto.noRoutetoDto(
                 targetItem,
                 itemMakerRepository,
-                bomRepository
+                bomRepository,
+                attachmentTagRepository
         );
     }
 

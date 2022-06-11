@@ -36,7 +36,9 @@ public class ProjectAttachmentDto  {
                 attachment.isDeleted(),
                 //attachment.getTag(),
                 AttachmentTagDto.toDto(
-                        attachmentTagRepository.findByName(attachment.getTag())
+                        attachmentTagRepository.findByName(
+                                attachment.getTag()
+                )
                 ),
                 "src/main/prodmedia/image/"
                         +

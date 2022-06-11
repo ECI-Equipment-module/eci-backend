@@ -194,7 +194,8 @@ public class ProjectService {
                 routeOrderingRepository,
                 routeProductRepository,
                 bomRepository,
-                preliminaryBomRepository
+                preliminaryBomRepository,
+                attachmentTagRepository
                 );
     }
 

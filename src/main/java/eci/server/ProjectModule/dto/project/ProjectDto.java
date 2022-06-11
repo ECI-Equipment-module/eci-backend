@@ -9,6 +9,7 @@ import eci.server.ItemModule.dto.newRoute.routeOrdering.RouteOrderingDto;
 import eci.server.ItemModule.exception.route.RouteNotFoundException;
 import eci.server.ItemModule.repository.newRoute.RouteOrderingRepository;
 import eci.server.ItemModule.repository.newRoute.RouteProductRepository;
+import eci.server.NewItemModule.repository.attachment.AttachmentTagRepository;
 import eci.server.ProjectModule.dto.carType.CarTypeDto;
 import eci.server.ProjectModule.dto.clientOrg.ClientOrganizationDto;
 import eci.server.ProjectModule.dto.produceOrg.ProduceOrganizationDto;
@@ -92,7 +93,8 @@ public class ProjectDto {
             RouteOrderingRepository routeOrderingRepository,
             RouteProductRepository routeProductRepository,
             BomRepository bomRepository,
-            PreliminaryBomRepository preliminaryBomRepository
+            PreliminaryBomRepository preliminaryBomRepository,
+            AttachmentTagRepository attachmentTagRepository
     ) {
         List<RouteOrderingDto> routeDtoList = Optional.ofNullable(
                 RouteOrderingDto.toDtoList(
@@ -134,7 +136,9 @@ public class ProjectDto {
 
                 project.getProjectAttachments().
                         stream().
-                        map(i -> ProjectAttachmentDto.toDto(i))
+                        map(i -> ProjectAttachmentDto.toDto(
+                                i,
+                                attachmentTagRepository))
                         .collect(toList()),
 
                 //routeDtoList
