@@ -4,10 +4,7 @@ import eci.server.BomModule.entity.Bom;
 import eci.server.BomModule.entity.CompareBom;
 import eci.server.BomModule.entity.DevelopmentBom;
 import eci.server.BomModule.entity.PreliminaryBom;
-import eci.server.BomModule.repository.BomRepository;
-import eci.server.BomModule.repository.CompareBomRepository;
-import eci.server.BomModule.repository.DevelopmentBomRepository;
-import eci.server.BomModule.repository.PreliminaryBomRepository;
+import eci.server.BomModule.repository.*;
 import eci.server.DesignModule.entity.design.Design;
 import eci.server.DesignModule.exception.DesignNotLinkedException;
 import eci.server.DesignModule.repository.DesignRepository;
@@ -27,6 +24,8 @@ import eci.server.ItemModule.repository.member.MemberRepository;
 import eci.server.ItemModule.repository.newRoute.RouteOrderingRepository;
 import eci.server.ItemModule.repository.newRoute.RouteProductRepository;
 import eci.server.ItemModule.repository.newRoute.RouteTypeRepository;
+import eci.server.NewItemModule.entity.JsonSave;
+import eci.server.NewItemModule.entity.NewItem;
 import eci.server.NewItemModule.exception.ItemTypeRequiredException;
 import eci.server.NewItemModule.repository.item.NewItemRepository;
 import eci.server.ProjectModule.entity.project.Project;
@@ -58,7 +57,7 @@ public class RouteOrderingService {
     private final PreliminaryBomRepository preliminaryBomRepository;
     private final DevelopmentBomRepository developmentBomRepository;
     private final CompareBomRepository compareBomRepository;
-
+    private final JsonSaveRepository jsonSaveRepository;
 
     private final RoutePreset routePreset;
 
@@ -152,6 +151,35 @@ public class RouteOrderingService {
         PreliminaryBom preliminaryBom = preliminaryBomRepository.save(
                 new PreliminaryBom(
                         bom
+                )
+        );
+
+        NewItem newItem = preliminaryBom.getBom().getNewItem();
+
+        // 06-11 태초에 기본 프릴리머리가 있었다
+
+        String initPreliminary = "{" +
+
+                "\"cardNumber \":\""+ newItem.getItemNumber() +"\","+
+                "\"cardName\": \""+ newItem.getName() +","+
+                "\"classification\": \"" + newItem.getClassification().getClassification1().getName().toString()
+                +"/" + newItem.getClassification().getClassification2().getName().toString()+
+                ( newItem.getClassification().getClassification3().getId().equals(99999L)?
+                "":
+                "/" + newItem.getClassification().getClassification3().getName()
+                )
+                + "\","+
+                "\"cardType\": \"" + newItem.getItemTypes().getItemType().name() +" ,"+
+                "\"sharing\": \"" + (newItem.isSharing() ?"공용":"전용") +"\"," +
+                "\"preliminaryBomId\": "+ preliminaryBom.getId() +"," +
+                "\"children\": []" +
+                "}"
+                ;
+
+        JsonSave initialJsonSave = jsonSaveRepository.save(
+                new JsonSave(
+                        initPreliminary,
+                        preliminaryBom
                 )
         );
 
