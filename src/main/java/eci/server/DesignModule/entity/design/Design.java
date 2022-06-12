@@ -207,7 +207,7 @@ public class Design extends EntityDate {
                     )
             );
             i.setTag(attachmentTagRepository
-                    .findById(req.getAddedTag().get(req.getAddedAttachments().indexOf(i))).
+                    .findById(req.getAddedTag().get(added.indexOf(i))).
                     orElseThrow(AttachmentNotFoundException::new).getName());
             i.setAttachmentaddress(
                     "src/main/prodmedia/image/" +

@@ -576,7 +576,7 @@ public class NewItem extends EntityDate {
             i.setAttach_comment(req.getAddedAttachmentComment().get((added.indexOf(i))));
 
             i.setTag(attachmentTagRepository
-                    .findById(req.getAddedTag().get(req.getAddedAttachments().indexOf(i))).
+                    .findById(req.getAddedTag().get(added.indexOf(i))).
                     orElseThrow(AttachmentNotFoundException::new).getName());
 
 //            i.setAttach_comment(req.getAddedAttachmentComment().get((req.getAddedAttachments().indexOf(i))));
