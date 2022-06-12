@@ -38,6 +38,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -609,8 +610,12 @@ public class NewItem extends EntityDate {
      * @param deleted
      */
     private void deleteAttachments(List<NewItemAttachment> deleted) {
-        deleted.stream().forEach(di ->
+        deleted.forEach(di ->
                         di.setDeleted(true)
+                //this.attachments.remove(di)
+        );
+        deleted.forEach(di ->
+                        di.setModifiedAt(LocalDateTime.now())
                 //this.attachments.remove(di)
         );
     }

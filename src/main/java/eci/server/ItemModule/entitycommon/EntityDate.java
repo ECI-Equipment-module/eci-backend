@@ -1,6 +1,7 @@
 package eci.server.ItemModule.entitycommon;
 
 import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -14,7 +15,7 @@ import java.time.LocalDateTime;
 @EntityListeners(AuditingEntityListener.class)
 @MappedSuperclass
 @Getter
-
+@Setter
 public abstract class EntityDate {
     @CreatedDate
     @Column(nullable = false, updatable = false)
