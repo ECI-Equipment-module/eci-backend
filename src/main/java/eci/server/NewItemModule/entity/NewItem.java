@@ -38,6 +38,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -576,7 +577,7 @@ public class NewItem extends EntityDate {
             i.setAttach_comment(req.getAddedAttachmentComment().get((added.indexOf(i))));
 
             i.setTag(attachmentTagRepository
-                    .findById(req.getAddedTag().get(req.getAddedAttachments().indexOf(i))).
+                    .findById(req.getAddedTag().get(added.indexOf(i))).
                     orElseThrow(AttachmentNotFoundException::new).getName());
 
 //            i.setAttach_comment(req.getAddedAttachmentComment().get((req.getAddedAttachments().indexOf(i))));
@@ -609,8 +610,12 @@ public class NewItem extends EntityDate {
      * @param deleted
      */
     private void deleteAttachments(List<NewItemAttachment> deleted) {
-        deleted.stream().forEach(di ->
+        deleted.forEach(di ->
                         di.setDeleted(true)
+                //this.attachments.remove(di)
+        );
+        deleted.forEach(di ->
+                        di.setModifiedAt(LocalDateTime.now())
                 //this.attachments.remove(di)
         );
     }

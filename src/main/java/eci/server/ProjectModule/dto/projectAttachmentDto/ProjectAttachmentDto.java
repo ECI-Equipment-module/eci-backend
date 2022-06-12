@@ -1,5 +1,6 @@
 package eci.server.ProjectModule.dto.projectAttachmentDto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import eci.server.ItemModule.entity.item.Attachment;
 import eci.server.NewItemModule.dto.attachment.AttachmentTagDto;
 import eci.server.NewItemModule.repository.attachment.AttachmentTagRepository;
@@ -7,6 +8,7 @@ import eci.server.ProjectModule.entity.projectAttachment.ProjectAttachment;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
@@ -23,6 +25,8 @@ public class ProjectAttachmentDto  {
     private String attachmentaddress;
     private String date;
     private String upload;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd hh:mm:ss.SSS", timezone = "Asia/Seoul")
+    private LocalDateTime modifiedAt;
 
     public static ProjectAttachmentDto toDto(
             ProjectAttachment attachment,
@@ -52,7 +56,9 @@ public class ProjectAttachmentDto  {
 
                 attachment.getModifiedAt().toString().split("_")[0].substring(0, 10),
 
-                attachment.getProject().getMember().getUsername()
+                attachment.getProject().getMember().getUsername(),
+
+                attachment.getModifiedAt()
 
         );
     }
@@ -86,7 +92,8 @@ public class ProjectAttachmentDto  {
                                         i.getUniqueName(),
 
                                 i.getModifiedAt().toString().split("_")[0].substring(0, 10),
-                                i.getProject().getMember().getUsername()
+                                i.getProject().getMember().getUsername(),
+                                i.getModifiedAt()
                         )
                 ).collect(
                         toList()

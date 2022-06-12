@@ -39,6 +39,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -142,9 +143,12 @@ public class ProjectService {
     private void deleteAttachments(List<ProjectAttachment> attachments) {
 //        attachments.stream().forEach(i -> fileService.delete(i.getUniqueName()));
         attachments.
-                stream().
                 forEach(
                         i -> i.setDeleted(true)
+                );
+        attachments.
+                forEach(
+                        i -> i.setModifiedAt(LocalDateTime.now())
                 );
     }
 

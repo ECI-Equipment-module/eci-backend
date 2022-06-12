@@ -1,11 +1,13 @@
 package eci.server.NewItemModule.dto.attachment;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import eci.server.ItemModule.entity.item.Attachment;
 import eci.server.NewItemModule.entity.NewItemAttachment;
 import eci.server.NewItemModule.repository.attachment.AttachmentTagRepository;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
@@ -22,6 +24,8 @@ public class NewItemAttachmentDto {
     private String attachmentaddress;
     private String date;
     private String upload;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd hh:mm:ss.SSS", timezone = "Asia/Seoul")
+    private LocalDateTime modifiedAt;
 
     public static NewItemAttachmentDto toDto(
             NewItemAttachment attachment,
@@ -50,8 +54,9 @@ public class NewItemAttachmentDto {
 
                 attachment.getModifiedAt().toString().split("_")[0].substring(0, 10),
 
-                attachment.getNewItem().getMember().getUsername()
+                attachment.getNewItem().getMember().getUsername(),
 
+                attachment.getModifiedAt()
         );
     }
 
@@ -86,7 +91,9 @@ public class NewItemAttachmentDto {
 
                                 i.getModifiedAt().toString().split("_")[0].substring(0, 10),
 
-                                i.getItem().getMember().getUsername()
+                                i.getItem().getMember().getUsername(),
+
+                                i.getModifiedAt()
                         )
                 ).collect(
                         toList()
