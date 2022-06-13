@@ -13,6 +13,7 @@ import eci.server.NewItemModule.dto.attachment.NewItemAttachmentDto;
 import eci.server.NewItemModule.dto.classification.ClassificationDto;
 import eci.server.NewItemModule.dto.coatingcommon.CoatingDto;
 import eci.server.NewItemModule.dto.image.NewItemImageDto;
+import eci.server.NewItemModule.dto.responsibility.DesignResponsibleDto;
 import eci.server.NewItemModule.dto.responsibility.ResponsibleDto;
 import eci.server.NewItemModule.dto.supplier.SupplierDto;
 import eci.server.NewItemModule.entity.NewItem;
@@ -104,7 +105,7 @@ public class NewItemDetailDto {
             AttachmentTagRepository attachmentTagRepository
     ) {
 
-        List<ResponsibleDto> tmpResponsibleDtoList = new ArrayList<>();
+        List<DesignResponsibleDto> tmpResponsibleDtoList = new ArrayList<>();
         System.out.println("dlrjtdl 문제아다아아아아ㅏ");
         System.out.println(bomRepository.findByNewItem(Item).size());
         //bomRepository.findByNewItem(Item).size()>0?
@@ -176,10 +177,10 @@ public class NewItemDetailDto {
                                     ),
                                     designGuard
                             ) :
-                            //디자인 없을 지도 모름
-                            new BomDesignItemDto(
-                                    -1L,
-                                    tmpResponsibleDtoList
+                            //디자인 없을 지도 모름 - 0613 수정
+                            BomDesignItemDto.toColorDesignDto(
+                                    Item,
+                                    designGuard
                             )
 
 
@@ -261,23 +262,23 @@ public class NewItemDetailDto {
                                 designGuard
                         ) :
                         //디자인 없을 지도 모름
-                        new BomDesignItemDto(
-                                -1L,
-                                tmpResponsibleDtoList
+                        BomDesignItemDto.toColorDesignDto(
+                                Item,
+                                designGuard
                         )
 
         );
     }
 
 
-    public static NewItemDetailDto noRoutetoDto(
+    public static NewItemDetailDto noRoutetoDto( //edit 창인 애들 불러올 때
             NewItem Item,
             NewItemMakerRepository newItemMakerRepository,
             BomRepository bomRepository,
             AttachmentTagRepository attachmentTagRepository
     ){
 
-        List<ResponsibleDto> tmpResponsibleDtoList = new ArrayList<>();
+        List<DesignResponsibleDto> tmpResponsibleDtoList = new ArrayList<>();
 
         if(Item.getMakers().size()>0) {
             return new NewItemDetailDto(
@@ -333,11 +334,10 @@ public class NewItemDetailDto {
                     Item.isTempsave(),
                     Item.isReadonly(),
 
+                    -1L, //라우트 없으면 봄 안만들어짐
 
-                    bomRepository.findByNewItem(Item).get(0).getId()
-                    ,
                     new BomDesignItemDto(
-                            99999L,
+                            -1L,
                             tmpResponsibleDtoList
                     )
 
@@ -398,7 +398,7 @@ public class NewItemDetailDto {
                 -1L, //라우트 없으면 봄 안만들어짐
 
                 new BomDesignItemDto(
-                        99999L,
+                        -1L,
                         tmpResponsibleDtoList
                 )
         );

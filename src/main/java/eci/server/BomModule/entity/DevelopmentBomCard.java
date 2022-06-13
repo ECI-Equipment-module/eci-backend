@@ -41,7 +41,7 @@ public class DevelopmentBomCard {
     private boolean deleted;
 
     @Column(nullable = false)
-    private int level;
+    private int itemLevel;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "development_id", nullable = false)
@@ -81,7 +81,7 @@ public class DevelopmentBomCard {
         this.parent = parent;
         this.deleted = false;
         this.newItem = newItem;
-        this.level = level;
+        this.itemLevel = level;
     }
 
     public Optional<DevelopmentBomCard> findDeletableDevelopmentBomCard() {
