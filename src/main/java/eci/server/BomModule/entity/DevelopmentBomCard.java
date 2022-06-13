@@ -40,6 +40,9 @@ public class DevelopmentBomCard {
     @Column(nullable = false)
     private boolean deleted;
 
+    @Column(nullable = false)
+    private int level;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "development_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
@@ -66,7 +69,8 @@ public class DevelopmentBomCard {
             String sharing,
             DevelopmentBom developmentBom,
             DevelopmentBomCard parent,
-            NewItem newItem
+            NewItem newItem,
+            int level
     ) {
         this.cardNumber = number;
         this.cardName = name;
@@ -77,6 +81,7 @@ public class DevelopmentBomCard {
         this.parent = parent;
         this.deleted = false;
         this.newItem = newItem;
+        this.level = level;
     }
 
     public Optional<DevelopmentBomCard> findDeletableDevelopmentBomCard() {

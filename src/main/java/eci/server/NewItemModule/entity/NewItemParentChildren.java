@@ -11,7 +11,7 @@ import javax.persistence.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @EqualsAndHashCode
-@IdClass(NewItemMakerId.class)
+@IdClass(NewItemParentChildrenId.class)
 public class NewItemParentChildren {
 
     @Id

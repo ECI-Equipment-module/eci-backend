@@ -212,6 +212,9 @@ public class NewItem extends EntityDate {
     @Column
     private boolean readonly;
 
+    @Column//0613 추가 - CAD에서 추가 속성, 디폴트가 false
+    private boolean subAssy;
+
     @Column(nullable = false)
     private boolean revise_progress;
 
