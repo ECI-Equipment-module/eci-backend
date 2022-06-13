@@ -64,7 +64,8 @@ public class DevelopmentBomCardCreateRequest {
                 DevelopmentBomRepository.findById(req.getDevelopmentBomId()).orElseThrow(DevelopmentBomNotFoundException::new),//Development
                 null, //지가 젤 부모라서 부모 없음 얘는
                 newItemRepository.findById(req.NewItemId).orElseThrow(ItemNotFoundException::new),
-                0 //req 받아서 생성하는 것은 언제나 아이디가 1 - , sub ass 라면 0인데,,
+                newItemRepository.findById(req.NewItemId).orElseThrow(ItemNotFoundException::new).isSubAssy()?
+                0 : 1//req 받아서 생성하는 것은 언제나 아이디가 1, sub ass 라면 0
         );
     }
 
@@ -87,7 +88,8 @@ public class DevelopmentBomCardCreateRequest {
                 :
                         DevelopmentBomCardRepository.findById(req.getParentId()).orElseThrow(DevelopmentCardNotFoundException::new),//parent Id
                 newItemRepository.findById(req.NewItemId).orElseThrow(ItemNotFoundException::new),
-                1
+                newItemRepository.findById(req.NewItemId).orElseThrow(ItemNotFoundException::new).isSubAssy()?
+                        0 : 1//req 받아서 생성하는 것은 언제나 아이디가 1, sub ass 라면 0
         );
     }
 
@@ -138,7 +140,8 @@ public class DevelopmentBomCardCreateRequest {
                             DevelopmentBom,
                             DevelopmentBomCardRepository.findById(parentId).orElseThrow(DevelopmentCardNotFoundException::new),
                             newItemRepository.findById(req.getNewItemId()).orElseThrow(ItemNotFoundException::new),
-                            1 //서브 어시면 레벨이 0이라고 했던 것 같긴 한데
+                            newItemRepository.findById(req.getNewItemId()).orElseThrow(ItemNotFoundException::new).isSubAssy()?
+                                    0 : 1//req 받아서 생성하는 것은 언제나 아이디가 1, sub ass 라면 0
                     )
             );
         }
