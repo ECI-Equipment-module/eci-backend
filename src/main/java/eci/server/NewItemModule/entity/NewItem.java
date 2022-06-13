@@ -1,5 +1,6 @@
 package eci.server.NewItemModule.entity;
 
+import eci.server.BomModule.entity.DevelopmentBomCard;
 import eci.server.ItemModule.entity.entitycommon.EntityDate;
 import eci.server.ItemModule.entity.item.*;
 import eci.server.ItemModule.exception.item.AttachmentNotFoundException;
@@ -38,6 +39,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -210,6 +212,9 @@ public class NewItem extends EntityDate {
     @Column
     private boolean readonly;
 
+    @Column//0613 추가 - CAD에서 추가 속성, 디폴트가 false
+    private boolean subAssy;
+
     @Column(nullable = false)
     private boolean revise_progress;
 
@@ -236,6 +241,25 @@ public class NewItem extends EntityDate {
     )
     private List<NewItemAttachment> attachments;
 
+    /**
+     * 한 아이템은 여러 부모 가지기 가능
+     */
+    @OneToMany(
+            mappedBy = "parent",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true,
+            fetch = FetchType.LAZY)
+    private List<NewItemParentChildren> parent;
+
+    /**
+     * 한 아이템은 여러 자식 가지기 가능
+     */
+    @OneToMany(
+            mappedBy = "children",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true,
+            fetch = FetchType.LAZY)
+    private List<NewItemParentChildren> children;
     /**
      * attachment 있을 때 생성자
      * @param classification
@@ -576,7 +600,7 @@ public class NewItem extends EntityDate {
             i.setAttach_comment(req.getAddedAttachmentComment().get((added.indexOf(i))));
 
             i.setTag(attachmentTagRepository
-                    .findById(req.getAddedTag().get(req.getAddedAttachments().indexOf(i))).
+                    .findById(req.getAddedTag().get(added.indexOf(i))).
                     orElseThrow(AttachmentNotFoundException::new).getName());
 
 //            i.setAttach_comment(req.getAddedAttachmentComment().get((req.getAddedAttachments().indexOf(i))));
@@ -609,8 +633,12 @@ public class NewItem extends EntityDate {
      * @param deleted
      */
     private void deleteAttachments(List<NewItemAttachment> deleted) {
-        deleted.stream().forEach(di ->
+        deleted.forEach(di ->
                         di.setDeleted(true)
+                //this.attachments.remove(di)
+        );
+        deleted.forEach(di ->
+                        di.setModifiedAt(LocalDateTime.now())
                 //this.attachments.remove(di)
         );
     }

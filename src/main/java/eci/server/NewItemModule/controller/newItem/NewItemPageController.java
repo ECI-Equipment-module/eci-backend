@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -31,8 +30,6 @@ public class NewItemPageController {
 
     @Autowired
     NewItemRepository newItemRepository;
-
-
     @CrossOrigin(origins = "https://localhost:3000")
     @GetMapping("/items/page")
     public Page<NewItemPagingDto> paging(@PageableDefault(size=5)
@@ -92,9 +89,33 @@ public class NewItemPageController {
 
         Page<ItemProjectCreateDto> itemList = new CustomPageImpl<>(itemListReal, indexes);
 
-        //System.out.println(itemList.getContent());
         return itemList;
 
+    }
+
+    @CrossOrigin(origins = "https://localhost:3000")
+    @GetMapping("bom/items/page")
+    public Page<NewItemPagingDto> bomItems(@PageableDefault(size=5)
+                                         @SortDefault.SortDefaults({
+                                                 @SortDefault(
+                                                         sort = "createdAt",
+                                                         direction = Sort.Direction.DESC)
+                                         })
+                                                 Pageable pageRequest) {
+
+        Page<NewItem> itemListBefore = newItemRepository.findAll(pageRequest);
+
+        List<NewItem> itemList1 =//06-01 false로 변경하기
+                itemListBefore.stream().filter(
+                        i-> (!i.isTempsave())
+                ).collect(Collectors.toList());
+
+        Page<NewItem> itemList = new PageImpl<>(itemList1);
+
+
+        return itemList.map(
+                item -> NewItemPagingDto.toDto(item)
+        );
     }
 
 }

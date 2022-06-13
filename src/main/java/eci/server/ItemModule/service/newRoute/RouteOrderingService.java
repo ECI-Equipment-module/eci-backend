@@ -160,8 +160,8 @@ public class RouteOrderingService {
 
         String initPreliminary = "{" +
 
-                "\"cardNumber \":\""+ newItem.getItemNumber() +"\","+
-                "\"cardName\": \""+ newItem.getName() +","+
+                "\"cardNumber\":\""+ newItem.getItemNumber() +"\","+
+                "\"cardName\": \""+ newItem.getName() +"\","+
                 "\"classification\": \"" + newItem.getClassification().getClassification1().getName().toString()
                 +"/" + newItem.getClassification().getClassification2().getName().toString()+
                 ( newItem.getClassification().getClassification3().getId().equals(99999L)?
@@ -169,7 +169,7 @@ public class RouteOrderingService {
                 "/" + newItem.getClassification().getClassification3().getName()
                 )
                 + "\","+
-                "\"cardType\": \"" + newItem.getItemTypes().getItemType().name() +" ,"+
+                "\"cardType\": \"" + newItem.getItemTypes().getItemType().name() +"\"," +
                 "\"sharing\": \"" + (newItem.isSharing() ?"공용":"전용") +"\"," +
                 "\"preliminaryBomId\": "+ preliminaryBom.getId() +"," +
                 "\"children\": []" +
