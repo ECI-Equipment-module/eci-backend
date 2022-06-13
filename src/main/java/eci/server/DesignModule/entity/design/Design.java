@@ -228,13 +228,22 @@ public class Design extends EntityDate {
      *
      * @param deleted
      */
+//    private void deleteDesignAttachments(List<DesignAttachment> deleted) {
+//        deleted.
+//                forEach(di ->
+//                        this.designAttachments.remove(di)
+//                );
+//    }
     private void deleteDesignAttachments(List<DesignAttachment> deleted) {
-        deleted.
-                forEach(di ->
-                        this.designAttachments.remove(di)
-                );
+        deleted.forEach(di ->
+                        di.setDeleted(true)
+                //this.attachments.remove(di)
+        );
+        deleted.forEach(di ->
+                        di.setModifiedAt(LocalDateTime.now())
+                //this.attachments.remove(di)
+        );
     }
-
     /**
      * 업데이트 돼야 할 파일 정보 만들어줌
      *

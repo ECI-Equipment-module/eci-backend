@@ -9,6 +9,7 @@ import eci.server.ItemModule.exception.member.sign.MemberNotFoundException;
 import eci.server.ItemModule.repository.item.ItemRepository;
 import eci.server.ItemModule.repository.member.MemberRepository;
 import eci.server.NewItemModule.entity.NewItem;
+import eci.server.NewItemModule.entity.NewItemAttachment;
 import eci.server.NewItemModule.repository.item.NewItemRepository;
 import eci.server.ProjectModule.dto.project.ProjectUpdateRequest;
 import eci.server.ProjectModule.entity.projectAttachment.ProjectAttachment;
@@ -485,11 +486,21 @@ public class Project extends EntityDate {
      *
      * @param deleted
      */
+//    private void deleteProjectAttachments(List<ProjectAttachment> deleted) {
+//        deleted.
+//                forEach(di ->
+//                        this.projectAttachments.remove(di)
+//                );
+//    }
     private void deleteProjectAttachments(List<ProjectAttachment> deleted) {
-        deleted.
-                forEach(di ->
-                        this.projectAttachments.remove(di)
-                );
+        deleted.forEach(di ->
+                        di.setDeleted(true)
+                //this.attachments.remove(di)
+        );
+        deleted.forEach(di ->
+                        di.setModifiedAt(LocalDateTime.now())
+                //this.attachments.remove(di)
+        );
     }
 
     /**
