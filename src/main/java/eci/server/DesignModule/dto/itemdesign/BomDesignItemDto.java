@@ -597,6 +597,8 @@ public class BomDesignItemDto {
     ) {
         List<DesignResponsibleDto> DesignResponsibleDtoList = new ArrayList<>();
 
+        System.out.println("디자인 생성자냐 ? " + designGuard.isDesginCreator(newItem.getId()));
+
         //1) 디자인 생성 담당자
         if (designGuard.isDesginCreator(newItem.getId())) {
 
@@ -677,7 +679,7 @@ public class BomDesignItemDto {
                 DesignResponsibleDtoList.add(
                         new DesignResponsibleDto(
                                 -1L,
-                                "development",
+                                "design",
                                 "disable",
                                 "none"
                         )
@@ -749,7 +751,7 @@ public class BomDesignItemDto {
                 DesignResponsibleDtoList.add(
                         new DesignResponsibleDto(
                                 -1L,
-                                "development",
+                                "design",
                                 "disable",
                                 "none"
                         )
