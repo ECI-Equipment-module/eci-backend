@@ -1,8 +1,6 @@
 package eci.server.advice;
 
-import eci.server.BomModule.exception.BomNotFoundException;
-import eci.server.BomModule.exception.PreliminaryBomCardNotFoundException;
-import eci.server.BomModule.exception.PreliminaryBomNotFoundException;
+import eci.server.BomModule.exception.*;
 import eci.server.DesignModule.exception.DesignNotFoundException;
 import eci.server.DesignModule.exception.DesignNotLinkedException;
 import eci.server.DesignModule.exception.DesignUpdateImpossibleException;
@@ -359,4 +357,20 @@ public class ExceptionAdvice {
         log.info("e = {}", e.getMessage());
         return Response.failure(404, "봄이 존재하지 않습니다.");
     }
+
+    @ExceptionHandler(DevelopmentCardNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Response DevelopmentCardNotFoundException(DevelopmentCardNotFoundException e) {
+        log.info("e = {}", e.getMessage());
+        return Response.failure(404, "개발봄 카드가 존재하지 않습니다.");
+    }
+
+
+    @ExceptionHandler(DevelopmentBomNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Response DevelopmentBomNotFoundException(DevelopmentBomNotFoundException e) {
+        log.info("e = {}", e.getMessage());
+        return Response.failure(404, "개발봄이 존재하지 않습니다.");
+    }
+
 }
