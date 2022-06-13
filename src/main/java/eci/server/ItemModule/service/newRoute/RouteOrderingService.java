@@ -160,7 +160,7 @@ public class RouteOrderingService {
 
         String initPreliminary = "{" +
 
-                "\"cardNumber \":\""+ newItem.getItemNumber() +"\","+
+                "\"cardNumber\":\""+ newItem.getItemNumber() +"\","+
                 "\"cardName\": \""+ newItem.getName() +"\","+
                 "\"classification\": \"" + newItem.getClassification().getClassification1().getName().toString()
                 +"/" + newItem.getClassification().getClassification2().getName().toString()+
