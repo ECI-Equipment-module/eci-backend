@@ -9,4 +9,7 @@ import java.util.List;
 public interface NewItemRepository extends JpaRepository<NewItem, Long>, CustomNewItemRepository {
 
     List<NewItem> findByMember(Member member);
+
+    List<NewItem> findByParent(NewItem newItem);
+
 }

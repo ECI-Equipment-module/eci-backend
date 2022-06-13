@@ -1,5 +1,6 @@
 package eci.server.NewItemModule.entity;
 
+import eci.server.BomModule.entity.DevelopmentBomCard;
 import eci.server.ItemModule.entity.entitycommon.EntityDate;
 import eci.server.ItemModule.entity.item.*;
 import eci.server.ItemModule.exception.item.AttachmentNotFoundException;
@@ -237,6 +238,25 @@ public class NewItem extends EntityDate {
     )
     private List<NewItemAttachment> attachments;
 
+    /**
+     * 한 아이템은 여러 부모 가지기 가능
+     */
+    @OneToMany(
+            mappedBy = "parent",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true,
+            fetch = FetchType.LAZY)
+    private List<NewItemParentChildren> parent;
+
+    /**
+     * 한 아이템은 여러 자식 가지기 가능
+     */
+    @OneToMany(
+            mappedBy = "children",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true,
+            fetch = FetchType.LAZY)
+    private List<NewItemParentChildren> children;
     /**
      * attachment 있을 때 생성자
      * @param classification

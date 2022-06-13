@@ -56,7 +56,7 @@ public class DevelopmentBomCard {
     private NewItem newItem;
 
     @OneToMany(mappedBy = "parent")
-    private List<DevelopmentBomCard> children = new ArrayList<>(); // 5
+    private List<DevelopmentBomCard> children = new ArrayList<>();
 
     public DevelopmentBomCard(
             String number,
