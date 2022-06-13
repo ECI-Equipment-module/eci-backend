@@ -33,6 +33,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -187,7 +188,7 @@ public class Design extends EntityDate {
                         req.getModifierId()
                 ).orElseThrow(MemberNotFoundException::new);//05 -22 생성자 추가
 
-
+        this.setModifiedAt(LocalDateTime.now());
 
         return fileUpdatedResult;
     }

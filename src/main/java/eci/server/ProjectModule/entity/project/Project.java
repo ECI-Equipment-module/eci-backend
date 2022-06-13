@@ -29,6 +29,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.persistence.*;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
@@ -343,6 +344,8 @@ public class Project extends EntityDate {
     )
 
     {
+
+        this.setModifiedAt(LocalDateTime.now());
 
         this.name = req.getName().isBlank() ? this.name : req.getName();
 

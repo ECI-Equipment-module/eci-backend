@@ -776,6 +776,8 @@ public class NewItem extends EntityDate {
             CarTypeRepository carTypeRepository,
             AttachmentTagRepository attachmentTagRepository
     ) {
+        this.setModifiedAt(LocalDateTime.now());
+
         AtomicInteger k = new AtomicInteger();
 
         //TODO update할 때 사용자가 기존 값 없애고 보낼 수도 있자나 => fix needed
