@@ -1,6 +1,5 @@
 package eci.server.NewItemModule.entity;
 
-import eci.server.BomModule.entity.DevelopmentBomCard;
 import eci.server.ItemModule.entity.entitycommon.EntityDate;
 import eci.server.ItemModule.entity.item.*;
 import eci.server.ItemModule.exception.item.AttachmentNotFoundException;
@@ -259,7 +258,8 @@ public class NewItem extends EntityDate {
             cascade = CascadeType.ALL,
             orphanRemoval = true,
             fetch = FetchType.LAZY)
-    private List<NewItemParentChildren> children;
+    //@JoinColumn(name = "children_id")
+    private List< NewItemParentChildren> children;
     /**
      * attachment 있을 때 생성자
      * @param classification
@@ -776,6 +776,8 @@ public class NewItem extends EntityDate {
             CarTypeRepository carTypeRepository,
             AttachmentTagRepository attachmentTagRepository
     ) {
+        this.setModifiedAt(LocalDateTime.now());
+
         AtomicInteger k = new AtomicInteger();
 
         //TODO update할 때 사용자가 기존 값 없애고 보낼 수도 있자나 => fix needed
@@ -1098,6 +1100,14 @@ public class NewItem extends EntityDate {
 
         }
         return fileUpdatedResult;
+    }
+
+    public void setParent(List<NewItemParentChildren> parent) {
+        this.parent = parent;
+    }
+
+    public void setChildren(List<NewItemParentChildren> children) {
+        this.children = children;
     }
 
 }

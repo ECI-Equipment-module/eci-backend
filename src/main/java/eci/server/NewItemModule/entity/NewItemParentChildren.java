@@ -1,11 +1,8 @@
 package eci.server.NewItemModule.entity;
 
-import eci.server.NewItemModule.entity.maker.NewItemMakerId;
-import eci.server.NewItemModule.entity.supplier.Maker;
 import lombok.*;
 
 import javax.persistence.*;
-
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -16,12 +13,12 @@ public class NewItemParentChildren {
 
     @Id
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "parent_id")
+    @JoinColumn(name = "parent")
     private NewItem parent;
 
     @Id
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "children_id")
+    @JoinColumn(name = "children")
     private NewItem children;
 
 }

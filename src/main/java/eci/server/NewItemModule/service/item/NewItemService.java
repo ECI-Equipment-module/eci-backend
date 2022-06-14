@@ -1,5 +1,7 @@
 package eci.server.NewItemModule.service.item;
 
+import eci.server.BomModule.dto.DevelopmentBomCardDto;
+import eci.server.BomModule.dto.cond.DevelopmentBomReadCondition;
 import eci.server.BomModule.repository.BomRepository;
 import eci.server.BomModule.repository.PreliminaryBomRepository;
 import eci.server.DesignModule.repository.DesignRepository;
@@ -25,10 +27,7 @@ import eci.server.ItemModule.repository.newRoute.RouteOrderingRepository;
 import eci.server.ItemModule.repository.newRoute.RouteProductRepository;
 import eci.server.ItemModule.service.file.FileService;
 import eci.server.ItemModule.service.file.LocalFileService;
-import eci.server.NewItemModule.dto.newItem.NewItemDetailDto;
-import eci.server.NewItemModule.dto.newItem.NewItemPagingDtoList;
-import eci.server.NewItemModule.dto.newItem.NewItemReadCondition;
-import eci.server.NewItemModule.dto.newItem.RetrieveNewItemDetailDto;
+import eci.server.NewItemModule.dto.newItem.*;
 import eci.server.NewItemModule.dto.newItem.create.NewItemCreateRequest;
 import eci.server.NewItemModule.dto.newItem.create.NewItemCreateResponse;
 import eci.server.NewItemModule.dto.newItem.create.NewItemTemporaryCreateRequest;
@@ -43,6 +42,7 @@ import eci.server.NewItemModule.repository.classification.Classification2Reposit
 import eci.server.NewItemModule.repository.classification.Classification3Repository;
 import eci.server.NewItemModule.repository.coatingType.CoatingTypeRepository;
 import eci.server.NewItemModule.repository.coatingWay.CoatingWayRepository;
+import eci.server.NewItemModule.repository.item.NewItemParentChildrenRepository;
 import eci.server.NewItemModule.repository.item.NewItemRepository;
 import eci.server.NewItemModule.repository.maker.NewItemMakerRepository;
 import eci.server.NewItemModule.repository.supplier.SupplierRepository;
@@ -99,6 +99,7 @@ public class NewItemService {
     private final DesignGuard designGuard;
     private final BomGuard bomGuard;
     private final PreliminaryBomRepository preliminaryBomRepository;
+    private final NewItemParentChildrenRepository newItemParentChildrenRepository;
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -483,6 +484,14 @@ public class NewItemService {
 
     }
 
+    public List<NewItemChildDto> readChildAll(Long id) {
 
+        return NewItemChildDto.toDtoList(
+                newItemParentChildrenRepository.
+                        findAllWithParentByParentId(id)//ByParentIdOrderByParentIdAscNullsFirst(
+
+        );
+
+    }
 
 }
