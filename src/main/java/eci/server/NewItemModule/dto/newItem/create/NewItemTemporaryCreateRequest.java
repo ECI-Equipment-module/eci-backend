@@ -120,7 +120,7 @@ public class NewItemTemporaryCreateRequest {
 
     @Null
     private Long memberId;
-
+//TODO : THUMBNAIL 없어도 되기 0614
     public static NewItem toEntity(
             NewItemTemporaryCreateRequest req,
             Classification1Repository classification1Repository,
