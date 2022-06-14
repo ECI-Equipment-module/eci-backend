@@ -106,7 +106,7 @@ public class NewItemChildDto {
                                 +"/"+c.getClassification().getClassification2().getName()+
                                 (
                                         c.getClassification().getClassification3().getId()==99999L?
-                                                "":"/"+"/"+c.getClassification().getClassification3().getName()
+                                                "":"/"+c.getClassification().getClassification3().getName()
                                 )
                         ,
                         c.getName(),
