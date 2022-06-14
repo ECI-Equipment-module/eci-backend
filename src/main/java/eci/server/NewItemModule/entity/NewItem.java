@@ -1012,7 +1012,7 @@ public class NewItem extends EntityDate {
 
         this.coatingType = req.getCoatingTypeId()==null?this.coatingType:
                 coatingTypeRepository.findById
-                        (req.getCarTypeId()).orElseThrow(CoatingNotFoundException::new);
+                        (req.getCoatingTypeId()).orElseThrow(CoatingNotFoundException::new);
 
 
         this.modulus = req.getModulus().isBlank()?this.modulus:req.getModulus();
