@@ -241,7 +241,6 @@ public class NewItemService {
         return image;
     }
 
-
     public NewItemPagingDtoList readAll(NewItemReadCondition cond) {
         return NewItemPagingDtoList.toDto(
                 newItemRepository.findAllByCondition(cond)
