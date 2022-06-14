@@ -145,5 +145,11 @@ public class NewItemController {
         return Response.success(newItemService.update(id, req));
     }
 
-
+    @GetMapping("/children/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public Response getDev(@PathVariable Long id) {
+        return Response.success(
+                newItemService.readChildAll(id)
+        );
+    }
 }
