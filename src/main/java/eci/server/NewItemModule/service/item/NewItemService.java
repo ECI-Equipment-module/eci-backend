@@ -488,7 +488,8 @@ public class NewItemService {
 
         return NewItemChildDto.toDtoList(
                 newItemParentChildrenRepository.
-                        findAllWithParentByParentId(id)//ByParentIdOrderByParentIdAscNullsFirst(
+                        findAllWithParentByParentId(id),//ByParentIdOrderByParentIdAscNullsFirst(
+                newItemParentChildrenRepository
 
         );
 
