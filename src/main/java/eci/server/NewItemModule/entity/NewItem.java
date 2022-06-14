@@ -1013,7 +1013,7 @@ public class NewItem extends EntityDate {
 
         this.coatingType = req.getCoatingTypeId()==null?this.coatingType:
                 coatingTypeRepository.findById
-                        (req.getCarTypeId()).orElseThrow(CoatingNotFoundException::new);
+                        (req.getCoatingTypeId()).orElseThrow(CoatingNotFoundException::new);
 
 
         this.modulus = req.getModulus().isBlank()?this.modulus:req.getModulus();
@@ -1071,7 +1071,7 @@ public class NewItem extends EntityDate {
         }
 
         NewItemFileUpdatedResult fileUpdatedResult = null;
-
+        // TODO : 0614 빈 "" 예외처리
         if (req.getThumbnail().getSize() > 0) {
             System.out.println("업데이트된 썸네일이 있네," +
                     "기존걸 삭제하고ㅡ 이걸 넣자! ");
