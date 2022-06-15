@@ -211,6 +211,9 @@ public class NewItem extends EntityDate {
     @Column
     private boolean readonly;
 
+    @Column//0613 추가 - CAD에서 추가 속성, 디폴트가 false
+    private boolean subAssy;
+
     @Column(nullable = false)
     private boolean revise_progress;
 
@@ -237,6 +240,26 @@ public class NewItem extends EntityDate {
     )
     private List<NewItemAttachment> attachments;
 
+    /**
+     * 한 아이템은 여러 부모 가지기 가능
+     */
+    @OneToMany(
+            mappedBy = "parent",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true,
+            fetch = FetchType.LAZY)
+    private List<NewItemParentChildren> parent;
+
+    /**
+     * 한 아이템은 여러 자식 가지기 가능
+     */
+    @OneToMany(
+            mappedBy = "children",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true,
+            fetch = FetchType.LAZY)
+    //@JoinColumn(name = "children_id")
+    private List< NewItemParentChildren> children;
     /**
      * attachment 있을 때 생성자
      * @param classification
@@ -753,6 +776,8 @@ public class NewItem extends EntityDate {
             CarTypeRepository carTypeRepository,
             AttachmentTagRepository attachmentTagRepository
     ) {
+        this.setModifiedAt(LocalDateTime.now());
+
         AtomicInteger k = new AtomicInteger();
 
         //TODO update할 때 사용자가 기존 값 없애고 보낼 수도 있자나 => fix needed
@@ -930,7 +955,8 @@ public class NewItem extends EntityDate {
         }
         AtomicInteger k = new AtomicInteger();
 
-        //TODO update할 때 사용자가 기존 값 없애고 보낼 수도 있자나 => fix needed
+        //TODO 0614 update할 때 사용자가 기존 값 없애고 보낼 수도 있자나 => fix needed,
+         //TODO ITEMTYPE 없으면 99999면 안되게
         //isBlank 랑 isNull로 판단해서 기존 값 / req 값 채워넣기
         this.name = req.getName().isBlank()?this.name:req.getName();
 
@@ -987,7 +1013,7 @@ public class NewItem extends EntityDate {
 
         this.coatingType = req.getCoatingTypeId()==null?this.coatingType:
                 coatingTypeRepository.findById
-                        (req.getCarTypeId()).orElseThrow(CoatingNotFoundException::new);
+                        (req.getCoatingTypeId()).orElseThrow(CoatingNotFoundException::new);
 
 
         this.modulus = req.getModulus().isBlank()?this.modulus:req.getModulus();
@@ -1045,7 +1071,7 @@ public class NewItem extends EntityDate {
         }
 
         NewItemFileUpdatedResult fileUpdatedResult = null;
-
+        // TODO : 0614 빈 "" 예외처리
         if (req.getThumbnail().getSize() > 0) {
             System.out.println("업데이트된 썸네일이 있네," +
                     "기존걸 삭제하고ㅡ 이걸 넣자! ");
@@ -1075,6 +1101,14 @@ public class NewItem extends EntityDate {
 
         }
         return fileUpdatedResult;
+    }
+
+    public void setParent(List<NewItemParentChildren> parent) {
+        this.parent = parent;
+    }
+
+    public void setChildren(List<NewItemParentChildren> children) {
+        this.children = children;
     }
 
 }

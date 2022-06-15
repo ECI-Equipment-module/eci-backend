@@ -1,5 +1,6 @@
 package eci.server.NewItemModule.controller.newItem;
 
+import eci.server.NewItemModule.dto.newItem.NewItemPagingDtoList;
 import eci.server.NewItemModule.dto.newItem.NewItemReadCondition;
 import eci.server.NewItemModule.dto.newItem.create.NewItemCreateRequest;
 import eci.server.NewItemModule.dto.newItem.create.NewItemTemporaryCreateRequest;
@@ -145,5 +146,21 @@ public class NewItemController {
         return Response.success(newItemService.update(id, req));
     }
 
+//    @GetMapping("/children/{id}")
+//    @ResponseStatus(HttpStatus.OK)
+//    public Response getDev(@PathVariable Long id) {
+//        return Response.success(
+//                newItemService.readChildAll(id)
+//        );
+//    }
+
+    @CrossOrigin(origins = "https://localhost:3000")
+    @GetMapping("/development/bom/item")
+    @ResponseStatus(HttpStatus.OK)
+    public Response readDevBomItem(@Valid NewItemReadCondition cond) {
+        return Response.success(
+                newItemService.
+                        readAll(cond));
+    }
 
 }

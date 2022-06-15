@@ -1,6 +1,7 @@
 package eci.server.NewItemModule.dto.newItem.create;
 
 import eci.server.ItemModule.entity.item.ItemType;
+import eci.server.ItemModule.exception.item.AttachmentNotFoundException;
 import eci.server.ItemModule.exception.item.ColorNotFoundException;
 import eci.server.ItemModule.exception.item.ItemNotFoundException;
 import eci.server.ItemModule.exception.item.ManufactureNotFoundException;
@@ -109,7 +110,7 @@ public class NewItemTemporaryCreateRequest {
     private MultipartFile thumbnail;
 
     private List<MultipartFile> attachments = new ArrayList<>();
-    private List<String> tag = new ArrayList<>();
+    private List<Long> tag = new ArrayList<>();
     private List<String> attachmentComment = new ArrayList<>();
 
 
@@ -119,7 +120,7 @@ public class NewItemTemporaryCreateRequest {
 
     @Null
     private Long memberId;
-
+//TODO : THUMBNAIL 없어도 되기 0614
     public static NewItem toEntity(
             NewItemTemporaryCreateRequest req,
             Classification1Repository classification1Repository,
@@ -368,10 +369,13 @@ public class NewItemTemporaryCreateRequest {
                 false ,//revise progress 중 아니다
 
 
+
                 req.attachments.stream().map(
                         i -> new NewItemAttachment(
                                 i.getOriginalFilename(),
-                                req.getTag().get(req.attachments.indexOf(i)),
+                                attachmentTagRepository
+                                        .findById(req.getTag().get(req.attachments.indexOf(i))).
+                                        orElseThrow(AttachmentNotFoundException::new).getName(),
                                 req.getAttachmentComment().get(req.attachments.indexOf(i))
                         )
                 ).collect(

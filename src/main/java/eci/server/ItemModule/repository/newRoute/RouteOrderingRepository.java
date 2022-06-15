@@ -1,6 +1,5 @@
 package eci.server.ItemModule.repository.newRoute;
 
-import eci.server.ItemModule.entity.item.Item;
 import eci.server.ItemModule.entity.newRoute.RouteOrdering;
 import eci.server.NewItemModule.entity.NewItem;
 import org.springframework.data.jpa.repository.JpaRepository;
