@@ -1,6 +1,7 @@
 package eci.server.NewItemModule.dto.newItem;
 
 import eci.server.ItemModule.helper.NestedConvertHelper;
+import eci.server.ItemModule.repository.newRoute.RouteOrderingRepository;
 import eci.server.NewItemModule.entity.NewItem;
 import eci.server.NewItemModule.entity.NewItemParentChildren;
 import eci.server.NewItemModule.repository.item.NewItemParentChildrenRepository;
@@ -22,9 +23,9 @@ public class NewItemChildDto {
 
     private Long id;
     private String classification;
-    private String name;
-    private String itemTypes;
-    private String itemNumber;
+    private String cardName;
+    private String cardType;
+    private String cardNumber;
     //private String thumbnailAddress;
     private String sharing;
     private List<NewItemChildDto> children;
@@ -33,15 +34,15 @@ public class NewItemChildDto {
     public static List<NewItemChildDto> toDtoList(
             List<NewItemParentChildren> NewItems,
             NewItemParentChildrenRepository newItemParentChildrenRepository
-            ) {
+    ) {
         List<NewItemChildDto> newItemChildDtos = NewItems.stream().map(
                 c -> new NewItemChildDto(
                         c.getChildren().getId(),//엔티티를 DTO로 변환하는 함수
                         c.getChildren().getClassification().getClassification1().getName()
-                        +"/"+c.getChildren().getClassification().getClassification2().getName()+
+                                +"/"+c.getChildren().getClassification().getClassification2().getName()+
                                 (
                                         c.getChildren().getClassification().getClassification3().getId()==99999L?
-                                        "":"/"+"/"+c.getChildren().getClassification().getClassification3().getName()
+                                                "":"/"+"/"+c.getChildren().getClassification().getClassification3().getName()
                                 )
                         ,
                         c.getChildren().getName(),
@@ -98,7 +99,36 @@ public class NewItemChildDto {
     public static Page<NewItemChildDto> toAddChildDtoList(
             Page<NewItem> NewItem,
             NewItemService newItemService
+            //,RouteOrderingRepository routeOrderingRepository
     ) {
+//        List<NewItem> filteredNewItem = new ArrayList<>();
+//        //필터링
+//        for(NewItem newItem : NewItem) {
+//            if(!(
+//                    (newItem.getItemTypes().getItemType().name().equals("프로덕트제품")
+//                ||newItem.getItemTypes().getItemType().name().equals("파트제품")
+//                    ) //제품이며
+//            &&
+//
+//                            !(
+//                                    routeOrderingRepository.findByNewItem(newItem).size()>0
+//            && (routeOrderingRepository.findByNewItem(newItem).get(
+//                    routeOrderingRepository.findByNewItem(newItem).size()-1
+//            ).getLifecycleStatus().equals("COMPLETE") ||
+//                    (routeOrderingRepository.findByNewItem(newItem).get(
+//                            routeOrderingRepository.findByNewItem(newItem).size()-1
+//                    ).getLifecycleStatus().equals("RELEASE")
+//
+//            )
+//                    )
+//            )
+//            ))
+//            {
+//                filteredNewItem.add(newItem);
+//            }
+//        }
+
+
         List<NewItemChildDto> newItemChildDtos = NewItem.stream().map(
                 c -> new NewItemChildDto(
                         c.getId(),//엔티티를 DTO로 변환하는 함수

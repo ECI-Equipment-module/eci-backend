@@ -41,11 +41,11 @@ public class NewItemPageController {
     @CrossOrigin(origins = "https://localhost:3000")
     @GetMapping("/items/page")
     public Page<NewItemPagingDto> paging(@PageableDefault(size=5)
-                                      @SortDefault.SortDefaults({
-                                              @SortDefault(
-                                                      sort = "createdAt",
-                                                      direction = Sort.Direction.DESC)
-                                      })
+                                         @SortDefault.SortDefaults({
+                                                 @SortDefault(
+                                                         sort = "createdAt",
+                                                         direction = Sort.Direction.DESC)
+                                         })
                                                  Pageable pageRequest) {
 
         Page<NewItem> itemListBefore = newItemRepository.findAll(pageRequest);
@@ -75,12 +75,12 @@ public class NewItemPageController {
     @CrossOrigin(origins = "https://localhost:3000")
     @GetMapping("/item-candidates")
     public Page<ItemProjectCreateDto> readItemCandidate(@PageableDefault(size=5)
-                                      @SortDefault.SortDefaults({
-                                              @SortDefault(
-                                                      sort = "createdAt",
-                                                      direction = Sort.Direction.DESC)
-                                      })
-                                              Pageable pageRequest) {
+                                                        @SortDefault.SortDefaults({
+                                                                @SortDefault(
+                                                                        sort = "createdAt",
+                                                                        direction = Sort.Direction.DESC)
+                                                        })
+                                                                Pageable pageRequest) {
 
         List<ItemProjectCreateDto> itemListReal =
                 itemService.linkNeededItemsForProjectPage();
@@ -98,12 +98,12 @@ public class NewItemPageController {
     @CrossOrigin(origins = "https://localhost:3000")
     @GetMapping("bom/items/page")
     public Page<NewItemPagingDto> bomItems(@PageableDefault(size=5)
-                                         @SortDefault.SortDefaults({
-                                                 @SortDefault(
-                                                         sort = "createdAt",
-                                                         direction = Sort.Direction.DESC)
-                                         })
-                                                 Pageable pageRequest) {
+                                           @SortDefault.SortDefaults({
+                                                   @SortDefault(
+                                                           sort = "createdAt",
+                                                           direction = Sort.Direction.DESC)
+                                           })
+                                                   Pageable pageRequest) {
 
         Page<NewItem> itemListBefore = newItemRepository.findAll(pageRequest);
 
@@ -132,12 +132,12 @@ public class NewItemPageController {
     @CrossOrigin(origins = "https://localhost:3000")
     @GetMapping("dev/bom/items/page")
     public Page<NewItemChildDto> devBomItems(@PageableDefault(size=5)
-                                           @SortDefault.SortDefaults({
-                                                   @SortDefault(
-                                                           sort = "createdAt",
-                                                           direction = Sort.Direction.DESC)
-                                           })
-                                                   Pageable pageRequest) {
+                                             @SortDefault.SortDefaults({
+                                                     @SortDefault(
+                                                             sort = "createdAt",
+                                                             direction = Sort.Direction.DESC)
+                                             })
+                                                     Pageable pageRequest) {
 
 
         //1) 제품인 것 (상태가 complete, release 인 것만)
@@ -161,14 +161,14 @@ public class NewItemPageController {
             System.out.println(routeOrderingRepository.findById(1399L));
             if(
                     routeOrderingRepository.findByNewItem(newItem).size()>0
-            && (routeOrderingRepository.findByNewItem(newItem).get(
-                    routeOrderingRepository.findByNewItem(newItem).size()-1
-            ).getLifecycleStatus().equals("COMPLETE") ||
-                    (routeOrderingRepository.findByNewItem(newItem).get(
+                            && (routeOrderingRepository.findByNewItem(newItem).get(
                             routeOrderingRepository.findByNewItem(newItem).size()-1
-                    ).getLifecycleStatus().equals("RELEASE")
-            )
-            )
+                    ).getLifecycleStatus().equals("COMPLETE") ||
+                            (routeOrderingRepository.findByNewItem(newItem).get(
+                                    routeOrderingRepository.findByNewItem(newItem).size()-1
+                            ).getLifecycleStatus().equals("RELEASE")
+                            )
+                    )
             ){
                 finalProducts.add(newItem);
             }
@@ -197,13 +197,26 @@ public class NewItemPageController {
         itemListElse.addAll(finalProducts);
         //여기에 상태 완료된 제품 아이템 더하기
 
-        Page<NewItem> concatItemList = new PageImpl<>(itemListElse);
+        Page<NewItem> concatItemList = newItemRepository.findByNewItems(itemListElse, pageRequest);
 
         Page<NewItemChildDto> finalList =
                 NewItemChildDto.toAddChildDtoList(concatItemList, newItemService);
+        ///////////////////////////////////////////////////////////////////////
 
+//        Page<NewItem> itemListBefore = newItemRepository.findAll(pageRequest);
+//
+//        List<NewItem> itemList1 =//06-01 false로 변경하기
+//                itemListBefore.stream().filter(
+//                        i-> (!i.isTempsave())
+//                ).collect(Collectors.toList());
+//
+//        Page<NewItem> itemList = new PageImpl<>(itemList1);
+//
+//        Page<NewItemChildDto> finalList =
+//                NewItemChildDto.toAddChildDtoList(itemList, newItemService, routeOrderingRepository);
+
+        ////////////////////////////////////////////////////////////////
         return finalList;
     }
 
 }
-
