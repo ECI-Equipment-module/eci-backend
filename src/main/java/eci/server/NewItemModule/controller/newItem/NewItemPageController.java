@@ -85,12 +85,6 @@ public class NewItemPageController {
         List<ItemProjectCreateDto> itemListReal =
                 itemService.linkNeededItemsForProjectPage();
 
-        //06-03 item-candidates는 인덱스 예외
-//        List<String> indexes = new ArrayList<>(); // 인덱스 종류 추가
-//        for(Field field : ItemProjectCreateDto.class.getDeclaredFields()){
-//            indexes.add(field.getName());
-//        }
-
         List<String> indexes = new ArrayList<>();
         indexes.add("itemNumber");
         indexes.add("itemName");
@@ -179,10 +173,6 @@ public class NewItemPageController {
                 finalProducts.add(newItem);
             }
         }
-        //Page<NewItem> itemProductList = new PageImpl<>(finalProducts);
-        //해당 애들은 봄으로 저장
-        //Page<NewItemChildDto> productBomList =
-        //        NewItemChildDto.toAddChildDtoList(itemProductList, newItemService);
 
         // 2) 제품 아닌 것 (temp save만 false면 다된다)
 
@@ -208,6 +198,7 @@ public class NewItemPageController {
         //여기에 상태 완료된 제품 아이템 더하기
 
         Page<NewItem> concatItemList = new PageImpl<>(itemListElse);
+
         Page<NewItemChildDto> finalList =
                 NewItemChildDto.toAddChildDtoList(concatItemList, newItemService);
 
