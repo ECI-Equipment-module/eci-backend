@@ -197,11 +197,25 @@ public class NewItemPageController {
         itemListElse.addAll(finalProducts);
         //여기에 상태 완료된 제품 아이템 더하기
 
-        Page<NewItem> concatItemList = new PageImpl<>(itemListElse);
+        Page<NewItem> concatItemList = newItemRepository.findByNewItems(itemListElse, pageRequest);
 
         Page<NewItemChildDto> finalList =
                 NewItemChildDto.toAddChildDtoList(concatItemList, newItemService);
+        ///////////////////////////////////////////////////////////////////////
 
+//        Page<NewItem> itemListBefore = newItemRepository.findAll(pageRequest);
+//
+//        List<NewItem> itemList1 =//06-01 false로 변경하기
+//                itemListBefore.stream().filter(
+//                        i-> (!i.isTempsave())
+//                ).collect(Collectors.toList());
+//
+//        Page<NewItem> itemList = new PageImpl<>(itemList1);
+//
+//        Page<NewItemChildDto> finalList =
+//                NewItemChildDto.toAddChildDtoList(itemList, newItemService, routeOrderingRepository);
+
+        ////////////////////////////////////////////////////////////////
         return finalList;
     }
 

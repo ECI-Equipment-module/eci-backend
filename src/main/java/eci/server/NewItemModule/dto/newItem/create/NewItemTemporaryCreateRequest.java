@@ -138,8 +138,6 @@ public class NewItemTemporaryCreateRequest {
             AttachmentTagRepository attachmentTagRepository) {
 
         if (req.getTag().size() == 0) {
-
-
             // attachment 가 없을 경우
             return new NewItem(
 
