@@ -79,10 +79,6 @@ public class NewItemUpdateRequest {
 
     private MultipartFile thumbnail;
 
-
-    //private MultipartFile addedImages = new ArrayList<>();
-
-
     /**
      * 추가된 파일을 첨부
      */

@@ -38,6 +38,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.validation.constraints.Null;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static java.util.stream.Collectors.toList;
 
@@ -106,7 +107,6 @@ public class NewItemTemporaryCreateRequest {
 
     private Long supplierOrganizationId;
 
-
     private MultipartFile thumbnail;
 
     private List<MultipartFile> attachments = new ArrayList<>();
@@ -120,7 +120,7 @@ public class NewItemTemporaryCreateRequest {
 
     @Null
     private Long memberId;
-//TODO : THUMBNAIL 없어도 되기 0614
+
     public static NewItem toEntity(
             NewItemTemporaryCreateRequest req,
             Classification1Repository classification1Repository,
@@ -163,7 +163,14 @@ public class NewItemTemporaryCreateRequest {
 
                     "made when saved",
 
-                    new NewItemImage(req.getThumbnail().getOriginalFilename()),
+                    //TODO : THUMBNAIL 없어도 되기 0614
+                    (
+                            (req.getThumbnail().getSize()>0)?
+                                    new NewItemImage(
+                                            req.thumbnail.getOriginalFilename()
+                                    )
+                                    :null
+                    ),
 
                     req.sharing,
 
@@ -257,8 +264,6 @@ public class NewItemTemporaryCreateRequest {
 
         return new NewItem(
 
-
-
                 new Classification(
                         classification1Repository.findById(req.classification1Id).orElseThrow(ClassificationNotFoundException::new),
                         classification2Repository.findById(req.classification2Id).orElseThrow(ClassificationNotFoundException::new),
@@ -274,9 +279,14 @@ public class NewItemTemporaryCreateRequest {
 
                 "made when saved",
 
-                new NewItemImage(
-                        req.thumbnail.getOriginalFilename()
-                        )
+                //TODO : THUMBNAIL 없어도 되기 0614
+                (
+                        (req.getThumbnail().getSize()>0)?
+                                new NewItemImage(
+                                        req.thumbnail.getOriginalFilename()
+                                )
+                                :null
+                )
                 ,
 
                 req.sharing,
@@ -324,7 +334,7 @@ public class NewItemTemporaryCreateRequest {
                         coatingTypeRepository.findById(99999L).orElseThrow(CoatingNotFoundException::new):
                         coatingTypeRepository.findById(req.coatingTypeId).orElseThrow(CoatingNotFoundException::new),
 
-                req.modulus.toString().isBlank()?"":req.modulus,
+                req.modulus.isBlank()?"":req.modulus,
 
                 req.screw.isBlank()?"":req.screw,
 
