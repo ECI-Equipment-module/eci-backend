@@ -241,7 +241,6 @@ public class NewItemService {
         return image;
     }
 
-
     public NewItemPagingDtoList readAll(NewItemReadCondition cond) {
         return NewItemPagingDtoList.toDto(
                 newItemRepository.findAllByCondition(cond)
@@ -488,7 +487,8 @@ public class NewItemService {
 
         return NewItemChildDto.toDtoList(
                 newItemParentChildrenRepository.
-                        findAllWithParentByParentId(id)//ByParentIdOrderByParentIdAscNullsFirst(
+                        findAllWithParentByParentId(id),//ByParentIdOrderByParentIdAscNullsFirst(
+                newItemParentChildrenRepository
 
         );
 

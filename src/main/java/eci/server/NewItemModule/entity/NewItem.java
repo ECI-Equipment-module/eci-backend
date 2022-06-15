@@ -39,10 +39,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.persistence.*;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static java.util.stream.Collectors.toList;
@@ -261,7 +258,7 @@ public class NewItem extends EntityDate {
     //@JoinColumn(name = "children_id")
     private List< NewItemParentChildren> children;
     /**
-     * attachment 있을 때 생성자
+     * attachment 있을 때, thumbnail 있을 때 생성자
      * @param classification
      * @param name
      * @param itemTypes
@@ -341,8 +338,10 @@ public class NewItem extends EntityDate {
 
         this.itemNumber = itemNumber;
 
-        this.thumbnail = thumbnail;
-        addImages(thumbnail);
+        if(thumbnail!=null) { //0615 썸네일 없으면 null 로 오는데, 생성 가능케 하기 (임시저장때 없어도 저장 돼서)
+            this.thumbnail = thumbnail;
+            addImages(thumbnail);
+        }
 
         this.sharing = sharing;
 
@@ -415,7 +414,7 @@ public class NewItem extends EntityDate {
 
 
     /**
-     * attachment 없을 때 생성자
+     * attachment 없지만 thumbnail 은 있을 때 생성자
      * @param classification
      * @param name
      * @param itemTypes
@@ -493,8 +492,11 @@ public class NewItem extends EntityDate {
 
         this.itemNumber = itemNumber;
 
-        this.thumbnail = thumbnail;
-        addImages(thumbnail);
+        if(thumbnail!=null) { //0615 썸네일 없으면 null 로 오는데, 생성 가능케 하기 (임시저장 때 없어도 저장돼서)
+                this.thumbnail = thumbnail;
+                addImages(thumbnail);
+        }
+
 
         this.sharing = sharinge;
 
@@ -562,6 +564,7 @@ public class NewItem extends EntityDate {
         this.modifier = member;
 
     }
+
 
 
     /**
@@ -897,7 +900,7 @@ public class NewItem extends EntityDate {
             System.out.println("업데이트된 썸네일이 있네," +
                     "기존걸 삭제하고ㅡ 이걸 넣자! ");
 
-            if (this.getThumbnail() != null) {
+            if (!Objects.equals(this.getThumbnail().getOriginName(), this.thumbnail.getOriginName())) {
                 //기존 이미지 삭제
                 System.out.println("기존 이미지 삭제할게잉 ");
 
@@ -956,7 +959,8 @@ public class NewItem extends EntityDate {
         }
         AtomicInteger k = new AtomicInteger();
 
-        //TODO update할 때 사용자가 기존 값 없애고 보낼 수도 있자나 => fix needed
+        //TODO 0614 update할 때 사용자가 기존 값 없애고 보낼 수도 있자나 => fix needed,
+         //TODO ITEMTYPE 없으면 99999면 안되게
         //isBlank 랑 isNull로 판단해서 기존 값 / req 값 채워넣기
         this.name = req.getName().isBlank()?this.name:req.getName();
 
@@ -1071,7 +1075,7 @@ public class NewItem extends EntityDate {
         }
 
         NewItemFileUpdatedResult fileUpdatedResult = null;
-
+        // TODO : 0614 빈 "" 예외처리
         if (req.getThumbnail().getSize() > 0) {
             System.out.println("업데이트된 썸네일이 있네," +
                     "기존걸 삭제하고ㅡ 이걸 넣자! ");
