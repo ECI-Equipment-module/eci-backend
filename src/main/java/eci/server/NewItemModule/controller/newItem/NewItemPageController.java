@@ -140,83 +140,11 @@ public class NewItemPageController {
                                                      Pageable pageRequest) {
 
 
-        //1) 제품인 것 (상태가 complete, release 인 것만)
+        Page<NewItem> concatItemList = newItemRepository.findByNewItems(
+                newItemService.readBomItems(), pageRequest
+        );
 
-        // 1-1 ) 제품 타입 데려오기
-        ItemType itemType1 = ItemType.프로덕트제품;
-        ItemType itemType2 = ItemType.파트제품;
-        ItemTypes productItemTypes1 = itemTypesRepository.findByItemType(itemType1);
-        ItemTypes productItemTypes2 = itemTypesRepository.findByItemType(itemType2);
-        List<ItemTypes> itemTypes = new ArrayList<>();
-        itemTypes.add(productItemTypes1);
-        itemTypes.add(productItemTypes2);
-
-        List<NewItem> itemListProduct = newItemRepository.findByItemTypes(itemTypes);
-
-        //1-2) 상태가 release 나 complete인 것만 최종 제품에 담을 예정
-        List<NewItem> finalProducts = new ArrayList<>();
-
-        for(NewItem newItem : itemListProduct){
-            System.out.println("여기이ㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣ");
-            System.out.println(routeOrderingRepository.findById(1399L));
-            if(
-                    routeOrderingRepository.findByNewItem(newItem).size()>0
-                            && (routeOrderingRepository.findByNewItem(newItem).get(
-                            routeOrderingRepository.findByNewItem(newItem).size()-1
-                    ).getLifecycleStatus().equals("COMPLETE") ||
-                            (routeOrderingRepository.findByNewItem(newItem).get(
-                                    routeOrderingRepository.findByNewItem(newItem).size()-1
-                            ).getLifecycleStatus().equals("RELEASE")
-                            )
-                    )
-            ){
-                finalProducts.add(newItem);
-            }
-        }
-
-        // 2) 제품 아닌 것 (temp save만 false면 다된다)
-
-        List<ItemType> itemTypeList = new ArrayList<>();
-        itemTypeList.add(ItemType.단순외주구매품);
-        itemTypeList.add(ItemType.기타);
-        itemTypeList.add(ItemType.부자재);
-        itemTypeList.add(ItemType.시방외주구매품);
-        itemTypeList.add(ItemType.원재료);
-        itemTypeList.add(ItemType.사내가공품);
-
-        List<ItemTypes> elseItemTypes = new ArrayList<>();
-        elseItemTypes.add(itemTypesRepository.findByItemType(itemTypeList.get(0)));
-        elseItemTypes.add(itemTypesRepository.findByItemType(itemTypeList.get(1)));
-        elseItemTypes.add(itemTypesRepository.findByItemType(itemTypeList.get(2)));
-        elseItemTypes.add(itemTypesRepository.findByItemType(itemTypeList.get(3)));
-        elseItemTypes.add(itemTypesRepository.findByItemType(itemTypeList.get(4)));
-        elseItemTypes.add(itemTypesRepository.findByItemType(itemTypeList.get(5)));
-
-        List<NewItem> itemListElse = newItemRepository.findByItemTypes(elseItemTypes);
-        //제품 이외 아이템 더하고
-        itemListElse.addAll(finalProducts);
-        //여기에 상태 완료된 제품 아이템 더하기
-
-        Page<NewItem> concatItemList = newItemRepository.findByNewItems(itemListElse, pageRequest);
-
-        Page<NewItemChildDto> finalList =
-                NewItemChildDto.toAddChildDtoList(concatItemList, newItemService);
-        ///////////////////////////////////////////////////////////////////////
-
-//        Page<NewItem> itemListBefore = newItemRepository.findAll(pageRequest);
-//
-//        List<NewItem> itemList1 =//06-01 false로 변경하기
-//                itemListBefore.stream().filter(
-//                        i-> (!i.isTempsave())
-//                ).collect(Collectors.toList());
-//
-//        Page<NewItem> itemList = new PageImpl<>(itemList1);
-//
-//        Page<NewItemChildDto> finalList =
-//                NewItemChildDto.toAddChildDtoList(itemList, newItemService, routeOrderingRepository);
-
-        ////////////////////////////////////////////////////////////////
-        return finalList;
+        return NewItemChildDto.toAddChildDtoList(concatItemList, newItemService);
     }
 
 }

@@ -98,35 +98,7 @@ public class NewItemChildDto {
 
     public static Page<NewItemChildDto> toAddChildDtoList(
             Page<NewItem> NewItem,
-            NewItemService newItemService
-            //,RouteOrderingRepository routeOrderingRepository
-    ) {
-//        List<NewItem> filteredNewItem = new ArrayList<>();
-//        //필터링
-//        for(NewItem newItem : NewItem) {
-//            if(!(
-//                    (newItem.getItemTypes().getItemType().name().equals("프로덕트제품")
-//                ||newItem.getItemTypes().getItemType().name().equals("파트제품")
-//                    ) //제품이며
-//            &&
-//
-//                            !(
-//                                    routeOrderingRepository.findByNewItem(newItem).size()>0
-//            && (routeOrderingRepository.findByNewItem(newItem).get(
-//                    routeOrderingRepository.findByNewItem(newItem).size()-1
-//            ).getLifecycleStatus().equals("COMPLETE") ||
-//                    (routeOrderingRepository.findByNewItem(newItem).get(
-//                            routeOrderingRepository.findByNewItem(newItem).size()-1
-//                    ).getLifecycleStatus().equals("RELEASE")
-//
-//            )
-//                    )
-//            )
-//            ))
-//            {
-//                filteredNewItem.add(newItem);
-//            }
-//        }
+            NewItemService newItemService    ) {
 
 
         List<NewItemChildDto> newItemChildDtos = NewItem.stream().map(
