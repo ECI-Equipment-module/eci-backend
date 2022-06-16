@@ -699,7 +699,6 @@ public class NewItem extends EntityDate {
         List<NewItemAttachment> deletedAttachments
                 = convertAttachmentIdsToAttachments(deletedAttachmentIds);
 
-        System.out.println("반환까지 완료요 ");
         return new NewItemAttachmentUpdatedResult(addedAttachmentFiles, addedAttachments, deletedAttachments);
     }
 
@@ -791,7 +790,7 @@ public class NewItem extends EntityDate {
             CarTypeRepository carTypeRepository,
             AttachmentTagRepository attachmentTagRepository
     ) {
-        System.out.println("여기로들어오는거 맞지?");
+
         this.setModifiedAt(LocalDateTime.now());
 
         AtomicInteger k = new AtomicInteger();

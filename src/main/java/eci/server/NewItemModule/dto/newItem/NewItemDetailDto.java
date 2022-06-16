@@ -106,11 +106,6 @@ public class NewItemDetailDto {
     ) {
 
         List<DesignResponsibleDto> tmpResponsibleDtoList = new ArrayList<>();
-        System.out.println("dlrjtdl 문제아다아아아아ㅏ");
-        System.out.println(bomRepository.findByNewItem(Item).size());
-        //bomRepository.findByNewItem(Item).size()>0?
-//                bomRepository.findByNewItem(Item).get(0).getId()
-//                :-1L
 
         NewItemImageDto nullImage = new NewItemImageDto();
 

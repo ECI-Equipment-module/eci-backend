@@ -142,16 +142,42 @@ public class DesignService {
     }
 
     @Transactional
-
     public DesignTempCreateUpdateResponse update(Long id, DesignUpdateRequest req) {
 
         Design design = designRepository.findById(id).orElseThrow(DesignNotFoundException::new);
 
         if (!design.getTempsave()) {
-
             //true면 임시저장 상태, false면 찐 저장 상태
             //찐 저장 상태라면 UPDATE 불가, 임시저장 일때만 가능
+            throw new DesignUpdateImpossibleException();
+        }
 
+        Design.FileUpdatedResult result = design.update(
+                req,
+                itemRepository,
+                memberRepository
+        );
+
+
+        uploadAttachments(
+                result.getDesignUpdatedResult().getAddedAttachments(),
+                result.getDesignUpdatedResult().getAddedAttachmentFiles()
+        );
+        deleteAttachments(
+                result.getDesignUpdatedResult().getDeletedAttachments()
+        );
+        return new DesignTempCreateUpdateResponse(id);
+
+    }
+
+    @Transactional
+    public DesignTempCreateUpdateResponse tempEnd(Long id, DesignUpdateRequest req) {
+
+        Design design = designRepository.findById(id).orElseThrow(DesignNotFoundException::new);
+
+        if (!design.getTempsave()) {
+            //true면 임시저장 상태, false면 찐 저장 상태
+            //찐 저장 상태라면 UPDATE 불가, 임시저장 일때만 가능
             throw new DesignUpdateImpossibleException();
         }
 

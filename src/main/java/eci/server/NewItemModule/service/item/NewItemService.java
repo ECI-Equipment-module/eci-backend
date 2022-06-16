@@ -416,7 +416,7 @@ public class NewItemService {
                 result.getImageUpdatedResult()!=null &&
                 result.getImageUpdatedResult().getAddedImages()!=null
         ){
-            System.out.println("이미지 업로드 하는 중야    ㅇㅇㅇㅇㅇㅇㅇㅇ");
+
             uploadImages(
                     result.getImageUpdatedResult().getAddedImages(),
                     result.getImageUpdatedResult().getAddedImageFiles()

@@ -195,6 +195,47 @@ public class Design extends EntityDate {
         return fileUpdatedResult;
     }
 
+
+    public FileUpdatedResult tempEnd(
+            DesignUpdateRequest req,
+            NewItemRepository itemRepository,
+            MemberRepository memberRepository
+    )
+
+
+    {
+        this.newItem=
+                itemRepository.findById(req.getItemId())
+                        .orElseThrow(ItemNotFoundException::new);
+
+
+        DesignAttachmentUpdatedResult resultAttachment =
+
+                findAttachmentUpdatedResult(
+                        req.getAddedAttachments(),
+                        req.getDeletedAttachments()
+                );
+
+        if(req.getAddedTag().size()>0) {
+            addUpdatedDesignAttachments(req, resultAttachment.getAddedAttachments());
+        }
+        if(req.getAddedTag().size()>0) {
+            deleteDesignAttachments(resultAttachment.getDeletedAttachments());
+        }
+        FileUpdatedResult fileUpdatedResult = new FileUpdatedResult(
+                resultAttachment//, updatedAddedProjectAttachmentList
+        );
+
+        this.modifier =
+                memberRepository.findById(
+                        req.getModifierId()
+                ).orElseThrow(MemberNotFoundException::new);//05 -22 생성자 추가
+
+        this.setModifiedAt(LocalDateTime.now());
+
+        return fileUpdatedResult;
+    }
+
     private void addUpdatedDesignAttachments(DesignUpdateRequest req, List<DesignAttachment> added) {
         SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date now = new Date();
