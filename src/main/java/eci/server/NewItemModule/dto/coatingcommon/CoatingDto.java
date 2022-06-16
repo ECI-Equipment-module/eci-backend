@@ -13,6 +13,9 @@ public class CoatingDto {
     private Long id;
     private String name;
 
+    public static CoatingDto toDto() {
+        return new CoatingDto();
+    }
     public static CoatingDto toDto(CoatingType c){
         return new CoatingDto(c.getId(), c.getName());
     }
