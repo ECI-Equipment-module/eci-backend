@@ -5,6 +5,7 @@ import eci.server.BomModule.repository.BomRepository;
 import eci.server.DesignModule.dto.itemdesign.BomDesignItemDto;
 import eci.server.DesignModule.repository.DesignRepository;
 import eci.server.ItemModule.dto.color.ColorDto;
+import eci.server.ItemModule.dto.item.ImageDto;
 import eci.server.ItemModule.dto.manufacture.MakerSimpleDto;
 import eci.server.ItemModule.dto.member.MemberDto;
 import eci.server.ItemModule.dto.newRoute.routeOrdering.RouteOrderingDto;
@@ -127,7 +128,11 @@ public class NewItemDetailDto {
                             ItemTypesDto.toDto(Item.getItemTypes()),
 
                     Item.getItemNumber(),
-                    nullImage,
+
+                    Item.getThumbnail()==null?
+                            nullImage:
+                            NewItemImageDto.toDto(Item.getThumbnail()),
+
                     Item.isSharing(),
 
                     Item.getCarType()==null?
@@ -228,7 +233,9 @@ public class NewItemDetailDto {
                         ItemTypesDto.toDto(Item.getItemTypes()),
 
                 Item.getItemNumber(),
-                nullImage,
+                Item.getThumbnail()==null?
+                        nullImage:
+                        NewItemImageDto.toDto(Item.getThumbnail()),
                 Item.isSharing(),
 
                 Item.getCarType()==null?
