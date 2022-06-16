@@ -1,6 +1,7 @@
 package eci.server.ProjectModule.controller.project;
 
 import eci.server.ItemModule.dto.response.Response;
+import eci.server.NewItemModule.dto.newItem.update.NewItemUpdateRequest;
 import eci.server.ProjectModule.dto.project.ProjectCreateRequest;
 import eci.server.ProjectModule.dto.project.ProjectReadCondition;
 import eci.server.ProjectModule.dto.project.ProjectTemporaryCreateRequest;
@@ -90,7 +91,20 @@ public class ProjectController {
         return Response.success(projectService.update(id, req));
     }
 
+    @CrossOrigin(origins = "https://localhost:3000")
+    @PutMapping("/project/temp/end/{id}")
+    @ResponseStatus(HttpStatus.CREATED)
+    @AssignModifierId //0605 : 수정 시에는 글쓴이 아디 주입 아니고, 수정자 아이디 주입
+    public Response tempEnd(
+            @PathVariable Long id,
+            @Valid @ModelAttribute
+                    ProjectUpdateRequest req
+    ) {
 
+        return Response.success(
+                projectService.tempEnd(id, req)
+        );
+    }
 
     @CrossOrigin(origins = "https://localhost:3000")
     @DeleteMapping("project/{id}")
