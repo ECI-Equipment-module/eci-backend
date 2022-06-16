@@ -108,7 +108,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.DELETE, "/dev").authenticated()
 
                 .antMatchers(HttpMethod.PUT, "/project/temp/end/{id}").access("@projectGuard.check(#id)")
-
+                .antMatchers(HttpMethod.PUT, "/design/temp/end/{id}").access("@designGuard.check(#id)")
 
                 .antMatchers(HttpMethod.GET, "/**").permitAll()//위에 명시된 get 말고는 다 허용, 맨 밑으로 위치 변경
 
