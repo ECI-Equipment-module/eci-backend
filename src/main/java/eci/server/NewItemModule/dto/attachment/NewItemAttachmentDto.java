@@ -1,8 +1,8 @@
 package eci.server.NewItemModule.dto.attachment;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import eci.server.ItemModule.entity.item.Attachment;
 import eci.server.NewItemModule.entity.NewItemAttachment;
+import eci.server.NewItemModule.entity.attachment.Attachment;
 import eci.server.NewItemModule.repository.attachment.AttachmentTagRepository;
 import lombok.AllArgsConstructor;
 import lombok.Data;

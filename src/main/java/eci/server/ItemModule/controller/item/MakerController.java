@@ -1,8 +1,8 @@
 package eci.server.ItemModule.controller.item;
 
-import eci.server.ItemModule.dto.manufacture.MakerReadCondition;
 import eci.server.ItemModule.dto.response.Response;
-import eci.server.ItemModule.service.item.MakerService;
+import eci.server.NewItemModule.dto.maker.MakerReadCondition;
+import eci.server.NewItemModule.service.MakerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.CrossOrigin;

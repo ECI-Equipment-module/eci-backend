@@ -1,6 +1,7 @@
 package eci.server.Socket.dto;
 
-import eci.server.ItemModule.entity.item.Item;
+//import eci.server.ItemModule.entity.item.Item;
+import eci.server.NewItemModule.entity.NewItem;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -23,7 +24,7 @@ public class ItemMatchDto {
     private List<ItemMatchDto> children;
 
     //temp
-    public static ItemMatchDto toDtoMatch(Item item){
+    public static ItemMatchDto toDtoMatch(NewItem item){
         List<ItemMatchDto> itemMatchDtos = new ArrayList<>();
         return new ItemMatchDto(
                 true,

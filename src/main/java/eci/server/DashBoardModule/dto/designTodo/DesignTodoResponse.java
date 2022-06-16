@@ -1,7 +1,8 @@
 package eci.server.DashBoardModule.dto.designTodo;
 
 import eci.server.DesignModule.entity.design.Design;
-import eci.server.ItemModule.entity.item.Item;
+//import eci.server.ItemModule.entity.item.Item;
+import eci.server.NewItemModule.entity.NewItem;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,7 +18,7 @@ public class DesignTodoResponse {
 
 
     public static DesignTodoResponse toDto(
-            Item item,
+            NewItem item,
             Design design
     ) {
 
@@ -25,7 +26,7 @@ public class DesignTodoResponse {
 
                 design.getId(),
                 item.getName(),
-                item.getType(),
+                item.getItemTypes().getItemType().name(),
                 item.getItemNumber()
 
         );

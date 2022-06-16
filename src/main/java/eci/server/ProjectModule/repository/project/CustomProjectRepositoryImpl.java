@@ -18,8 +18,8 @@ import java.util.List;
 import java.util.function.Function;
 
 import static com.querydsl.core.types.Projections.constructor;
-import static eci.server.ItemModule.entity.item.QItem.item;
 import static eci.server.ItemModule.entity.newRoute.QRouteProduct.routeProduct;
+import static eci.server.NewItemModule.entity.QNewItem.newItem;
 import static eci.server.ProjectModule.entity.project.QProject.project;
 
 
@@ -58,8 +58,8 @@ public class CustomProjectRepositoryImpl extends QuerydslRepositorySupport imple
                                 project.name,
                                 project.carType,
 
-                                item.name,
-                                item.itemNumber,
+                                newItem.name,
+                                newItem.itemNumber,
 
                                 project.protoStartPeriod,
                                 project.protoOverPeriod,
@@ -75,7 +75,7 @@ public class CustomProjectRepositoryImpl extends QuerydslRepositorySupport imple
                         ))
                         .from(project)
 
-                        .join(item).on(project.newItem.id.eq(item.id))
+                        .join(newItem).on(project.newItem.id.eq(newItem.id))
 
                         .join(routeProduct).on(project.id.eq(routeProduct.project.id))
 

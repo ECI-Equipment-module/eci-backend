@@ -336,7 +336,8 @@ public class NewItemDetailDto {
 
     public static NewItemDetailDto noRoutetoDto( //edit 창인 애들 불러올 때
             NewItem Item,
-            NewItemMakerRepository newItemMakerRepository,
+            //NewItemMakerRepository newItemMakerRepository,
+            MakerRepository makerRepository,
             BomRepository bomRepository,
             AttachmentTagRepository attachmentTagRepository
     ){

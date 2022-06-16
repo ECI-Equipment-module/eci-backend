@@ -4,7 +4,6 @@ import eci.server.BomModule.repository.BomRepository;
 import eci.server.BomModule.repository.PreliminaryBomRepository;
 import eci.server.DesignModule.repository.DesignRepository;
 import eci.server.ItemModule.dto.item.*;
-import eci.server.ItemModule.dto.manufacture.ReadPartNumberService;
 import eci.server.ItemModule.dto.newRoute.routeOrdering.RouteOrderingDto;
 
 import eci.server.ItemModule.entity.item.ItemType;
@@ -44,7 +43,7 @@ import eci.server.NewItemModule.repository.coatingWay.CoatingWayRepository;
 import eci.server.NewItemModule.repository.item.NewItemParentChildrenRepository;
 import eci.server.NewItemModule.repository.item.NewItemRepository;
 import eci.server.NewItemModule.repository.maker.MakerRepository;
-import eci.server.NewItemModule.repository.maker.NewItemMakerRepository;
+//import eci.server.NewItemModule.repository.maker.NewItemMakerRepository;
 import eci.server.NewItemModule.repository.supplier.SupplierRepository;
 import eci.server.NewItemModule.service.classification.ClassificationService;
 import eci.server.ProjectModule.repository.carType.CarTypeRepository;
@@ -85,9 +84,8 @@ public class NewItemService {
     private final NewItemRepository newItemRepository;
     private final RouteOrderingRepository routeOrderingRepository;
     private final RouteProductRepository routeProductRepository;
-    private final NewItemMakerRepository itemMakerRepository;
+//    private final NewItemMakerRepository itemMakerRepository;
     private final ProjectRepository projectRepository;
-    private final ReadPartNumberService readPartNumber;
     private final FileService fileService;
     private final LocalFileService localFileService;
     private final ClassificationService classificationService;
@@ -287,7 +285,7 @@ public class NewItemService {
         }
         return NewItemDetailDto.noRoutetoDto(
                 targetItem,
-                itemMakerRepository,
+                makerRepository,
                 bomRepository,
                 attachmentTagRepository
         );

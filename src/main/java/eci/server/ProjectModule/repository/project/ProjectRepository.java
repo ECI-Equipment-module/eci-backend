@@ -1,6 +1,6 @@
 package eci.server.ProjectModule.repository.project;
 
-import eci.server.ItemModule.entity.item.Item;
+//import eci.server.ItemModule.entity.item.Item;
 import eci.server.ItemModule.entity.member.Member;
 import eci.server.NewItemModule.entity.NewItem;
 import eci.server.ProjectModule.entity.project.Project;

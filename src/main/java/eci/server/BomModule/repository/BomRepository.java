@@ -3,7 +3,7 @@ package eci.server.BomModule.repository;
 import eci.server.BomModule.entity.Bom;
 import eci.server.DesignModule.entity.design.Design;
 import eci.server.DesignModule.repository.CustomDesignRepository;
-import eci.server.ItemModule.entity.item.Item;
+//import eci.server.ItemModule.entity.item.Item;
 import eci.server.ItemModule.entity.member.Member;
 import eci.server.NewItemModule.entity.NewItem;
 import org.springframework.data.jpa.repository.JpaRepository;

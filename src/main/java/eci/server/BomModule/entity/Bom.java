@@ -1,7 +1,7 @@
 package eci.server.BomModule.entity;
 
 import eci.server.ItemModule.entity.entitycommon.EntityDate;
-import eci.server.ItemModule.entity.item.Item;
+//import eci.server.ItemModule.entity.item.Item;
 import eci.server.ItemModule.entity.member.Member;
 import eci.server.NewItemModule.entity.NewItem;
 import eci.server.ProjectModule.entity.project.Project;

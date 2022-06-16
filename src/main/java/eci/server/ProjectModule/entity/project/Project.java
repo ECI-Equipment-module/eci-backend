@@ -2,29 +2,14 @@ package eci.server.ProjectModule.entity.project;
 
 
 import eci.server.ItemModule.entity.entitycommon.EntityDate;
-import eci.server.ItemModule.entity.item.*;
 import eci.server.ItemModule.entity.member.Member;
 import eci.server.ItemModule.exception.item.AttachmentNotFoundException;
-import eci.server.ItemModule.exception.item.ColorNotFoundException;
 import eci.server.ItemModule.exception.item.ItemNotFoundException;
-import eci.server.ItemModule.exception.item.ItemUpdateImpossibleException;
 import eci.server.ItemModule.exception.member.sign.MemberNotFoundException;
-import eci.server.ItemModule.repository.color.ColorRepository;
-import eci.server.ItemModule.repository.item.ItemRepository;
-import eci.server.ItemModule.repository.item.ItemTypesRepository;
 import eci.server.ItemModule.repository.member.MemberRepository;
-import eci.server.NewItemModule.dto.newItem.create.NewItemCreateResponse;
-import eci.server.NewItemModule.dto.newItem.update.NewItemUpdateRequest;
 import eci.server.NewItemModule.entity.NewItem;
-import eci.server.NewItemModule.entity.NewItemAttachment;
-import eci.server.NewItemModule.entity.NewItemImage;
-import eci.server.NewItemModule.exception.*;
 import eci.server.NewItemModule.repository.attachment.AttachmentTagRepository;
-import eci.server.NewItemModule.repository.coatingType.CoatingTypeRepository;
-import eci.server.NewItemModule.repository.coatingWay.CoatingWayRepository;
 import eci.server.NewItemModule.repository.item.NewItemRepository;
-import eci.server.NewItemModule.repository.maker.NewItemMakerRepository;
-import eci.server.NewItemModule.repository.supplier.SupplierRepository;
 import eci.server.ProjectModule.dto.project.ProjectCreateRequest;
 import eci.server.ProjectModule.dto.project.ProjectUpdateRequest;
 import eci.server.ProjectModule.entity.projectAttachment.ProjectAttachment;
@@ -40,7 +25,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
@@ -52,7 +36,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static java.util.stream.Collectors.toList;
 @Getter

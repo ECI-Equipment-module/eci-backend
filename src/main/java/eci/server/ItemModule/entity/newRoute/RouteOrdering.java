@@ -1,7 +1,6 @@
 package eci.server.ItemModule.entity.newRoute;
 
 import eci.server.ItemModule.dto.newRoute.routeOrdering.RouteOrderingUpdateRequest;
-import eci.server.ItemModule.entity.item.Item;
 import eci.server.ItemModule.entitycommon.EntityDate;
 import eci.server.ItemModule.exception.route.RejectImpossibleException;
 import eci.server.ItemModule.exception.route.UpdateImpossibleException;

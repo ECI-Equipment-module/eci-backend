@@ -1,7 +1,6 @@
 package eci.server.ProjectModule.dto.projectAttachmentDto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import eci.server.ItemModule.entity.item.Attachment;
 import eci.server.NewItemModule.dto.attachment.AttachmentTagDto;
 import eci.server.NewItemModule.repository.attachment.AttachmentTagRepository;
 import eci.server.ProjectModule.entity.projectAttachment.ProjectAttachment;
