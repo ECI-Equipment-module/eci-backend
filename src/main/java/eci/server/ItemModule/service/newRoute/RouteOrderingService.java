@@ -89,7 +89,7 @@ public class RouteOrderingService {
 
         for(Object type : routeProduct){
             typeList.add(type.toString());
-            System.out.println(type);
+
         }
         return typeList;
 

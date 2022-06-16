@@ -106,11 +106,9 @@ public class NewItemDetailDto {
     ) {
 
         List<DesignResponsibleDto> tmpResponsibleDtoList = new ArrayList<>();
-        System.out.println("dlrjtdl 문제아다아아아아ㅏ");
-        System.out.println(bomRepository.findByNewItem(Item).size());
-        //bomRepository.findByNewItem(Item).size()>0?
-//                bomRepository.findByNewItem(Item).get(0).getId()
-//                :-1L
+
+        NewItemImageDto nullImage = new NewItemImageDto();
+
         if(Item.getMakers().size()>0) {
             return new NewItemDetailDto(
                     Item.getId(),
@@ -118,7 +116,7 @@ public class NewItemDetailDto {
                     Item.getName(),
                     ItemTypesDto.toDto(Item.getItemTypes()),
                     Item.getItemNumber(),
-                    NewItemImageDto.toDto(Item.getThumbnail()),
+                    nullImage,
                     Item.isSharing(),
                     CarTypeDto.toDto(Item.getCarType()),
                     Item.getIntegrate(),
@@ -192,7 +190,7 @@ public class NewItemDetailDto {
                 Item.getName(),
                 ItemTypesDto.toDto(Item.getItemTypes()),
                 Item.getItemNumber(),
-                NewItemImageDto.toDto(Item.getThumbnail()),
+                nullImage,
                 Item.isSharing(),
                 CarTypeDto.toDto(Item.getCarType()),
                 Item.getIntegrate(),
@@ -278,6 +276,8 @@ public class NewItemDetailDto {
             AttachmentTagRepository attachmentTagRepository
     ){
 
+        NewItemImageDto nullImage = new NewItemImageDto();
+
         List<DesignResponsibleDto> tmpResponsibleDtoList = new ArrayList<>();
 
         if(Item.getMakers().size()>0) {
@@ -287,7 +287,7 @@ public class NewItemDetailDto {
                     Item.getName(),
                     ItemTypesDto.toDto(Item.getItemTypes()),
                     Item.getItemNumber(),
-                    NewItemImageDto.toDto(Item.getThumbnail()),
+                    nullImage,
                     Item.isSharing(),
                     CarTypeDto.toDto(Item.getCarType()),
                     Item.getIntegrate(),
@@ -349,7 +349,7 @@ public class NewItemDetailDto {
                 Item.getName(),
                 ItemTypesDto.toDto(Item.getItemTypes()),
                 Item.getItemNumber(),
-                NewItemImageDto.toDto(Item.getThumbnail()),
+                nullImage,
                 Item.isSharing(),
                 CarTypeDto.toDto(Item.getCarType()),
                 Item.getIntegrate(),

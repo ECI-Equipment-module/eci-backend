@@ -26,7 +26,7 @@ public class NewItemUpdateRequest {
     @Null
     private String itemNumber;
     private String name;
-    private boolean sharing;
+    private Boolean sharing;
 
     private Long carTypeId;
 

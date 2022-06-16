@@ -50,10 +50,9 @@ public class ProjectRouteOrderingCreateRequest {
 
         List routeProduct = List.of((routePreset.projectRouteName[routeType]));
 
-        System.out.println(routeProduct.size());
         for(Object type : routeProduct){
             typeList.add(type.toString());
-            System.out.println(type);
+
         }
 
         return new RouteOrdering(

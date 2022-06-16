@@ -102,8 +102,10 @@ public class NewItemAttachment extends EntityDate {
      * @param originName
      */
     public NewItemAttachment(String originName) {
+
         this.uniqueName = generateUniqueName(extractExtension(originName));
         this.originName = originName;
+
     }
 
     /**
@@ -112,9 +114,11 @@ public class NewItemAttachment extends EntityDate {
      * @param newItem
      */
     public void initNewItem(NewItem newItem) {
+
         if (this.newItem == null) {
             this.newItem = newItem;
         }
+
     }
 
     /**
@@ -124,7 +128,7 @@ public class NewItemAttachment extends EntityDate {
      * @return
      */
     private String generateUniqueName(String extension) {
-        return UUID.randomUUID().toString() + "." + extension;
+        return UUID.randomUUID() + "." + extension;
     }
 
     /**
