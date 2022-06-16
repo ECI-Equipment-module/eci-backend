@@ -334,21 +334,37 @@ public class NewItemDetailDto {
             BomRepository bomRepository,
             AttachmentTagRepository attachmentTagRepository
     ){
-
         NewItemImageDto nullImage = new NewItemImageDto();
+        ClassificationDto nullClassification = new ClassificationDto();
+        ItemTypesDto nullItemTypesDto = new ItemTypesDto();
+        CarTypeDto nullCarTypeDto = new CarTypeDto();
 
         List<DesignResponsibleDto> tmpResponsibleDtoList = new ArrayList<>();
 
         if(Item.getMakers().size()>0) {
             return new NewItemDetailDto(
                     Item.getId(),
-                    ClassificationDto.toDto(Item.getClassification()),
+
+                    Item.getClassification()==null?
+                            nullClassification
+                            :ClassificationDto.toDto(Item.getClassification()),
+
                     Item.getName(),
-                    ItemTypesDto.toDto(Item.getItemTypes()),
+
+                    Item.getItemTypes() == null?
+                            nullItemTypesDto:
+                            ItemTypesDto.toDto(Item.getItemTypes()),
+
                     Item.getItemNumber(),
-                    nullImage,
+                    Item.getThumbnail()==null?
+                            nullImage:
+                            NewItemImageDto.toDto(Item.getThumbnail()),
                     Item.isSharing(),
-                    CarTypeDto.toDto(Item.getCarType()),
+
+                    Item.getCarType()==null?
+                            nullCarTypeDto:
+                            CarTypeDto.toDto(Item.getCarType()),
+
                     Item.getIntegrate(),
                     Item.getCurve(),
                     Item.getWidth(),
@@ -356,20 +372,35 @@ public class NewItemDetailDto {
                     Item.getThickness(),
                     Item.getWeight(),
                     Item.getImportance(),
-                    ColorDto.toDto(Item.getColor()),
+
+                    Item.getColor()==null?
+                            ColorDto.toDto():
+                            ColorDto.toDto(Item.getColor()),
                     Item.getLoadQuantity(),
                     Item.getForming(),
-                    CoatingDto.toDto(Item.getCoatingWay()),
-                    CoatingDto.toDto(Item.getCoatingType()),
+
+                    Item.getCoatingWay()==null?
+                            CoatingDto.toDto():
+                            CoatingDto.toDto(Item.getCoatingWay()),
+                    Item.getCoatingType()==null?
+                            CoatingDto.toDto():
+                            CoatingDto.toDto(Item.getCoatingType()),
                     Item.getModulus(),
                     Item.getScrew(),
                     Item.getCuttingType(),
                     Item.getLcd(),
                     Item.getDisplaySize(),
                     Item.getScrewHeight(),
-                    ClientOrganizationDto.toDto(Item.getClientOrganization()),
-                    SupplierDto.toDto(Item.getSupplierOrganization()),
-                    MakerSimpleDto.toDtoList(Item.getMakers()),
+
+                    Item.getClientOrganization()==null?ClientOrganizationDto.toDto():
+                            ClientOrganizationDto.toDto(Item.getClientOrganization()),
+
+                    Item.getSupplierOrganization()==null?SupplierDto.toDto():
+                            SupplierDto.toDto(Item.getSupplierOrganization()),
+
+                    Item.getMakers()==null?MakerSimpleDto.toDtoList():
+                            MakerSimpleDto.toDtoList(Item.getMakers()),
+
                     newItemMakerRepository.findByMaker(Item.getMakers().get(0).getMaker()).get(0).getPartnumber(),
                     Item.isRevise_progress(),
 
@@ -404,13 +435,27 @@ public class NewItemDetailDto {
         }
         return new NewItemDetailDto(
                 Item.getId(),
-                ClassificationDto.toDto(Item.getClassification()),
+
+                Item.getClassification()==null?
+                        nullClassification
+                        :ClassificationDto.toDto(Item.getClassification()),
+
                 Item.getName(),
-                ItemTypesDto.toDto(Item.getItemTypes()),
+
+                Item.getItemTypes() == null?
+                        nullItemTypesDto:
+                        ItemTypesDto.toDto(Item.getItemTypes()),
+
                 Item.getItemNumber(),
-                nullImage,
+                Item.getThumbnail()==null?
+                        nullImage:
+                        NewItemImageDto.toDto(Item.getThumbnail()),
                 Item.isSharing(),
-                CarTypeDto.toDto(Item.getCarType()),
+
+                Item.getCarType()==null?
+                        nullCarTypeDto:
+                        CarTypeDto.toDto(Item.getCarType()),
+
                 Item.getIntegrate(),
                 Item.getCurve(),
                 Item.getWidth(),
@@ -418,20 +463,34 @@ public class NewItemDetailDto {
                 Item.getThickness(),
                 Item.getWeight(),
                 Item.getImportance(),
-                ColorDto.toDto(Item.getColor()),
+
+                Item.getColor()==null?
+                        ColorDto.toDto():
+                        ColorDto.toDto(Item.getColor()),
                 Item.getLoadQuantity(),
                 Item.getForming(),
-                CoatingDto.toDto(Item.getCoatingWay()),
-                CoatingDto.toDto(Item.getCoatingType()),
+
+                Item.getCoatingWay()==null?
+                        CoatingDto.toDto():
+                        CoatingDto.toDto(Item.getCoatingWay()),
+                Item.getCoatingType()==null?
+                        CoatingDto.toDto():
+                        CoatingDto.toDto(Item.getCoatingType()),
                 Item.getModulus(),
                 Item.getScrew(),
                 Item.getCuttingType(),
                 Item.getLcd(),
                 Item.getDisplaySize(),
                 Item.getScrewHeight(),
-                ClientOrganizationDto.toDto(Item.getClientOrganization()),
-                SupplierDto.toDto(Item.getSupplierOrganization()),
-                MakerSimpleDto.toDtoList(Item.getMakers()),
+
+                Item.getClientOrganization()==null?ClientOrganizationDto.toDto():
+                        ClientOrganizationDto.toDto(Item.getClientOrganization()),
+
+                Item.getSupplierOrganization()==null?SupplierDto.toDto():
+                        SupplierDto.toDto(Item.getSupplierOrganization()),
+
+                Item.getMakers()==null?MakerSimpleDto.toDtoList():
+                        MakerSimpleDto.toDtoList(Item.getMakers()),
                 "no partnum",
                 Item.isRevise_progress(),
 
