@@ -568,7 +568,7 @@ public class DashboardService {
         // 디자인 설계이고,
         // 라우트프로덕트 멤버가 나이고,
         // preREJECTED=TRUE 인 것
-        HashSet<TodoResponse> rejectedNewItemTodoResponses = new HashSet<>();
+        List<TodoResponse> rejectedNewItemTodoResponses = new ArrayList<>();
 
         for (RouteProduct routeProduct : myRouteProductList) { //myRoute-> 내꺼 + 현재
             //06-01 수정

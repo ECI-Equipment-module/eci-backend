@@ -20,19 +20,13 @@ public class MakerSimpleDto {
     private String code;
     private String name;
 
-    public static List<MakerSimpleDto> toDtoList() {
-
-        List<MakerSimpleDto> makerSimpleDtos = new ArrayList<>();
-        makerSimpleDtos.add(
-                new MakerSimpleDto(
-                        99999L,
-                        "-1",
-                        "NONE"
-
-        ));
-        return makerSimpleDtos;
-
+    public static MakerSimpleDto toDto() {
+        return new MakerSimpleDto(
+                99999L,
+                "-1",
+                "NONE");
     }
+
 
     public static MakerSimpleDto toDto(Maker maker) {
         return new MakerSimpleDto(

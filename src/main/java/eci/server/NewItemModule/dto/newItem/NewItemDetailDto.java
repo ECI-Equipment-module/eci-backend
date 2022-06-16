@@ -14,10 +14,10 @@ import eci.server.NewItemModule.dto.classification.ClassificationDto;
 import eci.server.NewItemModule.dto.coatingcommon.CoatingDto;
 import eci.server.NewItemModule.dto.image.NewItemImageDto;
 import eci.server.NewItemModule.dto.responsibility.DesignResponsibleDto;
-import eci.server.NewItemModule.dto.responsibility.ResponsibleDto;
 import eci.server.NewItemModule.dto.supplier.SupplierDto;
 import eci.server.NewItemModule.entity.NewItem;
 import eci.server.NewItemModule.repository.attachment.AttachmentTagRepository;
+import eci.server.NewItemModule.repository.maker.MakerRepository;
 import eci.server.NewItemModule.repository.maker.NewItemMakerRepository;
 import eci.server.ProjectModule.dto.carType.CarTypeDto;
 import eci.server.ProjectModule.dto.clientOrg.ClientOrganizationDto;
@@ -65,7 +65,8 @@ public class NewItemDetailDto {
     private String screwHeight;
     private ClientOrganizationDto clientOrganizationId;
     private SupplierDto supplierOrganizationId;
-    private List<MakerSimpleDto> makersId;
+//    private List<MakerSimpleDto> makersId;
+    private MakerSimpleDto makersId;
     private String partnumbers;
     private boolean revise_progress;
 
@@ -96,7 +97,7 @@ public class NewItemDetailDto {
 
     public static NewItemDetailDto toDto(
             NewItem Item,
-            NewItemMakerRepository newItemMakerRepository,
+            MakerRepository makerRepository,
             RouteOrderingDto routeOrderingDto,
             DesignRepository designRepository,
             BomRepository bomRepository,
@@ -112,7 +113,7 @@ public class NewItemDetailDto {
         ItemTypesDto nullItemTypesDto = new ItemTypesDto();
         CarTypeDto nullCarTypeDto = new CarTypeDto();
 
-        if(Item.getMakers().size()>0) {
+        if(Item.getMakers()!=null) {
             return new NewItemDetailDto(
                     Item.getId(),
 
@@ -169,10 +170,15 @@ public class NewItemDetailDto {
                     Item.getSupplierOrganization()==null?SupplierDto.toDto():
                     SupplierDto.toDto(Item.getSupplierOrganization()),
 
-                    Item.getMakers()==null?MakerSimpleDto.toDtoList():
-                    MakerSimpleDto.toDtoList(Item.getMakers()),
+                    Item.getMakers()==null?MakerSimpleDto.toDto():
+                            MakerSimpleDto.toDto(Item.getMakers()),
 
-                    newItemMakerRepository.findByMaker(Item.getMakers().get(0).getMaker()).get(0).getPartnumber(),
+                    Item.getPartNumber(),
+                    //MakerSimpleDto.toDtoList(Item.getMakers()),
+                            //MakerSimpleDto.toDtoList(Item.getMakers()),
+
+
+                    //newItemMakerRepository.findByMaker(Item.getMakers().get(0).getMaker()).get(0).getPartnumber(),
                     Item.isRevise_progress(),
 
                     Item.getAttachments().
@@ -271,8 +277,8 @@ public class NewItemDetailDto {
                         SupplierDto.toDto(Item.getSupplierOrganization()),
 
                 Item.getMakers() ==null?
-                        MakerSimpleDto.toDtoList():
-                MakerSimpleDto.toDtoList(Item.getMakers()),
+                        MakerSimpleDto.toDto():
+                MakerSimpleDto.toDto(Item.getMakers()),
                 "",
 
 
@@ -341,7 +347,7 @@ public class NewItemDetailDto {
 
         List<DesignResponsibleDto> tmpResponsibleDtoList = new ArrayList<>();
 
-        if(Item.getMakers().size()>0) {
+        if(Item.getMakers()!=null) {
             return new NewItemDetailDto(
                     Item.getId(),
 
@@ -398,10 +404,13 @@ public class NewItemDetailDto {
                     Item.getSupplierOrganization()==null?SupplierDto.toDto():
                             SupplierDto.toDto(Item.getSupplierOrganization()),
 
-                    Item.getMakers()==null?MakerSimpleDto.toDtoList():
-                            MakerSimpleDto.toDtoList(Item.getMakers()),
+//                    Item.getMakers()==null?MakerSimpleDto.toDtoList():
+//                            MakerSimpleDto.toDtoList(Item.getMakers()),
+                    Item.getMakers()==null?MakerSimpleDto.toDto():
+                            MakerSimpleDto.toDto(Item.getMakers()),
 
-                    newItemMakerRepository.findByMaker(Item.getMakers().get(0).getMaker()).get(0).getPartnumber(),
+                    Item.getPartNumber(),
+                    //newItemMakerRepository.findByMaker(Item.getMakers().get(0).getMaker()).get(0).getPartnumber(),
                     Item.isRevise_progress(),
 
                     Item.getAttachments().
@@ -489,8 +498,12 @@ public class NewItemDetailDto {
                 Item.getSupplierOrganization()==null?SupplierDto.toDto():
                         SupplierDto.toDto(Item.getSupplierOrganization()),
 
-                Item.getMakers()==null?MakerSimpleDto.toDtoList():
-                        MakerSimpleDto.toDtoList(Item.getMakers()),
+//                Item.getMakers()==null?MakerSimpleDto.toDtoList():
+//                        MakerSimpleDto.toDtoList(Item.getMakers()),
+
+                Item.getMakers()==null?MakerSimpleDto.toDto():
+                        MakerSimpleDto.toDto(Item.getMakers()),
+
                 "no partnum",
                 Item.isRevise_progress(),
 

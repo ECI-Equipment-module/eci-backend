@@ -15,7 +15,6 @@ import eci.server.ItemModule.entity.member.Member;
 import eci.server.NewItemModule.entity.classification.Classification;
 import eci.server.NewItemModule.entity.coating.CoatingType;
 import eci.server.NewItemModule.entity.coating.CoatingWay;
-import eci.server.NewItemModule.entity.maker.NewItemMaker;
 import eci.server.NewItemModule.entity.supplier.Supplier;
 import eci.server.NewItemModule.exception.CoatingNotFoundException;
 import eci.server.NewItemModule.exception.SupplierNotFoundException;
@@ -23,6 +22,7 @@ import eci.server.NewItemModule.repository.attachment.AttachmentTagRepository;
 import eci.server.NewItemModule.exception.*;
 import eci.server.NewItemModule.repository.coatingType.CoatingTypeRepository;
 import eci.server.NewItemModule.repository.coatingWay.CoatingWayRepository;
+import eci.server.NewItemModule.repository.maker.MakerRepository;
 import eci.server.NewItemModule.repository.maker.NewItemMakerRepository;
 import eci.server.NewItemModule.repository.supplier.SupplierRepository;
 import eci.server.ProjectModule.entity.project.CarType;
@@ -191,13 +191,18 @@ public class NewItem extends EntityDate {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Supplier supplierOrganization;
 
-    @OneToMany(
-            mappedBy = "newItem",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true,
-            fetch = FetchType.LAZY)
-    private List<NewItemMaker> makers;
+//    @OneToMany(
+//            mappedBy = "newItem",
+//            cascade = CascadeType.ALL,
+//            orphanRemoval = true,
+//            fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "makers")
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private Maker makers;
 
+
+    private String partNumber;
 //    @ManyToOne(fetch = FetchType.LAZY)
 //    @JoinColumn(name = "supplier_id")
 //    @OnDelete(action = OnDeleteAction.CASCADE)
@@ -322,9 +327,9 @@ public class NewItem extends EntityDate {
             String screwHeight,
             ClientOrganization clientOrganizations,
             Supplier supplierOrganization,
-            List<Maker> makers,
-            List<String> partnumbers,
-
+            Maker makers,
+            //List<String> partnumbers,
+            String partnumbers,
             Member member,
             Boolean tempsave,
             Boolean revise_progress,
@@ -389,14 +394,7 @@ public class NewItem extends EntityDate {
         this.supplierOrganization = supplierOrganization;
 
         this.makers =
-                makers.stream().map(
-
-                                //다대다 관계를 만드는 구간
-                                r -> new NewItemMaker(
-                                        this, r, partnumbers.get(makers.indexOf(r)).isBlank()?"":partnumbers.get(makers.indexOf(r))
-                                )
-                        )
-                        .collect(toList());
+                makers;
 
         this.tempsave = true;
         this.readonly = false;
@@ -478,9 +476,9 @@ public class NewItem extends EntityDate {
             String screwHeight,
             ClientOrganization clientOrganizations,
             Supplier supplierOrganization,
-            List<Maker> makers,
-            List<String> partnumbers,
-
+            Maker makers,
+            //List<String> partnumbers,
+            String partnumbers,
             Member member,
             Boolean tempsave,
             Boolean revise_progress
@@ -544,15 +542,15 @@ public class NewItem extends EntityDate {
 
         this.supplierOrganization = supplierOrganization;
 
-        this.makers =
-                makers.stream().map(
-
-                                //다대다 관계를 만드는 구간
-                                r -> new NewItemMaker(
-                                        this, r, partnumbers.get(makers.indexOf(r)).isBlank()?"":partnumbers.get(makers.indexOf(r))
-                                )
-                        )
-                        .collect(toList());
+        this.makers = makers;
+//                makers.stream().map(
+//
+//                                //다대다 관계를 만드는 구간
+//                                r -> new NewItemMaker(
+//                                        this, r, partnumbers.get(makers.indexOf(r)).isBlank()?"":partnumbers.get(makers.indexOf(r))
+//                                )
+//                        )
+//                        .collect(toList());
 
         this.tempsave = true;
 
@@ -783,7 +781,8 @@ public class NewItem extends EntityDate {
             MemberRepository memberRepository,
             ClientOrganizationRepository clientOrganizationRepository,
             SupplierRepository supplierRepository,
-            NewItemMakerRepository itemMakerRepository,
+            //NewItemMakerRepository itemMakerRepository,
+            MakerRepository makerRepository,
             ItemTypesRepository itemTypesRepository,
             CoatingWayRepository coatingWayRepository,
             CoatingTypeRepository coatingTypeRepository,
@@ -883,6 +882,9 @@ public class NewItem extends EntityDate {
                 supplierRepository.findById(req.getSupplierOrganizationId())
                         .orElseThrow(SupplierNotFoundException::new);
 
+        this.makers = req.getMakersId()==null?
+                makerRepository.findById(99999L).orElseThrow(MakerNotFoundException::new)
+                :makerRepository.findById(req.getMakersId()).orElseThrow(MakerNotFoundException::new);
 //        this.makers =
 //                makers.stream().map(
 //
@@ -965,7 +967,8 @@ public class NewItem extends EntityDate {
             MemberRepository memberRepository,
             ClientOrganizationRepository clientOrganizationRepository,
             SupplierRepository supplierRepository,
-            NewItemMakerRepository itemMakerRepository,
+            //NewItemMakerRepository itemMakerRepository,
+            MakerRepository makerRepository,
             ItemTypesRepository itemTypesRepository,
             CoatingWayRepository coatingWayRepository,
             CoatingTypeRepository coatingTypeRepository,
@@ -1071,6 +1074,8 @@ public class NewItem extends EntityDate {
                 supplierRepository.findById(req.getSupplierOrganizationId())
                         .orElseThrow(SupplierNotFoundException::new);
 
+        this.makers = req.getMakersId()==null?makerRepository.findById(-1L).orElseThrow(MakerNotFoundException::new)
+                :makerRepository.findById(req.getMakersId()).orElseThrow(MakerNotFoundException::new);
 //        this.makers =
 //                makers.stream().map(
 //

@@ -1,14 +1,11 @@
 package eci.server.NewItemModule.dto.newItem.create;
 
-import eci.server.ItemModule.entity.item.ItemType;
 import eci.server.ItemModule.exception.item.AttachmentNotFoundException;
 import eci.server.ItemModule.exception.item.ColorNotFoundException;
 import eci.server.ItemModule.exception.item.ItemNotFoundException;
-import eci.server.ItemModule.exception.item.ManufactureNotFoundException;
 import eci.server.ItemModule.exception.member.sign.MemberNotFoundException;
 import eci.server.ItemModule.repository.color.ColorRepository;
 import eci.server.ItemModule.repository.item.ItemTypesRepository;
-import eci.server.ItemModule.repository.manufacture.MakerRepository;
 import eci.server.ItemModule.repository.member.MemberRepository;
 import eci.server.NewItemModule.entity.NewItem;
 import eci.server.NewItemModule.entity.NewItemAttachment;
@@ -16,12 +13,14 @@ import eci.server.NewItemModule.entity.NewItemImage;
 import eci.server.NewItemModule.entity.classification.Classification;
 import eci.server.NewItemModule.exception.ClassificationNotFoundException;
 import eci.server.NewItemModule.exception.CoatingNotFoundException;
+import eci.server.NewItemModule.exception.MakerNotFoundException;
 import eci.server.NewItemModule.repository.attachment.AttachmentTagRepository;
 import eci.server.NewItemModule.repository.classification.Classification1Repository;
 import eci.server.NewItemModule.repository.classification.Classification2Repository;
 import eci.server.NewItemModule.repository.classification.Classification3Repository;
 import eci.server.NewItemModule.repository.coatingType.CoatingTypeRepository;
 import eci.server.NewItemModule.repository.coatingWay.CoatingWayRepository;
+import eci.server.NewItemModule.repository.maker.MakerRepository;
 import eci.server.NewItemModule.repository.supplier.SupplierRepository;
 import eci.server.ProjectModule.exception.CarTypeNotFoundException;
 import eci.server.ProjectModule.exception.ClientOrganizationNotFoundException;
@@ -115,10 +114,10 @@ public class NewItemTemporaryCreateRequest {
     private List<String> attachmentComment = new ArrayList<>();
 
 
-    private List<Long> makersId = new ArrayList<>();
+    private Long makersId;
 
-    private List<String> partnumbers = new ArrayList<>();
-
+    //private List<String> partnumbers = new ArrayList<>();
+    private String partnumbers;
     @Null
     private Long memberId;
 
@@ -241,13 +240,16 @@ public class NewItemTemporaryCreateRequest {
                             supplierRepository.findById(req.getSupplierOrganizationId())
                                     .orElseThrow(ProduceOrganizationNotFoundException::new),
 
-                    req.makersId.stream().map(
-                            i ->
-                                    makerRepository.
-                                            findById(i).orElseThrow(ManufactureNotFoundException::new)
-                    ).collect(
-                            toList()
-                    ),
+                    req.getMakersId()==null?
+                            makerRepository.findById(99999L).orElseThrow(MemberNotFoundException::new)
+                            :makerRepository.findById(req.getMakersId()).orElseThrow(MemberNotFoundException::new),
+//                    req.makersId.stream().map(
+//                            i ->
+//                                    makerRepository.
+//                                            findById(i).orElseThrow(ManufactureNotFoundException::new)
+//                    ).collect(
+//                            toList()
+//                    ),
 
                     req.partnumbers,
 
@@ -368,13 +370,16 @@ public class NewItemTemporaryCreateRequest {
                         supplierRepository.findById(req.getSupplierOrganizationId())
                                 .orElseThrow(ProduceOrganizationNotFoundException::new),
 
-                req.makersId.stream().map(
-                        i ->
-                                makerRepository.
-                                        findById(i).orElseThrow(ManufactureNotFoundException::new)
-                ).collect(
-                        toList()
-                ),
+                req.getMakersId()==null?
+                        makerRepository.findById(99999L).orElseThrow(MakerNotFoundException::new)
+                : makerRepository.findById(req.makersId).orElseThrow(MakerNotFoundException::new),
+//                req.makersId.stream().map(
+//                        i ->
+//                                makerRepository.
+//                                        findById(i).orElseThrow(ManufactureNotFoundException::new)
+//                ).collect(
+//                        toList()
+//                ),
 
                 req.partnumbers,
 

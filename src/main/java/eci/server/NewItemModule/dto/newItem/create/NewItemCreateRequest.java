@@ -1,13 +1,11 @@
 package eci.server.NewItemModule.dto.newItem.create;
 
-import eci.server.ItemModule.entity.item.Attachment;
-import eci.server.ItemModule.entity.item.Image;
 import eci.server.ItemModule.entity.item.ItemType;
 import eci.server.ItemModule.exception.item.*;
 import eci.server.ItemModule.exception.member.sign.MemberNotFoundException;
 import eci.server.ItemModule.repository.color.ColorRepository;
 import eci.server.ItemModule.repository.item.ItemTypesRepository;
-import eci.server.ItemModule.repository.manufacture.MakerRepository;
+
 import eci.server.ItemModule.repository.member.MemberRepository;
 import eci.server.NewItemModule.entity.NewItem;
 import eci.server.NewItemModule.entity.NewItemAttachment;
@@ -20,6 +18,7 @@ import eci.server.NewItemModule.repository.classification.Classification2Reposit
 import eci.server.NewItemModule.repository.classification.Classification3Repository;
 import eci.server.NewItemModule.repository.coatingType.CoatingTypeRepository;
 import eci.server.NewItemModule.repository.coatingWay.CoatingWayRepository;
+import eci.server.NewItemModule.repository.maker.MakerRepository;
 import eci.server.NewItemModule.repository.supplier.SupplierRepository;
 import eci.server.ProjectModule.exception.CarTypeNotFoundException;
 import eci.server.ProjectModule.exception.ClientOrganizationNotFoundException;
@@ -120,9 +119,11 @@ public class NewItemCreateRequest {
     private List<String> attachmentComment = new ArrayList<>();
 
 
-    private List<Long> makersId = new ArrayList<>();
+    //private List<Long> makersId = new ArrayList<>();
+    private Long makersId;
 
-    private List<String> partnumbers = new ArrayList<>();
+    //private List<String> partnumbers = new ArrayList<>();
+    private String partnumbers;
 
     @Null
     private Long memberId;
@@ -259,13 +260,17 @@ public class NewItemCreateRequest {
                             supplierRepository.findById(req.getSupplierOrganizationId())
                                     .orElseThrow(ProduceOrganizationNotFoundException::new),
 
-                    req.makersId.stream().map(
-                            i ->
-                                    makerRepository.
-                                            findById(i).orElseThrow(ManufactureNotFoundException::new)
-                    ).collect(
-                            toList()
-                    ),
+//                    req.makersId.stream().map(
+//                            i ->
+//                                    makerRepository.
+//                                            findById(i).orElseThrow(ManufactureNotFoundException::new)
+//                    ).collect(
+//                            toList()
+//                    ),
+
+                    req.getMakersId()==null?
+                            makerRepository.findById(req.getMakersId()).orElseThrow(MakerNotFoundException::new):
+                            makerRepository.findById(req.getMakersId()).orElseThrow(MakerNotFoundException::new),
 
                     req.partnumbers,
 
@@ -377,13 +382,18 @@ public class NewItemCreateRequest {
                         supplierRepository.findById(req.getSupplierOrganizationId())
                                 .orElseThrow(ProduceOrganizationNotFoundException::new),
 
-                req.makersId.stream().map(
-                        i ->
-                                makerRepository.
-                                        findById(i).orElseThrow(ManufactureNotFoundException::new)
-                ).collect(
-                        toList()
-                ),
+//                req.makersId.stream().map(
+//                        i ->
+//                                makerRepository.
+//                                        findById(i).orElseThrow(ManufactureNotFoundException::new)
+//                ).collect(
+//                        toList()
+//                ),
+
+                req.getMakersId()==null?
+                        makerRepository.findById(-1L).orElseThrow(MakerNotFoundException::new):
+                        makerRepository.findById(req.getMakersId()).orElseThrow(MakerNotFoundException::new)
+,
 
                 req.partnumbers,
 

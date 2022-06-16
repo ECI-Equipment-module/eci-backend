@@ -1,14 +1,11 @@
 package eci.server.NewItemModule.service.item;
 
-import eci.server.BomModule.dto.DevelopmentBomCardDto;
-import eci.server.BomModule.dto.cond.DevelopmentBomReadCondition;
 import eci.server.BomModule.repository.BomRepository;
 import eci.server.BomModule.repository.PreliminaryBomRepository;
 import eci.server.DesignModule.repository.DesignRepository;
 import eci.server.ItemModule.dto.item.*;
 import eci.server.ItemModule.dto.manufacture.ReadPartNumberService;
 import eci.server.ItemModule.dto.newRoute.routeOrdering.RouteOrderingDto;
-import eci.server.ItemModule.dto.newRoute.routeProduct.RouteProductDto;
 
 import eci.server.ItemModule.entity.item.ItemType;
 import eci.server.ItemModule.entity.item.ItemTypes;
@@ -23,7 +20,7 @@ import eci.server.ItemModule.exception.member.auth.AuthenticationEntryPointExcep
 import eci.server.ItemModule.exception.route.RouteNotFoundException;
 import eci.server.ItemModule.repository.color.ColorRepository;
 import eci.server.ItemModule.repository.item.*;
-import eci.server.ItemModule.repository.manufacture.MakerRepository;
+
 import eci.server.ItemModule.repository.member.MemberRepository;
 import eci.server.ItemModule.repository.newRoute.RouteOrderingRepository;
 import eci.server.ItemModule.repository.newRoute.RouteProductRepository;
@@ -46,6 +43,7 @@ import eci.server.NewItemModule.repository.coatingType.CoatingTypeRepository;
 import eci.server.NewItemModule.repository.coatingWay.CoatingWayRepository;
 import eci.server.NewItemModule.repository.item.NewItemParentChildrenRepository;
 import eci.server.NewItemModule.repository.item.NewItemRepository;
+import eci.server.NewItemModule.repository.maker.MakerRepository;
 import eci.server.NewItemModule.repository.maker.NewItemMakerRepository;
 import eci.server.NewItemModule.repository.supplier.SupplierRepository;
 import eci.server.NewItemModule.service.classification.ClassificationService;
@@ -275,7 +273,7 @@ public class NewItemService {
 
             return NewItemDetailDto.toDto(
                     targetItem,
-                    itemMakerRepository,
+                    makerRepository,
                     //최신 라우트에 딸린 라우트프로덕트 리스트 중,
                     // 라우트의 present 인덱스에 해당하는 타입을 데리고 오기
                     routeDtoList.get(routeDtoList.size() - 1),
@@ -403,7 +401,7 @@ public class NewItemService {
                 memberRepository,
                 clientOrganizationRepository,
                 supplierRepository,
-                itemMakerRepository,
+                makerRepository,
                 itemTypesRepository,
                 coatingWayRepository,
                 coatingTypeRepository,
@@ -455,7 +453,7 @@ public class NewItemService {
                 memberRepository,
                 clientOrganizationRepository,
                 supplierRepository,
-                itemMakerRepository,
+                makerRepository,
                 itemTypesRepository,
                 coatingWayRepository,
                 coatingTypeRepository,

@@ -420,4 +420,13 @@ public class ExceptionAdvice {
         return Response.failure(404, "이름은 필수입니다.");
     }
 
+
+
+    @ExceptionHandler(MakerNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Response NameNotEmptyException(MakerNotFoundException e) {
+        log.info("e = {}", e.getMessage());
+        return Response.failure(404, "Maker 은 필수입니다.");
+    }
+
 }

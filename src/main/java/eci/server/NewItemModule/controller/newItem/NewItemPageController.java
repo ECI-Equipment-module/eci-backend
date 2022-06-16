@@ -48,15 +48,14 @@ public class NewItemPageController {
                                          })
                                                  Pageable pageRequest) {
 
-        Page<NewItem> itemListBefore = newItemRepository.findAll(pageRequest);
+        //Page<NewItem> itemListBefore = (pageRequest);
 
         List<NewItem> itemList1 =//06-01 false로 변경하기
-                itemListBefore.stream().filter(
+                newItemRepository.findAll().stream().filter(
                         i-> (!i.isTempsave())
                 ).collect(Collectors.toList());
 
-        Page<NewItem> itemList = new PageImpl<>(itemList1);
-
+        Page<NewItem> itemList = newItemRepository.findByNewItems(itemList1, pageRequest);
 
         return itemList.map(
                 item -> NewItemPagingDto.toDto(item)
