@@ -96,12 +96,18 @@ public class ProjectCreateRequest {
 
 
 
-        if(req.projectLevelId==99999L ||
+        if(
+                req.projectLevelId==99999L ||
         req.carType == 99999L ||
         req.projectTypeId ==99999L ||
-        req.getItemId()==99999L
+        req.getItemId()==99999L ||
+                req.projectLevelId==null ||
+                req.carType == null ||
+                req.projectTypeId ==null ||
+                req.getItemId()==null
+
         ){
-                //TODO : id에러 던지기 - 다음 브랜치에서
+               throw new ProjectEmptyException();
         }
 
 //        //양산 개발의 아이디가 1 (Long)
@@ -257,14 +263,14 @@ public class ProjectCreateRequest {
         Date now = new Date();
         //projectNum 겹치지않도록 설정(순간의 연-월시분초
         String projectNum = new SimpleDateFormat("MMddHHmmss", Locale.ENGLISH).format(now);
-        String finalProjNum = "";
+        String finalProjNumber = new String();
 
         if (ProjectLevelId.equals(1L)) {
-            finalProjNum = "M-" + year + "-" + projectNum;
+            finalProjNumber = "M-" + year + "-" + projectNum;
         } else {
-            finalProjNum = "N-" + year + "-" + projectNum;
+            finalProjNumber= "N-" + year + "-" + projectNum;
         }
 
-        return finalProjNum;
+        return finalProjNumber;
     }
 }

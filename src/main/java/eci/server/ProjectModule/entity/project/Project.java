@@ -376,41 +376,49 @@ public class Project extends EntityDate {
                 .orElseThrow(ProjectTypeNotFoundException::new);
 
         this.protoStartPeriod =
-                req.getProtoStartPeriod().isBlank()?
+                req.getProtoStartPeriod() ==null ||
+                        req.getProtoStartPeriod().isBlank()?
                         this.protoStartPeriod:
                         LocalDate.parse(req.getProtoStartPeriod(), DateTimeFormatter.ISO_DATE);
 
         this.protoOverPeriod =
+                req.getProtoStartPeriod() ==null ||
                 req.getProtoOverPeriod().isBlank()?
                         this.protoOverPeriod:
                         LocalDate.parse(req.getProtoOverPeriod(), DateTimeFormatter.ISO_DATE);
 
         this.p1StartPeriod =
+                req.getP1StartPeriod() == null ||
                 req.getP1StartPeriod().isBlank()?
                         this.p1StartPeriod:
                         LocalDate.parse(req.getP1StartPeriod(), DateTimeFormatter.ISO_DATE);
 
         this.p1OverPeriod =
+                req.getP1OverPeriod() == null ||
                 req.getP1OverPeriod().isBlank()?
                         this.p1OverPeriod:
                         LocalDate.parse(req.getP1OverPeriod(), DateTimeFormatter.ISO_DATE);
 
         this.p2StartPeriod =
+                req.getP2StartPeriod() ==null ||
                 req.getP2StartPeriod().isBlank()?
                         this.p2StartPeriod:
                         LocalDate.parse(req.getP2StartPeriod(), DateTimeFormatter.ISO_DATE);
 
         this.p2OverPeriod =
+                req.getP2OverPeriod() ==null||
                 req.getP2OverPeriod().isBlank()?
                         this.protoOverPeriod:
                         LocalDate.parse(req.getP2OverPeriod(), DateTimeFormatter.ISO_DATE);
 
         this.sopStartPeriod =
+                req.getSopStartPeriod() ==null||
                 req.getSopStartPeriod().isBlank()?
                         this.sopStartPeriod:
                         LocalDate.parse(req.getSopStartPeriod(), DateTimeFormatter.ISO_DATE);
 
         this.sopOverPeriod =
+                req.getSopOverPeriod() ==null ||
                 req.getSopOverPeriod().isBlank()?
                         this.sopOverPeriod:
                         LocalDate.parse(req.getSopOverPeriod(), DateTimeFormatter.ISO_DATE);
@@ -605,6 +613,19 @@ public class Project extends EntityDate {
             MemberRepository memberRepository,
             AttachmentTagRepository attachmentTagRepository
     ) {
+        if(
+                req.getProjectLevelId()==null ||
+                        req.getCarType() == null ||
+                        req.getProjectTypeId() ==null ||
+                        req.getItemId()==null ||
+                req.getProjectLevelId()==99999L ||
+                        req.getCarType() == 99999L ||
+                        req.getProjectTypeId() ==99999L ||
+                        req.getItemId()==99999L
+
+        ){
+            throw new ProjectEmptyException();
+        }
 
         this.tempsave = true;
         this.readonly = true; //0605- 이 부분하나가 변경, 이 것은 얘를 false 에서 true로 변경 !
@@ -620,17 +641,29 @@ public class Project extends EntityDate {
         this.name = req.getName();
         this.projectNumber = ProjectCreateRequest.ProjectNumber(req.getProjectLevelId());
 
-        this.protoStartPeriod = LocalDate.parse(req.getProtoStartPeriod());
-        this.protoOverPeriod = LocalDate.parse(req.getProtoOverPeriod());
+        this.protoStartPeriod = req.getProtoStartPeriod()==null || req.getProtoStartPeriod().isBlank()?
+                null:LocalDate.parse(req.getProtoStartPeriod(), DateTimeFormatter.ISO_DATE);
 
-        this.p1StartPeriod = LocalDate.parse(req.getP1StartPeriod());
-        this.p1OverPeriod = LocalDate.parse(req.getP1OverPeriod());
+        this.protoOverPeriod = req.getProtoOverPeriod()==null || req.getProtoOverPeriod().isBlank()?
+                null:LocalDate.parse(req.getProtoOverPeriod(), DateTimeFormatter.ISO_DATE);
 
-        this.p2StartPeriod = LocalDate.parse(req.getP2StartPeriod());
-        this.p2OverPeriod = LocalDate.parse(req.getP2OverPeriod());
+        this.p1StartPeriod = req.getP1StartPeriod()==null || req.getP1StartPeriod().isBlank()?
+                null:LocalDate.parse(req.getP1StartPeriod(), DateTimeFormatter.ISO_DATE);
 
-        this.sopStartPeriod = LocalDate.parse(req.getSopStartPeriod());
-        this.sopOverPeriod = LocalDate.parse(req.getSopOverPeriod());
+        this.p1OverPeriod = req.getP1OverPeriod()==null || req.getP1OverPeriod().isBlank()?
+                null:LocalDate.parse(req.getP1OverPeriod(), DateTimeFormatter.ISO_DATE);
+
+        this.p2StartPeriod = req.getP2StartPeriod()==null || req.getP2StartPeriod().isBlank()?
+                null:LocalDate.parse(req.getP2StartPeriod(), DateTimeFormatter.ISO_DATE);
+
+        this.p2OverPeriod = req.getP2OverPeriod()==null || req.getP2OverPeriod().isBlank()?
+                null:LocalDate.parse(req.getP2OverPeriod(), DateTimeFormatter.ISO_DATE);
+
+        this.sopStartPeriod = req.getSopStartPeriod()==null || req.getSopStartPeriod().isBlank()?
+                null:LocalDate.parse(req.getSopStartPeriod(), DateTimeFormatter.ISO_DATE);
+
+        this.sopOverPeriod = req.getSopOverPeriod()==null || req.getSopOverPeriod().isBlank()?
+                null:LocalDate.parse(req.getSopOverPeriod(), DateTimeFormatter.ISO_DATE);
 
 
         this.newItem =
