@@ -412,4 +412,12 @@ public class ExceptionAdvice {
         log.info("e = {}", e.getMessage());
         return Response.failure(404, "프로젝트 타입은 필수입니다.");
     }
+
+    @ExceptionHandler(NameNotEmptyException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Response NameNotEmptyException(NameNotEmptyException e) {
+        log.info("e = {}", e.getMessage());
+        return Response.failure(404, "이름은 필수입니다.");
+    }
+
 }

@@ -96,18 +96,20 @@ public class ProjectCreateRequest {
 
 
 
-        if(
-                req.projectLevelId==99999L ||
-        req.carType == 99999L ||
-        req.projectTypeId ==99999L ||
-        req.getItemId()==99999L ||
-                req.projectLevelId==null ||
-                req.carType == null ||
-                req.projectTypeId ==null ||
-                req.getItemId()==null
-
-        ){
-               throw new ProjectEmptyException();
+        if(req.getProjectLevelId()==null || req.getProjectLevelId()==99999L){
+            throw new ProjectLevelNotEmptyException();
+        }
+        else if (req.getCarType() == null || req.getCarType() == 99999L){
+            throw new CarTypeNotEmptyException();
+        }
+        else if(req.getProjectTypeId()==null || req.getProjectTypeId()==99999L){
+            throw new ProjectTypeNotEmptyException();
+        }
+        else if(req.getItemId()==null || req.getItemId()==99999L){
+            throw new ItemNotFoundException();
+        }
+        else if(req.getName() == null || req.getName().isBlank()){
+            throw new NameNotEmptyException();
         }
 
 //        //양산 개발의 아이디가 1 (Long)
@@ -125,6 +127,7 @@ public class ProjectCreateRequest {
 //
 //            throw new ProjectCreateNotEmptyException();
 //        }
+
 
         String finalProjNum = ProjectNumber(req.getProjectTypeId());
 

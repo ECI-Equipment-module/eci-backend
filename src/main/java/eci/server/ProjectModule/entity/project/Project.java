@@ -615,21 +615,6 @@ public class Project extends EntityDate {
             AttachmentTagRepository attachmentTagRepository
     ) {
 
-
-//        if(
-//                req.getProjectLevelId()==null ||
-//                        req.getCarType() == null ||
-//                        req.getProjectTypeId() ==null ||
-//                        req.getItemId()==null ||
-//                req.getProjectLevelId()==99999L ||
-//                        req.getCarType() == 99999L ||
-//                        req.getProjectTypeId() ==99999L ||
-//                        req.getItemId()==99999L
-//
-//        ){
-//            throw new ProjectEmptyException();
-//        }
-
         this.tempsave = true;
         this.readonly = true; //0605- 이 부분하나가 변경, 이 것은 얘를 false 에서 true로 변경 !
 
@@ -641,8 +626,16 @@ public class Project extends EntityDate {
         // 수정 시간 갱신
         this.setModifiedAt(LocalDateTime.now());
 
-        this.name = req.getName();
-        this.projectNumber = ProjectCreateRequest.ProjectNumber(req.getProjectLevelId());
+        this.name = req.getName()==null || req.getName().isBlank() ?
+                projectLevelRepository.findById(-1L).orElseThrow(
+                        NameNotEmptyException::new)
+                        .getName() :
+        req.getName();
+        this.projectNumber =
+                req.getProjectLevelId()==null||req.getProjectLevelId()==99999L?
+                        projectLevelRepository.findById(-1L).orElseThrow(ProjectLevelNotEmptyException::new)
+                                .getName():
+                ProjectCreateRequest.ProjectNumber(req.getProjectLevelId());
 
         this.protoStartPeriod = req.getProtoStartPeriod()==null || req.getProtoStartPeriod().isBlank()?
                 null:LocalDate.parse(req.getProtoStartPeriod(), DateTimeFormatter.ISO_DATE);

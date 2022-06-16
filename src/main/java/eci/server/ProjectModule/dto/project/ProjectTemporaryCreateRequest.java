@@ -103,7 +103,6 @@ public class ProjectTemporaryCreateRequest  {
             Long clientOrgId = req.clientOrganizationId==null?99999L:req.clientOrganizationId;
             Long carTypeId = req.carType==null?99999L:req.carType;
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-            //System.out.println(LocalDate.now().format(formatter));
 
             if(req.getTag().size()>0) {
                 return new Project(
