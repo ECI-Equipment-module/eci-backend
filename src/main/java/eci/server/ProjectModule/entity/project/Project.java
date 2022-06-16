@@ -602,6 +602,7 @@ public class Project extends EntityDate {
     }
 
 
+
     public FileUpdatedResult tempEnd(
             ProjectUpdateRequest req,
             NewItemRepository newItemRepository,
@@ -613,19 +614,21 @@ public class Project extends EntityDate {
             MemberRepository memberRepository,
             AttachmentTagRepository attachmentTagRepository
     ) {
-        if(
-                req.getProjectLevelId()==null ||
-                        req.getCarType() == null ||
-                        req.getProjectTypeId() ==null ||
-                        req.getItemId()==null ||
-                req.getProjectLevelId()==99999L ||
-                        req.getCarType() == 99999L ||
-                        req.getProjectTypeId() ==99999L ||
-                        req.getItemId()==99999L
 
-        ){
-            throw new ProjectEmptyException();
-        }
+
+//        if(
+//                req.getProjectLevelId()==null ||
+//                        req.getCarType() == null ||
+//                        req.getProjectTypeId() ==null ||
+//                        req.getItemId()==null ||
+//                req.getProjectLevelId()==99999L ||
+//                        req.getCarType() == 99999L ||
+//                        req.getProjectTypeId() ==99999L ||
+//                        req.getItemId()==99999L
+//
+//        ){
+//            throw new ProjectEmptyException();
+//        }
 
         this.tempsave = true;
         this.readonly = true; //0605- 이 부분하나가 변경, 이 것은 얘를 false 에서 true로 변경 !
@@ -669,35 +672,42 @@ public class Project extends EntityDate {
         this.newItem =
                 req.getItemId()==null?
                         newItemRepository.findById(-1L)
-                                .orElseThrow(ProjectCreateNotEmptyException::new):
+                                .orElseThrow(ItemTypeNotEmptyException::new):
                         newItemRepository.findById(req.getItemId())
                                 .orElseThrow(ItemNotFoundException::new);
+
+
+        this.projectType =
+                req.getProjectTypeId() == null?
+                        projectTypeRepository.findById(-1L)
+                                .orElseThrow(ProjectTypeNotEmptyException::new):
+                        projectTypeRepository.findById(req.getProjectTypeId())
+                                .orElseThrow(ProjectTypeNotFoundException::new);
 
 
         this.projectLevel =
                 req.getProjectLevelId() == null?
                         projectLevelRepository.findById(-1L)
-                                .orElseThrow(ProjectCreateNotEmptyException::new):
+                                .orElseThrow(ProjectLevelNotEmptyException::new):
                         projectLevelRepository.findById(req.getProjectLevelId())
                                 .orElseThrow(ProjectLevelNotFoundException::new);
 
         this.clientOrganization =
                 req.getClientOrganizationId() == null?
-                clientOrganizationRepository.findById(-1L)
-                        .orElseThrow(ProjectCreateNotEmptyException::new):
+                null:
                         clientOrganizationRepository.findById(req.getProjectLevelId())//req.getProjectLevelId())
                                 .orElseThrow(ClientOrganizationNotFoundException::new);
 
         this.produceOrganization =
                 req.getProduceOrganizationId() == null?
-                        produceOrganizationRepository.findById(-1L)
-                                .orElseThrow(ProjectCreateNotEmptyException::new):
+                        null:
                         produceOrganizationRepository.findById(req.getProduceOrganizationId())
                                 .orElseThrow(ProduceOrganizationNotFoundException::new);
 
         this.carType =
                 req.getCarType() == null?
-                        this.carType:
+                        carTypeRepository.findById(-1L)
+                                .orElseThrow(CarTypeNotEmptyException::new):
                         carTypeRepository.findById(req.getCarType())
                                 .orElseThrow(CarTypeNotFoundException::new);
 

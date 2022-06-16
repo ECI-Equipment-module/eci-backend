@@ -28,7 +28,7 @@ public class ProjectExceptionAdvice {
      */
     @ExceptionHandler(ProjectCreateNotEmptyException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    public Response projectCreateNotEmptyException() {
+    public Response ProjectCreateNotEmptyException() {
 
         return Response.failure(400, "채워지지 않은 항목이 있습니다. 유효한 값을 넣어주세요");
     }

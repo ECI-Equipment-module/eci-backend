@@ -221,7 +221,10 @@ public class NewItemService {
                 );
     }
 
-    private void uploadAttachments(List<NewItemAttachment> attachments, List<MultipartFile> filedAttachments) {
+    private void uploadAttachments(
+            List<NewItemAttachment> attachments,
+            List<MultipartFile> filedAttachments
+    ) {
         // 실제 이미지 파일을 가지고 있는 Multipart 파일을
         // 파일이 가지는 uniquename을 파일명으로 해서 파일저장소 업로드
         IntStream.range(0, attachments.size())
@@ -413,6 +416,7 @@ public class NewItemService {
                 result.getImageUpdatedResult()!=null &&
                 result.getImageUpdatedResult().getAddedImages()!=null
         ){
+            System.out.println("이미지 업로드 하는 중야    ㅇㅇㅇㅇㅇㅇㅇㅇ");
             uploadImages(
                     result.getImageUpdatedResult().getAddedImages(),
                     result.getImageUpdatedResult().getAddedImageFiles()

@@ -403,6 +403,7 @@ public class NewItem extends EntityDate {
         this.revise_progress = revise_progress;
 
         this.attachments = new ArrayList<>();
+
         addAttachments(attachments);
 
         this.revision = 65;
@@ -420,7 +421,7 @@ public class NewItem extends EntityDate {
      * @param itemTypes
      * @param itemNumber
      * @param thumbnail
-     * @param sharinge
+     * @param sharing
      * @param carType
      * @param integrate
      * @param curve
@@ -454,7 +455,7 @@ public class NewItem extends EntityDate {
             ItemTypes itemTypes,
             String itemNumber,
             NewItemImage thumbnail,
-            boolean sharinge,
+            boolean sharing,
             CarType carType,
             String integrate,
             String curve,
@@ -498,7 +499,7 @@ public class NewItem extends EntityDate {
         }
 
 
-        this.sharing = sharinge;
+        this.sharing = sharing;
 
         this.carType = carType;
 
@@ -561,11 +562,10 @@ public class NewItem extends EntityDate {
         this.revision = 65;
 
         this.member = member;
+
         this.modifier = member;
 
     }
-
-
 
     /**
      * 추가할 이미지
@@ -586,28 +586,36 @@ public class NewItem extends EntityDate {
         added.forEach(i -> {
             attachments.add(i);
             i.initNewItem(this);
-        });
+        }
+        );
     }
 
-
     private void addUpdatedAttachments
-            (NewItemUpdateRequest req, List<NewItemAttachment> added,
-             AttachmentTagRepository attachmentTagRepository) {
+            (
+             NewItemUpdateRequest req,
+             List<NewItemAttachment> added,
+             AttachmentTagRepository attachmentTagRepository
+            ) {
+
         SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
         Date now = new Date();
 
         added.stream().forEach(i -> {
             attachments.add(i);
+
             i.initNewItem(this);
 
-            i.setAttach_comment(req.getAddedAttachmentComment().get((added.indexOf(i))));
+
+            i.setAttach_comment(
+                    req.getAddedAttachmentComment().get(
+                    (added.indexOf(i))
+            )
+            );
 
             i.setTag(attachmentTagRepository
                     .findById(req.getAddedTag().get(added.indexOf(i))).
                     orElseThrow(AttachmentNotFoundException::new).getName());
-
-//            i.setAttach_comment(req.getAddedAttachmentComment().get((req.getAddedAttachments().indexOf(i))));
-//            i.setTag(req.getAddedTag().get((req.getAddedAttachments().indexOf(i))));
 
             i.setAttachmentaddress(
                     "src/main/prodmedia/image/" +
@@ -615,7 +623,10 @@ public class NewItem extends EntityDate {
                             + "/"
                             + i.getUniqueName()
             );
-        });
+
+        }
+        );
+
     }
 
     /**
@@ -628,7 +639,6 @@ public class NewItem extends EntityDate {
         //this.getThumbnail().initNewItem(null);
         this.setThumbnail(null);
     }
-
 
     /**
      * 삭제될 이미지 제거
@@ -645,7 +655,6 @@ public class NewItem extends EntityDate {
                 //this.attachments.remove(di)
         );
     }
-
 
     /**
      * 압데이트 돼야 할 이미지 정보 만들어줌
@@ -688,6 +697,8 @@ public class NewItem extends EntityDate {
                 = convertAttachmentFilesToAttachments(addedAttachmentFiles);
         List<NewItemAttachment> deletedAttachments
                 = convertAttachmentIdsToAttachments(deletedAttachmentIds);
+
+        System.out.println("반환까지 완료요 ");
         return new NewItemAttachmentUpdatedResult(addedAttachmentFiles, addedAttachments, deletedAttachments);
     }
 
@@ -705,7 +716,9 @@ public class NewItem extends EntityDate {
     }
 
     private List<NewItemAttachment> convertAttachmentFilesToAttachments(List<MultipartFile> attachmentFiles) {
-        return attachmentFiles.stream().map(attachmentFile -> new NewItemAttachment(
+
+        return attachmentFiles.stream().map(attachmentFile ->
+                new NewItemAttachment(
                 attachmentFile.getOriginalFilename()
         )).collect(toList());
     }
@@ -746,11 +759,10 @@ public class NewItem extends EntityDate {
     public void updateTempsaveWhenMadeRoute() {
         this.tempsave = false;
     }
+
     public void updateReadOnlyWhenSaved() {
         this.readonly = true;
     }
-
-
 
     @Getter
     @AllArgsConstructor
@@ -758,7 +770,6 @@ public class NewItem extends EntityDate {
         private NewItemAttachmentUpdatedResult attachmentUpdatedResult;
         private NewItemImageUpdatedResult imageUpdatedResult;
     }
-
 
     /**
      * postupdaterequest 받아서 update 수행
@@ -779,6 +790,7 @@ public class NewItem extends EntityDate {
             CarTypeRepository carTypeRepository,
             AttachmentTagRepository attachmentTagRepository
     ) {
+
         this.setModifiedAt(LocalDateTime.now());
 
         AtomicInteger k = new AtomicInteger();
@@ -791,21 +803,13 @@ public class NewItem extends EntityDate {
                 itemTypesRepository.findById(req.getTypeId()).orElseThrow(ItemNotFoundException::new);
 
 
-        this.sharing = req.isSharing();
+        this.sharing = req.getSharing() == null || req.getSharing();
 
-        this.carType =
-                this.carType =                 //전용일 때야 차종 생성
-                        (!req.isSharing()) ?
-                                //1. 전용이라면
-                                req.getCarTypeId() == null ?
-                                        //1-1 : 아이디 없으면 (무조건 에러 튕기도록
-                                        carTypeRepository.findById(0L).orElseThrow(CarTypeNotFoundException::new) :
+        this.carType =     //임시저장 상태는 차종 없어도됨
+                        req.getCarTypeId() == null ?
+                                        null:
                                         //null 아니면 입력받은 것
-                                        carTypeRepository.findById(req.getCarTypeId()).orElseThrow(CarTypeNotFoundException::new)
-
-                                :
-                                //2. 공용이라면
-                                carTypeRepository.findById(99999L).orElseThrow(CarTypeNotFoundException::new);
+                                        carTypeRepository.findById(req.getCarTypeId()).orElseThrow(CarTypeNotFoundException::new);
 
 
         this.integrate = req.getIntegrate().isBlank() ? this.integrate : req.getIntegrate();
@@ -827,7 +831,7 @@ public class NewItem extends EntityDate {
 
         this.loadQuantity = req.getLoadQuantity().isBlank() ? this.loadQuantity : req.getLoadQuantity();
 
-        this.forming = req.getForming().isBlank() ? this.forming : req.getForming();
+        this.forming = req.getForming()==null || req.getForming().isBlank() ? this.forming : req.getForming();
 
         this.coatingWay = req.getCoatingWayId() == null ? this.coatingWay :
                 coatingWayRepository.findById
@@ -886,16 +890,23 @@ public class NewItem extends EntityDate {
                 );
 
         if (req.getAddedTag().size() > 0) {
-            addUpdatedAttachments(req, resultAttachment.getAddedAttachments(), attachmentTagRepository);
+            addUpdatedAttachments(
+                    req,
+                    resultAttachment.getAddedAttachments(),
+                    attachmentTagRepository
+            );
         }
 
         if (req.getDeletedAttachments().size() > 0) {
-            deleteAttachments(resultAttachment.getDeletedAttachments());
+            deleteAttachments(
+                    resultAttachment.getDeletedAttachments()
+            );
         }
+        ;
 
         NewItemFileUpdatedResult fileUpdatedResult = null;
 
-        if (req.getThumbnail().getSize() > 0) {
+        if (req.getThumbnail()!=null && req.getThumbnail().getSize() > 0) {
             System.out.println("업데이트된 썸네일이 있네," +
                     "기존걸 삭제하고ㅡ 이걸 넣자! ");
 
@@ -961,10 +972,10 @@ public class NewItem extends EntityDate {
         //TODO 0614 update할 때 사용자가 기존 값 없애고 보낼 수도 있자나 => fix needed,
          //TODO ITEMTYPE 없으면 99999면 안되게
         //isBlank 랑 isNull로 판단해서 기존 값 / req 값 채워넣기
-        this.name = req.getName().isBlank()?this.name:req.getName();
+        this.name = req.getName().isBlank()?"":req.getName();
 
         this.itemTypes = req.getTypeId()==null?this.itemTypes:
-                itemTypesRepository.findById(req.getTypeId()).orElseThrow(ItemNotFoundException::new);
+                itemTypesRepository.findById(req.getTypeId()).orElseThrow(ItemTypeNotFoundException::new);
 
         this.itemNumber =
                 req.getClassification1Id() + String.valueOf(ItemType.valueOf(
@@ -972,10 +983,10 @@ public class NewItem extends EntityDate {
                 ).label() * 1000000 + (int) (Math.random() * 1000));
 
 
-        this.sharing = req.isSharing();
+        this.sharing = req.getSharing();
 
         this.carType =                 //전용일 때야 차종 생성
-                (!req.isSharing())?
+                (!req.getSharing())?
                         //1. 전용이라면
                         req.getCarTypeId()==null?
                                 //1-1 : 아이디 없으면 (무조건 에러 튕기도록
@@ -1066,7 +1077,10 @@ public class NewItem extends EntityDate {
                 );
 
         if (req.getAddedTag().size() > 0) {
-            addUpdatedAttachments(req, resultAttachment.getAddedAttachments(), attachmentTagRepository);
+            addUpdatedAttachments(
+                    req,
+                    resultAttachment.getAddedAttachments(),
+                    attachmentTagRepository);
         }
 
         if (req.getDeletedAttachments().size() > 0) {
@@ -1075,7 +1089,7 @@ public class NewItem extends EntityDate {
 
         NewItemFileUpdatedResult fileUpdatedResult = null;
         // TODO : 0614 빈 "" 예외처리
-        if (req.getThumbnail().getSize() > 0) {
+        if (req.getThumbnail()!=null && req.getThumbnail().getSize() > 0) {
             System.out.println("업데이트된 썸네일이 있네," +
                     "기존걸 삭제하고ㅡ 이걸 넣자! ");
 
