@@ -116,7 +116,6 @@ public class NewItemDetailDto {
             return new NewItemDetailDto(
                     Item.getId(),
 
-
                     Item.getClassification()==null?
                             nullClassification
                     :ClassificationDto.toDto(Item.getClassification()),
@@ -218,7 +217,6 @@ public class NewItemDetailDto {
         return new NewItemDetailDto(
                 Item.getId(),
 
-
                 Item.getClassification()==null?
                         nullClassification
                         :ClassificationDto.toDto(Item.getClassification()),
@@ -270,11 +268,10 @@ public class NewItemDetailDto {
                 Item.getSupplierOrganization()==null?SupplierDto.toDto():
                         SupplierDto.toDto(Item.getSupplierOrganization()),
 
-                Item.getMakers()==null?MakerSimpleDto.toDtoList():
-                        MakerSimpleDto.toDtoList(Item.getMakers()),
-
-                newItemMakerRepository.findByMaker(Item.getMakers().get(0).getMaker()).get(0).getPartnumber(),
-                Item.isRevise_progress(),
+                Item.getMakers() ==null?
+                        MakerSimpleDto.toDtoList():
+                MakerSimpleDto.toDtoList(Item.getMakers()),
+                "",
 
 
                 Item.isRevise_progress(),
