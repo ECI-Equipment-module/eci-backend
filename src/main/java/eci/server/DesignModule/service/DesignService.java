@@ -181,7 +181,7 @@ public class DesignService {
             throw new DesignUpdateImpossibleException();
         }
 
-        Design.FileUpdatedResult result = design.update(
+        Design.FileUpdatedResult result = design.tempEnd(
                 req,
                 itemRepository,
                 memberRepository

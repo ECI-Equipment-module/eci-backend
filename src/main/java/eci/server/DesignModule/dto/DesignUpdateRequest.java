@@ -34,4 +34,7 @@ public class DesignUpdateRequest {
      */
     private List<Long> deletedAttachments = new ArrayList<>();
 
+    //단순 시연용
+    private String designContent;
+
 }
