@@ -13,6 +13,11 @@ public class ColorDto {
     private String code;
     private String name;
 
+    public static ColorDto toDto() {
+        return new ColorDto(
+        );
+    }
+
     public static ColorDto toDto(Color color) {
         return new ColorDto(
                 color.getId(),
@@ -20,4 +25,5 @@ public class ColorDto {
                 color.getColor()
         );
     }
+
 }

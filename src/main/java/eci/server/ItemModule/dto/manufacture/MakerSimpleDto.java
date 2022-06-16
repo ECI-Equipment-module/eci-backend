@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
@@ -18,6 +19,20 @@ public class MakerSimpleDto {
     Long id;
     private String code;
     private String name;
+
+    public static List<MakerSimpleDto> toDtoList() {
+
+        List<MakerSimpleDto> makerSimpleDtos = new ArrayList<>();
+        makerSimpleDtos.add(
+                new MakerSimpleDto(
+                        99999L,
+                        "-1",
+                        "NONE"
+
+        ));
+        return makerSimpleDtos;
+
+    }
 
     public static MakerSimpleDto toDto(Maker maker) {
         return new MakerSimpleDto(

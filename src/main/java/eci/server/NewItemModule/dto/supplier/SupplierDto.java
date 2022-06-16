@@ -10,6 +10,13 @@ public class SupplierDto {
     private Long id;
     private String name;
 
+    public static SupplierDto toDto(){
+
+        return new SupplierDto(
+            99999L, "NONE"
+        );
+    }
+
     public static SupplierDto toDto(Supplier supplier){
 
         return new SupplierDto(
