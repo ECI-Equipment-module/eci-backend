@@ -81,27 +81,31 @@ public class Design extends EntityDate {
     )
     private List<DesignAttachment> designAttachments;
 
+    /**
+     * 단순 시연용
+     */
+    private String designContent;
 
     public Design(
 
             NewItem item,
             Member member,
             boolean tempsave,
-            boolean readonly
+            boolean readonly,
+            String designContent // 단순 시연용
     ){
 
         this.newItem =item;
         this.member = member;
         this.tempsave = tempsave;
         this.readonly = readonly;
+        this.designContent = designContent; // 단순 시연용
     }
 
     public Design(
 
             NewItem item,
-
             Member member,
-
             Boolean tempsave,
             Boolean readonly
 
@@ -115,17 +119,42 @@ public class Design extends EntityDate {
 
     }
 
+    /**
+     * 단순 시연용
+     * @param item
+     * @param member
+     * @param tempsave
+     * @param readonly
+     * @param designAttachments
+     */
+    public Design(
+            NewItem item,
+            Member member,
+            Boolean tempsave,
+            Boolean readonly,
+            List<DesignAttachment> designAttachments,
+            String designContent //단순 시연용
+    ) {
 
+        this.newItem = item;
+        this.member = member;
+
+        this.tempsave = tempsave;
+        this.readonly = readonly;
+
+        this.designAttachments = new ArrayList<>();
+        addDesignAttachments(designAttachments);
+
+        this.designContent = designContent; //단순 시연용
+
+    }
 
     public Design(
             NewItem item,
-
             Member member,
-
             Boolean tempsave,
             Boolean readonly,
             List<DesignAttachment> designAttachments
-
 
     ) {
 
@@ -192,8 +221,11 @@ public class Design extends EntityDate {
 
         this.setModifiedAt(LocalDateTime.now());
 
+        this.designContent = req.getDesignContent(); //단순 시연용
+
         return fileUpdatedResult;
     }
+
 
 
     public FileUpdatedResult tempEnd(

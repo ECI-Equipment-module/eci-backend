@@ -36,6 +36,8 @@ public class DesignTempCreateRequest {
     private List<Long> tag = new ArrayList<>();
     private List<String> attachmentComment = new ArrayList<>();
 
+    //단순 시연용
+    private String designContent;
 
     public static Design toEntity(
             DesignTempCreateRequest req,
@@ -71,9 +73,11 @@ public class DesignTempCreateRequest {
                             )
                     ).collect(
                             toList()
-                    )
+                    ),
 
                     //Project 생성자에 들이밀기
+
+                    req.getDesignContent() //단순 시연용
 
             );
         }
@@ -93,7 +97,9 @@ public class DesignTempCreateRequest {
                 ).orElseThrow(MemberNotFoundException::new),
 
                 true,
-                false
+                false,
+
+                req.getDesignContent() //단순 시연용
 
         );
     }

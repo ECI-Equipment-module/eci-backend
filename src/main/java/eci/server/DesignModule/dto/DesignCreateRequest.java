@@ -38,7 +38,6 @@ import static java.util.stream.Collectors.toList;
 @AllArgsConstructor
 public class DesignCreateRequest {
 
-
     // 로그인 된 멤버 자동 주입
     @Null
     private Long memberId;
@@ -53,6 +52,8 @@ public class DesignCreateRequest {
 
     private List<String> attachmentComment = new ArrayList<>();
 
+    //단순 시연용
+    private String designContent;
 
     public static Design toEntity(
             DesignCreateRequest req,
@@ -72,9 +73,10 @@ public class DesignCreateRequest {
                     ).orElseThrow(MemberNotFoundException::new),
 
                     true, //05-12 수정사항 반영 - 라우트까지 작성되어야 false
-                    true//readonly default - false, create 하면 true
-            );
+                    true,//readonly default - false, create 하면 true,
 
+                    req.getDesignContent() //단순 시연용
+            );
         }
 
             return new Design(
@@ -103,7 +105,9 @@ public class DesignCreateRequest {
                             )
                     ).collect(
                             toList()
-                    )
+                    ),
+
+                    req.getDesignContent()//단순 시연용
             );
         }
 

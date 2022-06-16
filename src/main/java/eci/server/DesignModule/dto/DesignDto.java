@@ -46,6 +46,8 @@ public class DesignDto {
     private Boolean tempsave;
     private boolean readonly;
 
+    private String designContent; //단순 시연용
+
 
     public static DesignDto toDto(
             Design design,
@@ -93,7 +95,9 @@ public class DesignDto {
                 design.getModifier()==null?null:MemberDto.toDto(design.getModifier()),
 
                 design.getTempsave(),
-                design.getReadonly()
+                design.getReadonly(),
+
+                design.getDesignContent() //단순 시연용
 
 
         );
