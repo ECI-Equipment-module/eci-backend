@@ -127,7 +127,9 @@ public class NewItemDetailDto {
                             ItemTypesDto.toDto(Item.getItemTypes()),
 
                     Item.getItemNumber(),
-                    nullImage,
+                    Item.getThumbnail()==null?
+                            nullImage:
+                            NewItemImageDto.toDto(Item.getThumbnail()),
                     Item.isSharing(),
 
                     Item.getCarType()==null?
