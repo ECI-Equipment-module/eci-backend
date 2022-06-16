@@ -29,6 +29,7 @@ import eci.server.ProjectModule.entity.project.CarType;
 import eci.server.ProjectModule.entity.project.ClientOrganization;
 import eci.server.ProjectModule.exception.CarTypeNotFoundException;
 import eci.server.ProjectModule.exception.ClientOrganizationNotFoundException;
+import eci.server.ProjectModule.exception.ProduceOrganizationNotFoundException;
 import eci.server.ProjectModule.repository.carType.CarTypeRepository;
 import eci.server.ProjectModule.repository.clientOrg.ClientOrganizationRepository;
 import lombok.*;
@@ -790,16 +791,18 @@ public class NewItem extends EntityDate {
             CarTypeRepository carTypeRepository,
             AttachmentTagRepository attachmentTagRepository
     ) {
-
+        System.out.println("여기로들어오는거 맞지?");
         this.setModifiedAt(LocalDateTime.now());
 
         AtomicInteger k = new AtomicInteger();
 
         //TODO update할 때 사용자가 기존 값 없애고 보낼 수도 있자나 => fix needed
         //isBlank 랑 isNull로 판단해서 기존 값 / req 값 채워넣기
-        this.name = req.getName().isBlank() ? this.name : req.getName();
+        this.name = req.getName()==null || req.getName().isBlank() ?
+                " " : req.getName();
 
-        this.itemTypes = req.getTypeId() == null ? this.itemTypes :
+        this.itemTypes = req.getTypeId() == null ?
+                this.itemTypes :
                 itemTypesRepository.findById(req.getTypeId()).orElseThrow(ItemNotFoundException::new);
 
 
@@ -807,58 +810,77 @@ public class NewItem extends EntityDate {
 
         this.carType =     //임시저장 상태는 차종 없어도됨
                         req.getCarTypeId() == null ?
-                                        null:
+                                carTypeRepository.findById(99999L).orElseThrow(CarTypeNotFoundException::new):
                                         //null 아니면 입력받은 것
                                         carTypeRepository.findById(req.getCarTypeId()).orElseThrow(CarTypeNotFoundException::new);
 
 
-        this.integrate = req.getIntegrate().isBlank() ? this.integrate : req.getIntegrate();
+        this.integrate = req.getIntegrate().isBlank() ?
+                "" : req.getIntegrate();
 
-        this.curve = req.getCurve().isBlank() ? this.curve : req.getCurve();
+        this.curve = req.getCurve().isBlank() ?
+                "" : req.getCurve();
 
-        this.width = req.getWidth().isBlank() ? this.width : req.getWidth();
+        this.width = req.getWidth().isBlank() ?
+               "" : req.getWidth();
 
-        this.height = req.getHeight().isBlank() ? this.height : req.getHeight();
+        this.height = req.getHeight().isBlank() ?
+                "" : req.getHeight();
 
-        this.thickness = req.getThickness().isBlank() ? this.thickness : req.getThickness();
+        this.thickness = req.getThickness().isBlank() ?
+                "" : req.getThickness();
 
-        this.weight = req.getWeight().isBlank() ? this.weight : req.getWeight();
+        this.weight = req.getWeight().isBlank() ?
+                "" : req.getWeight();
 
-        this.importance = req.getImportance().isBlank() ? this.importance : req.getImportance();
+        this.importance = req.getImportance().isBlank() ?
+               "" : req.getImportance();
 
-        this.color = req.getColorId() == null ? this.color : colorRepository.findById(req.getColorId())
+        this.color = req.getColorId() == null ?
+                colorRepository.findById(99999L).orElseThrow(ColorNotFoundException::new)
+                :
+    colorRepository.findById(req.getColorId())
                 .orElseThrow(ColorNotFoundException::new);
 
-        this.loadQuantity = req.getLoadQuantity().isBlank() ? this.loadQuantity : req.getLoadQuantity();
+        this.loadQuantity = req.getLoadQuantity().isBlank() ?
+                "" : req.getLoadQuantity();
 
         this.forming = req.getForming()==null || req.getForming().isBlank() ? this.forming : req.getForming();
 
-        this.coatingWay = req.getCoatingWayId() == null ? this.coatingWay :
+        this.coatingWay = req.getCoatingWayId() == null ?
+                coatingWayRepository.findById(99999L).orElseThrow(CoatingNotFoundException::new) :
                 coatingWayRepository.findById
                         (req.getCoatingWayId()).orElseThrow(CoatingNotFoundException::new);
 
-        this.coatingType = req.getCoatingTypeId() == null ? this.coatingType :
+        this.coatingType = req.getCoatingTypeId() == null ?
+                coatingTypeRepository.findById(99999L).orElseThrow(CoatingNotFoundException::new) :
                 coatingTypeRepository.findById
                         (req.getCarTypeId()).orElseThrow(CoatingNotFoundException::new);
 
 
-        this.modulus = req.getModulus().isBlank() ? this.modulus : req.getModulus();
+        this.modulus = req.getModulus().isBlank() ? "" : req.getModulus();
 
-        this.screw = req.getScrew().isBlank() ? this.screw : req.getScrew();
+        this.screw = req.getScrew().isBlank() ? "" : req.getScrew();
 
-        this.cuttingType = req.getCuttingType().isBlank() ? this.cuttingType : req.getCuttingType();
+        this.cuttingType = req.getCuttingType().isBlank() ? "" : req.getCuttingType();
 
-        this.lcd = req.getLcd().isBlank() ? this.lcd : req.getLcd();
+        this.lcd = req.getLcd().isBlank() ? "": req.getLcd();
 
-        this.displaySize = req.getDisplaySize().isBlank() ? this.displaySize : req.getDisplaySize();
+        this.displaySize = req.getDisplaySize().isBlank() ? "" : req.getDisplaySize();
 
-        this.screwHeight = req.getScrewHeight().isBlank() ? this.screwHeight : req.getScrewHeight();
+        this.screwHeight = req.getScrewHeight().isBlank() ? "" : req.getScrewHeight();
 
-        this.clientOrganization = req.getClientOrganizationId() == null ? this.clientOrganization :
+        this.clientOrganization = req.getClientOrganizationId() == null ?
+                clientOrganizationRepository.findById(99999L)
+                        .orElseThrow(ClientOrganizationNotFoundException::new)
+                :
                 clientOrganizationRepository.findById(req.getClientOrganizationId())
                         .orElseThrow(ClientOrganizationNotFoundException::new);
 
-        this.supplierOrganization = req.getSupplierOrganizationId() == null ? this.supplierOrganization :
+        this.supplierOrganization = req.getSupplierOrganizationId() == null ?
+                supplierRepository.findById(99999L)
+                        .orElseThrow(ProduceOrganizationNotFoundException::new)
+                :
                 supplierRepository.findById(req.getSupplierOrganizationId())
                         .orElseThrow(SupplierNotFoundException::new);
 
