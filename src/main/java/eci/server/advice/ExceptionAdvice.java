@@ -23,6 +23,7 @@ import eci.server.ItemModule.exception.route.UpdateImpossibleException;
 import eci.server.NewItemModule.exception.*;
 import eci.server.ProjectModule.exception.CarTypeNotFoundException;
 import eci.server.ProjectModule.exception.IdNotAppropriateException;
+import eci.server.ProjectModule.exception.ProjectEmptyException;
 import eci.server.ProjectModule.exception.ProjectNotLinkedException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -371,6 +372,13 @@ public class ExceptionAdvice {
     public Response DevelopmentBomNotFoundException(DevelopmentBomNotFoundException e) {
         log.info("e = {}", e.getMessage());
         return Response.failure(404, "개발봄이 존재하지 않습니다.");
+    }
+
+    @ExceptionHandler(ProjectEmptyException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Response ProjectEmptyException(ProjectEmptyException e) {
+        log.info("e = {}", e.getMessage());
+        return Response.failure(404, "채워지지 않은 프로젝트 필수 항목이 있습니다.");
     }
 
 }

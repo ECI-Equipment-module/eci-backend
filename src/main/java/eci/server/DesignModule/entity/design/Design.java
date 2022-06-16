@@ -145,7 +145,9 @@ public class Design extends EntityDate {
      * 추가할 attachments
      *
      */
-    private void addDesignAttachments(List<DesignAttachment> added) {
+    private void addDesignAttachments(
+            List<DesignAttachment> added
+    ) {
         added.stream().forEach(i -> {
             designAttachments.add(i);
             i.initDesign(this);

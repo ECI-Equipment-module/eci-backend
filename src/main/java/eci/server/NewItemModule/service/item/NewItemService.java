@@ -559,10 +559,7 @@ public class NewItemService {
         itemListElse.addAll(finalProducts);
         //여기에 상태 완료된 제품 아이템 더하기
 
-
         return itemListElse;
-
-
     }
 
 }

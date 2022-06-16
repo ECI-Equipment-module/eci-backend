@@ -7,6 +7,8 @@ import eci.server.ItemModule.dto.item.ItemProjectDashboardDto;
 
 import eci.server.ItemModule.entity.newRoute.RouteOrdering;
 
+import eci.server.ItemModule.exception.item.ItemNotFoundException;
+import eci.server.ItemModule.exception.item.ItemUpdateImpossibleException;
 import eci.server.ItemModule.exception.member.MemberNotFoundException;
 
 import eci.server.ItemModule.repository.member.MemberRepository;
@@ -14,6 +16,8 @@ import eci.server.ItemModule.repository.newRoute.RouteOrderingRepository;
 import eci.server.ItemModule.repository.newRoute.RouteProductRepository;
 import eci.server.ItemModule.service.file.FileService;
 
+import eci.server.NewItemModule.dto.newItem.create.NewItemCreateResponse;
+import eci.server.NewItemModule.entity.NewItem;
 import eci.server.NewItemModule.repository.attachment.AttachmentTagRepository;
 import eci.server.NewItemModule.repository.item.NewItemRepository;
 import eci.server.ProjectModule.dto.carType.CarTypeDto;
@@ -64,18 +68,11 @@ public class ProjectService {
     private final BomRepository bomRepository;
     private final PreliminaryBomRepository preliminaryBomRepository;
 
-//    public ProjectListDto readDashboardAll(ProjectReadCondition cond) {
-//        return ProjectListDto.toDto(
-//                projectRepository.findAllByCondition(cond)
-//        );
-//    }
-
     public ProjectListDto readDashboardAll(ProjectReadCondition cond) {
         return ProjectListDto.toDto(
                 projectRepository.findAllByCondition(cond)
         );
     }
-
 
     @Transactional
     public ProjectTempCreateUpdateResponse tempCreate(ProjectTemporaryCreateRequest req) {
@@ -174,7 +171,8 @@ public class ProjectService {
                 produceOrganizationRepository,
                 clientOrganizationRepository,
                 carTypeRepository,
-                memberRepository
+                memberRepository,
+                attachmentTagRepository
         );
 
 
@@ -186,6 +184,47 @@ public class ProjectService {
                 result.getAttachmentUpdatedResult().getDeletedAttachments()
         );
         return new ProjectTempCreateUpdateResponse(id);
+
+    }
+
+
+    @Transactional
+    public NewItemCreateResponse tempEnd(
+            Long id, ProjectUpdateRequest req) {
+
+        Project project = projectRepository.findById(id).
+                orElseThrow(ProjectNotFoundException::new);
+
+        if (!project.getTempsave() || project.getReadonly()) {
+            //tempsave가 false면 찐 저장 상태
+            //찐 저장 상태라면 UPDATE 불가, 임시저장 일때만 가능
+            //readonly가 true라면 수정 불가상태
+            throw new ProjectUpdateImpossibleException();
+        }
+
+        Project.FileUpdatedResult result = project.tempEnd(
+            req,
+                newItemRepository,
+                projectTypeRepository,
+                projectLevelRepository,
+                produceOrganizationRepository,
+                clientOrganizationRepository,
+                carTypeRepository,
+                memberRepository,
+                attachmentTagRepository
+        );
+
+
+
+        uploadAttachments(
+                result.getAttachmentUpdatedResult().getAddedAttachments(),
+                result.getAttachmentUpdatedResult().getAddedAttachmentFiles()
+        );
+        deleteAttachments(
+                result.getAttachmentUpdatedResult().getDeletedAttachments()
+        );
+
+        return new NewItemCreateResponse(id);
 
     }
 
