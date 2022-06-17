@@ -1,4 +1,4 @@
-package eci.server.NewItemModule.service;
+package eci.server.NewItemModule.service.supplier;
 
 
 import eci.server.ItemModule.dto.manufacture.MakerListDto;
