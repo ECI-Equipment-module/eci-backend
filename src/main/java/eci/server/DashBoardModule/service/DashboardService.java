@@ -509,7 +509,7 @@ public class DashboardService {
                 AccessExpiredException::new
         );
 
-        //1-1 temp save 용 ) 내가 작성자인 모든 디자인 데려오기
+        //1-1 temp save 용 ) 내가 작성자인 모든 아이템 데려오기
         List<NewItem> NewItemList = newItemRepository.findByMember(member1);
         //1-2 temp-save 가 true 인 것만 담는 리스트
         List<NewItem> tempSavedNewItemList = new ArrayList<>();
@@ -564,43 +564,46 @@ public class DashboardService {
             }
         }
 
-        //2) REJECT - 라우트 프로덕트들 중에서 현재이고,
-        // 디자인 설계이고,
+        //2) REJECT - 라우트 프로덕트들 중에서 현재이고,,
         // 라우트프로덕트 멤버가 나이고,
         // preREJECTED=TRUE 인 것
         List<TodoResponse> rejectedNewItemTodoResponses = new ArrayList<>();
 
-        for (RouteProduct routeProduct : myRouteProductList) { //myRoute-> 내꺼 + 현재
+        for (RouteProduct routeProduct : routeProductList) { //myRoute-> 내꺼 + 현재 진행 중
             //06-01 수정
-            if (routeProduct.isPreRejected() &&
+            for (RouteProductMember routeProductMember : routeProduct.getMembers()) {
+                if (routeProductMember.getMember().getId().equals(member1.getId())) {
+                    if (routeProduct.isPreRejected() &&
 
-                    (
-                            //TODO 이렇게 문자열로 구분하는게 아닌, ROUTE TYPE으로
+                            (
+                                    //TODO 이렇게 문자열로 구분하는게 아닌, ROUTE TYPE으로
 //                            routeProduct.getRoute_name().equals("Item(사내가공품/외주구매품-시방)등록 Request(설계자)")
 //                            || routeProduct.getRoute_name().equals("Item Request")
 //                            || routeProduct.getRoute_name().equals("Item(외주구매품 단순)신청 Request(설계자)")
 //                            || routeProduct.getRoute_name().equals("Item(제품)등록 Request(설계자)")
 //                            || routeProduct.getRoute_name().equals("Item(원재료) Request(설계자)")
 
-                            routeProduct.getType().getModule().equals("ITEM")
-                            &&
-                            routeProduct.getType().getName().equals("REQUEST")
+                                    routeProduct.getType().getModule().equals("ITEM")
+                                            &&
+                                            routeProduct.getType().getName().equals("REQUEST")
 
-                    )
+                            )
 
-            ) {
+                    ) {
 
-                NewItem target = routeProduct.getRouteOrdering().getNewItem();
+                        NewItem target = routeProduct.getRouteOrdering().getNewItem();
 
-                rejectedNewItemTodoResponses.add(
-                        new TodoResponse(
-                                target.getId(),
-                                target.getName(),
-                                target.getItemTypes().getItemType().toString(),
-                                target.getItemNumber().toString()
-                        )
-                );
-            }
+                        rejectedNewItemTodoResponses.add(
+                                new TodoResponse(
+                                        target.getId(),
+                                        target.getName(),
+                                        target.getItemTypes().getItemType().toString(),
+                                        target.getItemNumber().toString()
+                                )
+                        );
+                    }
+                }
+        }
         }
         List<TodoResponse> REJECTED = new ArrayList<>(rejectedNewItemTodoResponses);
 

@@ -882,7 +882,7 @@ public class NewItem extends EntityDate {
                         .orElseThrow(SupplierNotFoundException::new);
 
         this.makers = req.getMakersId()==null?
-                makerRepository.findById(99999L).orElseThrow(MakerNotFoundException::new)
+                makerRepository.findById(-1L).orElseThrow(MakerNotEmptyException::new)
                 :makerRepository.findById(req.getMakersId()).orElseThrow(MakerNotFoundException::new);
 //        this.makers =
 //                makers.stream().map(

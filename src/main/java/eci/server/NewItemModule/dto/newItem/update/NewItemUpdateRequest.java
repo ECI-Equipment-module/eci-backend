@@ -95,8 +95,10 @@ public class NewItemUpdateRequest {
     private List<Long> deletedAttachments = new ArrayList<>();
 
     //private List<Long> makersId = new ArrayList<>();
-    Long makersId ;
-    private List<String> partnumbers = new ArrayList<>();
+    private Long makersId ;
+    //private List<String> partnumbers = new ArrayList<>();
+
+    private String partnumbers ;
 
     @Null
     private Long memberId;

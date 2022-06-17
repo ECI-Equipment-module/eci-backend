@@ -15,6 +15,7 @@ import eci.server.ItemModule.entity.newRoute.RouteProduct;
 import eci.server.ItemModule.entity.newRoute.RouteProductMember;
 import eci.server.ItemModule.exception.item.ItemNotFoundException;
 import eci.server.ItemModule.exception.item.ItemUpdateImpossibleException;
+import eci.server.ItemModule.exception.member.auth.AccessExpiredException;
 import eci.server.ItemModule.exception.member.auth.AuthenticationEntryPointException;
 import eci.server.ItemModule.exception.route.RouteNotFoundException;
 import eci.server.ItemModule.repository.color.ColorRepository;
@@ -263,7 +264,7 @@ public class NewItemService {
         ).orElseThrow(RouteNotFoundException::new);
 
         Member currentMember = memberRepository.findById(authHelper.extractMemberId()).orElseThrow(
-                AuthenticationEntryPointException::new
+                AccessExpiredException::new
         );
 
 

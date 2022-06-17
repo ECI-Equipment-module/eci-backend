@@ -424,9 +424,17 @@ public class ExceptionAdvice {
 
     @ExceptionHandler(MakerNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public Response NameNotEmptyException(MakerNotFoundException e) {
+    public Response MakerNotFoundException(MakerNotFoundException e) {
         log.info("e = {}", e.getMessage());
-        return Response.failure(404, "Maker 은 필수입니다.");
+        return Response.failure(404, "존재하지 않는 Maker 아이디입니다.");
+    }
+
+
+    @ExceptionHandler(MakerNotEmptyException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Response MakerNotEmptyException(MakerNotEmptyException e) {
+        log.info("e = {}", e.getMessage());
+        return Response.failure(404, "Maker 아이디는 필수입니다.");
     }
 
 }
