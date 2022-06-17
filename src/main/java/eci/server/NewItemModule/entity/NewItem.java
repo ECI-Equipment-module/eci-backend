@@ -994,7 +994,7 @@ public class NewItem extends EntityDate {
 
         //TODO 0614 update할 때 사용자가 기존 값 없애고 보낼 수도 있자나 => fix needed,
          //TODO ITEMTYPE 없으면 99999면 안되게
-        //isBlank 랑 isNull로 판단해서 기존 값 / req 값 채워넣기
+        //isBlank 랑 isNull로 판단해서 null / 기존 값 / req 값 채워넣기
         this.name = req.getName().isBlank()?"":req.getName();
 
         this.itemTypes = req.getTypeId()==null?this.itemTypes:
@@ -1019,12 +1019,13 @@ public class NewItem extends EntityDate {
 
                         :
                         //2. 공용이라면
-                        carTypeRepository.findById(99999L).orElseThrow(CarTypeNotFoundException::new);
+                        null;
+                        //carTypeRepository.findById(99999L).orElseThrow(CarTypeNotFoundException::new);
 
 
-                this.integrate = req.getIntegrate().isBlank()?this.integrate:req.getIntegrate();
+                this.integrate = req.getIntegrate().isBlank()?null:req.getIntegrate();
 
-        this.curve = req.getCurve().isBlank()?this.curve:req.getCurve();
+        this.curve = req.getCurve().isBlank()?null:req.getCurve();
 
         this.width = req.getWidth().isBlank()?this.width:req.getWidth();
 
@@ -1073,8 +1074,9 @@ public class NewItem extends EntityDate {
                 supplierRepository.findById(req.getSupplierOrganizationId())
                         .orElseThrow(SupplierNotFoundException::new);
 
-        this.makers = req.getMakersId()==null?makerRepository.findById(-1L).orElseThrow(MakerNotFoundException::new)
-                :makerRepository.findById(req.getMakersId()).orElseThrow(MakerNotFoundException::new);
+        this.makers = req.getMakersId()==null?//makerRepository.findById(-1L).orElseThrow(MakerNotFoundException::new)
+            null
+            :makerRepository.findById(req.getMakersId()).orElseThrow(MakerNotFoundException::new);
 //        this.makers =
 //                makers.stream().map(
 //

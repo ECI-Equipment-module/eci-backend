@@ -252,6 +252,33 @@ public class RouteOrdering extends EntityDate {
             }
         }
 
+        //06-17 : 거부된 라우트 프로덕트의 라우트 타입 검사
+
+        // 1,9, 11, 13 에 따라서 tempSave 랑 readOnly 의 true,false 값 변경
+        switch(routeProductList.get(rejectedIndex).getType().getId().toString()) {
+
+            // 1 (아이템)
+            case "1":
+                this.getNewItem().setTempsave(true);
+                this.getNewItem().setReadonly(false);
+                break;
+            // 9 (플젝)
+            case "9":
+                this.getProject().setTempsave(true);
+                this.getProject().setReadonly(false);
+                break;
+            // 13 (디자인)
+            case "13":
+                this.getDesign().setTempsave(true);
+                this.getDesign().setReadonly(false);
+                break;
+             //11 (봄)
+            case "11":
+                this.getBom().setTempsave(true);
+                this.getBom().setReadonly(false);
+                break;
+        }
+
         /**
          * 거부됐던 애의 reject 는 true 로 갱신하고 (거부받은자에게 알림용)
          * 거부한 차례 애의 comment엔 거부 코멘트(req에서 받은 것) set

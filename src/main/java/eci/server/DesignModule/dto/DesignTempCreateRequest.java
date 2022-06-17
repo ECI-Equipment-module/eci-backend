@@ -60,7 +60,6 @@ public class DesignTempCreateRequest {
                     ).orElseThrow(MemberNotFoundException::new),
 
                     true,
-
                     false, //임시저장은 readonly false //05-12 수정사항반영
 
                     req.attachments.stream().map(

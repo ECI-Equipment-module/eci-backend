@@ -178,7 +178,7 @@ public class NewItemTemporaryCreateRequest {
                                     :null
                     ),
 
-                    req.getSharing() == null || req.getSharing().toString().isBlank()? true : req.sharing,
+                    req.getSharing() == null || req.getSharing().toString().isBlank() || req.sharing,
 
                     //전용일 때야 차종 생성
                     req.getCarTypeId()!=null?
@@ -201,18 +201,22 @@ public class NewItemTemporaryCreateRequest {
                     req.importance.isBlank()?"":req.importance,
 
                     req.getColorId()==null?
-                            colorRepository.findById(99999L).orElseThrow(ColorNotFoundException::new):
+                            null:
+                            //colorRepository.findById(99999L).orElseThrow(ColorNotFoundException::new):
                             colorRepository.findById(req.colorId).orElseThrow(ColorNotFoundException::new),
 
                     req.loadQuantity.isBlank()?"":req.loadQuantity,
 
                     req.getForming()==null||req.forming.isBlank()?"":req.forming,
 
-                    req.getCoatingWayId()==null?coatingWayRepository.findById(99999L).orElseThrow(CoatingNotFoundException::new):
+                    req.getCoatingWayId()==null?
+                            null:
+                            //coatingWayRepository.findById(99999L).orElseThrow(CoatingNotFoundException::new):
                             coatingWayRepository.findById(req.coatingWayId).orElseThrow(CoatingNotFoundException::new),
 
                     req.getCoatingTypeId()==null?
-                            coatingTypeRepository.findById(99999L).orElseThrow(CoatingNotFoundException::new):
+                            null:
+                            //coatingTypeRepository.findById(99999L).orElseThrow(CoatingNotFoundException::new):
                             coatingTypeRepository.findById(req.coatingTypeId).orElseThrow(CoatingNotFoundException::new),
 
                     req.modulus.isBlank()?"":req.modulus,
@@ -228,20 +232,24 @@ public class NewItemTemporaryCreateRequest {
                     req.screwHeight.isBlank()?null:req.screwHeight,
 
                     req.getClientOrganizationId() == null ?
-                            clientOrganizationRepository.findById(99999L)
-                                    .orElseThrow(ClientOrganizationNotFoundException::new)
+                            null
+                            //clientOrganizationRepository.findById(99999L)
+                            //        .orElseThrow(ClientOrganizationNotFoundException::new)
                             :
                             clientOrganizationRepository.findById(req.getClientOrganizationId())
                                     .orElseThrow(ClientOrganizationNotFoundException::new),
 
                     req.getSupplierOrganizationId() == null ?
-                            supplierRepository.findById(99999L)
-                                    .orElseThrow(ProduceOrganizationNotFoundException::new):
+                            null
+                            :
+//                            supplierRepository.findById(99999L)
+//                                    .orElseThrow(ProduceOrganizationNotFoundException::new):
                             supplierRepository.findById(req.getSupplierOrganizationId())
                                     .orElseThrow(ProduceOrganizationNotFoundException::new),
 
                     req.getMakersId()==null?
-                            makerRepository.findById(99999L).orElseThrow(MemberNotFoundException::new)
+                            null
+                            //makerRepository.findById(99999L).orElseThrow(MemberNotFoundException::new)
                             :makerRepository.findById(req.getMakersId()).orElseThrow(MemberNotFoundException::new),
 //                    req.makersId.stream().map(
 //                            i ->
@@ -308,7 +316,7 @@ public class NewItemTemporaryCreateRequest {
                                 :null
                 ),
 
-                req.getSharing() == null || req.getSharing().toString().isBlank()? true : req.sharing,
+                req.getSharing() == null || req.getSharing().toString().isBlank() || req.sharing,
 
                 //전용일 때야 차종 생성
                 req.getCarTypeId()!=null?
@@ -331,18 +339,22 @@ public class NewItemTemporaryCreateRequest {
                 req.importance.isBlank()?"":req.importance,
 
                 req.getColorId()==null?
-                        colorRepository.findById(99999L).orElseThrow(ColorNotFoundException::new):
+                        null:
+                        //colorRepository.findById(99999L).orElseThrow(ColorNotFoundException::new):
                         colorRepository.findById(req.colorId).orElseThrow(ColorNotFoundException::new),
 
                 req.loadQuantity.isBlank()?"":req.loadQuantity,
 
-                req.forming.isBlank()?"":req.forming,
+                req.getForming()==null||req.forming.isBlank()?"":req.forming,
 
-                req.getCoatingWayId()==null?coatingWayRepository.findById(99999L).orElseThrow(CoatingNotFoundException::new):
+                req.getCoatingWayId()==null?
+                        null:
+                        //coatingWayRepository.findById(99999L).orElseThrow(CoatingNotFoundException::new):
                         coatingWayRepository.findById(req.coatingWayId).orElseThrow(CoatingNotFoundException::new),
 
                 req.getCoatingTypeId()==null?
-                        coatingTypeRepository.findById(99999L).orElseThrow(CoatingNotFoundException::new):
+                        null:
+                        //coatingTypeRepository.findById(99999L).orElseThrow(CoatingNotFoundException::new):
                         coatingTypeRepository.findById(req.coatingTypeId).orElseThrow(CoatingNotFoundException::new),
 
                 req.modulus.isBlank()?"":req.modulus,
@@ -358,28 +370,32 @@ public class NewItemTemporaryCreateRequest {
                 req.screwHeight.isBlank()?null:req.screwHeight,
 
                 req.getClientOrganizationId() == null ?
-                        clientOrganizationRepository.findById(99999L)
-                                .orElseThrow(ClientOrganizationNotFoundException::new)
+                        null
+                        //clientOrganizationRepository.findById(99999L)
+                        //        .orElseThrow(ClientOrganizationNotFoundException::new)
                         :
                         clientOrganizationRepository.findById(req.getClientOrganizationId())
                                 .orElseThrow(ClientOrganizationNotFoundException::new),
 
                 req.getSupplierOrganizationId() == null ?
-                        supplierRepository.findById(99999L)
-                                .orElseThrow(ProduceOrganizationNotFoundException::new):
+                        null
+                        :
+//                            supplierRepository.findById(99999L)
+//                                    .orElseThrow(ProduceOrganizationNotFoundException::new):
                         supplierRepository.findById(req.getSupplierOrganizationId())
                                 .orElseThrow(ProduceOrganizationNotFoundException::new),
 
                 req.getMakersId()==null?
-                        makerRepository.findById(99999L).orElseThrow(MakerNotFoundException::new)
-                : makerRepository.findById(req.makersId).orElseThrow(MakerNotFoundException::new),
-//                req.makersId.stream().map(
-//                        i ->
-//                                makerRepository.
-//                                        findById(i).orElseThrow(ManufactureNotFoundException::new)
-//                ).collect(
-//                        toList()
-//                ),
+                        null
+                        //makerRepository.findById(99999L).orElseThrow(MemberNotFoundException::new)
+                        :makerRepository.findById(req.getMakersId()).orElseThrow(MemberNotFoundException::new),
+//                    req.makersId.stream().map(
+//                            i ->
+//                                    makerRepository.
+//                                            findById(i).orElseThrow(ManufactureNotFoundException::new)
+//                    ).collect(
+//                            toList()
+//                    ),
 
                 req.partnumbers,
 
@@ -391,6 +407,7 @@ public class NewItemTemporaryCreateRequest {
                 true, //임시저장 (라우트 작성 해야 false로 변한다)
 
                 false, //revise progress 중 아니다
+
 
                 req.attachments.stream().map(
                         i -> new NewItemAttachment(

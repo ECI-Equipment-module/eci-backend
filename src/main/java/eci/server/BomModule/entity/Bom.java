@@ -58,4 +58,13 @@ public class Bom extends EntityDate {
         this.member = member;
     }
 
+    //06-17 추가
+    public void setTempsave(Boolean tempsave) {
+        this.tempsave = tempsave;
+    }
+
+    //06-17 추가
+    public void setReadonly(Boolean readonly) {
+        this.readonly = readonly;
+    }
 }

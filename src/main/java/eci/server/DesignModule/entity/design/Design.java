@@ -77,6 +77,16 @@ public class Design extends EntityDate {
      */
     private String designContent;
 
+    //06-17 추가
+    public void setTempsave(Boolean tempsave) {
+        this.tempsave = tempsave;
+    }
+
+    //06-17 추가
+    public void setReadonly(Boolean readonly) {
+        this.readonly = readonly;
+    }
+
     public Design(
 
             NewItem item,
@@ -183,7 +193,11 @@ public class Design extends EntityDate {
 
 
     {
-            this.newItem=
+
+        this.tempsave = true; //라우트 작성하기 전이니깐 !
+        this.readonly = false;  //0605- 이 부분하나가 변경, 이 것은 얘를 false 에서 true로 변경 !
+
+        this.newItem=
                 itemRepository.findById(req.getItemId())
                         .orElseThrow(ItemNotFoundException::new);
 
@@ -224,12 +238,13 @@ public class Design extends EntityDate {
             MemberRepository memberRepository
     )
 
-
     {
-
         if(req.getDesignContent().length()==0){
             throw new DesignContentNotEmptyException();
         }
+
+        this.tempsave = true; //라우트 작성하기 전이니깐 !
+        this.readonly = true; //0605- 이 부분하나가 변경, 이 것은 얘를 false 에서 true로 변경 !
 
         this.newItem=
                 itemRepository.findById(req.getItemId())

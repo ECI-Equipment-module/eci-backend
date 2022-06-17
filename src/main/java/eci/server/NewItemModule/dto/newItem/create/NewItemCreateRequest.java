@@ -171,8 +171,6 @@ public class NewItemCreateRequest {
             // attachment 가 없을 경우
             return new NewItem(
 
-
-
                     new Classification(
                             classification1Repository.findById(req.classification1Id).orElseThrow(ClassificationNotFoundException::new),
                             classification2Repository.findById(req.classification2Id).orElseThrow(ClassificationNotFoundException::new),
@@ -221,18 +219,22 @@ public class NewItemCreateRequest {
                     req.importance.isBlank()?"":req.importance,
 
                     req.getColorId()==null?
-                            colorRepository.findById(99999L).orElseThrow(ColorNotFoundException::new):
+                            null:
+                            //colorRepository.findById(99999L).orElseThrow(ColorNotFoundException::new):
                     colorRepository.findById(req.colorId).orElseThrow(ColorNotFoundException::new),
 
                     req.loadQuantity.isBlank()?"":req.loadQuantity,
 
                     req.forming.isBlank()?"":req.forming,
 
-                    req.getCoatingWayId()==null?coatingWayRepository.findById(99999L).orElseThrow(CoatingNotFoundException::new):
+                    req.getCoatingWayId()==null?
+                            null:
+                            //coatingWayRepository.findById(99999L).orElseThrow(CoatingNotFoundException::new):
                     coatingWayRepository.findById(req.coatingWayId).orElseThrow(CoatingNotFoundException::new),
 
                     req.getCoatingTypeId()==null?
-            coatingTypeRepository.findById(99999L).orElseThrow(CoatingNotFoundException::new):
+                            null:
+            //coatingTypeRepository.findById(99999L).orElseThrow(CoatingNotFoundException::new):
                     coatingTypeRepository.findById(req.coatingTypeId).orElseThrow(CoatingNotFoundException::new),
 
                     req.modulus.isBlank()?"":req.modulus,
@@ -248,15 +250,17 @@ public class NewItemCreateRequest {
                     req.screwHeight.isBlank()?null:req.screwHeight,
 
                     req.getClientOrganizationId() == null ?
-                            clientOrganizationRepository.findById(99999L)
-                                    .orElseThrow(ClientOrganizationNotFoundException::new)
+                            null
+//                            clientOrganizationRepository.findById(99999L)
+//                                    .orElseThrow(ClientOrganizationNotFoundException::new)
             :
                             clientOrganizationRepository.findById(req.getClientOrganizationId())
                                     .orElseThrow(ClientOrganizationNotFoundException::new),
 
                     req.getSupplierOrganizationId() == null ?
-                            supplierRepository.findById(99999L)
-                                    .orElseThrow(ProduceOrganizationNotFoundException::new):
+                            null:
+//                            supplierRepository.findById(99999L)
+//                                    .orElseThrow(ProduceOrganizationNotFoundException::new):
                             supplierRepository.findById(req.getSupplierOrganizationId())
                                     .orElseThrow(ProduceOrganizationNotFoundException::new),
 
@@ -269,7 +273,8 @@ public class NewItemCreateRequest {
 //                    ),
 
                     req.getMakersId()==null?
-                            makerRepository.findById(req.getMakersId()).orElseThrow(MakerNotFoundException::new):
+                            null:
+                            //makerRepository.findById(req.getMakersId()).orElseThrow(MakerNotFoundException::new):
                             makerRepository.findById(req.getMakersId()).orElseThrow(MakerNotFoundException::new),
 
                     req.partnumbers,
@@ -343,18 +348,22 @@ public class NewItemCreateRequest {
                 req.importance.isBlank()?"":req.importance,
 
                 req.getColorId()==null?
-                        colorRepository.findById(99999L).orElseThrow(ColorNotFoundException::new):
+                        null:
+                        //colorRepository.findById(99999L).orElseThrow(ColorNotFoundException::new):
                         colorRepository.findById(req.colorId).orElseThrow(ColorNotFoundException::new),
 
                 req.loadQuantity.isBlank()?"":req.loadQuantity,
 
                 req.forming.isBlank()?"":req.forming,
 
-                req.getCoatingWayId()==null?coatingWayRepository.findById(99999L).orElseThrow(CoatingNotFoundException::new):
+                req.getCoatingWayId()==null?
+                        null:
+                        //coatingWayRepository.findById(99999L).orElseThrow(CoatingNotFoundException::new):
                         coatingWayRepository.findById(req.coatingWayId).orElseThrow(CoatingNotFoundException::new),
 
                 req.getCoatingTypeId()==null?
-                        coatingTypeRepository.findById(99999L).orElseThrow(CoatingNotFoundException::new):
+                        null:
+                        //coatingTypeRepository.findById(99999L).orElseThrow(CoatingNotFoundException::new):
                         coatingTypeRepository.findById(req.coatingTypeId).orElseThrow(CoatingNotFoundException::new),
 
                 req.modulus.toString().isBlank()?"":req.modulus,
@@ -370,15 +379,17 @@ public class NewItemCreateRequest {
                 req.screwHeight.isBlank()?null:req.screwHeight,
 
                 req.getClientOrganizationId() == null ?
-                        clientOrganizationRepository.findById(99999L)
-                                .orElseThrow(ClientOrganizationNotFoundException::new)
+                        null
+//                        clientOrganizationRepository.findById(99999L)
+//                                .orElseThrow(ClientOrganizationNotFoundException::new)
                         :
                         clientOrganizationRepository.findById(req.getClientOrganizationId())
                                 .orElseThrow(ClientOrganizationNotFoundException::new),
 
                 req.getSupplierOrganizationId() == null ?
-                        supplierRepository.findById(99999L)
-                                .orElseThrow(ProduceOrganizationNotFoundException::new):
+//                        supplierRepository.findById(99999L)
+//                                .orElseThrow(ProduceOrganizationNotFoundException::new):
+                        null:
                         supplierRepository.findById(req.getSupplierOrganizationId())
                                 .orElseThrow(ProduceOrganizationNotFoundException::new),
 
@@ -391,7 +402,8 @@ public class NewItemCreateRequest {
 //                ),
 
                 req.getMakersId()==null?
-                        makerRepository.findById(-1L).orElseThrow(MakerNotFoundException::new):
+                        null:
+                        //makerRepository.findById(-1L).orElseThrow(MakerNotFoundException::new):
                         makerRepository.findById(req.getMakersId()).orElseThrow(MakerNotFoundException::new)
 ,
 
