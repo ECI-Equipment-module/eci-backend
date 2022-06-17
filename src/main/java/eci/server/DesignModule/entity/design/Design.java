@@ -2,27 +2,18 @@ package eci.server.DesignModule.entity.design;
 
 import eci.server.DesignModule.dto.DesignUpdateRequest;
 import eci.server.DesignModule.entity.designfile.DesignAttachment;
+import eci.server.DesignModule.exception.DesignContentNotEmptyException;
 import eci.server.ItemModule.entity.entitycommon.EntityDate;
-import eci.server.ItemModule.entity.item.Item;
+//import eci.server.ItemModule.entity.item.Item;
 import eci.server.ItemModule.entity.member.Member;
 import eci.server.ItemModule.exception.item.AttachmentNotFoundException;
 import eci.server.ItemModule.exception.item.ItemNotFoundException;
 import eci.server.ItemModule.exception.member.sign.MemberNotFoundException;
-import eci.server.ItemModule.repository.item.ItemRepository;
 import eci.server.ItemModule.repository.member.MemberRepository;
 import eci.server.NewItemModule.entity.NewItem;
 import eci.server.NewItemModule.repository.attachment.AttachmentTagRepository;
 import eci.server.NewItemModule.repository.item.NewItemRepository;
-import eci.server.ProjectModule.dto.project.ProjectUpdateRequest;
-import eci.server.ProjectModule.entity.project.*;
-import eci.server.ProjectModule.entity.projectAttachment.ProjectAttachment;
-import eci.server.ProjectModule.exception.*;
-import eci.server.ProjectModule.repository.carType.CarTypeRepository;
-import eci.server.ProjectModule.repository.clientOrg.ClientOrganizationRepository;
-import eci.server.ProjectModule.repository.produceOrg.ProduceOrganizationRepository;
-import eci.server.ProjectModule.repository.project.ProjectRepository;
-import eci.server.ProjectModule.repository.projectLevel.ProjectLevelRepository;
-import eci.server.ProjectModule.repository.projectType.ProjectTypeRepository;
+import eci.server.config.guard.DesignGuard;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -81,27 +72,41 @@ public class Design extends EntityDate {
     )
     private List<DesignAttachment> designAttachments;
 
+    /**
+     * 단순 시연용
+     */
+    private String designContent;
 
-    public Design(
-
-            NewItem item,
-            Member member,
-            boolean tempsave,
-            boolean readonly
-    ){
-
-        this.newItem =item;
-        this.member = member;
+    //06-17 추가
+    public void setTempsave(Boolean tempsave) {
         this.tempsave = tempsave;
+    }
+
+    //06-17 추가
+    public void setReadonly(Boolean readonly) {
         this.readonly = readonly;
     }
 
     public Design(
 
             NewItem item,
-
             Member member,
+            boolean tempsave,
+            boolean readonly,
+            String designContent // 단순 시연용
+    ){
 
+        this.newItem =item;
+        this.member = member;
+        this.tempsave = tempsave;
+        this.readonly = readonly;
+        this.designContent = designContent; // 단순 시연용
+    }
+
+    public Design(
+
+            NewItem item,
+            Member member,
             Boolean tempsave,
             Boolean readonly
 
@@ -115,17 +120,42 @@ public class Design extends EntityDate {
 
     }
 
+    /**
+     * 단순 시연용
+     * @param item
+     * @param member
+     * @param tempsave
+     * @param readonly
+     * @param designAttachments
+     */
+    public Design(
+            NewItem item,
+            Member member,
+            Boolean tempsave,
+            Boolean readonly,
+            List<DesignAttachment> designAttachments,
+            String designContent //단순 시연용
+    ) {
 
+        this.newItem = item;
+        this.member = member;
+
+        this.tempsave = tempsave;
+        this.readonly = readonly;
+
+        this.designAttachments = new ArrayList<>();
+        addDesignAttachments(designAttachments);
+
+        this.designContent = designContent; //단순 시연용
+
+    }
 
     public Design(
             NewItem item,
-
             Member member,
-
             Boolean tempsave,
             Boolean readonly,
             List<DesignAttachment> designAttachments
-
 
     ) {
 
@@ -145,7 +175,9 @@ public class Design extends EntityDate {
      * 추가할 attachments
      *
      */
-    private void addDesignAttachments(List<DesignAttachment> added) {
+    private void addDesignAttachments(
+            List<DesignAttachment> added
+    ) {
         added.stream().forEach(i -> {
             designAttachments.add(i);
             i.initDesign(this);
@@ -161,7 +193,11 @@ public class Design extends EntityDate {
 
 
     {
-            this.newItem=
+
+        this.tempsave = true; //라우트 작성하기 전이니깐 !
+        this.readonly = false;  //0605- 이 부분하나가 변경, 이 것은 얘를 false 에서 true로 변경 !
+
+        this.newItem=
                 itemRepository.findById(req.getItemId())
                         .orElseThrow(ItemNotFoundException::new);
 
@@ -189,6 +225,57 @@ public class Design extends EntityDate {
                 ).orElseThrow(MemberNotFoundException::new);//05 -22 생성자 추가
 
         this.setModifiedAt(LocalDateTime.now());
+
+        this.designContent = req.getDesignContent(); //단순 시연용
+
+        return fileUpdatedResult;
+    }
+
+
+    public FileUpdatedResult tempEnd(
+            DesignUpdateRequest req,
+            NewItemRepository itemRepository,
+            MemberRepository memberRepository
+    )
+
+    {
+        if(req.getDesignContent().length()==0){
+            throw new DesignContentNotEmptyException();
+        }
+
+        this.tempsave = true; //라우트 작성하기 전이니깐 !
+        this.readonly = true; //0605- 이 부분하나가 변경, 이 것은 얘를 false 에서 true로 변경 !
+
+        this.newItem=
+                itemRepository.findById(req.getItemId())
+                        .orElseThrow(ItemNotFoundException::new);
+
+
+        DesignAttachmentUpdatedResult resultAttachment =
+
+                findAttachmentUpdatedResult(
+                        req.getAddedAttachments(),
+                        req.getDeletedAttachments()
+                );
+
+        if(req.getAddedTag().size()>0) {
+            addUpdatedDesignAttachments(req, resultAttachment.getAddedAttachments());
+        }
+        if(req.getAddedTag().size()>0) {
+            deleteDesignAttachments(resultAttachment.getDeletedAttachments());
+        }
+        FileUpdatedResult fileUpdatedResult = new FileUpdatedResult(
+                resultAttachment//, updatedAddedProjectAttachmentList
+        );
+
+        this.modifier =
+                memberRepository.findById(
+                        req.getModifierId()
+                ).orElseThrow(MemberNotFoundException::new);//05 -22 생성자 추가
+
+        this.setModifiedAt(LocalDateTime.now());
+
+        this.designContent = req.getDesignContent(); //단순 시연용
 
         return fileUpdatedResult;
     }

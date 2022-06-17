@@ -26,7 +26,7 @@ public class NewItemUpdateRequest {
     @Null
     private String itemNumber;
     private String name;
-    private boolean sharing;
+    private Boolean sharing;
 
     private Long carTypeId;
 
@@ -79,10 +79,6 @@ public class NewItemUpdateRequest {
 
     private MultipartFile thumbnail;
 
-
-    //private MultipartFile addedImages = new ArrayList<>();
-
-
     /**
      * 추가된 파일을 첨부
      */
@@ -98,9 +94,11 @@ public class NewItemUpdateRequest {
      */
     private List<Long> deletedAttachments = new ArrayList<>();
 
-    private List<Long> makersId = new ArrayList<>();
+    //private List<Long> makersId = new ArrayList<>();
+    private Long makersId ;
+    //private List<String> partnumbers = new ArrayList<>();
 
-    private List<String> partnumbers = new ArrayList<>();
+    private String partnumbers ;
 
     @Null
     private Long memberId;

@@ -1,7 +1,8 @@
 package eci.server.ItemModule.entity.newRoute;
 
+import eci.server.BomModule.entity.Bom;
+import eci.server.DesignModule.entity.design.Design;
 import eci.server.ItemModule.dto.newRoute.routeOrdering.RouteOrderingUpdateRequest;
-import eci.server.ItemModule.entity.item.Item;
 import eci.server.ItemModule.entitycommon.EntityDate;
 import eci.server.ItemModule.exception.route.RejectImpossibleException;
 import eci.server.ItemModule.exception.route.UpdateImpossibleException;
@@ -18,6 +19,7 @@ import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.*;
+import java.time.format.DecimalStyle;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
@@ -78,6 +80,21 @@ public class RouteOrdering extends EntityDate {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private NewItem newItem;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "project_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private Project project;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "design_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private Design design;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "bom_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private Bom bom;
+
 //    /**
 //     * null 가능, 플젝에서 라우트 생성 시 지정
 //     */
@@ -113,6 +130,19 @@ public class RouteOrdering extends EntityDate {
     public void setPresent(Integer present) {
         //초기 값은 1(진행 중인 아이)
         this.present = present;
+    }
+
+    public void setProject(Project project) {
+        this.project = project;
+    }
+
+
+    public void setDesign(Design design) {
+        this.design = design;
+    }
+
+    public void setBom(Bom bom) {
+        this.bom = bom;
     }
 
     public RouteOrderingUpdateRequest update(
@@ -209,7 +239,7 @@ public class RouteOrdering extends EntityDate {
 
 
         /**
-         * 기존 애들 중에서 passed가 false인 애들의 show는 false로 변경해주기
+         * 기존 애들 중에서 passed 가 false 인 애들의 show 는 false 로 변경해주기
          */
         for(RouteProduct routeProductshow : routeProductList){
             if(!routeProductshow.isPassed()){
@@ -220,6 +250,33 @@ public class RouteOrdering extends EntityDate {
                 //거부당한 인덱스보다 큰 애들은 쭉~ 무효화처리 (reject 대상이 되지 못해)
                 routeProductshow.setDisabled(true);
             }
+        }
+
+        //06-17 : 거부된 라우트 프로덕트의 라우트 타입 검사
+
+        // 1,9, 11, 13 에 따라서 tempSave 랑 readOnly 의 true,false 값 변경
+        switch(routeProductList.get(rejectedIndex).getType().getId().toString()) {
+
+            // 1 (아이템)
+            case "1":
+                this.getNewItem().setTempsave(true);
+                this.getNewItem().setReadonly(false);
+                break;
+            // 9 (플젝)
+            case "9":
+                this.getProject().setTempsave(true);
+                this.getProject().setReadonly(false);
+                break;
+            // 13 (디자인)
+            case "13":
+                this.getDesign().setTempsave(true);
+                this.getDesign().setReadonly(false);
+                break;
+             //11 (봄)
+            case "11":
+                this.getBom().setTempsave(true);
+                this.getBom().setReadonly(false);
+                break;
         }
 
         /**

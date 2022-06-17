@@ -1,10 +1,12 @@
 package eci.server.DesignModule.controller;
 
 import eci.server.DesignModule.dto.DesignCreateRequest;
+import eci.server.DesignModule.dto.DesignCreateUpdateResponse;
 import eci.server.DesignModule.dto.DesignTempCreateRequest;
 import eci.server.DesignModule.dto.DesignUpdateRequest;
 import eci.server.DesignModule.service.DesignService;
 import eci.server.ItemModule.dto.response.Response;
+import eci.server.NewItemModule.dto.newItem.update.NewItemUpdateRequest;
 import eci.server.aop.AssignMemberId;
 import eci.server.aop.AssignModifierId;
 import lombok.RequiredArgsConstructor;
@@ -61,10 +63,10 @@ public class DesignController {
             @Valid @ModelAttribute
                     DesignCreateRequest req
     ) {
+        DesignCreateUpdateResponse res =
+                designService.create(req);
 
-        return Response.success(
-
-                designService.create(req));
+        return Response.success(res);
     }
 
     /**
@@ -84,6 +86,21 @@ public class DesignController {
 
         return Response.success(designService.update(id, req));
     }
+
+    @CrossOrigin(origins = "https://localhost:3000")
+    @PutMapping("/design/temp/end/{id}")
+    @ResponseStatus(HttpStatus.CREATED)
+    @AssignModifierId
+    public Response tempEnd(
+            @PathVariable Long id,
+            @Valid @ModelAttribute
+                    DesignUpdateRequest req
+    ) {
+
+        return Response.success(
+                designService.tempEnd(id, req));
+    }
+
 
 
 

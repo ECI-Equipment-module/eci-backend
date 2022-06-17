@@ -2,7 +2,6 @@ package eci.server.ProjectModule.dto.project;
 
 import eci.server.ItemModule.exception.item.*;
 import eci.server.ItemModule.exception.member.sign.MemberNotFoundException;
-import eci.server.ItemModule.repository.item.ItemRepository;
 import eci.server.ItemModule.repository.member.MemberRepository;
 import eci.server.NewItemModule.repository.attachment.AttachmentTagRepository;
 import eci.server.NewItemModule.repository.item.NewItemRepository;
@@ -94,14 +93,20 @@ public class ProjectCreateRequest {
             AttachmentTagRepository attachmentTagRepository
             ) {
 
-
-
-        if(req.projectLevelId==99999L ||
-        req.carType == 99999L ||
-        req.projectTypeId ==99999L ||
-        req.getItemId()==99999L
-        ){
-                //TODO : id에러 던지기 - 다음 브랜치에서
+        if(req.getProjectLevelId()==null || req.getProjectLevelId()==99999L){
+            throw new ProjectLevelNotEmptyException();
+        }
+        else if (req.getCarType() == null || req.getCarType() == 99999L){
+            throw new CarTypeNotEmptyException();
+        }
+        else if(req.getProjectTypeId()==null || req.getProjectTypeId()==99999L){
+            throw new ProjectTypeNotEmptyException();
+        }
+        else if(req.getItemId()==null || req.getItemId()==99999L){
+            throw new ItemNotFoundException();
+        }
+        else if(req.getName() == null || req.getName().isBlank()){
+            throw new NameNotEmptyException();
         }
 
 //        //양산 개발의 아이디가 1 (Long)
@@ -120,28 +125,8 @@ public class ProjectCreateRequest {
 //            throw new ProjectCreateNotEmptyException();
 //        }
 
-        Integer year = Calendar.getInstance().get(Calendar.YEAR);
 
-        Date now = new Date();
-        //projectNum 겹치지않도록 설정(순간의 연-월시분초
-        String projectNum = new SimpleDateFormat("MMddHHmmss", Locale.ENGLISH).format(now);
-        String finalProjNum = "";
-
-        if (req.projectTypeId.equals(1L)) {
-            finalProjNum = "M-" + year.toString() + "-" + projectNum;
-        } else {
-            finalProjNum = "N-" + year.toString() + "-" + projectNum;
-        }
-
-//        Long clientOrgId = 100000L;
-//        clientOrgId = req.clientOrganizationId == null ? 100000L :
-//                //null이 아니라면
-//                req.clientOrganizationId == 99999L?
-//                        100000L
-//                :
-//                    req.clientOrganizationId;
-
-
+        String finalProjNum = ProjectNumber(req.getProjectTypeId());
 
         if (req.tag.size() == 0) { //Project에 Attachment 존재하지 않을 시에 생성자
             return new Project(
@@ -270,5 +255,22 @@ public class ProjectCreateRequest {
                             .orElseThrow(CarTypeNotFoundException::new)
             );
         }
+    }
+
+    public static String ProjectNumber(Long ProjectLevelId){
+        Integer year = Calendar.getInstance().get(Calendar.YEAR);
+
+        Date now = new Date();
+        //projectNum 겹치지않도록 설정(순간의 연-월시분초
+        String projectNum = new SimpleDateFormat("MMddHHmmss", Locale.ENGLISH).format(now);
+        String finalProjNumber = new String();
+
+        if (ProjectLevelId.equals(1L)) {
+            finalProjNumber = "M-" + year + "-" + projectNum;
+        } else {
+            finalProjNumber= "N-" + year + "-" + projectNum;
+        }
+
+        return finalProjNumber;
     }
 }

@@ -2,7 +2,8 @@ package eci.server.DashBoardModule.dto.bomTodo;
 
 import eci.server.BomModule.entity.Bom;
 import eci.server.DesignModule.entity.design.Design;
-import eci.server.ItemModule.entity.item.Item;
+//import eci.server.ItemModule.entity.item.Item;
+import eci.server.NewItemModule.entity.NewItem;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,7 +19,7 @@ public class BomTodoResponse {
 
 
     public static BomTodoResponse toDto(
-            Item item,
+            NewItem item,
             Bom bom
     ) {
 
@@ -26,7 +27,7 @@ public class BomTodoResponse {
 
                 bom.getId(),
                 item.getName(),
-                item.getType(),
+                item.getItemTypes().getItemType().name(),
                 item.getItemNumber()
 
         );

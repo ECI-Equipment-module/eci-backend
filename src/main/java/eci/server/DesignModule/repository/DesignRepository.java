@@ -1,7 +1,7 @@
 package eci.server.DesignModule.repository;
 
 import eci.server.DesignModule.entity.design.Design;
-import eci.server.ItemModule.entity.item.Item;
+//import eci.server.ItemModule.entity.item.Item;
 import eci.server.ItemModule.entity.member.Member;
 import eci.server.NewItemModule.entity.NewItem;
 import org.springframework.data.jpa.repository.JpaRepository;

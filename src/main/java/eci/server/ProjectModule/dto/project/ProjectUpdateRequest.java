@@ -23,9 +23,23 @@ public class ProjectUpdateRequest {
 
     private String clientItemNumber;
 
-    private String startPeriod;
 
-    private String overPeriod;
+    private String protoStartPeriod;
+
+    private String protoOverPeriod;
+
+    private String p1StartPeriod;
+
+    private String p1OverPeriod;
+
+    private String p2StartPeriod;
+
+    private String p2OverPeriod;
+
+    private String sopStartPeriod;
+
+    private String sopOverPeriod;
+
 
     // 로그인 된 멤버 자동 주입
     @Null
@@ -48,7 +62,7 @@ public class ProjectUpdateRequest {
      * 추가된 파일을 첨부
      */
     private List<MultipartFile> addedAttachments = new ArrayList<>();
-    private List<String> addedTag = new ArrayList<>();
+    private List<Long> addedTag = new ArrayList<>();
     private List<String> addedAttachmentComment = new ArrayList<>();
 
     /**

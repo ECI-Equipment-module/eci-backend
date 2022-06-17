@@ -1,12 +1,10 @@
 package eci.server.ItemModule.dto.newRoute.routeOrdering;
 
-import eci.server.ItemModule.entity.item.Item;
 import eci.server.ItemModule.entity.item.ItemType;
 import eci.server.ItemModule.entity.newRoute.RouteOrdering;
 import eci.server.ItemModule.entity.newRoute.RoutePreset;
 import eci.server.ItemModule.exception.item.ItemNotFoundException;
 import eci.server.ItemModule.exception.member.sign.MemberNotFoundException;
-import eci.server.ItemModule.repository.item.ItemRepository;
 import eci.server.ItemModule.repository.newRoute.RouteTypeRepository;
 import eci.server.NewItemModule.entity.NewItem;
 import eci.server.NewItemModule.repository.item.NewItemRepository;
@@ -63,10 +61,9 @@ public class RouteOrderingCreateRequest {
 
         List routeProduct = List.of((routePreset.itemRouteName[routeType]));
 
-        System.out.println(routeProduct.size());
         for(Object type : routeProduct){
             typeList.add(type.toString());
-            System.out.println(type);
+
         }
 
 

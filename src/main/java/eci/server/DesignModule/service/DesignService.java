@@ -2,36 +2,24 @@ package eci.server.DesignModule.service;
 
 import eci.server.BomModule.repository.BomRepository;
 import eci.server.BomModule.repository.PreliminaryBomRepository;
-import eci.server.DashBoardModule.dto.myProject.ProjectDashboardDto;
 import eci.server.DesignModule.dto.*;
 import eci.server.DesignModule.entity.design.Design;
 import eci.server.DesignModule.entity.designfile.DesignAttachment;
 import eci.server.DesignModule.exception.DesignNotFoundException;
 import eci.server.DesignModule.exception.DesignUpdateImpossibleException;
 import eci.server.DesignModule.repository.DesignRepository;
-import eci.server.ItemModule.dto.item.ItemProjectDashboardDto;
-import eci.server.ItemModule.dto.item.ItemProjectDto;
 import eci.server.ItemModule.entity.newRoute.RouteOrdering;
-import eci.server.ItemModule.exception.member.MemberNotFoundException;
-import eci.server.ItemModule.repository.item.ItemRepository;
+import eci.server.ItemModule.exception.item.ItemNotFoundException;
+import eci.server.ItemModule.exception.route.RouteNotFoundException;
 import eci.server.ItemModule.repository.member.MemberRepository;
 import eci.server.ItemModule.repository.newRoute.RouteOrderingRepository;
 import eci.server.ItemModule.repository.newRoute.RouteProductRepository;
 import eci.server.ItemModule.service.file.FileService;
+import eci.server.NewItemModule.entity.NewItem;
 import eci.server.NewItemModule.repository.attachment.AttachmentTagRepository;
 import eci.server.NewItemModule.repository.item.NewItemRepository;
-import eci.server.ProjectModule.dto.carType.CarTypeDto;
 import eci.server.ProjectModule.dto.project.*;
-import eci.server.ProjectModule.entity.project.Project;
-import eci.server.ProjectModule.entity.projectAttachment.ProjectAttachment;
-import eci.server.ProjectModule.exception.ProjectNotFoundException;
-import eci.server.ProjectModule.exception.ProjectUpdateImpossibleException;
-import eci.server.ProjectModule.repository.carType.CarTypeRepository;
-import eci.server.ProjectModule.repository.clientOrg.ClientOrganizationRepository;
-import eci.server.ProjectModule.repository.produceOrg.ProduceOrganizationRepository;
 import eci.server.ProjectModule.repository.project.ProjectRepository;
-import eci.server.ProjectModule.repository.projectLevel.ProjectLevelRepository;
-import eci.server.ProjectModule.repository.projectType.ProjectTypeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -55,6 +43,7 @@ public class DesignService {
     private final BomRepository bomRepository;
     private final PreliminaryBomRepository preliminaryBomRepository;
     private final ProjectRepository projectRepository;
+    private final NewItemRepository newItemRepository;
 
     private final FileService fileService;
     private final RouteOrderingRepository routeOrderingRepository;
@@ -112,6 +101,13 @@ public class DesignService {
         //프로젝트에 딸린 라우트
         Long routeId = routeOrderingRepository.findByNewItem(design.getNewItem()).get(routeOrdering.size() - 1).getId();
 
+        //06-17 등록되면 , routeOrdering 에 design 으로 얘를 등록 시켜주기//////
+        RouteOrdering setRoute =
+                routeOrderingRepository.findById(routeId).orElseThrow(RouteNotFoundException::new);
+
+        setRoute.setDesign(design);
+        /////////////////////////////////////////////////////////////////
+
         return new DesignCreateUpdateResponse(design.getId(), routeId);
     }
 
@@ -142,16 +138,13 @@ public class DesignService {
     }
 
     @Transactional
-
     public DesignTempCreateUpdateResponse update(Long id, DesignUpdateRequest req) {
 
         Design design = designRepository.findById(id).orElseThrow(DesignNotFoundException::new);
 
         if (!design.getTempsave()) {
-
             //true면 임시저장 상태, false면 찐 저장 상태
             //찐 저장 상태라면 UPDATE 불가, 임시저장 일때만 가능
-
             throw new DesignUpdateImpossibleException();
         }
 
@@ -170,6 +163,48 @@ public class DesignService {
                 result.getDesignUpdatedResult().getDeletedAttachments()
         );
         return new DesignTempCreateUpdateResponse(id);
+
+    }
+
+    @Transactional
+    public DesignCreateUpdateResponse tempEnd(Long id, DesignUpdateRequest req) {
+
+        Design design = designRepository.findById(id).orElseThrow(DesignNotFoundException::new);
+
+        if (!design.getTempsave()) {
+            //true면 임시저장 상태, false면 찐 저장 상태
+            //찐 저장 상태라면 UPDATE 불가, 임시저장 일때만 가능
+            throw new DesignUpdateImpossibleException();
+        }
+
+        Design.FileUpdatedResult result = design.tempEnd(
+                req,
+                itemRepository,
+                memberRepository
+        );
+
+
+        uploadAttachments(
+                result.getDesignUpdatedResult().getAddedAttachments(),
+                result.getDesignUpdatedResult().getAddedAttachmentFiles()
+        );
+        deleteAttachments(
+                result.getDesignUpdatedResult().getDeletedAttachments()
+        );
+
+        //06-17 아래 라우트에 디자인 등록 로직 추가
+
+        List<RouteOrdering> routeOrdering = routeOrderingRepository.findByNewItem(design.getNewItem());
+        //디자인에 딸린 라우트////////////////////////////
+        Long routeId = routeOrderingRepository.findByNewItem(design.getNewItem()).get(routeOrdering.size() - 1).getId();
+
+
+        RouteOrdering setRoute =
+                routeOrderingRepository.findById(routeId).orElseThrow(RouteNotFoundException::new);
+
+        setRoute.setDesign(design);
+        ////////////////////////////////////////////////
+        return new DesignCreateUpdateResponse(id, routeId);
 
     }
 

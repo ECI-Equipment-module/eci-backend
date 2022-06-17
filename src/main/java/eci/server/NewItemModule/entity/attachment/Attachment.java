@@ -1,7 +1,8 @@
-package eci.server.ItemModule.entity.item;
+package eci.server.NewItemModule.entity.attachment;
 
 import eci.server.ItemModule.entitycommon.EntityDate;
 import eci.server.ItemModule.exception.image.UnsupportedImageFormatException;
+import eci.server.NewItemModule.entity.NewItem;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -45,7 +46,7 @@ public class Attachment extends EntityDate {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "item_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    private Item item;
+    private NewItem item;
 
     @Column(nullable = false)
     @Lob
@@ -86,7 +87,7 @@ public class Attachment extends EntityDate {
         this.attach_comment = attach_comment;
         this.attachmentaddress =
                 "src/main/prodmedia/image/" +
-                sdf1.format(now).substring(0,10)
+                        sdf1.format(now).substring(0,10)
                         + "/"
                         + this.uniqueName; //이미지 저장 폴더 + 이미지 저장명
     }
@@ -107,7 +108,7 @@ public class Attachment extends EntityDate {
      *
      * @param item
      */
-    public void initItem(Item item) {
+    public void initItem(NewItem item) {
         if (this.item == null) {
             this.item = item;
         }
@@ -140,8 +141,8 @@ public class Attachment extends EntityDate {
             return ext;
         } catch (StringIndexOutOfBoundsException e) {
         }
-       throw new UnsupportedImageFormatException();
-   }
+        throw new UnsupportedImageFormatException();
+    }
 
 
 

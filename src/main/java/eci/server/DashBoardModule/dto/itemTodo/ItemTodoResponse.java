@@ -1,6 +1,6 @@
 package eci.server.DashBoardModule.dto.itemTodo;
 
-import eci.server.ItemModule.entity.item.Item;
+import eci.server.NewItemModule.entity.NewItem;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,14 +16,14 @@ public class ItemTodoResponse {
 
 
     public static ItemTodoResponse toDto(
-            Item item
+            NewItem item
     ) {
 
         return new ItemTodoResponse(
 
                 item.getId(),
                 item.getName(),
-                item.getType(),
+                item.getItemTypes().getItemType().name(),
                 item.getItemNumber()
 
         );

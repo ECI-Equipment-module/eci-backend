@@ -1,7 +1,7 @@
 package eci.server.ItemModule.dto.item;
 
 
-import eci.server.ItemModule.entity.item.Item;
+//import eci.server.ItemModule.entity.item.Item;
 import eci.server.NewItemModule.entity.NewItem;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -27,7 +27,7 @@ public class ItemDesignDto {
                 Item.getName(),
                 Item.getItemTypes().getItemType().toString(),
                 Item.getItemNumber(),
-                Item.getThumbnail().getImageaddress(),
+                Item.getThumbnail()==null?"no item address" : Item.getThumbnail().getImageaddress(),
                 Item.getRevision()
 
         );

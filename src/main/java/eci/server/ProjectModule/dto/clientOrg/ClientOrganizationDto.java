@@ -10,6 +10,9 @@ public class ClientOrganizationDto {
     private Long id;
     private String name;
 
+    public static ClientOrganizationDto toDto(){
+        return new ClientOrganizationDto(99999L, "NONE");
+    }
     public static ClientOrganizationDto toDto(ClientOrganization clientOrganization){
 
         return new ClientOrganizationDto(

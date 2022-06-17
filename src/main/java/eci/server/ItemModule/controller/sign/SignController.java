@@ -86,10 +86,6 @@ public class SignController {
         Integer index = refreshToken.length();
 
         System.out.println("refreeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeshhhhhhhhh");
-        System.out.println(refreshToken);
-        if (refreshToken.length()==0){
-            System.out.println("refresh is 0000");
-        }
 
         String rToken = (refreshToken.toString().substring(20,index));
 

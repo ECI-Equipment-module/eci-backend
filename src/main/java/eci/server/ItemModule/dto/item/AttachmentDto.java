@@ -1,6 +1,6 @@
 package eci.server.ItemModule.dto.item;
 
-import eci.server.ItemModule.entity.item.Attachment;
+import eci.server.NewItemModule.entity.attachment.Attachment;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 

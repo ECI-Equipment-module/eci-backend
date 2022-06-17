@@ -1,8 +1,6 @@
 package eci.server.config.guard;
 
-import eci.server.ItemModule.entity.item.Item;
 import eci.server.ItemModule.entity.member.RoleType;
-import eci.server.ItemModule.repository.item.ItemRepository;
 import eci.server.NewItemModule.entity.NewItem;
 import eci.server.NewItemModule.repository.item.NewItemRepository;
 import lombok.RequiredArgsConstructor;

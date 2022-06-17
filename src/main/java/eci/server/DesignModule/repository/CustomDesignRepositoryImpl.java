@@ -7,9 +7,6 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import eci.server.DesignModule.dto.DesignReadCondition;
 import eci.server.DesignModule.dto.DesignReadDto;
 import eci.server.DesignModule.entity.design.Design;
-import eci.server.ProjectModule.dto.project.ProjectReadCondition;
-import eci.server.ProjectModule.dto.project.ProjectReadDto;
-import eci.server.ProjectModule.entity.project.Project;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -20,9 +17,9 @@ import java.util.List;
 import java.util.function.Function;
 
 import static com.querydsl.core.types.Projections.constructor;
-import static eci.server.ItemModule.entity.item.QItem.item;
 import static eci.server.ItemModule.entity.newRoute.QRouteProduct.routeProduct;
 import static eci.server.DesignModule.entity.design.QDesign.design;
+import static eci.server.NewItemModule.entity.QNewItem.newItem;
 
 public class CustomDesignRepositoryImpl extends QuerydslRepositorySupport implements CustomDesignRepository {
 
@@ -57,8 +54,8 @@ public class CustomDesignRepositoryImpl extends QuerydslRepositorySupport implem
                                 DesignReadDto.class,
                                 design.id,
 
-                                item.name,
-                                item.itemNumber,
+                                newItem.name,
+                                newItem.itemNumber,
 
                                 design.tempsave,
 
@@ -69,7 +66,7 @@ public class CustomDesignRepositoryImpl extends QuerydslRepositorySupport implem
                         ))
                         .from(design)
 
-                        .join(item).on(design.newItem.id.eq(item.id))
+                        .join(newItem).on(design.newItem.id.eq(newItem.id))
 
                         .join(routeProduct).on(design.id.eq(routeProduct.project.id))
 
@@ -103,5 +100,4 @@ public class CustomDesignRepositoryImpl extends QuerydslRepositorySupport implem
                 .orElse(null);
     }
 }
-
 

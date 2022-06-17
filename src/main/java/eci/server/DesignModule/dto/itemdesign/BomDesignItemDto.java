@@ -163,8 +163,6 @@ public class BomDesignItemDto {
 
         //2) 봄 리뷰 담당자
         else if(bomGuard.isBomReviewer(newItem.getId())) {
-            System.out.println("ewerwerwerwerrrrrrrrrrrrrrrrrr");
-            System.out.println(bomGuard.reviewState(newItem.getId()));
             if (bomGuard.reviewState(newItem.getId()).equals("beforeReview")) {
                 //2) 봄 리뷰 담당자
                 DesignResponsibleDtoList.add(
@@ -596,8 +594,6 @@ public class BomDesignItemDto {
             DesignGuard designGuard
     ) {
         List<DesignResponsibleDto> DesignResponsibleDtoList = new ArrayList<>();
-
-        System.out.println("디자인 생성자냐 ? " + designGuard.isDesginCreator(newItem.getId()));
 
         //1) 디자인 생성 담당자
         if (designGuard.isDesginCreator(newItem.getId())) {

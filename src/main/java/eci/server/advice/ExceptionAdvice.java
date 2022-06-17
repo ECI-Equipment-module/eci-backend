@@ -1,6 +1,7 @@
 package eci.server.advice;
 
 import eci.server.BomModule.exception.*;
+import eci.server.DesignModule.exception.DesignContentNotEmptyException;
 import eci.server.DesignModule.exception.DesignNotFoundException;
 import eci.server.DesignModule.exception.DesignNotLinkedException;
 import eci.server.DesignModule.exception.DesignUpdateImpossibleException;
@@ -21,9 +22,7 @@ import eci.server.ItemModule.exception.route.RejectImpossibleException;
 import eci.server.ItemModule.exception.route.RouteNotFoundException;
 import eci.server.ItemModule.exception.route.UpdateImpossibleException;
 import eci.server.NewItemModule.exception.*;
-import eci.server.ProjectModule.exception.CarTypeNotFoundException;
-import eci.server.ProjectModule.exception.IdNotAppropriateException;
-import eci.server.ProjectModule.exception.ProjectNotLinkedException;
+import eci.server.ProjectModule.exception.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -372,5 +371,79 @@ public class ExceptionAdvice {
         log.info("e = {}", e.getMessage());
         return Response.failure(404, "개발봄이 존재하지 않습니다.");
     }
+
+    @ExceptionHandler(ProjectEmptyException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Response ProjectEmptyException(ProjectEmptyException e) {
+        log.info("e = {}", e.getMessage());
+        return Response.failure(404, "채워지지 않은 프로젝트 필수 항목이 있습니다.");
+    }
+
+    @ExceptionHandler(ItemTypeNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Response ItemTypeNotFoundException(ItemTypeNotFoundException e) {
+        log.info("e = {}", e.getMessage());
+        return Response.failure(404, "유효한 아이템 타입을 채워주세요.");
+    }
+
+    @ExceptionHandler(ItemTypeNotEmptyException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Response ItemTypeNotEmptyException(ItemTypeNotEmptyException e) {
+        log.info("e = {}", e.getMessage());
+        return Response.failure(404, "아이템 타입을 필수입니다.");
+    }
+
+    @ExceptionHandler(ProjectLevelNotEmptyException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Response ProjectLevelNotEmptyException(ProjectLevelNotEmptyException e) {
+        log.info("e = {}", e.getMessage());
+        return Response.failure(404, "프로젝트 레벨은 필수입니다.");
+    }
+
+    @ExceptionHandler(CarTypeNotEmptyException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Response CarTypeNotEmptyException(CarTypeNotEmptyException e) {
+        log.info("e = {}", e.getMessage());
+        return Response.failure(404, "차종은 필수입니다.");
+    }
+
+    @ExceptionHandler(ProjectTypeNotEmptyException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Response ProjectTypeNotEmptyException(ProjectTypeNotEmptyException e) {
+        log.info("e = {}", e.getMessage());
+        return Response.failure(404, "프로젝트 타입은 필수입니다.");
+    }
+
+    @ExceptionHandler(NameNotEmptyException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Response NameNotEmptyException(NameNotEmptyException e) {
+        log.info("e = {}", e.getMessage());
+        return Response.failure(404, "이름은 필수입니다.");
+    }
+
+
+
+    @ExceptionHandler(MakerNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Response MakerNotFoundException(MakerNotFoundException e) {
+        log.info("e = {}", e.getMessage());
+        return Response.failure(404, "존재하지 않는 Maker 아이디입니다.");
+    }
+
+
+    @ExceptionHandler(MakerNotEmptyException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Response MakerNotEmptyException(MakerNotEmptyException e) {
+        log.info("e = {}", e.getMessage());
+        return Response.failure(404, "Maker 아이디는 필수입니다.");
+    }
+
+    @ExceptionHandler(DesignContentNotEmptyException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Response DesignContentNotEmptyException(DesignContentNotEmptyException e) {
+        log.info("e = {}", e.getMessage());
+        return Response.failure(404, "디자인 내용은 저장 시 필수입니다.");
+    }
+
 
 }
