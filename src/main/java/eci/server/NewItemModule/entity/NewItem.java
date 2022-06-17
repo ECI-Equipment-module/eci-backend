@@ -816,7 +816,7 @@ public class NewItem extends EntityDate {
                 " " : req.getName();
 
         this.itemTypes = req.getTypeId() == null ?
-                this.itemTypes :
+                null :
                 itemTypesRepository.findById(req.getTypeId()).orElseThrow(ItemNotFoundException::new);
 
 
@@ -824,7 +824,8 @@ public class NewItem extends EntityDate {
 
         this.carType =     //임시저장 상태는 차종 없어도됨
                         req.getCarTypeId() == null ?
-                                carTypeRepository.findById(99999L).orElseThrow(CarTypeNotFoundException::new):
+                                null:
+                                //carTypeRepository.findById(99999L).orElseThrow(CarTypeNotFoundException::new):
                                         //null 아니면 입력받은 것
                                         carTypeRepository.findById(req.getCarTypeId()).orElseThrow(CarTypeNotFoundException::new);
 
@@ -851,8 +852,8 @@ public class NewItem extends EntityDate {
                "" : req.getImportance();
 
         this.color = req.getColorId() == null ?
-                colorRepository.findById(99999L).orElseThrow(ColorNotFoundException::new)
-                :
+                null:                //colorRepository.findById(99999L).orElseThrow(ColorNotFoundException::new)
+
     colorRepository.findById(req.getColorId())
                 .orElseThrow(ColorNotFoundException::new);
 
@@ -862,12 +863,14 @@ public class NewItem extends EntityDate {
         this.forming = req.getForming()==null || req.getForming().isBlank() ? this.forming : req.getForming();
 
         this.coatingWay = req.getCoatingWayId() == null ?
-                coatingWayRepository.findById(99999L).orElseThrow(CoatingNotFoundException::new) :
+                null:
+                //coatingWayRepository.findById(99999L).orElseThrow(CoatingNotFoundException::new) :
                 coatingWayRepository.findById
                         (req.getCoatingWayId()).orElseThrow(CoatingNotFoundException::new);
 
         this.coatingType = req.getCoatingTypeId() == null ?
-                coatingTypeRepository.findById(99999L).orElseThrow(CoatingNotFoundException::new) :
+                null:
+                //coatingTypeRepository.findById(99999L).orElseThrow(CoatingNotFoundException::new) :
                 coatingTypeRepository.findById
                         (req.getCarTypeId()).orElseThrow(CoatingNotFoundException::new);
 
@@ -885,21 +888,24 @@ public class NewItem extends EntityDate {
         this.screwHeight = req.getScrewHeight().isBlank() ? "" : req.getScrewHeight();
 
         this.clientOrganization = req.getClientOrganizationId() == null ?
-                clientOrganizationRepository.findById(99999L)
-                        .orElseThrow(ClientOrganizationNotFoundException::new)
+                null
+//                clientOrganizationRepository.findById(99999L)
+//                        .orElseThrow(ClientOrganizationNotFoundException::new)
                 :
                 clientOrganizationRepository.findById(req.getClientOrganizationId())
                         .orElseThrow(ClientOrganizationNotFoundException::new);
 
         this.supplierOrganization = req.getSupplierOrganizationId() == null ?
-                supplierRepository.findById(99999L)
-                        .orElseThrow(ProduceOrganizationNotFoundException::new)
+                null
+//                supplierRepository.findById(99999L)
+//                        .orElseThrow(ProduceOrganizationNotFoundException::new)
                 :
                 supplierRepository.findById(req.getSupplierOrganizationId())
                         .orElseThrow(SupplierNotFoundException::new);
 
         this.makers = req.getMakersId()==null?
-                makerRepository.findById(-1L).orElseThrow(MakerNotEmptyException::new)
+                null
+                //makerRepository.findById(-1L).orElseThrow(MakerNotEmptyException::new)
                 :makerRepository.findById(req.getMakersId()).orElseThrow(MakerNotFoundException::new);
 //        this.makers =
 //                makers.stream().map(
