@@ -1,6 +1,7 @@
 package eci.server.advice;
 
 import eci.server.BomModule.exception.*;
+import eci.server.DesignModule.exception.DesignContentNotEmptyException;
 import eci.server.DesignModule.exception.DesignNotFoundException;
 import eci.server.DesignModule.exception.DesignNotLinkedException;
 import eci.server.DesignModule.exception.DesignUpdateImpossibleException;
@@ -436,5 +437,13 @@ public class ExceptionAdvice {
         log.info("e = {}", e.getMessage());
         return Response.failure(404, "Maker 아이디는 필수입니다.");
     }
+
+    @ExceptionHandler(DesignContentNotEmptyException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Response DesignContentNotEmptyException(DesignContentNotEmptyException e) {
+        log.info("e = {}", e.getMessage());
+        return Response.failure(404, "디자인 내용은 저장 시 필수입니다.");
+    }
+
 
 }

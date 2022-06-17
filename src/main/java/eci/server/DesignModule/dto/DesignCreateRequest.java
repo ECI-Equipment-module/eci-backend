@@ -2,6 +2,7 @@ package eci.server.DesignModule.dto;
 
 import eci.server.DesignModule.entity.design.Design;
 import eci.server.DesignModule.entity.designfile.DesignAttachment;
+import eci.server.DesignModule.exception.DesignContentNotEmptyException;
 import eci.server.ItemModule.exception.item.AttachmentNotFoundException;
 import eci.server.ItemModule.exception.item.ItemNotFoundException;
 import eci.server.ItemModule.exception.member.sign.MemberNotFoundException;
@@ -47,6 +48,10 @@ public class DesignCreateRequest {
             NewItemRepository itemRepository,
             AttachmentTagRepository attachmentTagRepository
     ) {
+
+        if(req.getDesignContent().length()==0){
+            throw new DesignContentNotEmptyException();
+        }
 
         if (req.getTag().size() == 0) { //Project에 Attachment 존재하지 않을 시에 생성자
             return new Design(

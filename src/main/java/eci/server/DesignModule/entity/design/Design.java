@@ -2,6 +2,7 @@ package eci.server.DesignModule.entity.design;
 
 import eci.server.DesignModule.dto.DesignUpdateRequest;
 import eci.server.DesignModule.entity.designfile.DesignAttachment;
+import eci.server.DesignModule.exception.DesignContentNotEmptyException;
 import eci.server.ItemModule.entity.entitycommon.EntityDate;
 //import eci.server.ItemModule.entity.item.Item;
 import eci.server.ItemModule.entity.member.Member;
@@ -12,6 +13,7 @@ import eci.server.ItemModule.repository.member.MemberRepository;
 import eci.server.NewItemModule.entity.NewItem;
 import eci.server.NewItemModule.repository.attachment.AttachmentTagRepository;
 import eci.server.NewItemModule.repository.item.NewItemRepository;
+import eci.server.config.guard.DesignGuard;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -224,6 +226,11 @@ public class Design extends EntityDate {
 
 
     {
+
+        if(req.getDesignContent().length()==0){
+            throw new DesignContentNotEmptyException();
+        }
+
         this.newItem=
                 itemRepository.findById(req.getItemId())
                         .orElseThrow(ItemNotFoundException::new);
