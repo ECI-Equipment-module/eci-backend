@@ -644,14 +644,23 @@ public class NewItem extends EntityDate {
      * @param deleted
      */
     private void deleteAttachments(List<NewItemAttachment> deleted) {
-        deleted.forEach(di ->
-                        di.setDeleted(true)
-                //this.attachments.remove(di)
-        );
-        deleted.forEach(di ->
-                        di.setModifiedAt(LocalDateTime.now())
-                //this.attachments.remove(di)
-        );
+
+        // 1) save = false 인 애들 지울 땐 찐 지우기
+
+        for (NewItemAttachment att : deleted){
+            if(!att.isSave()){
+                this.attachments.remove(att);
+                //orphanRemoval=true에 의해 Post와
+                //연관 관계가 끊어지며 고아 객체가 된 Image는
+                // 데이터베이스에서도 제거
+            }
+            // 2) save = true 인 애들 지울 땐 아래와 같이 진행
+            else{
+                att.setDeleted(true);
+                att.setModifiedAt(LocalDateTime.now());
+            }
+        }
+
     }
 
     /**
@@ -712,6 +721,11 @@ public class NewItem extends EntityDate {
         return this.attachments.stream().filter(i -> i.getId().equals(id)).findAny();
     }
 
+    /**
+     * 이거를 어찌어찌 변형해보도록 하자
+     * @param attachmentFiles
+     * @return
+     */
     private List<NewItemAttachment> convertAttachmentFilesToAttachments(List<MultipartFile> attachmentFiles) {
 
         return attachmentFiles.stream().map(attachmentFile ->

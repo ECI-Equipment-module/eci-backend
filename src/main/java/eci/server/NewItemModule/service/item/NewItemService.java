@@ -310,15 +310,25 @@ public class NewItemService {
     }
 
     private void deleteAttachments(List<NewItemAttachment> attachments) {
+
+        // 1) save = false 인 애들 지울 땐 찐 지우기
         attachments.
                 stream().
                 forEach(
-                        i -> i.setDeleted(true)
+                        i -> fileService.delete(i.getUniqueName())
                 );
-        attachments.
-                forEach(
-                        i -> i.setModifiedAt(LocalDateTime.now())
-                );
+
+        // 2) save = true 인 애들 지울 땐 아래와 같이 진행
+// 이 부분 이미 entity 단에서 수행해줌
+//        attachments.
+//                stream().
+//                forEach(
+//                        i -> i.setDeleted(true)
+//                );
+//        attachments.
+//                forEach(
+//                        i -> i.setModifiedAt(LocalDateTime.now())
+//                );
     }
 
     public List<ItemProjectCreateDto> linkNeededItemsForProjectPage() {

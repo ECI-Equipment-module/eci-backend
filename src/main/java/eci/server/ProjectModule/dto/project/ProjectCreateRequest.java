@@ -245,7 +245,8 @@ public class ProjectCreateRequest {
                                     req.getAttachmentComment().
                                             get(req.attachments.indexOf(i)).
                                             isBlank()?"":
-                                            req.getAttachmentComment().get(req.attachments.indexOf(i))
+                                            req.getAttachmentComment().get(req.attachments.indexOf(i)),
+                                    true
                             )
                     ).collect(
                             toList()

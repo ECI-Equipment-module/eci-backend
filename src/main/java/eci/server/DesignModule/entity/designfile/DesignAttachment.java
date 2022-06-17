@@ -80,7 +80,10 @@ public class DesignAttachment extends EntityDate {
      *
      * @param originName
      */
-    public DesignAttachment(String originName, String tag, String attach_comment) {
+    public DesignAttachment(String originName,
+                            String tag,
+                            String attach_comment,
+                            boolean save) {
         SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date now = new Date();
 
@@ -93,6 +96,7 @@ public class DesignAttachment extends EntityDate {
                         sdf1.format(now).substring(0,10)
                         + "/"
                         + this.uniqueName; //이미지 저장 폴더 + 이미지 저장명
+        this.save = save;
     }
 
 

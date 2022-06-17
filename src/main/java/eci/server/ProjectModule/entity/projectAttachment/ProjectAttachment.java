@@ -81,8 +81,13 @@ public class ProjectAttachment extends EntityDate {
      *
      * @param originName
      */
-    public ProjectAttachment(String originName, String tag, String attach_comment) {
-        SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    public ProjectAttachment(
+            String originName,
+            String tag,
+            String attach_comment,
+            boolean save) {
+        SimpleDateFormat sdf1 =
+                new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date now = new Date();
 
         this.uniqueName = generateUniqueName(extractExtension(originName));
@@ -94,6 +99,7 @@ public class ProjectAttachment extends EntityDate {
                         sdf1.format(now).substring(0,10)
                         + "/"
                         + this.uniqueName; //이미지 저장 폴더 + 이미지 저장명
+        this.save = save;
     }
 
 
