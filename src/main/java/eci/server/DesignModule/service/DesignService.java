@@ -139,6 +139,14 @@ public class DesignService {
 
         Design design = designRepository.findById(id).orElseThrow(DesignNotFoundException::new);
 
+        if (!design.getTempsave() || design.getReadonly()) {
+            //tempsave가 false면 찐 저장 상태
+            //찐 저장 상태라면 UPDATE 불가,
+            // 임시저장 일때만 가능
+            //readonly가 true라면 수정 불가상태
+            throw new DesignUpdateImpossibleException();
+        }
+
         if (!design.getTempsave()) {
             //true면 임시저장 상태, false면 찐 저장 상태
             //찐 저장 상태라면 UPDATE 불가, 임시저장 일때만 가능

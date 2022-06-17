@@ -613,7 +613,7 @@ public class NewItem extends EntityDate {
 
             i.setTag(attachmentTagRepository
                     .findById(req.getAddedTag().get(added.indexOf(i))).
-                    orElseThrow(AttachmentNotFoundException::new).getName());
+                    orElseThrow(AttachmentTagNotFoundException::new).getName());
 
             i.setAttachmentaddress(
                     "src/main/prodmedia/image/" +
@@ -816,7 +816,7 @@ public class NewItem extends EntityDate {
                 " " : req.getName();
 
         this.itemTypes = req.getTypeId() == null ?
-                null :
+                itemTypesRepository.findById(99999L).orElseThrow(ItemNotFoundException::new) :
                 itemTypesRepository.findById(req.getTypeId()).orElseThrow(ItemNotFoundException::new);
 
 
