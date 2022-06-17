@@ -5,11 +5,7 @@ import eci.server.BomModule.repository.PreliminaryBomRepository;
 import eci.server.DashBoardModule.dto.myProject.ProjectDashboardDto;
 import eci.server.DesignModule.dto.DesignCreateUpdateResponse;
 import eci.server.ItemModule.dto.item.ItemProjectDashboardDto;
-
 import eci.server.ItemModule.entity.newRoute.RouteOrdering;
-
-import eci.server.ItemModule.exception.item.ItemNotFoundException;
-import eci.server.ItemModule.exception.item.ItemUpdateImpossibleException;
 import eci.server.ItemModule.exception.member.MemberNotFoundException;
 
 import eci.server.ItemModule.exception.route.RouteNotFoundException;
@@ -18,8 +14,6 @@ import eci.server.ItemModule.repository.newRoute.RouteOrderingRepository;
 import eci.server.ItemModule.repository.newRoute.RouteProductRepository;
 import eci.server.ItemModule.service.file.FileService;
 
-import eci.server.NewItemModule.dto.newItem.create.NewItemCreateResponse;
-import eci.server.NewItemModule.entity.NewItem;
 import eci.server.NewItemModule.repository.attachment.AttachmentTagRepository;
 import eci.server.NewItemModule.repository.item.NewItemRepository;
 import eci.server.ProjectModule.dto.carType.CarTypeDto;
@@ -35,6 +29,7 @@ import eci.server.ProjectModule.repository.carType.CarTypeRepository;
 import eci.server.ProjectModule.repository.clientOrg.ClientOrganizationRepository;
 import eci.server.ProjectModule.repository.produceOrg.ProduceOrganizationRepository;
 import eci.server.ProjectModule.repository.project.ProjectRepository;
+import eci.server.ProjectModule.repository.projectAttachmentRepository.ProjectAttachmentRepository;
 import eci.server.ProjectModule.repository.projectLevel.ProjectLevelRepository;
 import eci.server.ProjectModule.repository.projectType.ProjectTypeRepository;
 import lombok.RequiredArgsConstructor;
@@ -45,7 +40,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -69,6 +63,7 @@ public class ProjectService {
     private final AttachmentTagRepository attachmentTagRepository;
     private final BomRepository bomRepository;
     private final PreliminaryBomRepository preliminaryBomRepository;
+    private final ProjectAttachmentRepository projectAttachmentRepository;
 
     public ProjectListDto readDashboardAll(ProjectReadCondition cond) {
         return ProjectListDto.toDto(
@@ -128,6 +123,7 @@ public class ProjectService {
                 routeOrderingRepository.findById(routeId).orElseThrow(RouteNotFoundException::new);
 
         setRoute.setProject(project);
+        saveTrueAttachment(project);
 
         return new ProjectCreateUpdateResponse(project.getId(), routeId);
     }
@@ -146,15 +142,11 @@ public class ProjectService {
     }
 
     private void deleteAttachments(List<ProjectAttachment> attachments) {
-//        attachments.stream().forEach(i -> fileService.delete(i.getUniqueName()));
-        attachments.
-                forEach(
-                        i -> i.setDeleted(true)
-                );
-        attachments.
-                forEach(
-                        i -> i.setModifiedAt(LocalDateTime.now())
-                );
+        for(ProjectAttachment attachment:attachments){
+            if(!attachment.isSave()){
+                fileService.delete(attachment.getUniqueName());
+            }
+        }
     }
 
     @Transactional
@@ -241,6 +233,7 @@ public class ProjectService {
                 routeOrderingRepository.findById(routeId).orElseThrow(RouteNotFoundException::new);
 
         setRoute.setProject(project);
+        saveTrueAttachment(project);
         /////////////////////////////////////////////////////////////////////////
 
         return new DesignCreateUpdateResponse(id, routeId);
@@ -629,6 +622,12 @@ public class ProjectService {
         projectAttachments.forEach(i -> fileService.delete(i.getUniqueName()));
     }
 
+    private void saveTrueAttachment(Project target) {
+        projectAttachmentRepository.findByProject(target).
+                forEach(
+                        i->i.setSave(true)
+                );
 
+    }
 
 }

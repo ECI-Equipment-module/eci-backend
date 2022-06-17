@@ -108,9 +108,10 @@ public class ProjectAttachment extends EntityDate {
      *
      * @param originName
      */
-    public ProjectAttachment(String originName) {
+    public ProjectAttachment(String originName, boolean save) {
         this.uniqueName = generateUniqueName(extractExtension(originName));
         this.originName = originName;
+        this.save = save;
     }
 
     /**

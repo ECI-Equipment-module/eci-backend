@@ -7,16 +7,14 @@ import eci.server.DesignModule.entity.design.Design;
 import eci.server.DesignModule.entity.designfile.DesignAttachment;
 import eci.server.DesignModule.exception.DesignNotFoundException;
 import eci.server.DesignModule.exception.DesignUpdateImpossibleException;
+import eci.server.DesignModule.repository.DesignAttachmentRepository;
 import eci.server.DesignModule.repository.DesignRepository;
 import eci.server.ItemModule.entity.newRoute.RouteOrdering;
-import eci.server.ItemModule.exception.item.ItemNotFoundException;
-import eci.server.ItemModule.exception.item.ItemUpdateImpossibleException;
 import eci.server.ItemModule.exception.route.RouteNotFoundException;
 import eci.server.ItemModule.repository.member.MemberRepository;
 import eci.server.ItemModule.repository.newRoute.RouteOrderingRepository;
 import eci.server.ItemModule.repository.newRoute.RouteProductRepository;
 import eci.server.ItemModule.service.file.FileService;
-import eci.server.NewItemModule.entity.NewItem;
 import eci.server.NewItemModule.repository.attachment.AttachmentTagRepository;
 import eci.server.NewItemModule.repository.item.NewItemRepository;
 import eci.server.ProjectModule.dto.project.*;
@@ -29,7 +27,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -45,6 +42,7 @@ public class DesignService {
     private final PreliminaryBomRepository preliminaryBomRepository;
     private final ProjectRepository projectRepository;
     private final NewItemRepository newItemRepository;
+    private final DesignAttachmentRepository designAttachmentRepository;
 
     private final FileService fileService;
     private final RouteOrderingRepository routeOrderingRepository;
@@ -107,6 +105,7 @@ public class DesignService {
                 routeOrderingRepository.findById(routeId).orElseThrow(RouteNotFoundException::new);
 
         setRoute.setDesign(design);
+        saveTrueAttachment(design);
         /////////////////////////////////////////////////////////////////
 
         return new DesignCreateUpdateResponse(design.getId(), routeId);
@@ -126,17 +125,14 @@ public class DesignService {
     }
 
     private void deleteAttachments(List<DesignAttachment> attachments) {
-//        attachments.stream().forEach(i -> fileService.delete(i.getUniqueName()));
-        attachments.
-                stream().
-                forEach(
-                        i -> i.setDeleted(true)
-                );
-        attachments.
-                forEach(
-                        i -> i.setModifiedAt(LocalDateTime.now())
-                );
+        for(DesignAttachment attachment:attachments){
+            if(!attachment.isSave()){
+                fileService.delete(attachment.getUniqueName());
+            }
+        }
     }
+
+
 
     @Transactional
     public DesignTempCreateUpdateResponse update(Long id, DesignUpdateRequest req) {
@@ -206,6 +202,7 @@ public class DesignService {
                 routeOrderingRepository.findById(routeId).orElseThrow(RouteNotFoundException::new);
 
         setRoute.setDesign(design);
+        saveTrueAttachment(design);
         ////////////////////////////////////////////////
         return new DesignCreateUpdateResponse(id, routeId);
 
@@ -295,5 +292,16 @@ public class DesignService {
     private void deleteDesignAttachments(List<DesignAttachment> designAttachments) {
         designAttachments.forEach(i -> fileService.delete(i.getUniqueName()));
     }
+
+    private void saveTrueAttachment(Design target) {
+        designAttachmentRepository.findByDesign(target).
+                forEach(
+                        i->i.setSave(true)
+                );
+
+    }
+
+
+
 
 }

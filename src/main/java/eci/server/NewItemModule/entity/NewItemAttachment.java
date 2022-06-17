@@ -115,7 +115,6 @@ public class NewItemAttachment extends EntityDate {
 
         this.uniqueName = generateUniqueName(extractExtension(originName));
         this.originName = originName;
-
     }
 
     /**

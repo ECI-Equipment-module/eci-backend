@@ -8,6 +8,7 @@ import eci.server.ItemModule.exception.item.ItemNotFoundException;
 import eci.server.ItemModule.exception.member.sign.MemberNotFoundException;
 import eci.server.ItemModule.repository.member.MemberRepository;
 import eci.server.NewItemModule.entity.NewItem;
+import eci.server.NewItemModule.entity.NewItemAttachment;
 import eci.server.NewItemModule.repository.attachment.AttachmentTagRepository;
 import eci.server.NewItemModule.repository.item.NewItemRepository;
 import eci.server.ProjectModule.dto.project.ProjectCreateRequest;
@@ -441,7 +442,8 @@ public class Project extends EntityDate {
 
                 findAttachmentUpdatedResult(
                         req.getAddedAttachments(),
-                        req.getDeletedAttachments()
+                        req.getDeletedAttachments(),
+                        false
                 );
         if(req.getAddedTag().size()>0) {
             addUpdatedProjectAttachments(
@@ -523,14 +525,21 @@ public class Project extends EntityDate {
 //                );
 //    }
     private void deleteProjectAttachments(List<ProjectAttachment> deleted) {
-        deleted.forEach(di ->
-                        di.setDeleted(true)
-                //this.attachments.remove(di)
-        );
-        deleted.forEach(di ->
-                        di.setModifiedAt(LocalDateTime.now())
-                //this.attachments.remove(di)
-        );
+        // 1) save = false 인 애들 지울 땐 찐 지우기
+
+        for (ProjectAttachment att : deleted){
+            if(!att.isSave()){
+                this.projectAttachments.remove(att);
+                //orphanRemoval=true에 의해 Post와
+                //연관 관계가 끊어지며 고아 객체가 된 Image는
+                // 데이터베이스에서도 제거
+            }
+            // 2) save = true 인 애들 지울 땐 아래와 같이 진행
+            else{
+                att.setDeleted(true);
+                att.setModifiedAt(LocalDateTime.now());
+            }
+        }
     }
 
     /**
@@ -540,13 +549,22 @@ public class Project extends EntityDate {
      */
     private ProjectAttachmentUpdatedResult findAttachmentUpdatedResult(
             List<MultipartFile> addedAttachmentFiles,
-            List<Long> deletedAttachmentIds
+            List<Long> deletedAttachmentIds,
+            boolean save
     ) {
         List<ProjectAttachment> addedAttachments
-                = convertProjectAttachmentFilesToProjectAttachments(addedAttachmentFiles);
+                = convertProjectAttachmentFilesToProjectAttachments(
+                        addedAttachmentFiles,
+                save);
         List<ProjectAttachment> deletedAttachments
                 = convertProjectAttachmentIdsToProjectAttachments(deletedAttachmentIds);
-        return new ProjectAttachmentUpdatedResult(addedAttachmentFiles, addedAttachments, deletedAttachments);
+
+        addedAttachments.stream().forEach( //06-17 added 에 들어온 것은 모두 임시저장용
+                i->i.setSave(false)
+        );
+
+        return new ProjectAttachmentUpdatedResult(
+                addedAttachmentFiles, addedAttachments, deletedAttachments);
     }
 
 
@@ -562,9 +580,18 @@ public class Project extends EntityDate {
         return this.projectAttachments.stream().filter(i -> i.getId().equals(id)).findAny();
     }
 
-    private List<ProjectAttachment> convertProjectAttachmentFilesToProjectAttachments(List<MultipartFile> attachmentFiles) {
-        return attachmentFiles.stream().map(attachmentFile -> new ProjectAttachment(
-                attachmentFile.getOriginalFilename()
+    /**
+     * 어찌저찌
+     * @param attachmentFiles
+     * @return
+     */
+    private List<ProjectAttachment> convertProjectAttachmentFilesToProjectAttachments(
+            List<MultipartFile> attachmentFiles,
+            boolean save) {
+        return attachmentFiles.stream().map(attachmentFile ->
+                new ProjectAttachment(
+                attachmentFile.getOriginalFilename(),
+                        save
         )).collect(toList());
     }
 
@@ -701,7 +728,8 @@ public class Project extends EntityDate {
         ProjectAttachmentUpdatedResult resultAttachments =
                 findAttachmentUpdatedResult(
                         req.getAddedAttachments(),
-                        req.getDeletedAttachments()
+                        req.getDeletedAttachments(),
+                        true //temp End 에서 저장되는 파일들은 찐 저장
                 );
         // 문서 존재한다면 add 작업 처리
         if(req.getAddedTag().size()>0) {

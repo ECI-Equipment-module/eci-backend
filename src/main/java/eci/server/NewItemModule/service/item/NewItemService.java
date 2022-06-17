@@ -2,6 +2,7 @@ package eci.server.NewItemModule.service.item;
 
 import eci.server.BomModule.repository.BomRepository;
 import eci.server.BomModule.repository.PreliminaryBomRepository;
+import eci.server.DesignModule.entity.design.Design;
 import eci.server.DesignModule.repository.DesignRepository;
 import eci.server.ItemModule.dto.item.*;
 import eci.server.ItemModule.dto.newRoute.routeOrdering.RouteOrderingDto;
@@ -100,6 +101,8 @@ public class NewItemService {
     private final PreliminaryBomRepository preliminaryBomRepository;
     private final NewItemParentChildrenRepository newItemParentChildrenRepository;
 
+    private final NewItemAttachmentRepository newItemAttachmentRepository;
+
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -185,6 +188,8 @@ public class NewItemService {
             }
         }
         item.updateReadOnlyWhenSaved(); //저장하면 readonly = true
+        saveTrueAttachment(item); //06-17 찐 저장될 때
+
         return new NewItemCreateResponse(item.getId());
     }
 
@@ -310,25 +315,17 @@ public class NewItemService {
     }
 
     private void deleteAttachments(List<NewItemAttachment> attachments) {
-
-        // 1) save = false 인 애들 지울 땐 찐 지우기
-        attachments.
-                stream().
-                forEach(
-                        i -> fileService.delete(i.getUniqueName())
-                );
-
-        // 2) save = true 인 애들 지울 땐 아래와 같이 진행
-// 이 부분 이미 entity 단에서 수행해줌
 //        attachments.
 //                stream().
 //                forEach(
-//                        i -> i.setDeleted(true)
+//                        i -> fileService.delete(i.getUniqueName())
 //                );
-//        attachments.
-//                forEach(
-//                        i -> i.setModifiedAt(LocalDateTime.now())
-//                );
+        for(NewItemAttachment newItemAttachment:attachments){
+            if(!newItemAttachment.isSave()){
+                fileService.delete(newItemAttachment.getUniqueName());
+            }
+        }
+
     }
 
     public List<ItemProjectCreateDto> linkNeededItemsForProjectPage() {
@@ -393,6 +390,8 @@ public class NewItemService {
         return itemProjectCreateDtos;
 
     }
+
+
 
     @Transactional
     public ItemUpdateResponse update(Long id, NewItemUpdateRequest req) {
@@ -492,6 +491,8 @@ public class NewItemService {
                 result.getAttachmentUpdatedResult().getDeletedAttachments()
         );
 
+        saveTrueAttachment(item);
+
         return new NewItemCreateResponse(id);
 
     }
@@ -571,6 +572,14 @@ public class NewItemService {
         //여기에 상태 완료된 제품 아이템 더하기
 
         return itemListElse;
+    }
+
+    private void saveTrueAttachment(NewItem target) {
+        newItemAttachmentRepository.findByNewItem(target).
+                forEach(
+                        i->i.setSave(true)
+                );
+
     }
 
 }

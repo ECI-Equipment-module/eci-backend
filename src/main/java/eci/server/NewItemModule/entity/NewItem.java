@@ -704,7 +704,9 @@ public class NewItem extends EntityDate {
                 = convertAttachmentFilesToAttachments(addedAttachmentFiles);
         List<NewItemAttachment> deletedAttachments
                 = convertAttachmentIdsToAttachments(deletedAttachmentIds);
-
+        addedAttachments.stream().forEach( //06-17 added 에 들어온 것은 모두 임시저장용
+                i->i.setSave(false)
+        );
         return new NewItemAttachmentUpdatedResult(addedAttachmentFiles, addedAttachments, deletedAttachments);
     }
 
@@ -726,7 +728,8 @@ public class NewItem extends EntityDate {
      * @param attachmentFiles
      * @return
      */
-    private List<NewItemAttachment> convertAttachmentFilesToAttachments(List<MultipartFile> attachmentFiles) {
+    private List<NewItemAttachment> convertAttachmentFilesToAttachments(
+            List<MultipartFile> attachmentFiles) {
 
         return attachmentFiles.stream().map(attachmentFile ->
                 new NewItemAttachment(
