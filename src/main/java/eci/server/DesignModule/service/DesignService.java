@@ -138,8 +138,7 @@ public class DesignService {
     public DesignTempCreateUpdateResponse update(Long id, DesignUpdateRequest req) {
 
         Design design = designRepository.findById(id).orElseThrow(DesignNotFoundException::new);
-
-        if (!design.getTempsave() || design.getReadonly()) {
+        if (!design.getTempsave() ||design.getReadonly() ) {
             //tempsave가 false면 찐 저장 상태
             //찐 저장 상태라면 UPDATE 불가,
             // 임시저장 일때만 가능
