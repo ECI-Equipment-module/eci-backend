@@ -8,6 +8,7 @@ import eci.server.ItemModule.entity.entitycommon.EntityDate;
 import eci.server.ItemModule.entity.member.Member;
 import eci.server.ItemModule.exception.item.AttachmentNotFoundException;
 import eci.server.ItemModule.exception.item.ItemNotFoundException;
+import eci.server.ItemModule.exception.item.ItemUpdateImpossibleException;
 import eci.server.ItemModule.exception.member.sign.MemberNotFoundException;
 import eci.server.ItemModule.repository.member.MemberRepository;
 import eci.server.NewItemModule.entity.NewItem;
@@ -238,6 +239,7 @@ public class Design extends EntityDate {
             MemberRepository memberRepository
     )
 
+
     {
         if(req.getDesignContent().length()==0){
             throw new DesignContentNotEmptyException();
@@ -389,6 +391,7 @@ public class Design extends EntityDate {
     public void finalSaveDesign(){
         //라우트까지 만들어져야 temp save 가 비로소 true
         this.tempsave = false;
+        this.readonly = true;
     }
 
 }

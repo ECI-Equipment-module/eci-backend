@@ -425,7 +425,9 @@ public class NewItemCreateRequest {
                                 attachmentTagRepository
                                         .findById(req.getTag().get(req.attachments.indexOf(i))).
                                         orElseThrow(AttachmentNotFoundException::new).getName(),
-                                req.getAttachmentComment().get(req.attachments.indexOf(i))
+                                req.getAttachmentComment().get(req.attachments.indexOf(i)),
+                                //찐 생성이므로 이때 추가되는 문서들 모두 save = true
+                                true //save 속성임
                         )
                 ).collect(
                         toList()

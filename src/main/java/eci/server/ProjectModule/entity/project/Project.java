@@ -590,6 +590,7 @@ public class Project extends EntityDate {
     public void finalSaveProject(){
         //라우트까지 만들어져야 temp save 가 비로소 true
         this.tempsave = false;
+        this.readonly = true;
     }
 
 

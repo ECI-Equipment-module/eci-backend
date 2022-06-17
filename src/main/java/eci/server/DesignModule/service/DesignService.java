@@ -10,6 +10,7 @@ import eci.server.DesignModule.exception.DesignUpdateImpossibleException;
 import eci.server.DesignModule.repository.DesignRepository;
 import eci.server.ItemModule.entity.newRoute.RouteOrdering;
 import eci.server.ItemModule.exception.item.ItemNotFoundException;
+import eci.server.ItemModule.exception.item.ItemUpdateImpossibleException;
 import eci.server.ItemModule.exception.route.RouteNotFoundException;
 import eci.server.ItemModule.repository.member.MemberRepository;
 import eci.server.ItemModule.repository.newRoute.RouteOrderingRepository;
@@ -171,9 +172,11 @@ public class DesignService {
 
         Design design = designRepository.findById(id).orElseThrow(DesignNotFoundException::new);
 
-        if (!design.getTempsave()) {
-            //true면 임시저장 상태, false면 찐 저장 상태
-            //찐 저장 상태라면 UPDATE 불가, 임시저장 일때만 가능
+        if (!design.getTempsave() || design.getReadonly()) {
+            //tempsave가 false면 찐 저장 상태
+            //찐 저장 상태라면 UPDATE 불가,
+            // 임시저장 일때만 가능
+            //readonly가 true라면 수정 불가상태
             throw new DesignUpdateImpossibleException();
         }
 

@@ -85,7 +85,7 @@ public class NewItemAttachment extends EntityDate {
      *
      * @param originName
      */
-    public NewItemAttachment(String originName, String tag, String attach_comment) {
+    public NewItemAttachment(String originName, String tag, String attach_comment, boolean save) {
         SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date now = new Date();
 
