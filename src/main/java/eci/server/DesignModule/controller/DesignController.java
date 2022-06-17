@@ -1,6 +1,7 @@
 package eci.server.DesignModule.controller;
 
 import eci.server.DesignModule.dto.DesignCreateRequest;
+import eci.server.DesignModule.dto.DesignCreateUpdateResponse;
 import eci.server.DesignModule.dto.DesignTempCreateRequest;
 import eci.server.DesignModule.dto.DesignUpdateRequest;
 import eci.server.DesignModule.service.DesignService;
@@ -62,10 +63,10 @@ public class DesignController {
             @Valid @ModelAttribute
                     DesignCreateRequest req
     ) {
+        DesignCreateUpdateResponse res =
+                designService.create(req);
 
-        return Response.success(
-
-                designService.create(req));
+        return Response.success(res);
     }
 
     /**

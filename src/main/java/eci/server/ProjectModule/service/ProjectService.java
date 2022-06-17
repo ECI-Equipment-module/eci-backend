@@ -3,6 +3,7 @@ package eci.server.ProjectModule.service;
 import eci.server.BomModule.repository.BomRepository;
 import eci.server.BomModule.repository.PreliminaryBomRepository;
 import eci.server.DashBoardModule.dto.myProject.ProjectDashboardDto;
+import eci.server.DesignModule.dto.DesignCreateUpdateResponse;
 import eci.server.ItemModule.dto.item.ItemProjectDashboardDto;
 
 import eci.server.ItemModule.entity.newRoute.RouteOrdering;
@@ -11,6 +12,7 @@ import eci.server.ItemModule.exception.item.ItemNotFoundException;
 import eci.server.ItemModule.exception.item.ItemUpdateImpossibleException;
 import eci.server.ItemModule.exception.member.MemberNotFoundException;
 
+import eci.server.ItemModule.exception.route.RouteNotFoundException;
 import eci.server.ItemModule.repository.member.MemberRepository;
 import eci.server.ItemModule.repository.newRoute.RouteOrderingRepository;
 import eci.server.ItemModule.repository.newRoute.RouteProductRepository;
@@ -121,6 +123,12 @@ public class ProjectService {
         //프로젝트에 딸린 라우트
         Long routeId = routeOrderingRepository.findByNewItem(project.getNewItem()).get(routeOrdering.size()-1).getId();
 
+        //06-17 추가 , route 에 project 등록
+        RouteOrdering setRoute =
+                routeOrderingRepository.findById(routeId).orElseThrow(RouteNotFoundException::new);
+
+        setRoute.setProject(project);
+
         return new ProjectCreateUpdateResponse(project.getId(), routeId);
     }
 
@@ -189,7 +197,7 @@ public class ProjectService {
 
 
     @Transactional
-    public NewItemCreateResponse tempEnd(
+    public DesignCreateUpdateResponse tempEnd(
             Long id, ProjectUpdateRequest req) {
 
         Project project = projectRepository.findById(id).
@@ -224,7 +232,18 @@ public class ProjectService {
                 result.getAttachmentUpdatedResult().getDeletedAttachments()
         );
 
-        return new NewItemCreateResponse(id);
+        //06-17 추가 , route 에 project 등록 ////////////////////////////////////
+        List<RouteOrdering> routeOrdering = routeOrderingRepository.findByNewItem(project.getNewItem());
+        //프로젝트에 딸린 라우트
+        Long routeId = routeOrderingRepository.findByNewItem(project.getNewItem()).get(routeOrdering.size()-1).getId();
+
+        RouteOrdering setRoute =
+                routeOrderingRepository.findById(routeId).orElseThrow(RouteNotFoundException::new);
+
+        setRoute.setProject(project);
+        /////////////////////////////////////////////////////////////////////////
+
+        return new DesignCreateUpdateResponse(id, routeId);
 
     }
 

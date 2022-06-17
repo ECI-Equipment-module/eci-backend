@@ -9,10 +9,13 @@ import eci.server.DesignModule.exception.DesignNotFoundException;
 import eci.server.DesignModule.exception.DesignUpdateImpossibleException;
 import eci.server.DesignModule.repository.DesignRepository;
 import eci.server.ItemModule.entity.newRoute.RouteOrdering;
+import eci.server.ItemModule.exception.item.ItemNotFoundException;
+import eci.server.ItemModule.exception.route.RouteNotFoundException;
 import eci.server.ItemModule.repository.member.MemberRepository;
 import eci.server.ItemModule.repository.newRoute.RouteOrderingRepository;
 import eci.server.ItemModule.repository.newRoute.RouteProductRepository;
 import eci.server.ItemModule.service.file.FileService;
+import eci.server.NewItemModule.entity.NewItem;
 import eci.server.NewItemModule.repository.attachment.AttachmentTagRepository;
 import eci.server.NewItemModule.repository.item.NewItemRepository;
 import eci.server.ProjectModule.dto.project.*;
@@ -40,6 +43,7 @@ public class DesignService {
     private final BomRepository bomRepository;
     private final PreliminaryBomRepository preliminaryBomRepository;
     private final ProjectRepository projectRepository;
+    private final NewItemRepository newItemRepository;
 
     private final FileService fileService;
     private final RouteOrderingRepository routeOrderingRepository;
@@ -96,6 +100,13 @@ public class DesignService {
         List<RouteOrdering> routeOrdering = routeOrderingRepository.findByNewItem(design.getNewItem());
         //프로젝트에 딸린 라우트
         Long routeId = routeOrderingRepository.findByNewItem(design.getNewItem()).get(routeOrdering.size() - 1).getId();
+
+        //06-17 등록되면 , routeOrdering 에 design 으로 얘를 등록 시켜주기//////
+        RouteOrdering setRoute =
+                routeOrderingRepository.findById(routeId).orElseThrow(RouteNotFoundException::new);
+
+        setRoute.setDesign(design);
+        /////////////////////////////////////////////////////////////////
 
         return new DesignCreateUpdateResponse(design.getId(), routeId);
     }
@@ -156,7 +167,7 @@ public class DesignService {
     }
 
     @Transactional
-    public DesignTempCreateUpdateResponse tempEnd(Long id, DesignUpdateRequest req) {
+    public DesignCreateUpdateResponse tempEnd(Long id, DesignUpdateRequest req) {
 
         Design design = designRepository.findById(id).orElseThrow(DesignNotFoundException::new);
 
@@ -180,7 +191,20 @@ public class DesignService {
         deleteAttachments(
                 result.getDesignUpdatedResult().getDeletedAttachments()
         );
-        return new DesignTempCreateUpdateResponse(id);
+
+        //06-17 아래 라우트에 디자인 등록 로직 추가
+
+        List<RouteOrdering> routeOrdering = routeOrderingRepository.findByNewItem(design.getNewItem());
+        //디자인에 딸린 라우트////////////////////////////
+        Long routeId = routeOrderingRepository.findByNewItem(design.getNewItem()).get(routeOrdering.size() - 1).getId();
+
+
+        RouteOrdering setRoute =
+                routeOrderingRepository.findById(routeId).orElseThrow(RouteNotFoundException::new);
+
+        setRoute.setDesign(design);
+        ////////////////////////////////////////////////
+        return new DesignCreateUpdateResponse(id, routeId);
 
     }
 

@@ -93,8 +93,6 @@ public class ProjectCreateRequest {
             AttachmentTagRepository attachmentTagRepository
             ) {
 
-
-
         if(req.getProjectLevelId()==null || req.getProjectLevelId()==99999L){
             throw new ProjectLevelNotEmptyException();
         }
