@@ -46,7 +46,7 @@ import static eci.server.NewItemModule.entity.supplier.QMaker.maker;
                                     CustomMakerResponse.class,
                                     maker.id,
                                     maker.code,
-                                    maker.maker))
+                                    maker.name))
                             .from(maker)
                             .where(predicate)
                             .orderBy(maker.id.desc())
