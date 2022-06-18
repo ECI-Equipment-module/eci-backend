@@ -170,6 +170,26 @@ public class RouteOrdering extends EntityDate {
         if(this.present<routeProductList.size()-1) {//05-24 <= => < 로 수정
             //지금 들어온 코멘트는 현재 애 다음에
             routeProductList.get(this.present).setComment(req.getComment());
+
+            // 지금 업데이트되는 라우트 프로덕트의 타입이 create 라면
+            if(routeProductList.get(this.present).getType().getName().equals("CREATE")){
+                // 모듈이 아이템
+                if(routeProductList.get(this.present).getType().getModule().equals("ITEM")){
+                    this.getNewItem().setTempsave(false); //06-18 라우트 만든 순간 임시저장 다시 거짓으로
+                }
+                // 모듈이 디자인
+                else if(routeProductList.get(this.present).getType().getModule().equals("DESIGN")){
+                    this.getDesign().setTempsave(false); //라우트 만든 순간 임시저장 다시 거짓으로
+                }
+                // 모듈이 프로젝트
+                else if(routeProductList.get(this.present).getType().getModule().equals("PROJECT")){
+                    this.getProject().setTempsave(false); //라우트 만든 순간 임시저장 다시 거짓으로
+                }
+                else if(routeProductList.get(this.present).getType().getModule().equals("BOM")){
+                    this.getProject().setTempsave(false); //라우트 만든 순간 임시저장 다시 거짓으로
+                }
+            }
+
         }else{
             //만약 present가 size() 가 됐다면 다 왔다는 거다.
             System.out.println("complete");
@@ -191,6 +211,8 @@ public class RouteOrdering extends EntityDate {
         if(this.present<routeProductList.size()) {
             this.present = this.present + 1;
         }
+
+
 
         return req;
     }
