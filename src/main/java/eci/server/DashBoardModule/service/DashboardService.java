@@ -9,6 +9,7 @@ import eci.server.DesignModule.entity.design.Design;
 import eci.server.DesignModule.repository.DesignRepository;
 //import eci.server.ItemModule.entity.item.Item;
 import eci.server.ItemModule.entity.member.Member;
+import eci.server.ItemModule.entity.newRoute.RouteOrdering;
 import eci.server.ItemModule.entity.newRoute.RouteProduct;
 import eci.server.ItemModule.entity.newRoute.RouteProductMember;
 import eci.server.ItemModule.exception.member.auth.AccessExpiredException;
@@ -514,12 +515,20 @@ public class DashboardService {
         //1-2 temp-save 가 true 인 것만 담는 리스트
         List<NewItem> tempSavedNewItemList = new ArrayList<>();
 
+
+
         for (NewItem newItem : NewItemList) {
-            if (newItem.isTempsave() //&& !(newItem.isReadonly())
-            ){
-                //06-04 : 임시저장 이고 읽기 전용이 아니라면 임시저장에 뜨도록
-                tempSavedNewItemList.add(newItem);
-                //임시저장 진행 중인 것
+
+            if (newItem.isTempsave()){
+                RouteOrdering ordering = routeOrderingRepository.findByNewItem(newItem).get(
+                        routeOrderingRepository.findByNewItem(newItem).size()-1);
+                int presentIdx = ordering.getPresent();
+                RouteProduct routeProduct = routeProductRepository.findAllByRouteOrdering(ordering).get(presentIdx);
+                if(!routeProduct.isPreRejected()) { //06-18 거부된게 아닐때만 임시저장에, 거부된 것이라면 임시저장에 뜨면 안됨
+                    //06-04 : 임시저장 이고 읽기 전용이 아니라면 임시저장에 뜨도록
+                    tempSavedNewItemList.add(newItem);
+                    //임시저장 진행 중인 것
+                }
             }
         }
 
