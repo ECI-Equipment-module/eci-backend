@@ -1001,9 +1001,16 @@ public class NewItem extends EntityDate {
         if(req.getClassification1Id()==null || req.getClassification2Id() ==null || req.getClassification3Id()==null){
             throw new ClassificationRequiredException();
         }
-        if(req.getClassification1Id()==99999L || req.getClassification2Id() == 99999L || req.getClassification3Id()== 99999L){
+
+        if(req.getClassification1Id()==99999L || req.getClassification2Id() == 99999L){
+            //06-18 분류 3은 99999 여도 괜찮지
             throw new ProperClassificationRequiredException();
         }
+
+        if(req.getClassification1Id()==99999L && req.getClassification2Id() ==99999L && req.getClassification3Id()==99999L){
+            throw new ProperClassificationRequiredException();
+        }
+
         //아이템 타입 체크
         if(req.getTypeId()==null){
             throw new ItemTypeRequiredException();
