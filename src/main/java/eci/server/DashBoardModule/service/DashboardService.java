@@ -136,13 +136,20 @@ public class DashboardService {
 
         for (Project project : myProjectList) {
             if (project.getTempsave()
-                &&
-            Objects.equals(project.getId(), projectRepository.findByNewItem(project.getNewItem()).get(
-                    projectRepository.findByNewItem(project.getNewItem()).size() - 1
-            ).getId())
+                    &&
+                    Objects.equals(project.getId(), projectRepository.findByNewItem(project.getNewItem()).get(
+                            projectRepository.findByNewItem(project.getNewItem()).size() - 1
+                    ).getId())
             ) {
-                tempSavedProjectList.add(project);
-                //임시저장 진행 중인 것
+                RouteOrdering ordering = routeOrderingRepository.findByNewItem(project.getNewItem()).get(
+                        routeOrderingRepository.findByNewItem(project.getNewItem()).size()-1);
+                int presentIdx = ordering.getPresent();
+                RouteProduct routeProduct = routeProductRepository.findAllByRouteOrdering(ordering).get(presentIdx);
+                if(!routeProduct.isPreRejected()) { //06-18 거부된게 아닐때만 임시저장에, 거부된 것이라면 임시저장에 뜨면 안됨
+
+                    tempSavedProjectList.add(project);
+                    //임시저장 진행 중인 것
+                }
             }
         }
 // temp save 로직을 변경해서 아래 코드 필요 없어짐
@@ -192,12 +199,14 @@ public class DashboardService {
                 if (routeProductMember.getMember().getId().equals(member1.getId())
                         &&
                         (
-                        routeProduct.getType().getModule().equals("PROJECT")
-                        &&
-                        routeProduct.getType().getName().equals("CREATE")
+                                routeProduct.getType().getModule().equals("PROJECT")
+                                        &&
+                                        routeProduct.getType().getName().equals("CREATE")
                         )
-                        //routeProduct.getRoute_name().equals("프로젝트와 Item(제품) Link(설계자)")
+                    //routeProduct.getRoute_name().equals("프로젝트와 Item(제품) Link(설계자)")
                 ) {
+
+
                     myRouteProductList.add(routeProduct);
                     break;
                 }
@@ -260,14 +269,21 @@ public class DashboardService {
 
         for (Design design : myDesignList) {
             if (design.getTempsave()
-                &&
-            Objects.equals(design.getId(), designRepository.findByNewItem(design.getNewItem()).get(
-                    designRepository.findByNewItem(design.getNewItem()).size() - 1
-            ).getId())){
-            //05-30 - 이 아이가 최신 아이일 때만! (최신 아니고 옛날 거면 필요 없음)
+                    &&
+                    Objects.equals(design.getId(), designRepository.findByNewItem(design.getNewItem()).get(
+                            designRepository.findByNewItem(design.getNewItem()).size() - 1
+                    ).getId())){
+                //05-30 - 이 아이가 최신 아이일 때만! (최신 아니고 옛날 거면 필요 없음)
 
-                tempSavedDesignList.add(design);
-                //임시저장 진행 중인 것
+                RouteOrdering ordering = routeOrderingRepository.findByNewItem(design.getNewItem()).get(
+                        routeOrderingRepository.findByNewItem(design.getNewItem()).size()-1);
+                int presentIdx = ordering.getPresent();
+                RouteProduct routeProduct = routeProductRepository.findAllByRouteOrdering(ordering).get(presentIdx);
+                if(!routeProduct.isPreRejected()) { //06-18 거부된게 아닐때만 임시저장에, 거부된 것이라면 임시저장에 뜨면 안됨
+                    //06-04 : 임시저장 이고 읽기 전용이 아니라면 임시저장에 뜨도록
+                    tempSavedDesignList.add(design);
+                    //임시저장 진행 중인 것
+                }
             }
         }
 
@@ -301,9 +317,9 @@ public class DashboardService {
                 if (routeProductMember.getMember().getId().equals(member1.getId()) &&
                         //routeProduct.getRoute_name().equals("기구Design생성[설계자]")
                         (
-                        routeProduct.getType().getModule().equals("DESIGN")
-                        &&
-                        routeProduct.getType().getName().equals("CREATE")
+                                routeProduct.getType().getModule().equals("DESIGN")
+                                        &&
+                                        routeProduct.getType().getName().equals("CREATE")
                         )
                 ) {
                     myRouteProductList.add(routeProduct);
@@ -346,9 +362,9 @@ public class DashboardService {
             if (routeProduct.isPreRejected() &&
                     //routeProduct.getRoute_name().equals("기구Design생성[설계자]")
                     (
-                    routeProduct.getType().getModule().equals("DESIGN")
-                    &&
-                    routeProduct.getType().getName().equals("CREATE")
+                            routeProduct.getType().getModule().equals("DESIGN")
+                                    &&
+                                    routeProduct.getType().getName().equals("CREATE")
                     )
             ) {
 
@@ -456,9 +472,9 @@ public class DashboardService {
                 if (routeProductMember.getMember().getId().equals(member1.getId()) &&
                         //routeProduct.getRoute_name().equals("개발BOM생성[설계자]")
                         (
-                        routeProduct.getType().getModule().equals("BOM")
-                        &&
-                        routeProduct.getType().getName().equals("CREATE")
+                                routeProduct.getType().getModule().equals("BOM")
+                                        &&
+                                        routeProduct.getType().getName().equals("CREATE")
                         )
                 ) {
                     myRouteProductList.add(routeProduct);
@@ -490,9 +506,9 @@ public class DashboardService {
         List<TodoResponse> NEW_BOM = new ArrayList<>(unlinkedItemTodoResponses);
 
 
-            ToDoSingle newDesign = new ToDoSingle("New Bom", NEW_BOM);
-            List<ToDoSingle> toDoDoubleList = new ArrayList<ToDoSingle>();
-            toDoDoubleList.add(newDesign);
+        ToDoSingle newDesign = new ToDoSingle("New Bom", NEW_BOM);
+        List<ToDoSingle> toDoDoubleList = new ArrayList<ToDoSingle>();
+        toDoDoubleList.add(newDesign);
 
 
         return new ToDoDoubleList(toDoDoubleList);
@@ -561,11 +577,11 @@ public class DashboardService {
                 if (routeProductMember.getMember().getId().equals(member1.getId()) &&
                         //routeProduct.getRoute_name().equals("기구Design생성[설계자]")
                         (
-                        routeProduct.getType().getModule().equals("DESIGN")
-                        &&
-                        routeProduct.getType().getName().equals("CREATE")
+                                routeProduct.getType().getModule().equals("DESIGN")
+                                        &&
+                                        routeProduct.getType().getName().equals("CREATE")
                         )
-                        ) {
+                ) {
                     myRouteProductList.add(routeProduct);
                     break;
                 }
@@ -612,7 +628,7 @@ public class DashboardService {
                         );
                     }
                 }
-        }
+            }
         }
         List<TodoResponse> REJECTED = new ArrayList<>(rejectedNewItemTodoResponses);
 
@@ -631,9 +647,9 @@ public class DashboardService {
                         (
                                 routeProduct.getType().getModule().equals("ITEM")
                                         &&
-                                routeProduct.getType().getName().equals("REVIEW")
+                                        routeProduct.getType().getName().equals("REVIEW")
                         )
-                        //routeProduct.getRoute_name().equals("Item Request Review(설계팀장)")
+                    //routeProduct.getRoute_name().equals("Item Request Review(설계팀장)")
 
                 ) {
                     myNewItemReviewRouteProductList.add(routeProduct);
