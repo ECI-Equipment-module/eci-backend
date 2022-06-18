@@ -141,8 +141,15 @@ public class DashboardService {
                     projectRepository.findByNewItem(project.getNewItem()).size() - 1
             ).getId())
             ) {
-                tempSavedProjectList.add(project);
-                //임시저장 진행 중인 것
+                RouteOrdering ordering = routeOrderingRepository.findByNewItem(project.getNewItem()).get(
+                        routeOrderingRepository.findByNewItem(project.getNewItem()).size()-1);
+                int presentIdx = ordering.getPresent();
+                RouteProduct routeProduct = routeProductRepository.findAllByRouteOrdering(ordering).get(presentIdx);
+                if(!routeProduct.isPreRejected()) { //06-18 거부된게 아닐때만 임시저장에, 거부된 것이라면 임시저장에 뜨면 안됨
+
+                    tempSavedProjectList.add(project);
+                    //임시저장 진행 중인 것
+                }
             }
         }
 // temp save 로직을 변경해서 아래 코드 필요 없어짐
@@ -198,6 +205,8 @@ public class DashboardService {
                         )
                         //routeProduct.getRoute_name().equals("프로젝트와 Item(제품) Link(설계자)")
                 ) {
+
+
                     myRouteProductList.add(routeProduct);
                     break;
                 }
@@ -266,8 +275,15 @@ public class DashboardService {
             ).getId())){
             //05-30 - 이 아이가 최신 아이일 때만! (최신 아니고 옛날 거면 필요 없음)
 
-                tempSavedDesignList.add(design);
-                //임시저장 진행 중인 것
+                RouteOrdering ordering = routeOrderingRepository.findByNewItem(design.getNewItem()).get(
+                        routeOrderingRepository.findByNewItem(design.getNewItem()).size()-1);
+                int presentIdx = ordering.getPresent();
+                RouteProduct routeProduct = routeProductRepository.findAllByRouteOrdering(ordering).get(presentIdx);
+                if(!routeProduct.isPreRejected()) { //06-18 거부된게 아닐때만 임시저장에, 거부된 것이라면 임시저장에 뜨면 안됨
+                    //06-04 : 임시저장 이고 읽기 전용이 아니라면 임시저장에 뜨도록
+                    tempSavedDesignList.add(design);
+                    //임시저장 진행 중인 것
+                }
             }
         }
 
