@@ -141,15 +141,26 @@ public class DashboardService {
                             projectRepository.findByNewItem(project.getNewItem()).size() - 1
                     ).getId())
             ) {
-                RouteOrdering ordering = routeOrderingRepository.findByNewItem(project.getNewItem()).get(
-                        routeOrderingRepository.findByNewItem(project.getNewItem()).size()-1);
-                int presentIdx = ordering.getPresent();
-                RouteProduct routeProduct = routeProductRepository.findAllByRouteOrdering(ordering).get(presentIdx);
-                if(!routeProduct.isPreRejected()) { //06-18 거부된게 아닐때만 임시저장에, 거부된 것이라면 임시저장에 뜨면 안됨
 
-                    tempSavedProjectList.add(project);
-                    //임시저장 진행 중인 것
+
+
+                if(routeOrderingRepository.findByNewItem(project.getNewItem()).size()>0){
+                    RouteOrdering ordering = routeOrderingRepository.findByNewItem(project.getNewItem()).get(
+                            routeOrderingRepository.findByNewItem(project.getNewItem()).size() - 1);
+                    int presentIdx = ordering.getPresent();
+                    RouteProduct routeProduct = routeProductRepository.findAllByRouteOrdering(ordering).get(presentIdx);
+                    if (!routeProduct.isPreRejected()) { //06-18 거부된게 아닐때만 임시저장에, 거부된 것이라면 임시저장에 뜨면 안됨
+                        //06-04 : 임시저장 이고 읽기 전용이 아니라면 임시저장에 뜨도록
+                        tempSavedProjectList.add(project);
+                        //임시저장 진행 중인 것
+                    }
                 }
+
+                else {
+                    tempSavedProjectList.add(project);
+                }
+
+
             }
         }
 // temp save 로직을 변경해서 아래 코드 필요 없어짐
@@ -275,17 +286,25 @@ public class DashboardService {
                     ).getId())){
                 //05-30 - 이 아이가 최신 아이일 때만! (최신 아니고 옛날 거면 필요 없음)
 
-                RouteOrdering ordering = routeOrderingRepository.findByNewItem(design.getNewItem()).get(
-                        routeOrderingRepository.findByNewItem(design.getNewItem()).size()-1);
-                int presentIdx = ordering.getPresent();
-                RouteProduct routeProduct = routeProductRepository.findAllByRouteOrdering(ordering).get(presentIdx);
-                if(!routeProduct.isPreRejected()) { //06-18 거부된게 아닐때만 임시저장에, 거부된 것이라면 임시저장에 뜨면 안됨
-                    //06-04 : 임시저장 이고 읽기 전용이 아니라면 임시저장에 뜨도록
+
+                if(routeOrderingRepository.findByNewItem(design.getNewItem()).size()>0){
+                    RouteOrdering ordering = routeOrderingRepository.findByNewItem(design.getNewItem()).get(
+                            routeOrderingRepository.findByNewItem(design.getNewItem()).size() - 1);
+                    int presentIdx = ordering.getPresent();
+                    RouteProduct routeProduct = routeProductRepository.findAllByRouteOrdering(ordering).get(presentIdx);
+                    if (!routeProduct.isPreRejected()) { //06-18 거부된게 아닐때만 임시저장에, 거부된 것이라면 임시저장에 뜨면 안됨
+                        //06-04 : 임시저장 이고 읽기 전용이 아니라면 임시저장에 뜨도록
+                        tempSavedDesignList.add(design);
+                        //임시저장 진행 중인 것
+                    }
+                }
+
+                else {
                     tempSavedDesignList.add(design);
-                    //임시저장 진행 중인 것
+                }
                 }
             }
-        }
+
 
         if (tempSavedDesignList.size() > 0) {
             for (Design d : tempSavedDesignList) {
@@ -309,7 +328,7 @@ public class DashboardService {
                 )
         ).collect(Collectors.toList());
 
-        //2) 라우트 프로덕트들 중 나에게 할당된 카드들 & 단계가 기구Design생성[설계자] 인 것
+        //2) 라우트 프로덕트들 중 나에게 할당된 카드들 & 단계가 기구 Design 생성[설계자] 인 것
         List<RouteProduct> myRouteProductList = new ArrayList<>();
 
         for (RouteProduct routeProduct : routeProductList) {
@@ -536,14 +555,21 @@ public class DashboardService {
         for (NewItem newItem : NewItemList) {
 
             if (newItem.isTempsave()){
-                RouteOrdering ordering = routeOrderingRepository.findByNewItem(newItem).get(
-                        routeOrderingRepository.findByNewItem(newItem).size()-1);
-                int presentIdx = ordering.getPresent();
-                RouteProduct routeProduct = routeProductRepository.findAllByRouteOrdering(ordering).get(presentIdx);
-                if(!routeProduct.isPreRejected()) { //06-18 거부된게 아닐때만 임시저장에, 거부된 것이라면 임시저장에 뜨면 안됨
-                    //06-04 : 임시저장 이고 읽기 전용이 아니라면 임시저장에 뜨도록
+
+                if(routeOrderingRepository.findByNewItem(newItem).size()>0){
+                    RouteOrdering ordering = routeOrderingRepository.findByNewItem(newItem).get(
+                            routeOrderingRepository.findByNewItem(newItem).size() - 1);
+                    int presentIdx = ordering.getPresent();
+                    RouteProduct routeProduct = routeProductRepository.findAllByRouteOrdering(ordering).get(presentIdx);
+                    if (!routeProduct.isPreRejected()) { //06-18 거부된게 아닐때만 임시저장에, 거부된 것이라면 임시저장에 뜨면 안됨
+                        //06-04 : 임시저장 이고 읽기 전용이 아니라면 임시저장에 뜨도록
+                        tempSavedNewItemList.add(newItem);
+                        //임시저장 진행 중인 것
+                    }
+                }
+
+                else {
                     tempSavedNewItemList.add(newItem);
-                    //임시저장 진행 중인 것
                 }
             }
         }
