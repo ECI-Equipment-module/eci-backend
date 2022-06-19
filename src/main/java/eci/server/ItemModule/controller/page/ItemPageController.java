@@ -33,7 +33,7 @@
 //    ItemRepository itemRepository;
 //
 //
-//    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
+//    @CrossOrigin(origins = "https://localhost:3000")
 //    @GetMapping("/item/page")
 //    public Page<ItemSimpleDto> paging(@PageableDefault(size=5)
 //                                      @SortDefault.SortDefaults({
@@ -85,8 +85,8 @@
 //     */
 //    @Autowired
 //    ItemService itemService;
-//    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
-//    @GetMapping("/item-candidates")
+//    @CrossOrigin(origins = "https://localhost:3000")
+//    @GetMapping("/https://localhost:3000ates")
 //    public Page<ItemProjectCreateDto> readItemCandidate(@PageableDefault(size=5)
 //                                      @SortDefault.SortDefaults({
 //                                              @SortDefault(
