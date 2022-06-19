@@ -298,7 +298,6 @@ public class ProjectService {
 
         Page<ProjectDashboardDto> workingPagingList = workingProjectList.map(
                 project -> new ProjectDashboardDto(
-
                         project.getId(),
                         project.getProjectNumber(),
                         project.getName(),
@@ -306,13 +305,22 @@ public class ProjectService {
                         project.getProjectType().getName(),
                         project.getProjectLevel().getName(),
 
-                        ProduceOrganizationDto.toDto(project.getProduceOrganization()).getName(),
-                        ClientOrganizationDto.toDto(project.getClientOrganization()).getName(),
-                        CarTypeDto.toDto(project.getCarType()),
+                        project.getProduceOrganization()==null?
+                                "":
+                                ProduceOrganizationDto.toDto(project.getProduceOrganization()).getName(),
 
+                        project.getClientOrganization()==null?
+                                "":
+                                ClientOrganizationDto.toDto(project.getClientOrganization()).getName(),
+
+                        project.getCarType()==null?
+                                CarTypeDto.toDto()
+                                : CarTypeDto.toDto(project.getCarType()),
                         project.getClientItemNumber(),
 
-                        ItemProjectDashboardDto.toDto(project.getNewItem()),
+                        project.getNewItem()==null?
+                                ItemProjectDashboardDto.toDto():
+                                ItemProjectDashboardDto.toDto(project.getNewItem()),
 
                         project.getTempsave(),
 
