@@ -18,7 +18,7 @@ import javax.validation.Valid;
 public class ProjectLevelController {
     private final ProjectLevelService projectLevelService;
 
-    @GetMapping("/project-level")
+    @GetMapping("/projectLevel")
     @ResponseStatus(HttpStatus.OK)
     public Response readAll(@Valid ProjectLevelReadCondition cond) {
         return Response.success(
