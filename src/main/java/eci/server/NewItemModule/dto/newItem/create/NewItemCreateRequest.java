@@ -425,23 +425,50 @@ public class NewItemCreateRequest {
 
                 false ,//revise progress 중 아니다
 
+                req.getAttachmentComment().size()>0?(
 
+                // 06-18 ) 1) comment 가 있다면 순차대로 채워지게 하기
                 req.attachments.stream().map(
                         i -> new NewItemAttachment(
                                 i.getOriginalFilename(),
                                 attachmentTagRepository
                                         .findById(req.getTag().get(req.attachments.indexOf(i))).
                                         orElseThrow(AttachmentNotFoundException::new).getName(),
-                                req.getAttachmentComment().get(req.attachments.indexOf(i)),
+
+                                req.getAttachmentComment().get(
+                                        req.attachments.indexOf(i)
+                                )
+                                ,
                                 //찐 생성이므로 이때 추가되는 문서들 모두 save = true
                                 true //save 속성임
                         )
                 ).collect(
                         toList()
                 )
+                ) :
 
+                // 06-18 ) 2) comment 가 없다면 빈칸으로 코멘트 채워지게 하기
+                        req.attachments.stream().map(
+                                i -> new NewItemAttachment(
+                                        i.getOriginalFilename(),
+                                        attachmentTagRepository
+                                                .findById(req.getTag().get(req.attachments.indexOf(i))).
+                                                orElseThrow(AttachmentNotFoundException::new).getName(),
+
+                                        " "
+                                        ,
+                                        //찐 생성이므로 이때 추가되는 문서들 모두 save = true
+                                        true //save 속성임
+                                )
+
+                        ).collect(
+
+                                toList()
+
+                        )
 
         );
+
     }
 
 }
