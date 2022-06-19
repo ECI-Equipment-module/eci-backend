@@ -234,14 +234,22 @@ public class DesignGuard  {
 
     // isEdit이라면 이거 돌려주기  !
     public Long editDesignId(Long itemId){
-        return designRepository.findByNewItem(
+        Long targetId = -1L;
+
+        if(designRepository.findByNewItem(
                 newItemRepository.findById(itemId).orElseThrow(ItemNotFoundException::new)
-        ).get(
-                designRepository.findByNewItem(
-                        newItemRepository.findById(itemId).orElseThrow(ItemNotFoundException::new)
-                ).size()-1
-        ).getId();
-        //사이즈가 0보다 크면 edit
+        ).size()>0) {
+            targetId = designRepository.findByNewItem(
+                    newItemRepository.findById(itemId).orElseThrow(ItemNotFoundException::new)
+            ).get(
+                    designRepository.findByNewItem(
+                            newItemRepository.findById(itemId).orElseThrow(ItemNotFoundException::new)
+                    ).size() - 1
+            ).getId();
+            //사이즈가 0보다 크면 edit
+        }
+
+        return targetId;
     }
 }
 

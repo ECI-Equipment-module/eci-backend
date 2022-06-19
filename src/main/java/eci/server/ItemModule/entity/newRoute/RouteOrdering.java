@@ -38,9 +38,11 @@ import static java.util.stream.Collectors.toList;
 public class RouteOrdering extends EntityDate {
 
     @Id
+
     @GeneratedValue(strategy = GenerationType.IDENTITY)
 //  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQUENCE1")
 //  @SequenceGenerator(name="SEQUENCE1", sequenceName="SEQUENCE1", allocationSize=1)
+
     private Long id;
 
     /**
@@ -294,7 +296,7 @@ public class RouteOrdering extends EntityDate {
                 this.getDesign().setTempsave(true);
                 this.getDesign().setReadonly(false);
                 break;
-             //11 (봄)
+            //11 (봄)
             case "11":
                 this.getBom().setTempsave(true);
                 this.getBom().setReadonly(false);
