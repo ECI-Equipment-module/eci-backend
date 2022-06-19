@@ -250,7 +250,7 @@ public class NewItemCreateRequest {
 
                     req.cuttingType.isBlank()?"":req.cuttingType,
 
-                    req.lcd.isBlank()?"":req.cuttingType,
+                    req.lcd.isBlank()?"":req.lcd,
 
                     req.displaySize.isBlank()?null:req.displaySize,
 
