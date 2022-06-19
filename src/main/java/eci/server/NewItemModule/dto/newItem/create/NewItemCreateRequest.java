@@ -425,6 +425,7 @@ public class NewItemCreateRequest {
 
                 false ,//revise progress 중 아니다
 
+                req.getAttachmentComment().size()>0?(
 
                 req.attachments.stream().map(
                         i -> new NewItemAttachment(
@@ -432,13 +433,36 @@ public class NewItemCreateRequest {
                                 attachmentTagRepository
                                         .findById(req.getTag().get(req.attachments.indexOf(i))).
                                         orElseThrow(AttachmentNotFoundException::new).getName(),
-                                req.getAttachmentComment().get(req.attachments.indexOf(i)),
+
+                                req.getAttachmentComment().get(
+                                        req.attachments.indexOf(i)
+                                )
+                                ,
                                 //찐 생성이므로 이때 추가되는 문서들 모두 save = true
                                 true //save 속성임
                         )
                 ).collect(
                         toList()
                 )
+                ) :
+                        req.attachments.stream().map(
+                                i -> new NewItemAttachment(
+                                        i.getOriginalFilename(),
+                                        attachmentTagRepository
+                                                .findById(req.getTag().get(req.attachments.indexOf(i))).
+                                                orElseThrow(AttachmentNotFoundException::new).getName(),
+
+                                        req.getAttachmentComment().get(
+                                                req.attachments.indexOf(i)
+                                        )
+                                        ,
+                                        //찐 생성이므로 이때 추가되는 문서들 모두 save = true
+                                        true //save 속성임
+                                )
+                        ).collect(
+                                toList()
+                        )
+
 
 
         );
