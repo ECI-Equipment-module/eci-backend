@@ -395,6 +395,8 @@ public class NewItem extends EntityDate {
         this.makers =
                 makers;
 
+        this.partNumber = partnumbers;
+
         this.tempsave = true;
         this.readonly = false;
 
@@ -550,6 +552,8 @@ public class NewItem extends EntityDate {
 //                                )
 //                        )
 //                        .collect(toList());
+
+        this.partNumber = partnumbers;
 
         this.tempsave = true;
 
@@ -916,7 +920,7 @@ public class NewItem extends EntityDate {
 //                                )
 //                        )
 //                        .collect(toList());
-
+        this.partNumber = req.getPartnumbers().isBlank()?"":req.getPartnumbers();
         this.tempsave = true;
         this.readonly = false;
 
@@ -1116,7 +1120,7 @@ public class NewItem extends EntityDate {
 //                                )
 //                        )
 //                        .collect(toList());
-
+        this.partNumber = req.getPartnumbers().isBlank()?"":req.getPartnumbers();
         this.tempsave = true;
         this.readonly = true; //0605- 이 부분하나가 변경, 이 것은 얘를 false 에서 true로 변경 !
 

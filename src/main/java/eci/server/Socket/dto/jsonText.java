@@ -8,6 +8,9 @@ public class jsonText {
 
     public static String MatchjsonTest() throws ParseException {
         String jsonStr = "{" +
+
+                "\"title\": \"CAD FILE\"," +
+
                 "\"item\" : {" +
 
                 "\"match\": true," +
