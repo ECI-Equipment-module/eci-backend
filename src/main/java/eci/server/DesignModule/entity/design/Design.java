@@ -8,11 +8,13 @@ import eci.server.ItemModule.entity.entitycommon.EntityDate;
 import eci.server.ItemModule.entity.member.Member;
 import eci.server.ItemModule.exception.item.AttachmentNotFoundException;
 import eci.server.ItemModule.exception.item.ItemNotFoundException;
+import eci.server.ItemModule.exception.item.ItemUpdateImpossibleException;
 import eci.server.ItemModule.exception.member.sign.MemberNotFoundException;
 import eci.server.ItemModule.repository.member.MemberRepository;
 import eci.server.NewItemModule.entity.NewItem;
 import eci.server.NewItemModule.repository.attachment.AttachmentTagRepository;
 import eci.server.NewItemModule.repository.item.NewItemRepository;
+import eci.server.ProjectModule.entity.projectAttachment.ProjectAttachment;
 import eci.server.config.guard.DesignGuard;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -238,6 +240,7 @@ public class Design extends EntityDate {
             MemberRepository memberRepository
     )
 
+
     {
         if(req.getDesignContent().length()==0){
             throw new DesignContentNotEmptyException();
@@ -322,14 +325,21 @@ public class Design extends EntityDate {
 //                );
 //    }
     private void deleteDesignAttachments(List<DesignAttachment> deleted) {
-        deleted.forEach(di ->
-                        di.setDeleted(true)
-                //this.attachments.remove(di)
-        );
-        deleted.forEach(di ->
-                        di.setModifiedAt(LocalDateTime.now())
-                //this.attachments.remove(di)
-        );
+        // 1) save = false 인 애들 지울 땐 찐 지우기
+
+        for (DesignAttachment att : deleted){
+            if(!att.isSave()){
+                this.designAttachments.remove(att);
+                //orphanRemoval=true에 의해 Post와
+                //연관 관계가 끊어지며 고아 객체가 된 Image는
+                // 데이터베이스에서도 제거
+            }
+            // 2) save = true 인 애들 지울 땐 아래와 같이 진행
+            else{
+                att.setDeleted(true);
+                att.setModifiedAt(LocalDateTime.now());
+            }
+        }
     }
     /**
      * 업데이트 돼야 할 파일 정보 만들어줌
@@ -344,6 +354,9 @@ public class Design extends EntityDate {
                 = convertDesignAttachmentFilesToDesignAttachments(addedAttachmentFiles);
         List<DesignAttachment> deletedAttachments
                 = convertDesignAttachmentIdsToDesignAttachments(deletedAttachmentIds);
+        addedAttachments.stream().forEach( //06-17 added 에 들어온 것은 모두 임시저장용
+                i->i.setSave(false)
+        );
         return new DesignAttachmentUpdatedResult(addedAttachmentFiles, addedAttachments, deletedAttachments);
     }
 
@@ -360,7 +373,13 @@ public class Design extends EntityDate {
         return this.designAttachments.stream().filter(i -> i.getId().equals(id)).findAny();
     }
 
-    private List<DesignAttachment> convertDesignAttachmentFilesToDesignAttachments(List<MultipartFile> attachmentFiles) {
+    /**
+     * 어찌저찌
+     * @param attachmentFiles
+     * @return
+     */
+    private List<DesignAttachment> convertDesignAttachmentFilesToDesignAttachments
+            (List<MultipartFile> attachmentFiles) {
         return attachmentFiles.stream().map(attachmentFile -> new DesignAttachment(
                 attachmentFile.getOriginalFilename()
         )).collect(toList());
@@ -389,6 +408,7 @@ public class Design extends EntityDate {
     public void finalSaveDesign(){
         //라우트까지 만들어져야 temp save 가 비로소 true
         this.tempsave = false;
+        this.readonly = true;
     }
 
 }

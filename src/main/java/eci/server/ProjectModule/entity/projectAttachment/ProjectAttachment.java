@@ -60,6 +60,9 @@ public class ProjectAttachment extends EntityDate {
     private boolean deleted;
 
     @Column(nullable = false)
+    private boolean save;
+
+    @Column(nullable = false)
     private String tag;
 
     @Column
@@ -78,8 +81,13 @@ public class ProjectAttachment extends EntityDate {
      *
      * @param originName
      */
-    public ProjectAttachment(String originName, String tag, String attach_comment) {
-        SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    public ProjectAttachment(
+            String originName,
+            String tag,
+            String attach_comment,
+            boolean save) {
+        SimpleDateFormat sdf1 =
+                new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date now = new Date();
 
         this.uniqueName = generateUniqueName(extractExtension(originName));
@@ -91,6 +99,7 @@ public class ProjectAttachment extends EntityDate {
                         sdf1.format(now).substring(0,10)
                         + "/"
                         + this.uniqueName; //이미지 저장 폴더 + 이미지 저장명
+        this.save = save;
     }
 
 
@@ -99,9 +108,10 @@ public class ProjectAttachment extends EntityDate {
      *
      * @param originName
      */
-    public ProjectAttachment(String originName) {
+    public ProjectAttachment(String originName, boolean save) {
         this.uniqueName = generateUniqueName(extractExtension(originName));
         this.originName = originName;
+        this.save = save;
     }
 
     /**
@@ -159,6 +169,15 @@ public class ProjectAttachment extends EntityDate {
         return Arrays.stream(supportedExtension)
                 .anyMatch(e -> e.equalsIgnoreCase(ext));
 
+    }
+
+    //06-17 추가
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
+    }
+
+    public void setSave(boolean save) {
+        this.save = save;
     }
 
 }

@@ -66,7 +66,8 @@ public class DesignCreateRequest {
                     true, //05-12 수정사항 반영 - 라우트까지 작성되어야 false
                     true,//readonly default - false, create 하면 true,
 
-                    req.getDesignContent() //단순 시연용
+                    req.getDesignContent()//단순 시연용
+
             );
         }
 
@@ -92,10 +93,12 @@ public class DesignCreateRequest {
                                             req.getAttachmentComment().
                                                     get(req.attachments.indexOf(i)).
                                                     isBlank()?"":
-                                                    req.getAttachmentComment().get(req.attachments.indexOf(i))
+                                                    req.getAttachmentComment().get(req.attachments.indexOf(i)),
+                                    true
                             )
                     ).collect(
                             toList()
+
                     ),
 
                     req.getDesignContent()//단순 시연용

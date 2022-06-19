@@ -395,6 +395,8 @@ public class NewItem extends EntityDate {
         this.makers =
                 makers;
 
+        this.partNumber = partnumbers;
+
         this.tempsave = true;
         this.readonly = false;
 
@@ -551,6 +553,8 @@ public class NewItem extends EntityDate {
 //                        )
 //                        .collect(toList());
 
+        this.partNumber = partnumbers;
+
         this.tempsave = true;
 
         this.readonly = false;
@@ -613,7 +617,7 @@ public class NewItem extends EntityDate {
 
             i.setTag(attachmentTagRepository
                     .findById(req.getAddedTag().get(added.indexOf(i))).
-                    orElseThrow(AttachmentNotFoundException::new).getName());
+                    orElseThrow(AttachmentTagNotFoundException::new).getName());
 
             i.setAttachmentaddress(
                     "src/main/prodmedia/image/" +
@@ -644,14 +648,23 @@ public class NewItem extends EntityDate {
      * @param deleted
      */
     private void deleteAttachments(List<NewItemAttachment> deleted) {
-        deleted.forEach(di ->
-                        di.setDeleted(true)
-                //this.attachments.remove(di)
-        );
-        deleted.forEach(di ->
-                        di.setModifiedAt(LocalDateTime.now())
-                //this.attachments.remove(di)
-        );
+
+        // 1) save = false 인 애들 지울 땐 찐 지우기
+
+        for (NewItemAttachment att : deleted){
+            if(!att.isSave()){
+                this.attachments.remove(att);
+                //orphanRemoval=true에 의해 Post와
+                //연관 관계가 끊어지며 고아 객체가 된 Image는
+                // 데이터베이스에서도 제거
+            }
+            // 2) save = true 인 애들 지울 땐 아래와 같이 진행
+            else{
+                att.setDeleted(true);
+                att.setModifiedAt(LocalDateTime.now());
+            }
+        }
+
     }
 
     /**
@@ -695,7 +708,9 @@ public class NewItem extends EntityDate {
                 = convertAttachmentFilesToAttachments(addedAttachmentFiles);
         List<NewItemAttachment> deletedAttachments
                 = convertAttachmentIdsToAttachments(deletedAttachmentIds);
-
+        addedAttachments.stream().forEach( //06-17 added 에 들어온 것은 모두 임시저장용
+                i->i.setSave(false)
+        );
         return new NewItemAttachmentUpdatedResult(addedAttachmentFiles, addedAttachments, deletedAttachments);
     }
 
@@ -712,7 +727,13 @@ public class NewItem extends EntityDate {
         return this.attachments.stream().filter(i -> i.getId().equals(id)).findAny();
     }
 
-    private List<NewItemAttachment> convertAttachmentFilesToAttachments(List<MultipartFile> attachmentFiles) {
+    /**
+     * 이거를 어찌어찌 변형해보도록 하자
+     * @param attachmentFiles
+     * @return
+     */
+    private List<NewItemAttachment> convertAttachmentFilesToAttachments(
+            List<MultipartFile> attachmentFiles) {
 
         return attachmentFiles.stream().map(attachmentFile ->
                 new NewItemAttachment(
@@ -799,7 +820,7 @@ public class NewItem extends EntityDate {
                 " " : req.getName();
 
         this.itemTypes = req.getTypeId() == null ?
-                this.itemTypes :
+                itemTypesRepository.findById(99999L).orElseThrow(ItemNotFoundException::new) :
                 itemTypesRepository.findById(req.getTypeId()).orElseThrow(ItemNotFoundException::new);
 
 
@@ -807,7 +828,8 @@ public class NewItem extends EntityDate {
 
         this.carType =     //임시저장 상태는 차종 없어도됨
                         req.getCarTypeId() == null ?
-                                carTypeRepository.findById(99999L).orElseThrow(CarTypeNotFoundException::new):
+                                null:
+                                //carTypeRepository.findById(99999L).orElseThrow(CarTypeNotFoundException::new):
                                         //null 아니면 입력받은 것
                                         carTypeRepository.findById(req.getCarTypeId()).orElseThrow(CarTypeNotFoundException::new);
 
@@ -834,8 +856,8 @@ public class NewItem extends EntityDate {
                "" : req.getImportance();
 
         this.color = req.getColorId() == null ?
-                colorRepository.findById(99999L).orElseThrow(ColorNotFoundException::new)
-                :
+                null:                //colorRepository.findById(99999L).orElseThrow(ColorNotFoundException::new)
+
     colorRepository.findById(req.getColorId())
                 .orElseThrow(ColorNotFoundException::new);
 
@@ -845,12 +867,14 @@ public class NewItem extends EntityDate {
         this.forming = req.getForming()==null || req.getForming().isBlank() ? this.forming : req.getForming();
 
         this.coatingWay = req.getCoatingWayId() == null ?
-                coatingWayRepository.findById(99999L).orElseThrow(CoatingNotFoundException::new) :
+                null:
+                //coatingWayRepository.findById(99999L).orElseThrow(CoatingNotFoundException::new) :
                 coatingWayRepository.findById
                         (req.getCoatingWayId()).orElseThrow(CoatingNotFoundException::new);
 
         this.coatingType = req.getCoatingTypeId() == null ?
-                coatingTypeRepository.findById(99999L).orElseThrow(CoatingNotFoundException::new) :
+                null:
+                //coatingTypeRepository.findById(99999L).orElseThrow(CoatingNotFoundException::new) :
                 coatingTypeRepository.findById
                         (req.getCarTypeId()).orElseThrow(CoatingNotFoundException::new);
 
@@ -868,21 +892,24 @@ public class NewItem extends EntityDate {
         this.screwHeight = req.getScrewHeight().isBlank() ? "" : req.getScrewHeight();
 
         this.clientOrganization = req.getClientOrganizationId() == null ?
-                clientOrganizationRepository.findById(99999L)
-                        .orElseThrow(ClientOrganizationNotFoundException::new)
+                null
+//                clientOrganizationRepository.findById(99999L)
+//                        .orElseThrow(ClientOrganizationNotFoundException::new)
                 :
                 clientOrganizationRepository.findById(req.getClientOrganizationId())
                         .orElseThrow(ClientOrganizationNotFoundException::new);
 
         this.supplierOrganization = req.getSupplierOrganizationId() == null ?
-                supplierRepository.findById(99999L)
-                        .orElseThrow(ProduceOrganizationNotFoundException::new)
+                null
+//                supplierRepository.findById(99999L)
+//                        .orElseThrow(ProduceOrganizationNotFoundException::new)
                 :
                 supplierRepository.findById(req.getSupplierOrganizationId())
                         .orElseThrow(SupplierNotFoundException::new);
 
         this.makers = req.getMakersId()==null?
-                makerRepository.findById(-1L).orElseThrow(MakerNotEmptyException::new)
+                null
+                //makerRepository.findById(-1L).orElseThrow(MakerNotEmptyException::new)
                 :makerRepository.findById(req.getMakersId()).orElseThrow(MakerNotFoundException::new);
 //        this.makers =
 //                makers.stream().map(
@@ -893,7 +920,7 @@ public class NewItem extends EntityDate {
 //                                )
 //                        )
 //                        .collect(toList());
-
+        this.partNumber = req.getPartnumbers().isBlank()?"":req.getPartnumbers();
         this.tempsave = true;
         this.readonly = false;
 
@@ -978,9 +1005,16 @@ public class NewItem extends EntityDate {
         if(req.getClassification1Id()==null || req.getClassification2Id() ==null || req.getClassification3Id()==null){
             throw new ClassificationRequiredException();
         }
-        if(req.getClassification1Id()==99999L || req.getClassification2Id() == 99999L || req.getClassification3Id()== 99999L){
+
+        if(req.getClassification1Id()==99999L || req.getClassification2Id() == 99999L){
+            //06-18 분류 3은 99999 여도 괜찮지
             throw new ProperClassificationRequiredException();
         }
+
+        if(req.getClassification1Id()==99999L && req.getClassification2Id() ==99999L && req.getClassification3Id()==99999L){
+            throw new ProperClassificationRequiredException();
+        }
+
         //아이템 타입 체크
         if(req.getTypeId()==null){
             throw new ItemTypeRequiredException();
@@ -1086,7 +1120,7 @@ public class NewItem extends EntityDate {
 //                                )
 //                        )
 //                        .collect(toList());
-
+        this.partNumber = req.getPartnumbers().isBlank()?"":req.getPartnumbers();
         this.tempsave = true;
         this.readonly = true; //0605- 이 부분하나가 변경, 이 것은 얘를 false 에서 true로 변경 !
 

@@ -279,6 +279,7 @@ public class RouteOrderingService {
                 .findAllByRouteOrdering(routeOrdering);
 
         //현재 진행중인 라우트프로덕트
+
         if (routeOrdering.getLifecycleStatus().equals("COMPLETE")) {
             throw new UpdateImpossibleException();
         }
@@ -294,8 +295,12 @@ public class RouteOrderingService {
             // TODO : 함수로 따로 빼기 availableAccept("route_name)
             //route_name에 따른 조건을 각각 설정해서 해당 조건 부합할 때만 accept 가능하게,
             // 아니면 exception 날리게 설정
-            if (targetRoutProduct.getRoute_name().equals("프로젝트와 Item(제품) Link(설계자)")) {
-                //05-12 추가사항 : 이 라우트를 제작해줄 때야 비로소 프로젝트는 temp save = false 가 되는 것
+
+            //if (targetRoutProduct.getRoute_name().equals("프로젝트와 Item(제품) Link(설계자)")) {
+
+            // 06-17 리팩토링 : module : project , name : create
+            if (targetRoutProduct.getType().getModule().equals("PROJECT")
+            && targetRoutProduct.getType().getName().equals("CREATE")) {
 
                 //아이템에 링크된 맨 마지막 (최신) 프로젝트 데려오기
                 if (projectRepository.findByNewItem(routeOrdering.getNewItem()).size() == 0) {
@@ -308,15 +313,17 @@ public class RouteOrderingService {
                                     );
                     //그 프로젝트를 라우트 프로덕트에 set 해주기
                     targetRoutProduct.setProject(linkedProject);
-
+                    //05-12 추가사항 : 이 라우트를 제작해줄 때야 비로소 프로젝트는 temp save = false 가 되는 것
                     linkedProject.finalSaveProject();
                 }
             }
 
             /////////////////////////////////////////////////////////////////////////////////
 
-            else if (targetRoutProduct.getRoute_name().equals("기구Design생성[설계자]")) {
-                //05-12 추가사항 : 이 라우트를 제작해줄 때야 비로소 프로젝트는 temp save = false 가 되는 것
+//            else if (targetRoutProduct.getRoute_name().equals("기구Design생성[설계자]")) {
+            // 06-17 리팩토링 : module : DESIGN , name : create
+            else if (targetRoutProduct.getType().getModule().equals("DESIGN")
+                    && targetRoutProduct.getType().getName().equals("CREATE")) {
 
                 //아이템에 링크된 맨 마지막 (최신) 디자인 데려오기
                 if (designRepository.findByNewItem(routeOrdering.getNewItem()).size() == 0) {
@@ -334,6 +341,7 @@ public class RouteOrderingService {
                     //그 프로젝트를 라우트 프로덕트에 set 해주기
                     targetRoutProduct.setDesign(linkedDesign);
                     // 해당 design 의 임시저장을 false
+                    //05-12 추가사항 : 이 라우트를 제작해줄 때야 비로소 프로젝트는 temp save = false 가 되는 것
                     linkedDesign.finalSaveDesign();
                 }
             }

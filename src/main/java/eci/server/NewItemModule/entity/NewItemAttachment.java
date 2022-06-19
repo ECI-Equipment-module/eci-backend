@@ -62,10 +62,15 @@ public class NewItemAttachment extends EntityDate {
     private boolean deleted;
 
     @Column(nullable = false)
+    private boolean save;
+
+    @Column(nullable = false)
     private String tag;
 
     @Column
     private String attachmentaddress;
+
+
 
     /**
      * 지원하는 파일 확장자
@@ -80,7 +85,11 @@ public class NewItemAttachment extends EntityDate {
      *
      * @param originName
      */
-    public NewItemAttachment(String originName, String tag, String attach_comment) {
+    public NewItemAttachment(
+            String originName,
+            String tag,
+            String attach_comment,
+            boolean save) {
         SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date now = new Date();
 
@@ -93,6 +102,7 @@ public class NewItemAttachment extends EntityDate {
                 sdf1.format(now).substring(0,10)
                         + "/"
                         + this.uniqueName; //이미지 저장 폴더 + 이미지 저장명
+        this.save = save;
     }
 
 
@@ -105,7 +115,6 @@ public class NewItemAttachment extends EntityDate {
 
         this.uniqueName = generateUniqueName(extractExtension(originName));
         this.originName = originName;
-
     }
 
     /**
@@ -167,4 +176,12 @@ public class NewItemAttachment extends EntityDate {
 
     }
 
+    //06-17 추가
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
+    }
+
+    public void setSave(boolean save) {
+        this.save = save;
+    }
 }
