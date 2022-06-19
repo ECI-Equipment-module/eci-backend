@@ -76,7 +76,7 @@ public class ProjectCreateRequest {
     private Long produceOrganizationId;
 
     @NotNull(message = "차종을 입력해주세요.")
-    private Long carType;
+    private Long carTypeId;
 
     private String clientItemNumber;
 
@@ -96,7 +96,7 @@ public class ProjectCreateRequest {
         if(req.getProjectLevelId()==null || req.getProjectLevelId()==99999L){
             throw new ProjectLevelNotEmptyException();
         }
-        else if (req.getCarType() == null || req.getCarType() == 99999L){
+        else if (req.getCarTypeId() == null || req.getCarTypeId() == 99999L){
             throw new CarTypeNotEmptyException();
         }
         else if(req.getProjectTypeId()==null || req.getProjectTypeId()==99999L){
@@ -178,7 +178,7 @@ public class ProjectCreateRequest {
                     // 예외 만들기
 
 
-                    carTypeRepository.findById(req.carType)
+                    carTypeRepository.findById(req.carTypeId)
                             .orElseThrow(CarTypeNotFoundException::new)
             );
 
@@ -252,7 +252,7 @@ public class ProjectCreateRequest {
                             toList()
                     ),
 
-                    carTypeRepository.findById(req.carType)
+                    carTypeRepository.findById(req.carTypeId)
                             .orElseThrow(CarTypeNotFoundException::new)
             );
         }
