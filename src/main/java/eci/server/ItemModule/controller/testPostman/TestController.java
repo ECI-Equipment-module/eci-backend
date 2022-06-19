@@ -11,7 +11,7 @@ import static eci.server.ItemModule.dto.response.Response.success;
 
 @RestController
 @RequiredArgsConstructor
-@CrossOrigin(origins = "https://localhost:3000")
+@CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
 public class TestController {
 
     private final TokenService tokenService;

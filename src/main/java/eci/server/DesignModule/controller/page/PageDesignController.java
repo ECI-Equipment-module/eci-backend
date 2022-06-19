@@ -33,7 +33,7 @@ public class PageDesignController {
     @Autowired
     DesignRepository designRepository;
     RouteOrderingRepository routeOrderingRepository;
-    @CrossOrigin(origins = "https://localhost:3000")
+    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
     @GetMapping("/design/page")
     @AssignMemberId
     public Page<DesignSimpleDto> pagingDesign(@PageableDefault(size=5)

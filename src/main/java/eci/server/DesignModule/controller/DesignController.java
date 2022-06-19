@@ -19,12 +19,12 @@ import javax.validation.Valid;
 @RestController
 @RequiredArgsConstructor
 @Slf4j
-@CrossOrigin(origins = "https://localhost:3000")
+@CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
 public class DesignController {
 
     private final DesignService designService;
 
-//    @CrossOrigin(origins = "https://localhost:3000")
+//    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
 //    @AssignMemberId
 //    @GetMapping("/design")
 //    @ResponseStatus(HttpStatus.OK)
@@ -34,7 +34,7 @@ public class DesignController {
 //                        readDashboardAll(cond));
 //    }
 
-    @CrossOrigin(origins = "https://localhost:3000")
+    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
     @PostMapping("/design/temp")
     @ResponseStatus(HttpStatus.CREATED)
     @AssignMemberId
@@ -55,7 +55,7 @@ public class DesignController {
      * @param req
      * @return 200 (success)
      */
-    @CrossOrigin(origins = "https://localhost:3000")
+    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
     @PostMapping("/design")
     @ResponseStatus(HttpStatus.CREATED)
     @AssignMemberId
@@ -76,7 +76,7 @@ public class DesignController {
      * @param req
      * @return
      */
-    @CrossOrigin(origins = "https://localhost:3000")
+    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
     @PutMapping("/design/{id}")
     @ResponseStatus(HttpStatus.OK)
     @AssignModifierId
@@ -87,7 +87,7 @@ public class DesignController {
         return Response.success(designService.update(id, req));
     }
 
-    @CrossOrigin(origins = "https://localhost:3000")
+    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
     @PutMapping("/design/temp/end/{id}")
     @ResponseStatus(HttpStatus.CREATED)
     @AssignModifierId
@@ -105,7 +105,7 @@ public class DesignController {
 
 
 
-    @CrossOrigin(origins = "https://localhost:3000")
+    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
     @DeleteMapping("design/{id}")
     @ResponseStatus(HttpStatus.OK)
     public Response delete(@PathVariable Long id) {
@@ -113,7 +113,7 @@ public class DesignController {
         return Response.success();
     }
 
-    @CrossOrigin(origins = "https://localhost:3000")
+    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
     @GetMapping("/design/{id}")
     @ResponseStatus(HttpStatus.OK)
     public Response read(@PathVariable Long id) {
