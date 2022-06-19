@@ -142,17 +142,28 @@ public class DashboardService {
                     ).getId())
             ) {
 
+                if(
+                        routeOrderingRepository.findByNewItem(project.getNewItem()).size()>0
+//                &&
+//                                (
+//                        routeOrderingRepository.findByNewItem(project.getNewItem()).size()
+//                        >
+//                                routeOrderingRepository.findByNewItem(project.getNewItem()).size() - 1
+//                                )
+                ){
 
-
-                if(routeOrderingRepository.findByNewItem(project.getNewItem()).size()>0){
                     RouteOrdering ordering = routeOrderingRepository.findByNewItem(project.getNewItem()).get(
                             routeOrderingRepository.findByNewItem(project.getNewItem()).size() - 1);
                     int presentIdx = ordering.getPresent();
+                    //아래가 에러 발생
+                    if(routeProductRepository.findAllByRouteOrdering(ordering).size()>
+                            presentIdx){
                     RouteProduct routeProduct = routeProductRepository.findAllByRouteOrdering(ordering).get(presentIdx);
                     if (!routeProduct.isPreRejected()) { //06-18 거부된게 아닐때만 임시저장에, 거부된 것이라면 임시저장에 뜨면 안됨
                         //06-04 : 임시저장 이고 읽기 전용이 아니라면 임시저장에 뜨도록
                         tempSavedProjectList.add(project);
                         //임시저장 진행 중인 것
+                    }
                     }
                 }
 
