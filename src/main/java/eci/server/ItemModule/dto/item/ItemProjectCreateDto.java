@@ -20,7 +20,7 @@ public class ItemProjectCreateDto {
 
     private Long itemId;
     private Integer itemRevision;
-    // private String itemFamily; //classification
+
     private ItemClassificationDto itemClassification;
     private String itemStatus;
 
