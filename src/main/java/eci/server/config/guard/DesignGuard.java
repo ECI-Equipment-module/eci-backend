@@ -196,12 +196,16 @@ public class DesignGuard  {
     }
 
     private boolean isBeforeDesign(RouteOrdering routeOrdering, List<RouteProduct> routeProductList){
+        if(routeOrdering.getPresent()<routeProductList.size()) {
+            String module = routeProductList.get(
+                    routeOrdering.getPresent()
+            ).getType().getModule();
+            return module.equals("ITEM") || module.equals("PROJECT");
+        }
 
-        String module = routeProductList.get(
-                routeOrdering.getPresent()
-        ).getType().getModule();
-
-        return module.equals("ITEM") || module.equals("PROJECT");
+        else { //complete 상태라면
+            return false;
+        }
     }
 
     private boolean isDesignCreate(RouteOrdering routeOrdering, List<RouteProduct> routeProductList){

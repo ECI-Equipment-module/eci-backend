@@ -227,8 +227,8 @@ public class BomGuard {
         ).getType().getName();
 
         return module.equals("BOM")&&name.equals("REVIEW");
-    }
 
+    }
 
     public boolean isBomComplete(RouteOrdering routeOrdering){
         return routeOrdering.getLifecycleStatus().equals("COMPLETE");
