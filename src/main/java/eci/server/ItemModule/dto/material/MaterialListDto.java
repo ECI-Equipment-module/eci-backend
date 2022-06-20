@@ -16,6 +16,9 @@ public class MaterialListDto {
     private List<MaterialSimpleDto> content;
 
     public static MaterialListDto toDto(Page<MaterialSimpleDto> page) {
-        return new MaterialListDto(page.getTotalElements(), page.getTotalPages(), page.hasNext(), page.getContent());
+        return new MaterialListDto(page.getTotalElements(),
+                page.getTotalPages(),
+                page.hasNext(),
+                page.getContent());
     }
 }
