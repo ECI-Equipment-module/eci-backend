@@ -209,26 +209,46 @@ public class DesignGuard  {
     }
 
     private boolean isDesignCreate(RouteOrdering routeOrdering, List<RouteProduct> routeProductList){
-        return routeProductList.get(
-                routeOrdering.getPresent()
-        ).getType().getModule().equals("DESIGN")
-                &&
-                routeProductList.get(
-                        routeOrdering.getPresent()
-                ).getType().getName().equals("CREATE")
-                ;
+
+        if(routeOrdering.getPresent()<routeProductList.size()) {
+           return
+                   routeProductList.get(
+                           routeOrdering.getPresent()
+                   ).getType().getModule().equals("DESIGN")
+                           &&
+                           routeProductList.get(
+                                   routeOrdering.getPresent()
+                           ).getType().getName().equals("CREATE")
+                   ;
+
+        }
+
+        else { //complete 상태라면
+            return false;
+        }
+
     }
 
     private boolean isDesignReview(RouteOrdering routeOrdering, List<RouteProduct> routeProductList){
-        return routeProductList.get(
-                routeOrdering.getPresent()
-        ).getType().getModule().equals("DESIGN")
-                &&
-                routeProductList.get(
-                        routeOrdering.getPresent()
-                ).getType().getName().equals("REVIEW")
-                ;
+        if(routeOrdering.getPresent()<routeProductList.size()) {
+            return
+                    routeProductList.get(
+                            routeOrdering.getPresent()
+                    ).getType().getModule().equals("DESIGN")
+                            &&
+                            routeProductList.get(
+                                    routeOrdering.getPresent()
+                            ).getType().getName().equals("REVIEW")
+                    ;
+
+        }
+
+        else { //complete 상태라면
+            return false;
+        }
+
     }
+
     public boolean isEdit(Long itemId){
         return designRepository.findByNewItem(
                 newItemRepository.findById(itemId).orElseThrow(ItemNotFoundException::new)
