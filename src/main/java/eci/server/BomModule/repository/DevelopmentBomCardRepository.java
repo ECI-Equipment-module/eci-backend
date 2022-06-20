@@ -1,5 +1,6 @@
 package eci.server.BomModule.repository;
 
+import eci.server.BomModule.entity.Bom;
 import eci.server.BomModule.entity.DevelopmentBom;
 import eci.server.BomModule.entity.DevelopmentBomCard;
 import eci.server.BomModule.entity.PreliminaryBom;
@@ -24,5 +25,8 @@ public interface DevelopmentBomCardRepository extends JpaRepository<DevelopmentB
                 (@Param("developmentBomId") Long developmentBomId);
 
         List<DevelopmentBomCard> findByDevelopmentBom(DevelopmentBom developmentBom);
+
+
+
 }
 

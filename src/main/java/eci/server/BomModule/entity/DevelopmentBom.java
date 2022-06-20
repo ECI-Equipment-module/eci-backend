@@ -27,12 +27,16 @@ public class DevelopmentBom {
     @Column(nullable = false)
     private Boolean readonly; //05-12반영
 
+    @Column(nullable = false) //0621 nullable = true 로 변경하기
+    private Boolean edited; //06-20 반영
+
     public DevelopmentBom(
             Bom bom
     ){
         this.bom = bom;
         this.tempsave = true;
         this.readonly = false;
+        this.edited = false;
     }
 
 }
