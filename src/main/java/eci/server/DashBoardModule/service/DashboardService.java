@@ -1,6 +1,7 @@
 package eci.server.DashBoardModule.service;
 
 import eci.server.BomModule.repository.BomRepository;
+import eci.server.BomModule.repository.DevelopmentBomRepository;
 import eci.server.DashBoardModule.dto.ToDoDoubleList;
 import eci.server.DashBoardModule.dto.ToDoSingle;
 import eci.server.DashBoardModule.dto.myProject.TotalProject;
@@ -26,6 +27,7 @@ import eci.server.config.guard.AuthHelper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.RouteMatcher;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -43,6 +45,7 @@ public class DashboardService {
     private final ProjectRepository projectRepository;
     private final NewItemRepository newItemRepository;
     private final AuthHelper authHelper;
+    private final DevelopmentBomRepository developmentBomRepository;
 
     public TotalProject readProjectTotal() {
         //0) 현재 로그인 된 유저
@@ -499,12 +502,16 @@ public class DashboardService {
             for (RouteProductMember routeProductMember : routeProduct.getMembers()) {
                 if (routeProductMember.getMember().getId().equals(member1.getId()) &&
                         //routeProduct.getRoute_name().equals("개발BOM생성[설계자]")
+
                         (
+
                                 routeProduct.getType().getModule().equals("BOM")
                                         &&
                                         routeProduct.getType().getName().equals("CREATE")
                         )
                 ) {
+                    System.out.println(routeProduct.getType().getModule());
+                    System.out.println(routeProduct.getType().getName());
                     myRouteProductList.add(routeProduct);
                     break;
                 }
@@ -512,11 +519,19 @@ public class DashboardService {
             }
         }
 
+
         //3) new bom : 봄 링크 안된 아이템만 담기
         HashSet<TodoResponse> unlinkedItemTodoResponses = new HashSet<>();
 
-        for (RouteProduct routeProduct : myRouteProductList) {
-            if (bomRepository.findByNewItem(routeProduct.getRouteOrdering().getNewItem()).size() == 0) {
+        for (RouteProduct routeProduct : myRouteProductList) {//현재 봄 생성 단계 중에서
+
+            if ( //0621 dev Bom 의 edit = false 라면
+                    !developmentBomRepository
+                            .findByBom(
+                                    bomRepository.findByNewItem(routeProduct.getRouteOrdering().getNewItem()).get(
+                                            bomRepository.findByNewItem(routeProduct.getRouteOrdering().getNewItem()).size() - 1
+                                    )
+                            ).getEdited()) {
 
                 NewItem targetItem = routeProduct.getRouteOrdering().getNewItem();
 
@@ -533,10 +548,9 @@ public class DashboardService {
 
         List<TodoResponse> NEW_BOM = new ArrayList<>(unlinkedItemTodoResponses);
 
-
-        ToDoSingle newDesign = new ToDoSingle("New Bom", NEW_BOM);
+        ToDoSingle newBom = new ToDoSingle("Add New Bom", NEW_BOM);
         List<ToDoSingle> toDoDoubleList = new ArrayList<ToDoSingle>();
-        toDoDoubleList.add(newDesign);
+        toDoDoubleList.add(newBom);
 
 
         return new ToDoDoubleList(toDoDoubleList);

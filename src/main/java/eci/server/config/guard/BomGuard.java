@@ -180,7 +180,7 @@ public class BomGuard {
 
         else if(
                 isBomCreate(routeOrdering, routeProductList)
-                //봄 생성 전단계~봄 리뷰
+            //봄 생성 전단계~봄 리뷰
         ) {
             result = "bomCreate";
         }
@@ -193,7 +193,7 @@ public class BomGuard {
         }
 
 
-    return result;
+        return result;
     }
 
     private boolean isBeforeDesignReview(RouteOrdering routeOrdering, List<RouteProduct> routeProductList){
