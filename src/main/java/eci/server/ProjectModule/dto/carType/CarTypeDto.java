@@ -12,6 +12,7 @@ public class CarTypeDto {
     private Long id;
     private String name;
 
+
     public static CarTypeDto toDto(CarType carType){
 
         return new CarTypeDto(
@@ -19,5 +20,15 @@ public class CarTypeDto {
                 carType.getName()
         );
     }
+
+
+    public static CarTypeDto toDto(){
+
+        return new CarTypeDto(
+                -1L,
+                ""
+        );
+    }
+
 }
 

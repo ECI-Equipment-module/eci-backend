@@ -1,8 +1,6 @@
 package eci.server.NewItemModule.entity.activateAttributeClassification;
 
-import eci.server.NewItemModule.dto.activateAttribute.ActivateAttributesDto;
-import eci.server.NewItemModule.entity.activateAttributes.ActivateAttributes;
-import eci.server.NewItemModule.entity.activateAttributes.ChoiceField;
+import eci.server.NewItemModule.entity.coating.activateAttributes.ChoiceField;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

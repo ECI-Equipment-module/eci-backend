@@ -5,7 +5,7 @@ import eci.server.NewItemModule.dto.activateAttribute.ActivateAttributesDto;
 import eci.server.NewItemModule.dto.activateAttribute.RetrieveActivateAttributes;
 import eci.server.NewItemModule.dto.classification.C1SelectDto;
 import eci.server.NewItemModule.entity.activateAttributeClassification.ClassifyActivate;
-import eci.server.NewItemModule.entity.activateAttributes.ActivateAttributes;
+import eci.server.NewItemModule.entity.coating.activateAttributes.ActivateAttributes;
 import eci.server.NewItemModule.entity.classification.Classification;
 import eci.server.NewItemModule.entity.classification.Classification1;
 import eci.server.NewItemModule.entity.classification.Classification2;

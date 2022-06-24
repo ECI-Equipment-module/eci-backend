@@ -19,7 +19,7 @@ public class ItemProjectCreateDto {
     private String itemName;
 
     private Long itemId;
-    private Integer itemRevision;
+    private char itemRevision;
     //private String itemFamily; //classification
     private ItemClassificationDto itemClassification;
     private String itemStatus;
@@ -34,7 +34,9 @@ public class ItemProjectCreateDto {
                 Item.getName(),
 
                 Item.getId(),
-                Item.getRevision(),
+
+                (char)(Item.getRevision()),
+
                 new ItemClassificationDto(Item.getClassification().getClassification1().getName()+"/"
                         +Item.getClassification().getClassification2().getName()+"/"
                         +Item.getClassification().getClassification3().getName()),

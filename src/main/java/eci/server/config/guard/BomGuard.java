@@ -180,7 +180,7 @@ public class BomGuard {
 
         else if(
                 isBomCreate(routeOrdering, routeProductList)
-                //봄 생성 전단계~봄 리뷰
+            //봄 생성 전단계~봄 리뷰
         ) {
             result = "bomCreate";
         }
@@ -193,42 +193,68 @@ public class BomGuard {
         }
 
 
-    return result;
+        return result;
     }
 
     private boolean isBeforeDesignReview(RouteOrdering routeOrdering, List<RouteProduct> routeProductList){
-        String module = routeProductList.get(
-                routeOrdering.getPresent()
-        ).getType().getModule();
 
-        return (module.equals("ITEM") || module.equals("PROJECT") || module.equals("DESIGN") );
+        if(routeOrdering.getPresent()<routeProductList.size()) {
 
+            String module = routeProductList.get(
+                    routeOrdering.getPresent()
+            ).getType().getModule();
+
+            return (module.equals("ITEM") || module.equals("PROJECT") || module.equals("DESIGN") );
+        }
+
+        else { //complete 상태라면
+            return false;
+        }
     }
 
     private boolean isBomCreate(RouteOrdering routeOrdering, List<RouteProduct> routeProductList){
-        String module = routeProductList.get(
-                routeOrdering.getPresent()
-        ).getType().getModule();
 
-        String name = routeProductList.get(
-                routeOrdering.getPresent()
-        ).getType().getName();
+        if(routeOrdering.getPresent()<routeProductList.size()) {
 
-        return module.equals("BOM")&&name.equals("CREATE");
+            String module = routeProductList.get(
+                    routeOrdering.getPresent()
+            ).getType().getModule();
+
+            String name = routeProductList.get(
+                    routeOrdering.getPresent()
+            ).getType().getName();
+
+            return module.equals("BOM")&&name.equals("CREATE");
+        }
+
+        else { //complete 상태라면
+            return false;
+        }
+
     }
 
     private boolean isBomReview(RouteOrdering routeOrdering, List<RouteProduct> routeProductList){
-        String module = routeProductList.get(
-                routeOrdering.getPresent()
-        ).getType().getModule();
 
-        String name = routeProductList.get(
-                routeOrdering.getPresent()
-        ).getType().getName();
+        if(routeOrdering.getPresent()<routeProductList.size()) {
 
-        return module.equals("BOM")&&name.equals("REVIEW");
+            String module = routeProductList.get(
+                    routeOrdering.getPresent()
+            ).getType().getModule();
+
+            String name = routeProductList.get(
+                    routeOrdering.getPresent()
+            ).getType().getName();
+
+            return module.equals("BOM")&&name.equals("REVIEW");
+
+        }
+
+        else { //complete 상태라면
+            return false;
+        }
+
+
     }
-
 
     public boolean isBomComplete(RouteOrdering routeOrdering){
         return routeOrdering.getLifecycleStatus().equals("COMPLETE");

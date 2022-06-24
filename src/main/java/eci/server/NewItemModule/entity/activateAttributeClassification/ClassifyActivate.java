@@ -1,6 +1,6 @@
 package eci.server.NewItemModule.entity.activateAttributeClassification;
 
-import eci.server.NewItemModule.entity.activateAttributes.ActivateAttributes;
+import eci.server.NewItemModule.entity.coating.activateAttributes.ActivateAttributes;
 import eci.server.NewItemModule.entity.classification.Classification;
 import lombok.*;
 

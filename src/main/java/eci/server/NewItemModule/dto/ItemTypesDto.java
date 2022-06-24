@@ -1,8 +1,6 @@
 package eci.server.NewItemModule.dto;
 
 import eci.server.ItemModule.entity.item.ItemTypes;
-import eci.server.NewItemModule.dto.attachment.AttachmentTagDto;
-import eci.server.NewItemModule.entity.activateAttributes.ActivateAttributes;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
