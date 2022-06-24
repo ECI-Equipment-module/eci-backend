@@ -1,7 +1,12 @@
 package eci.server.NewItemModule.service.item;
 
+import eci.server.BomModule.dto.DevelopmentBomCardCreateRequest;
+import eci.server.BomModule.entity.DevelopmentBom;
+import eci.server.BomModule.entity.DevelopmentBomCard;
 import eci.server.BomModule.repository.BomRepository;
+import eci.server.BomModule.repository.DevelopmentBomRepository;
 import eci.server.BomModule.repository.PreliminaryBomRepository;
+import eci.server.DesignModule.dto.DesignContentDto;
 import eci.server.DesignModule.entity.design.Design;
 import eci.server.DesignModule.repository.DesignRepository;
 import eci.server.ItemModule.dto.item.*;
@@ -32,9 +37,7 @@ import eci.server.NewItemModule.dto.newItem.create.NewItemCreateRequest;
 import eci.server.NewItemModule.dto.newItem.create.NewItemCreateResponse;
 import eci.server.NewItemModule.dto.newItem.create.NewItemTemporaryCreateRequest;
 import eci.server.NewItemModule.dto.newItem.update.NewItemUpdateRequest;
-import eci.server.NewItemModule.entity.NewItem;
-import eci.server.NewItemModule.entity.NewItemAttachment;
-import eci.server.NewItemModule.entity.NewItemImage;
+import eci.server.NewItemModule.entity.*;
 import eci.server.NewItemModule.repository.attachment.AttachmentTagRepository;
 import eci.server.NewItemModule.repository.attachment.NewItemAttachmentRepository;
 import eci.server.NewItemModule.repository.classification.Classification1Repository;
@@ -580,6 +583,74 @@ public class NewItemService {
                         i->i.setSave(true)
                 );
 
+    }
+
+
+    /**
+     * createDevelopmentCard 에서 쓰일 것
+
+     */
+    public void recursiveChildrenMaking(
+            NewItem parentNewItem,
+            List<DesignContentDto> childrenList,
+            NewItemParentChildrenRepository newItemParentChildrenRepository,
+            NewItemRepository newItemRepository
+    ) {
+
+        if (childrenList!=null && childrenList.size() > 0) {
+            for (DesignContentDto p : childrenList) {
+
+                NewItem children =
+                        newItemRepository.findByItemNumber(p.getCardNumber());
+
+                // 디자인 승인 완료 되니깐 ~ 찐 관계 생성
+                NewItemParentChildrenId newItemParentChildrenId = new NewItemParentChildrenId(
+                        parentNewItem,
+                        newItemRepository.findByItemNumber(p.getCardNumber())
+
+                );
+
+
+                 // 06-25 newParentItemId 는
+
+                Long newId = Long.parseLong((parentNewItem.getId().toString()+
+                        children.getId().toString()));
+
+                newItemParentChildrenRepository.save(
+                            new NewItemParentChildren(
+                        newId,
+                        parentNewItem,
+                        children
+                        )
+                );
+
+
+                if (
+                        childrenList.get(
+                                childrenList.indexOf(p)
+                        )!=null
+                                &&
+                                childrenList.get(
+                                        childrenList.indexOf(p)
+                                ).getChildren()!=null
+                                &&
+                                childrenList.get(
+                                        childrenList.indexOf(p)
+                                ).getChildren().size() > 0
+                ) {
+
+                    recursiveChildrenMaking(
+                            newItemRepository.findByItemNumber(p.getCardNumber()),
+                            childrenList.get(
+                                    childrenList.indexOf(p)
+                            ).getChildren(),
+                            newItemParentChildrenRepository,
+                            newItemRepository
+                    );
+                }
+
+            }
+        }
     }
 
 }

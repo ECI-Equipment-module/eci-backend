@@ -29,5 +29,6 @@ public interface NewItemRepository extends JpaRepository<NewItem, Long>, CustomN
     )
     Page<NewItem> findByNewItems(@Param("newItems") List<NewItem> newItems, Pageable pageable);
 
+    NewItem findByItemNumber(String itemNumber);
 
 }

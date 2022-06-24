@@ -5,20 +5,21 @@ import lombok.*;
 import javax.persistence.*;
 @Entity
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Setter
+@NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
-@IdClass(NewItemParentChildrenId.class)
+//@IdClass(NewItemParentChildrenId.class)
 public class NewItemParentChildren {
 
     @Id
+    private Long id;
+
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "parent")
+    @JoinColumn(name = "parent_id")
     private NewItem parent;
 
-    @Id
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "children")
+    @JoinColumn(name = "children_id")
     private NewItem children;
-
 }
