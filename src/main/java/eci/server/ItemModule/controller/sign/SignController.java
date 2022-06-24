@@ -24,7 +24,7 @@ import static eci.server.ItemModule.dto.response.Response.success;
 
 @RestController
 @RequiredArgsConstructor
-@CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
+@CrossOrigin(origins = "https://localhost:3000")
 public class SignController {
     private final SignService signService;
 
@@ -78,7 +78,7 @@ public class SignController {
      * @return success
      *
      */
-    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
+    @CrossOrigin(origins = "https://localhost:3000")
     @PostMapping("/refresh-token")
     @ResponseStatus(HttpStatus.OK)
     public Response refreshToken(@RequestHeader(value = "cookie") String refreshToken) {
