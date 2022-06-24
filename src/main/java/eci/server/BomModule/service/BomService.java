@@ -5,8 +5,10 @@ import eci.server.BomModule.dto.BomDto;
 import eci.server.BomModule.dto.prelimianry.JsonSaveCreateRequest;
 import eci.server.BomModule.dto.prelimianry.PreliminaryBomDto;
 import eci.server.BomModule.entity.Bom;
+import eci.server.BomModule.entity.DevelopmentBom;
 import eci.server.BomModule.entity.PreliminaryBom;
 import eci.server.BomModule.exception.BomNotFoundException;
+import eci.server.BomModule.exception.DevelopmentBomNotFoundException;
 import eci.server.BomModule.exception.PreliminaryBomNotFoundException;
 import eci.server.BomModule.repository.*;
 import eci.server.DesignModule.dto.DesignContentDto;
@@ -14,6 +16,7 @@ import eci.server.DesignModule.entity.design.Design;
 import eci.server.DesignModule.exception.DesignNotFoundException;
 import eci.server.DesignModule.repository.DesignRepository;
 import eci.server.ItemModule.repository.newRoute.RouteTypeRepository;
+import eci.server.NewItemModule.dto.newItem.NewItemChildDto;
 import eci.server.NewItemModule.dto.newItem.create.NewItemCreateResponse;
 import eci.server.NewItemModule.entity.JsonSave;
 import eci.server.NewItemModule.entity.NewItem;
@@ -113,6 +116,19 @@ public class BomService {
         return PreliminaryBomDto.toDto(targetBom);
     }
 
+    public List<NewItemChildDto> readDevelopment(Long devId){
+
+        DevelopmentBom developmentBom = developmentBomRepository.findById(devId).
+                orElseThrow(DevelopmentBomNotFoundException::new);
+
+        NewItem newItem = developmentBom.getBom().getNewItem();
+
+        newItemService.readChildAll(newItem.getId());
+
+        return newItemService.readChildAll(newItem.getId());
+
+    }
+
     /**
      * 들어온 designContent 로 아이템 parent, child 관계 맺어주기
      * @param id
@@ -134,10 +150,6 @@ public class BomService {
                 newItemRepository
 
         );
-
-
-
-
 
     }
 

@@ -41,11 +41,20 @@ public class BomController {
         );
     }
 
-        @GetMapping("/preliminary/{id}")
-        @ResponseStatus(HttpStatus.OK)
-        public Response getPreliminary(@PathVariable Long id) {
-            return Response.success(
-                    bomService.readPreliminary(id)
-            );
-        }
+    @GetMapping("/preliminary/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public Response getPreliminary(@PathVariable Long id) {
+        return Response.success(
+                bomService.readPreliminary(id)
+        );
+    }
+
+    @GetMapping("/development/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public Response getDevelopment(@PathVariable Long id) {
+        return Response.success(
+                bomService.readDevelopment(id)
+        );
+    }
+
 }

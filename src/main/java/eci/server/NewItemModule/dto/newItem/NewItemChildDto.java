@@ -28,7 +28,9 @@ public class NewItemChildDto {
     private String cardNumber;
     //private String thumbnailAddress;
     private String sharing;
+    private boolean plusPossible;
     private List<NewItemChildDto> children;
+
 
 
     public static List<NewItemChildDto> toDtoList(
@@ -50,6 +52,7 @@ public class NewItemChildDto {
                         c.getChildren().getItemNumber(),
                         c.getChildren().isSharing()?"공용":"전용",
                         //c.getThumbnailAddress(),
+                        c.getChildren().isSubAssy(),
                         c.getChildren().getChildren().size()>0?
                                 toDtoList(newItemParentChildrenRepository.findAllWithParentByParentId(c.getChildren().getId()),
                                         newItemParentChildrenRepository):new ArrayList<>()
@@ -84,6 +87,7 @@ public class NewItemChildDto {
                         c.getItemNumber(),
                         c.isSharing()?"공용":"전용",
                         //c.getThumbnailAddress(),
+                        c.isSubAssy(),
                         new ArrayList<>()
 
                 )
@@ -116,7 +120,9 @@ public class NewItemChildDto {
                         c.getItemNumber(),
                         c.isSharing()?"공용":"전용",
                         //c.getThumbnailAddress(),
+                        c.isSubAssy(),
                         newItemService.readChildAll(c.getId())
+
 
                 )
         ).collect(Collectors.toList());
