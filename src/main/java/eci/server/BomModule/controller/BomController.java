@@ -1,5 +1,6 @@
 package eci.server.BomModule.controller;
 
+import eci.server.BomModule.dto.DevelopmentRequestDto;
 import eci.server.BomModule.dto.prelimianry.JsonSaveCreateRequest;
 import eci.server.BomModule.service.BomService;
 import eci.server.ItemModule.dto.response.Response;
@@ -54,6 +55,18 @@ public class BomController {
     public Response getDevelopment(@PathVariable Long id) {
         return Response.success(
                 bomService.readDevelopment(id)
+        );
+    }
+
+    @CrossOrigin(origins = "https://localhost:3000")
+    @PostMapping("/development")
+    @ResponseStatus(HttpStatus.CREATED)
+    @AssignMemberId
+    public Response createDevelopment(
+            @Valid DevelopmentRequestDto req) {
+
+        return Response.success(
+                bomService.createDevelopment(req)
         );
     }
 

@@ -5,11 +5,14 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 public class DevelopmentRequestDto {
-    Long parentId;
-    Long childId;
+    List<Long> parentId;
+    List<Long> childId;
+    Long devId;
 }

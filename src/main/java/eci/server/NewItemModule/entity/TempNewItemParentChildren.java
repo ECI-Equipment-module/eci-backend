@@ -10,7 +10,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @EqualsAndHashCode
 //@IdClass(NewItemParentChildrenId.class)
-public class NewItemParentChildren {
+public class TempNewItemParentChildren {
 
     @Id
     private Long id;
@@ -23,4 +23,7 @@ public class NewItemParentChildren {
     @JoinColumn(name = "children_id")
     private NewItem children;
 
+
+    @Column
+    private Long bomId;
 }

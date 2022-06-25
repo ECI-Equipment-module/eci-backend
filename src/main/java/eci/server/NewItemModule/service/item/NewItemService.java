@@ -1,13 +1,8 @@
 package eci.server.NewItemModule.service.item;
 
-import eci.server.BomModule.dto.DevelopmentBomCardCreateRequest;
-import eci.server.BomModule.entity.DevelopmentBom;
-import eci.server.BomModule.entity.DevelopmentBomCard;
 import eci.server.BomModule.repository.BomRepository;
-import eci.server.BomModule.repository.DevelopmentBomRepository;
 import eci.server.BomModule.repository.PreliminaryBomRepository;
 import eci.server.DesignModule.dto.DesignContentDto;
-import eci.server.DesignModule.entity.design.Design;
 import eci.server.DesignModule.repository.DesignRepository;
 import eci.server.ItemModule.dto.item.*;
 import eci.server.ItemModule.dto.newRoute.routeOrdering.RouteOrderingDto;
@@ -32,12 +27,14 @@ import eci.server.ItemModule.repository.newRoute.RouteOrderingRepository;
 import eci.server.ItemModule.repository.newRoute.RouteProductRepository;
 import eci.server.ItemModule.service.file.FileService;
 import eci.server.ItemModule.service.file.LocalFileService;
+import eci.server.NewItemModule.dto.TempNewItemChildDto;
 import eci.server.NewItemModule.dto.newItem.*;
 import eci.server.NewItemModule.dto.newItem.create.NewItemCreateRequest;
 import eci.server.NewItemModule.dto.newItem.create.NewItemCreateResponse;
 import eci.server.NewItemModule.dto.newItem.create.NewItemTemporaryCreateRequest;
 import eci.server.NewItemModule.dto.newItem.update.NewItemUpdateRequest;
 import eci.server.NewItemModule.entity.*;
+import eci.server.NewItemModule.repository.TempNewItemParentChildrenRepository;
 import eci.server.NewItemModule.repository.attachment.AttachmentTagRepository;
 import eci.server.NewItemModule.repository.attachment.NewItemAttachmentRepository;
 import eci.server.NewItemModule.repository.classification.Classification1Repository;
@@ -105,6 +102,7 @@ public class NewItemService {
     private final NewItemParentChildrenRepository newItemParentChildrenRepository;
 
     private final NewItemAttachmentRepository newItemAttachmentRepository;
+    private final TempNewItemParentChildrenRepository tempNewItemParentChildrenRepository;
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -512,6 +510,7 @@ public class NewItemService {
     }
 
 
+
     /**
      * 제품 중 상태가 complete 나 release 이면서
      * 제품 아닌 건 모두다 데려오는 NewItem
@@ -652,5 +651,7 @@ public class NewItemService {
             }
         }
     }
+
+
 
 }

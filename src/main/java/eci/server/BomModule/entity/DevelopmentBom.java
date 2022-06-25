@@ -1,10 +1,12 @@
 package eci.server.BomModule.entity;
 
+import eci.server.BomModule.dto.DevelopmentRequestDto;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Getter
 @Entity
