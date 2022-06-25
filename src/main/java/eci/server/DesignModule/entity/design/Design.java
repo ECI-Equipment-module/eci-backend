@@ -287,7 +287,7 @@ public class Design extends EntityDate {
         SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date now = new Date();
         AttachmentTagRepository attachmentTagRepository = null;
-
+        System.out.println(added);
         added.forEach(i -> {
             designAttachments.add(i);
             i.initDesign(this);
