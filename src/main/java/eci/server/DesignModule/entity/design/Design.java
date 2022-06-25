@@ -282,12 +282,13 @@ public class Design extends EntityDate {
 
         return fileUpdatedResult;
     }
-
+    
     private void addUpdatedDesignAttachments(DesignUpdateRequest req, List<DesignAttachment> added) {
         SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date now = new Date();
         AttachmentTagRepository attachmentTagRepository = null;
         System.out.println(added);
+        System.out.println(req.getAddedTag());
         added.forEach(i -> {
             designAttachments.add(i);
             i.initDesign(this);
