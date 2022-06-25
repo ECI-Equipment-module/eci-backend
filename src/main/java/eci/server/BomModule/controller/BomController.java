@@ -15,7 +15,7 @@ import javax.validation.Valid;
 @RestController
 @RequiredArgsConstructor
 @Slf4j
-@CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
+@CrossOrigin(origins = "https://localhost:3000")
 public class BomController {
 
     private final BomService bomService;
@@ -30,7 +30,7 @@ public class BomController {
     }
 
     // 1) Preliminary BOM
-    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
+    @CrossOrigin(origins = "https://localhost:3000")
     @PostMapping("/preliminary")
     @ResponseStatus(HttpStatus.CREATED)
     @AssignMemberId
