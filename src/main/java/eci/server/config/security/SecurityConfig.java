@@ -97,6 +97,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET, "/preliminary/{id}").authenticated()
                 .antMatchers(HttpMethod.DELETE, "/preliminary").authenticated()
 
+
+                .antMatchers(HttpMethod.POST, "/development").authenticated()
+                .antMatchers(HttpMethod.PUT, "/development").authenticated()
+                .antMatchers(HttpMethod.PUT, "/development/temp").authenticated()
+                .antMatchers(HttpMethod.PUT, "/development/temp/end/{id}").authenticated()
+                .antMatchers(HttpMethod.GET, "/development/{id}").authenticated()
+                .antMatchers(HttpMethod.DELETE, "/development").authenticated()
+
                 .antMatchers(HttpMethod.POST, "/bom").authenticated()
                 .antMatchers(HttpMethod.PUT, "/bom/{id}").authenticated()
                 .antMatchers(HttpMethod.GET, "/bom/{id}").authenticated()

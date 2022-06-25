@@ -1,4 +1,4 @@
-package eci.server.NewItemModule.entity.activateAttributes;
+package eci.server.NewItemModule.entity.coating.activateAttributes;
 
 import lombok.AccessLevel;
 import lombok.Getter;

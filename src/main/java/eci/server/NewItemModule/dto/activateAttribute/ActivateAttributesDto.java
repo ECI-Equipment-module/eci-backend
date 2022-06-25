@@ -1,11 +1,8 @@
 package eci.server.NewItemModule.dto.activateAttribute;
 
-import eci.server.NewItemModule.dto.ItemTypesDto;
-import eci.server.NewItemModule.dto.attachment.AttachmentTagDto;
 import eci.server.NewItemModule.entity.activateAttributeClassification.ChoiceFieldDto;
 import eci.server.NewItemModule.entity.activateAttributeClassification.ClassifyActivate;
-import eci.server.NewItemModule.entity.activateAttributes.ActivateAttributes;
-import eci.server.NewItemModule.entity.activateAttributes.ChoiceField;
+import eci.server.NewItemModule.entity.coating.activateAttributes.ActivateAttributes;
 import eci.server.NewItemModule.repository.classification.ClassifyActivateRepository;
 import lombok.AllArgsConstructor;
 import lombok.Data;

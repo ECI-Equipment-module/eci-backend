@@ -2,7 +2,6 @@ package eci.server.NewItemModule.entity;
 
 import eci.server.ItemModule.entity.entitycommon.EntityDate;
 import eci.server.ItemModule.entity.item.*;
-import eci.server.ItemModule.exception.item.AttachmentNotFoundException;
 import eci.server.ItemModule.exception.item.ColorNotFoundException;
 import eci.server.ItemModule.exception.item.ItemNotFoundException;
 import eci.server.ItemModule.exception.member.sign.MemberNotFoundException;
@@ -28,7 +27,6 @@ import eci.server.ProjectModule.entity.project.CarType;
 import eci.server.ProjectModule.entity.project.ClientOrganization;
 import eci.server.ProjectModule.exception.CarTypeNotFoundException;
 import eci.server.ProjectModule.exception.ClientOrganizationNotFoundException;
-import eci.server.ProjectModule.exception.ProduceOrganizationNotFoundException;
 import eci.server.ProjectModule.repository.carType.CarTypeRepository;
 import eci.server.ProjectModule.repository.clientOrg.ClientOrganizationRepository;
 import lombok.*;
@@ -50,9 +48,10 @@ import static java.util.stream.Collectors.toList;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class NewItem extends EntityDate {
     @Id
- @GeneratedValue(strategy = GenerationType.IDENTITY)
- //   @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQUENCE3")
- //   @SequenceGenerator(name="SEQUENCE3", sequenceName="SEQUENCE3", allocationSize=1)
+    //@GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQUENCE3")
+    @SequenceGenerator(name="SEQUENCE3", sequenceName="SEQUENCE3", allocationSize=1)
+
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -106,7 +105,7 @@ public class NewItem extends EntityDate {
     private String integrate;
 
     /**
-    * true면 곡면, false면 평면
+     * true면 곡면, false면 평면
      */
     @Column
     private String curve;
@@ -190,7 +189,7 @@ public class NewItem extends EntityDate {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Supplier supplierOrganization;
 
-//    @OneToMany(
+    //    @OneToMany(
 //            mappedBy = "newItem",
 //            cascade = CascadeType.ALL,
 //            orphanRemoval = true,
@@ -250,7 +249,7 @@ public class NewItem extends EntityDate {
             cascade = CascadeType.ALL,
             orphanRemoval = true,
             fetch = FetchType.LAZY)
-    private List<NewItemParentChildren> parent;
+    private Set<NewItemParentChildren> parent;
 
     /**
      * 한 아이템은 여러 자식 가지기 가능
@@ -261,7 +260,7 @@ public class NewItem extends EntityDate {
             orphanRemoval = true,
             fetch = FetchType.LAZY)
     //@JoinColumn(name = "children_id")
-    private List< NewItemParentChildren> children;
+    private Set< NewItemParentChildren> children;
     /**
      * attachment 있을 때, thumbnail 있을 때 생성자
      * @param classification
@@ -494,8 +493,8 @@ public class NewItem extends EntityDate {
         this.itemNumber = itemNumber;
 
         if(thumbnail!=null) { //0615 썸네일 없으면 null 로 오는데, 생성 가능케 하기 (임시저장 때 없어도 저장돼서)
-                this.thumbnail = thumbnail;
-                addImages(thumbnail);
+            this.thumbnail = thumbnail;
+            addImages(thumbnail);
         }
 
 
@@ -575,8 +574,8 @@ public class NewItem extends EntityDate {
      * @param added
      */
     private void addImages(NewItemImage added) {
-            added.initNewItem(this);
-            this.thumbnail=added;
+        added.initNewItem(this);
+        this.thumbnail=added;
     }
 
     /**
@@ -586,17 +585,17 @@ public class NewItem extends EntityDate {
      */
     private void addAttachments(List<NewItemAttachment> added) {
         added.forEach(i -> {
-            attachments.add(i);
-            i.initNewItem(this);
-        }
+                    attachments.add(i);
+                    i.initNewItem(this);
+                }
         );
     }
 
     private void addUpdatedAttachments
             (
-             NewItemUpdateRequest req,
-             List<NewItemAttachment> added,
-             AttachmentTagRepository attachmentTagRepository
+                    NewItemUpdateRequest req,
+                    List<NewItemAttachment> added,
+                    AttachmentTagRepository attachmentTagRepository
             ) {
 
         SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -604,29 +603,29 @@ public class NewItem extends EntityDate {
         Date now = new Date();
 
         added.stream().forEach(i -> {
-            attachments.add(i);
+                    attachments.add(i);
 
-            i.initNewItem(this);
+                    i.initNewItem(this);
 
 
-            i.setAttach_comment(
-                    req.getAddedAttachmentComment().get(
-                    (added.indexOf(i))
-            )
-            );
+                    i.setAttach_comment(
+                            req.getAddedAttachmentComment().get(
+                                    (added.indexOf(i))
+                            )
+                    );
 
-            i.setTag(attachmentTagRepository
-                    .findById(req.getAddedTag().get(added.indexOf(i))).
-                    orElseThrow(AttachmentTagNotFoundException::new).getName());
+                    i.setTag(attachmentTagRepository
+                            .findById(req.getAddedTag().get(added.indexOf(i))).
+                            orElseThrow(AttachmentTagNotFoundException::new).getName());
 
-            i.setAttachmentaddress(
-                    "src/main/prodmedia/image/" +
-                            sdf1.format(now).substring(0,10)
-                            + "/"
-                            + i.getUniqueName()
-            );
+                    i.setAttachmentaddress(
+                            "src/main/prodmedia/image/" +
+                                    sdf1.format(now).substring(0,10)
+                                    + "/"
+                                    + i.getUniqueName()
+                    );
 
-        }
+                }
         );
 
     }
@@ -737,8 +736,8 @@ public class NewItem extends EntityDate {
 
         return attachmentFiles.stream().map(attachmentFile ->
                 new NewItemAttachment(
-                attachmentFile.getOriginalFilename()
-        )).collect(toList());
+                        attachmentFile.getOriginalFilename()
+                )).collect(toList());
     }
 
 
@@ -827,11 +826,11 @@ public class NewItem extends EntityDate {
         this.sharing = req.getSharing() == null || req.getSharing();
 
         this.carType =     //임시저장 상태는 차종 없어도됨
-                        req.getCarTypeId() == null ?
-                                null:
-                                //carTypeRepository.findById(99999L).orElseThrow(CarTypeNotFoundException::new):
-                                        //null 아니면 입력받은 것
-                                        carTypeRepository.findById(req.getCarTypeId()).orElseThrow(CarTypeNotFoundException::new);
+                req.getCarTypeId() == null ?
+                        null:
+                        //carTypeRepository.findById(99999L).orElseThrow(CarTypeNotFoundException::new):
+                        //null 아니면 입력받은 것
+                        carTypeRepository.findById(req.getCarTypeId()).orElseThrow(CarTypeNotFoundException::new);
 
 
         this.integrate = req.getIntegrate().isBlank() ?
@@ -841,7 +840,7 @@ public class NewItem extends EntityDate {
                 "" : req.getCurve();
 
         this.width = req.getWidth().isBlank() ?
-               "" : req.getWidth();
+                "" : req.getWidth();
 
         this.height = req.getHeight().isBlank() ?
                 "" : req.getHeight();
@@ -853,13 +852,13 @@ public class NewItem extends EntityDate {
                 "" : req.getWeight();
 
         this.importance = req.getImportance().isBlank() ?
-               "" : req.getImportance();
+                "" : req.getImportance();
 
         this.color = req.getColorId() == null ?
                 null:                //colorRepository.findById(99999L).orElseThrow(ColorNotFoundException::new)
 
-    colorRepository.findById(req.getColorId())
-                .orElseThrow(ColorNotFoundException::new);
+                colorRepository.findById(req.getColorId())
+                        .orElseThrow(ColorNotFoundException::new);
 
         this.loadQuantity = req.getLoadQuantity().isBlank() ?
                 "" : req.getLoadQuantity();
@@ -966,14 +965,14 @@ public class NewItem extends EntityDate {
                 deleteImages(this.thumbnail);
             }
 
-                NewItemImageUpdatedResult resultImage =
-                        findImageUpdatedResult(
-                                req.getThumbnail()
-                        );
+            NewItemImageUpdatedResult resultImage =
+                    findImageUpdatedResult(
+                            req.getThumbnail()
+                    );
 
-                addImages(new NewItemImage(req.getThumbnail().getOriginalFilename()));
-                fileUpdatedResult =
-                        new NewItemFileUpdatedResult(resultAttachment, resultImage);
+            addImages(new NewItemImage(req.getThumbnail().getOriginalFilename()));
+            fileUpdatedResult =
+                    new NewItemFileUpdatedResult(resultAttachment, resultImage);
 
 
         }
@@ -1027,7 +1026,7 @@ public class NewItem extends EntityDate {
         AtomicInteger k = new AtomicInteger();
 
         //TODO 0614 update할 때 사용자가 기존 값 없애고 보낼 수도 있자나 => fix needed,
-         //TODO ITEMTYPE 없으면 99999면 안되게
+        //TODO ITEMTYPE 없으면 99999면 안되게
         //isBlank 랑 isNull로 판단해서 null / 기존 값 / req 값 채워넣기
         this.name = req.getName().isBlank()?"":req.getName();
 
@@ -1054,10 +1053,10 @@ public class NewItem extends EntityDate {
                         :
                         //2. 공용이라면
                         null;
-                        //carTypeRepository.findById(99999L).orElseThrow(CarTypeNotFoundException::new);
+        //carTypeRepository.findById(99999L).orElseThrow(CarTypeNotFoundException::new);
 
 
-                this.integrate = req.getIntegrate().isBlank()?null:req.getIntegrate();
+        this.integrate = req.getIntegrate().isBlank()?null:req.getIntegrate();
 
         this.curve = req.getCurve().isBlank()?null:req.getCurve();
 
@@ -1109,8 +1108,8 @@ public class NewItem extends EntityDate {
                         .orElseThrow(SupplierNotFoundException::new);
 
         this.makers = req.getMakersId()==null?//makerRepository.findById(-1L).orElseThrow(MakerNotFoundException::new)
-            null
-            :makerRepository.findById(req.getMakersId()).orElseThrow(MakerNotFoundException::new);
+                null
+                :makerRepository.findById(req.getMakersId()).orElseThrow(MakerNotFoundException::new);
 //        this.makers =
 //                makers.stream().map(
 //
@@ -1181,11 +1180,11 @@ public class NewItem extends EntityDate {
         return fileUpdatedResult;
     }
 
-    public void setParent(List<NewItemParentChildren> parent) {
+    public void setParent(Set<NewItemParentChildren> parent) {
         this.parent = parent;
     }
 
-    public void setChildren(List<NewItemParentChildren> children) {
+    public void setChildren(Set<NewItemParentChildren> children) {
         this.children = children;
     }
 
