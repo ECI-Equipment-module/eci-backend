@@ -1,6 +1,5 @@
 package eci.server.NewItemModule.repository;
 
-import eci.server.NewItemModule.entity.NewItemParentChildren;
 import eci.server.NewItemModule.entity.TempNewItemParentChildren;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

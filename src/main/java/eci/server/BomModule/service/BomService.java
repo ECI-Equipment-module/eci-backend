@@ -24,6 +24,7 @@ import eci.server.NewItemModule.dto.newItem.create.NewItemCreateResponse;
 import eci.server.NewItemModule.entity.JsonSave;
 import eci.server.NewItemModule.entity.NewItem;
 import eci.server.NewItemModule.entity.TempNewItemParentChildren;
+import eci.server.NewItemModule.repository.TempNewItemParentChildrenRepository;
 import eci.server.NewItemModule.repository.item.NewItemParentChildrenRepository;
 import eci.server.NewItemModule.repository.item.NewItemRepository;
 import eci.server.NewItemModule.service.TempNewItemParentChildService;
@@ -52,6 +53,7 @@ public class BomService {
     private final NewItemRepository newItemRepository;
     private final NewItemParentChildrenRepository newItemParentChildrenRepository;
     private final TempNewItemParentChildService tempNewItemParentChildService;
+    private final TempNewItemParentChildrenRepository tempNewItemParentChildrenRepository;
 
 
     // 0) BOM
@@ -163,7 +165,8 @@ public class BomService {
 
     // 1) Preliminary
     @Transactional
-    public NewItemCreateResponse createDevelopment(DevelopmentRequestDto req) {
+    public NewItemCreateResponse createDevelopment(DevelopmentRequestDto req
+                                                   ) {
 
         //temp parent - item 아이디 만들어줘야 함
 
@@ -186,12 +189,15 @@ public class BomService {
                     ItemNotFoundException::new
             );
 
-            new TempNewItemParentChildren(
-                    newId,
-                    parent,
-                    child,
-                    req.getDevId()
+            tempNewItemParentChildrenRepository.save(
+                    new TempNewItemParentChildren(
+                            newId,
+                            parent,
+                            child,
+                            req.getDevId()
+                    )
             );
+
 
             i+=1;
         }
