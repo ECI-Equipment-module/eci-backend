@@ -110,7 +110,7 @@ public class ProjectTemporaryCreateRequest  {
 
                         req.clientItemNumber,
 
-                        req.protoStartPeriod.toString().isBlank() ? LocalDate.parse(LocalDate.now().format(formatter)) :
+                        req.protoStartPeriod.isBlank() ? LocalDate.parse(LocalDate.now().format(formatter)) :
                                 LocalDate.parse(req.protoStartPeriod, DateTimeFormatter.ISO_DATE),
 
                         req.protoOverPeriod.toString().isBlank() ? LocalDate.parse(LocalDate.now().format(formatter)) :

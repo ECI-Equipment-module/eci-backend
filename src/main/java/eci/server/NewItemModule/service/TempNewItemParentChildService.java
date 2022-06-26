@@ -7,7 +7,6 @@ import eci.server.BomModule.repository.DevelopmentBomRepository;
 import eci.server.DesignModule.dto.DesignContentDto;
 import eci.server.NewItemModule.dto.TempNewItemChildDto;
 import eci.server.NewItemModule.entity.NewItem;
-import eci.server.NewItemModule.entity.NewItemParentChildrenId;
 import eci.server.NewItemModule.entity.TempNewItemParentChildren;
 import eci.server.NewItemModule.repository.TempNewItemParentChildrenRepository;
 import eci.server.NewItemModule.repository.item.NewItemRepository;

@@ -19,6 +19,7 @@ import eci.server.DesignModule.exception.DesignNotFoundException;
 import eci.server.DesignModule.repository.DesignRepository;
 import eci.server.ItemModule.exception.item.ItemNotFoundException;
 import eci.server.ItemModule.repository.newRoute.RouteTypeRepository;
+import eci.server.NewItemModule.dto.TempNewItemChildDto;
 import eci.server.NewItemModule.dto.newItem.NewItemChildDto;
 import eci.server.NewItemModule.dto.newItem.create.NewItemCreateResponse;
 import eci.server.NewItemModule.entity.JsonSave;
@@ -125,16 +126,14 @@ public class BomService {
         return PreliminaryBomDto.toDto(targetBom);
     }
 
-    public List<NewItemChildDto> readDevelopment(Long devId){
+    public List<TempNewItemChildDto> readDevelopment(Long devId){
 
         DevelopmentBom developmentBom = developmentBomRepository.findById(devId).
                 orElseThrow(DevelopmentBomNotFoundException::new);
 
         NewItem newItem = developmentBom.getBom().getNewItem();
 
-        newItemService.readChildAll(newItem.getId());
-
-        return newItemService.readChildAll(newItem.getId());
+        return newItemService.readDevChildAll(newItem.getId());
 
     }
 
