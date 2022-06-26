@@ -29,7 +29,9 @@ import eci.server.ItemModule.repository.newRoute.RouteTypeRepository;
 import eci.server.NewItemModule.entity.JsonSave;
 import eci.server.NewItemModule.entity.NewItem;
 import eci.server.NewItemModule.exception.ItemTypeRequiredException;
+import eci.server.NewItemModule.repository.TempNewItemParentChildrenRepository;
 import eci.server.NewItemModule.repository.item.NewItemRepository;
+import eci.server.NewItemModule.service.TempNewItemParentChildService;
 import eci.server.ProjectModule.entity.project.Project;
 import eci.server.ProjectModule.exception.ProjectNotLinkedException;
 import eci.server.ProjectModule.repository.project.ProjectRepository;
@@ -60,6 +62,7 @@ public class RouteOrderingService {
     private final DevelopmentBomRepository developmentBomRepository;
     private final CompareBomRepository compareBomRepository;
     private final JsonSaveRepository jsonSaveRepository;
+    private final TempNewItemParentChildService tempNewItemParentChildService;
 
     private final BomService bomService;
 
@@ -368,6 +371,8 @@ public class RouteOrderingService {
                     // 디자인 리뷰 승인 나면 아이템 정보 관계 맺어주기
                     bomService.makeDevBom(linkedDesign.getId());
 
+                    // dev bom 의 temp new item parent children 관계도 맺어주기
+                    bomService.makeTempDevBom(linkedDesign.getId());
                 }
 
 

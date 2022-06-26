@@ -1,6 +1,7 @@
 package eci.server.NewItemModule.service;
 
 import eci.server.BomModule.entity.Bom;
+import eci.server.BomModule.entity.DevelopmentBom;
 import eci.server.BomModule.repository.BomRepository;
 import eci.server.BomModule.repository.DevelopmentBomRepository;
 import eci.server.DesignModule.dto.DesignContentDto;
@@ -37,14 +38,14 @@ public class TempNewItemParentChildService {
     }
 
     /**
-     * createDevelopmentCard 에서 쓰일 것
-
+     * 디자인 승인나면 만들어야 함
      */
     public void recursiveChildrenMaking(
             NewItem parentNewItem,
             List<DesignContentDto> childrenList,
             TempNewItemParentChildrenRepository newItemParentChildrenRepository,
-            NewItemRepository newItemRepository
+            NewItemRepository newItemRepository,
+            DevelopmentBom staticDevBom
     ) {
 
         if (childrenList!=null && childrenList.size() > 0) {
@@ -52,13 +53,6 @@ public class TempNewItemParentChildService {
 
                 NewItem children =
                         newItemRepository.findByItemNumber(p.getCardNumber());
-
-                // 디자인 승인 완료 되니깐 ~ 찐 관계 생성
-                NewItemParentChildrenId newItemParentChildrenId = new NewItemParentChildrenId(
-                        parentNewItem,
-                        newItemRepository.findByItemNumber(p.getCardNumber())
-
-                );
 
 
                 // 06-25 newParentItemId 는
@@ -70,12 +64,14 @@ public class TempNewItemParentChildService {
                         bomRepository.findByNewItem(parentNewItem).size()-1
                 );
 
+                DevelopmentBom developmentBom = developmentBomRepository.findByBom(bom);
+
                 newItemParentChildrenRepository.save(
                         new TempNewItemParentChildren(
                                 newId,
                                 parentNewItem,
                                 children,
-                                bom.getId()
+                                staticDevBom
                         )
                 );
 
@@ -100,7 +96,8 @@ public class TempNewItemParentChildService {
                                     childrenList.indexOf(p)
                             ).getChildren(),
                             newItemParentChildrenRepository,
-                            newItemRepository
+                            newItemRepository,
+                            staticDevBom
                     );
                 }
 

@@ -163,6 +163,33 @@ public class BomService {
 
     }
 
+    /**
+     * 들어온 designContent 로 아이템 parent, child 관계 맺어주기
+     * @param id
+     */
+    public void makeTempDevBom(Long id) {
+
+        Design design = designRepository.findById(id).orElseThrow(DesignNotFoundException::new);
+        Gson gson = new Gson();
+        String json = design.getDesignContent();
+        DesignContentDto designContentDto = gson.fromJson(json, DesignContentDto.class);
+
+        NewItem parentNewItem = newItemRepository.findByItemNumber(designContentDto.getCardNumber());
+        Bom bom = bomRepository.findByNewItem(parentNewItem).get(0);
+        DevelopmentBom developmentBom = developmentBomRepository.findByBom(bom);
+        tempNewItemParentChildService.recursiveChildrenMaking(
+
+                parentNewItem,//parent NewItem
+                designContentDto.getChildren(),
+                tempNewItemParentChildrenRepository,
+                newItemRepository,
+                developmentBom
+
+
+        );
+
+
+    }
 
     /**
      *  bom의 dev bom에 tempRelation 필드를 Gson 으로 만들어서 진짜 관계 생성해주기
@@ -224,7 +251,8 @@ public class BomService {
                                 newId,
                                 parent,
                                 child,
-                                req.getDevId()
+                                developmentBomRepository.findById(req.getDevId())
+                                        .orElseThrow(DevelopmentBomNotFoundException::new)
                         )
                 );
             }
