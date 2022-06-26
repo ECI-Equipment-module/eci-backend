@@ -66,7 +66,7 @@ public class BomController {
             @Valid DevelopmentRequestDto req) {
 
         return Response.success(
-                bomService.createRealParentChildren(req)
+                bomService.createAndDestroyTempParentChildren(req)
         );
     }
 

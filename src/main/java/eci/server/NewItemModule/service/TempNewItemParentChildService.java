@@ -54,9 +54,6 @@ public class TempNewItemParentChildService {
                 NewItem children =
                         newItemRepository.findByItemNumber(p.getCardNumber());
 
-
-                // 06-25 newParentItemId 는
-
                 Long newId = Long.parseLong((parentNewItem.getId().toString()+
                         children.getId().toString()));
 
