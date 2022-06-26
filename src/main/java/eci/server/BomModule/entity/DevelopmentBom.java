@@ -30,6 +30,10 @@ public class DevelopmentBom {
     @Column(nullable = false) //0621 nullable = true 로 변경하기
     private Boolean edited; //06-20 반영
 
+    @Lob
+    @Column //0626 : devBom 문자열
+    private String tempRelation;
+
     public DevelopmentBom(
             Bom bom
     ){
@@ -39,4 +43,7 @@ public class DevelopmentBom {
         this.edited = false;
     }
 
+    public void setTempRelation(String tempRelation) {
+        this.tempRelation = tempRelation;
+    }
 }

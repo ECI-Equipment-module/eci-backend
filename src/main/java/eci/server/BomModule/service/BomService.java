@@ -23,6 +23,7 @@ import eci.server.NewItemModule.dto.newItem.NewItemChildDto;
 import eci.server.NewItemModule.dto.newItem.create.NewItemCreateResponse;
 import eci.server.NewItemModule.entity.JsonSave;
 import eci.server.NewItemModule.entity.NewItem;
+import eci.server.NewItemModule.entity.NewItemParentChildren;
 import eci.server.NewItemModule.entity.TempNewItemParentChildren;
 import eci.server.NewItemModule.repository.TempNewItemParentChildrenRepository;
 import eci.server.NewItemModule.repository.item.NewItemParentChildrenRepository;
@@ -163,12 +164,38 @@ public class BomService {
     }
 
 
+    /**
+     *  bom의 dev bom에 tempRelation 필드를 Gson 으로 만들어서 진짜 관계 생성해주기
+     * @param bom
+     */
+    public void makeFinalBom(Bom bom) {
+
+        DevelopmentBom developmentBom = developmentBomRepository.findByBom(bom);
+        Gson gson = new Gson();
+        String json = developmentBom.getTempRelation();
+        DevelopmentRequestDto dto = gson.fromJson(json, DevelopmentRequestDto.class);
+
+        createRealParentChildren( //new item parent children 만들어주기
+                dto
+        );
+
+    }
+
+
     // 1) Preliminary
     @Transactional
-    public NewItemCreateResponse createDevelopment(DevelopmentRequestDto req
+    public NewItemCreateResponse createRealParentChildren(DevelopmentRequestDto req
                                                    ) {
 
         //temp parent - item 아이디 만들어줘야 함
+
+        //06-26 : req 들어올 때마다 dev bom 의 temp relation string 으로 저장
+
+        DevelopmentBom developmentBom = developmentBomRepository.findById(req.getDevId())
+                .orElseThrow(DevelopmentBomNotFoundException::new);
+
+        developmentBom.setTempRelation(req.toString());
+
 
         if((req.getChildId()).size() != req.getParentId().size()){
             throw new AddedDevBomNotPossible();
@@ -189,14 +216,18 @@ public class BomService {
                     ItemNotFoundException::new
             );
 
-            tempNewItemParentChildrenRepository.save(
-                    new TempNewItemParentChildren(
-                            newId,
-                            parent,
-                            child,
-                            req.getDevId()
-                    )
-            );
+            if(tempNewItemParentChildrenRepository.findById(
+                    newId
+            ).isEmpty()) { //안 만들어졌던 관계일 경우에만 삭제
+                tempNewItemParentChildrenRepository.save(
+                        new TempNewItemParentChildren(
+                                newId,
+                                parent,
+                                child,
+                                req.getDevId()
+                        )
+                );
+            }
 
 
             i+=1;
