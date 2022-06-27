@@ -226,23 +226,24 @@ public class BomService {
 
         DevelopmentBom developmentBom = developmentBomRepository.findById(req.getDevId())
                 .orElseThrow(DevelopmentBomNotFoundException::new);
-
+        System.out.println("hello");
         developmentBom.setTempRelation(req.toString());
-
+        System.out.println("hello");
         //06-26 0) req 에 들어온 애들 newId 만들어주기  (1번 작업 진행위해서 2번에서 0번으로 순서 옮겼음)
         if((req.getChildId()).size() != req.getParentId().size()){//길이 다르면 잘못 보내준 거
             throw new AddedDevBomNotPossible();
         }
-
+        System.out.println("hello");
         List<Long> newIdList = new ArrayList<>();
         int s = 0 ;
-
+        System.out.println("hello");
         while(s < req.getChildId().size()){
 
             Long newId = Long.parseLong(req.getParentId().get(s).toString()+
                     req.getChildId().get(s).toString());
-
+            System.out.println(newId);
             newIdList.add(newId);
+            s+=1;
 
         }
 
@@ -250,10 +251,10 @@ public class BomService {
         // 1) temp parent child 돌건데
         // 그 아이를 req 에서 찾을 수 없다면 걔는 사용자가 쓰레기통에 넣은 것
         // => tempRelation 에서 삭제 처리
-
+        System.out.println("hello");
         List<TempNewItemParentChildren> tempNewItemParentChildren
                 = tempNewItemParentChildrenRepository.findByDevelopmentBom(developmentBom);
-
+        System.out.println("hello");
         for (TempNewItemParentChildren pc : tempNewItemParentChildren){
             if(!(newIdList.contains(pc.getId()))){
 
