@@ -73,14 +73,17 @@ public class BomService {
 
         NewItem parentNewItem = newItemRepository.findByItemNumber(designContentDto.getCardNumber());
 
-        newItemService.recursiveChildrenMaking(
+        if(parentNewItem !=null) {
 
-                parentNewItem,//parent NewItem
-                designContentDto.getChildren(),
-                newItemParentChildrenRepository,
-                newItemRepository
+            newItemService.recursiveChildrenMaking(
 
-        );
+                    parentNewItem,//parent NewItem
+                    designContentDto.getChildren(),
+                    newItemParentChildrenRepository,
+                    newItemRepository
+
+            );
+        }
 
 
     }
@@ -98,18 +101,21 @@ public class BomService {
         DesignContentDto designContentDto = gson.fromJson(json, DesignContentDto.class);
 
         NewItem parentNewItem = newItemRepository.findByItemNumber(designContentDto.getCardNumber());
-        Bom bom = bomRepository.findByNewItem(parentNewItem).get(0);
-        DevelopmentBom developmentBom = developmentBomRepository.findByBom(bom);
-        tempNewItemParentChildService.recursiveChildrenMaking(
 
-                parentNewItem,//parent NewItem
-                designContentDto.getChildren(),
-                tempNewItemParentChildrenRepository,
-                newItemRepository,
-                developmentBom
+        if(parentNewItem !=null) {
+            Bom bom = bomRepository.findByNewItem(parentNewItem).get(0);
+            DevelopmentBom developmentBom = developmentBomRepository.findByBom(bom);
+            tempNewItemParentChildService.recursiveChildrenMaking(
+
+                    parentNewItem,//parent NewItem
+                    designContentDto.getChildren(),
+                    tempNewItemParentChildrenRepository,
+                    newItemRepository,
+                    developmentBom
 
 
-        );
+            );
+        }
 
 
     }
@@ -157,37 +163,37 @@ public class BomService {
         if((req.getChildId()).size() != req.getParentId().size()){
             throw new AddedDevBomNotPossible();
         }
+        if(req.getParentId()!=null) {
+            int i = 0;
 
-        int i = 0 ;
+            while (i < req.getChildId().size()) {
 
-        while (i< req.getChildId().size()){
+                Long newId = Long.parseLong(req.getParentId().get(i).toString() +
+                        req.getChildId().get(i).toString());
 
-            Long newId = Long.parseLong(req.getParentId().get(i).toString()+
-                    req.getChildId().get(i).toString());
-
-            NewItem parent = newItemRepository.findById(req.getParentId().get(i)).orElseThrow(
-                    ItemNotFoundException::new
-            );
-
-            NewItem child = newItemRepository.findById(req.getChildId().get(i)).orElseThrow(
-                    ItemNotFoundException::new
-            );
-
-            if(newItemParentChildrenRepository.findById(
-                    newId
-            ).isEmpty()) { //안 만들어졌던 관계일 경우에만 만들어주기
-                newItemParentChildrenRepository.save(
-                        new NewItemParentChildren(
-                                newId,
-                                parent,
-                                child
-                        )
+                NewItem parent = newItemRepository.findById(req.getParentId().get(i)).orElseThrow(
+                        ItemNotFoundException::new
                 );
+
+                NewItem child = newItemRepository.findById(req.getChildId().get(i)).orElseThrow(
+                        ItemNotFoundException::new
+                );
+
+                if (newItemParentChildrenRepository.findById(
+                        newId
+                ).isEmpty()) { //안 만들어졌던 관계일 경우에만 만들어주기
+                    newItemParentChildrenRepository.save(
+                            new NewItemParentChildren(
+                                    newId,
+                                    parent,
+                                    child
+                            )
+                    );
+                }
+
+                i += 1;
             }
-
-            i+=1;
         }
-
         //dev bom id return
         return new NewItemCreateResponse(req.getDevId());
     }

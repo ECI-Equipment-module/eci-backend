@@ -70,83 +70,83 @@ public class DevelopmentBomService {
         //temp parent - item 아이디 만들어줘야 함
 
         //06-26 : req 들어올 때마다 dev bom 의 temp relation string 으로 저장
+        if(req.getParentId()!=null) {
+            DevelopmentBom developmentBom = developmentBomRepository.findById(req.getDevId())
+                    .orElseThrow(DevelopmentBomNotFoundException::new);
 
-        DevelopmentBom developmentBom = developmentBomRepository.findById(req.getDevId())
-                .orElseThrow(DevelopmentBomNotFoundException::new);
+            developmentBom.setTempRelation(req.toString());
 
-        developmentBom.setTempRelation(req.toString());
+            //06 -27 : dev bom edited 가 false 면 edited = true 갱신 ~
+            developmentBom.setEdited(true);
 
-        //06 -27 : dev bom edited 가 false 면 edited = true 갱신 ~
-        developmentBom.setEdited(true);
-
-        //06-26 0) req 에 들어온 애들 newId 만들어주기  (1번 작업 진행위해서 2번에서 0번으로 순서 옮겼음)
-        if((req.getChildId()).size() != req.getParentId().size()){//길이 다르면 잘못 보내준 거
-            throw new AddedDevBomNotPossible();
-        }
-
-        List<Long> newIdList = new ArrayList<>();
-        int s = 0 ;
-
-        while(s < req.getChildId().size()){
-
-            Long newId = Long.parseLong(req.getParentId().get(s).toString()+
-                    req.getChildId().get(s).toString());
-            System.out.println(newId);
-            newIdList.add(newId);
-            s+=1;
-
-        }
-
-
-        // 1) temp parent child 돌건데
-        // 그 아이를 req 에서 찾을 수 없다면 걔는 사용자가 쓰레기통에 넣은 것
-        // => tempRelation 에서 삭제 처리
-
-        List<TempNewItemParentChildren> tempNewItemParentChildren
-                = tempNewItemParentChildrenRepository.findByDevelopmentBom(developmentBom);
-
-        for (TempNewItemParentChildren pc : tempNewItemParentChildren){
-            if(!(newIdList.contains(pc.getId()))){
-
-                tempNewItemParentChildrenRepository.delete(
-                        pc
-                );
-
-            }
-        }
-
-
-        // 2) 없으면 만들어주기 (new & save)
-
-        int i = 0 ;
-
-        while (i< req.getChildId().size()){
-
-            NewItem parent = newItemRepository.findById(req.getParentId().get(i)).orElseThrow(
-                    ItemNotFoundException::new
-            );
-
-            NewItem child = newItemRepository.findById(req.getChildId().get(i)).orElseThrow(
-                    ItemNotFoundException::new
-            );
-
-            if(tempNewItemParentChildrenRepository.findById(
-                    newIdList.get(i)
-            ).isEmpty()) { //안 만들어졌던 관계일 경우에만 만들어주기
-                tempNewItemParentChildrenRepository.save(
-                        new TempNewItemParentChildren(
-                                newIdList.get(i),
-                                parent,
-                                child,
-                                developmentBomRepository.findById(req.getDevId())
-                                        .orElseThrow(DevelopmentBomNotFoundException::new)
-                        )
-                );
+            //06-26 0) req 에 들어온 애들 newId 만들어주기  (1번 작업 진행위해서 2번에서 0번으로 순서 옮겼음)
+            if ((req.getChildId()).size() != req.getParentId().size()) {//길이 다르면 잘못 보내준 거
+                throw new AddedDevBomNotPossible();
             }
 
-            i+=1;
-        }
+            List<Long> newIdList = new ArrayList<>();
+            int s = 0;
 
+            while (s < req.getChildId().size()) {
+
+                Long newId = Long.parseLong(req.getParentId().get(s).toString() +
+                        req.getChildId().get(s).toString());
+                System.out.println(newId);
+                newIdList.add(newId);
+                s += 1;
+
+            }
+
+
+            // 1) temp parent child 돌건데
+            // 그 아이를 req 에서 찾을 수 없다면 걔는 사용자가 쓰레기통에 넣은 것
+            // => tempRelation 에서 삭제 처리
+
+            List<TempNewItemParentChildren> tempNewItemParentChildren
+                    = tempNewItemParentChildrenRepository.findByDevelopmentBom(developmentBom);
+
+            for (TempNewItemParentChildren pc : tempNewItemParentChildren) {
+                if (!(newIdList.contains(pc.getId()))) {
+
+                    tempNewItemParentChildrenRepository.delete(
+                            pc
+                    );
+
+                }
+            }
+
+
+            // 2) 없으면 만들어주기 (new & save)
+
+            int i = 0;
+
+            while (i < req.getChildId().size()) {
+
+                NewItem parent = newItemRepository.findById(req.getParentId().get(i)).orElseThrow(
+                        ItemNotFoundException::new
+                );
+
+                NewItem child = newItemRepository.findById(req.getChildId().get(i)).orElseThrow(
+                        ItemNotFoundException::new
+                );
+
+                if (tempNewItemParentChildrenRepository.findById(
+                        newIdList.get(i)
+                ).isEmpty()) { //안 만들어졌던 관계일 경우에만 만들어주기
+                    tempNewItemParentChildrenRepository.save(
+                            new TempNewItemParentChildren(
+                                    newIdList.get(i),
+                                    parent,
+                                    child,
+                                    developmentBomRepository.findById(req.getDevId())
+                                            .orElseThrow(DevelopmentBomNotFoundException::new)
+                            )
+                    );
+                }
+
+                i += 1;
+            }
+        }
         //dev bom id return
         return new NewItemCreateResponse(req.getDevId());
     }

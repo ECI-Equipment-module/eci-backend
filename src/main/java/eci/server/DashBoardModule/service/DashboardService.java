@@ -441,6 +441,8 @@ public class DashboardService {
         for (RouteProduct routeProduct : myDesignReviewRouteProductList) { //myRoute-> 내꺼 + 현재
 
             //현재 라우트보다 하나 이전 라우트프로덕트의 디자인만 존재함, 그 디자인을 가져와야한다.
+            System.out.println("eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeew");
+            System.out.println(routeProduct.getId() - 1);
             RouteProduct targetRouteProduct = routeProductRepository.findById(routeProduct.getId() - 1)
                     .orElseThrow(RouteProductNotFoundException::new);
 
@@ -809,7 +811,7 @@ public class DashboardService {
                 TodoResponse
                         projectTodoResponse =
                         new TodoResponse(
-                                d.getId(),
+                                d.getBom().getNewItem().getId(),
                                 d.getBom().getNewItem().getName(),
                                 d.getBom().getNewItem().getItemTypes().getItemType().toString(),
                                 d.getBom().getNewItem().getItemNumber()
@@ -834,10 +836,10 @@ public class DashboardService {
 
                 rejectedDesignTodoResponses.add(
                         new TodoResponse(
-                                targetBom.getId(),
+                                targetBom.getNewItem().getId(),
                                 targetBom.getNewItem().getName(),
                                 targetBom.getNewItem().getItemTypes().getItemType().toString(),
-                                targetBom.getNewItem().getItemNumber().toString()
+                                targetBom.getNewItem().getItemNumber()
                         )
                 );
             }
@@ -855,14 +857,14 @@ public class DashboardService {
             RouteProduct targetRouteProduct = routeProductRepository.findById(routeProduct.getId() - 1)
                     .orElseThrow(RouteProductNotFoundException::new);
 
-            Design targetDesign = targetRouteProduct.getDesign();
+            Bom targetBom = targetRouteProduct.getBom();
 
             needReviewBomTodoResponses.add(
                     new TodoResponse(
-                            targetDesign.getId(),
-                            targetDesign.getNewItem().getName(),
-                            targetDesign.getNewItem().getItemTypes().getItemType().toString(),
-                            targetDesign.getNewItem().getItemNumber()
+                            targetBom.getNewItem().getId(),
+                            targetBom.getNewItem().getName(),
+                            targetBom.getNewItem().getItemTypes().getItemType().toString(),
+                            targetBom.getNewItem().getItemNumber()
                     )
             );
         }
