@@ -20,7 +20,6 @@ import eci.server.DesignModule.repository.DesignRepository;
 import eci.server.ItemModule.exception.item.ItemNotFoundException;
 import eci.server.ItemModule.repository.newRoute.RouteTypeRepository;
 import eci.server.NewItemModule.dto.TempNewItemChildDto;
-import eci.server.NewItemModule.dto.newItem.NewItemChildDto;
 import eci.server.NewItemModule.dto.newItem.create.NewItemCreateResponse;
 import eci.server.NewItemModule.entity.JsonSave;
 import eci.server.NewItemModule.entity.NewItem;
@@ -78,7 +77,7 @@ public class BomService {
     @Transactional
     public NewItemCreateResponse createPreliminary(JsonSaveCreateRequest req) {
         if(
-                //기존에 있는 것 있다면 삭제해버리기
+            //기존에 있는 것 있다면 삭제해버리기
                 jsonSaveRepository.findByPreliminaryBomId(req.getPreliminaryId()).size()>0
         ){
             List<JsonSave> willBeDeletedJsonSave = jsonSaveRepository.findByPreliminaryBomId(req.getPreliminaryId());
@@ -223,7 +222,7 @@ public class BomService {
     @Transactional
     public NewItemCreateResponse createAndDestroyTempParentChildren(
             DevelopmentRequestDto req
-                                                   ) {
+    ) {
 
 
         //temp parent - item 아이디 만들어줘야 함
@@ -232,20 +231,20 @@ public class BomService {
 
         DevelopmentBom developmentBom = developmentBomRepository.findById(req.getDevId())
                 .orElseThrow(DevelopmentBomNotFoundException::new);
-        
+
         developmentBom.setTempRelation(req.toString());
 
         //06 -27 : dev bom edited 가 false 면 edited = true 갱신 ~
         developmentBom.setEdited(true);
-        
+
         //06-26 0) req 에 들어온 애들 newId 만들어주기  (1번 작업 진행위해서 2번에서 0번으로 순서 옮겼음)
         if((req.getChildId()).size() != req.getParentId().size()){//길이 다르면 잘못 보내준 거
             throw new AddedDevBomNotPossible();
         }
-        
+
         List<Long> newIdList = new ArrayList<>();
         int s = 0 ;
-        
+
         while(s < req.getChildId().size()){
 
             Long newId = Long.parseLong(req.getParentId().get(s).toString()+
@@ -263,7 +262,7 @@ public class BomService {
 
         List<TempNewItemParentChildren> tempNewItemParentChildren
                 = tempNewItemParentChildrenRepository.findByDevelopmentBom(developmentBom);
-        
+
         for (TempNewItemParentChildren pc : tempNewItemParentChildren){
             if(!(newIdList.contains(pc.getId()))){
 
@@ -353,8 +352,8 @@ public class BomService {
                                 newId,
                                 parent,
                                 child
-                )
-                        );
+                        )
+                );
             }
 
 
