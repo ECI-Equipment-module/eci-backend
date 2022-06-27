@@ -63,7 +63,7 @@ public class TempNewItemChildDto {
                                 +"/"+c.getChildren().getClassification().getClassification2().getName()+
                                 (
                                         c.getChildren().getClassification().getClassification3().getId()==99999L?
-                                                "":"/"+"/"+c.getChildren().getClassification().getClassification3().getName()
+                                                "":"/"+c.getChildren().getClassification().getClassification3().getName()
                                 )
                         ,
                         c.getChildren().getName(),
