@@ -46,4 +46,8 @@ public class DevelopmentBom {
     public void setTempRelation(String tempRelation) {
         this.tempRelation = tempRelation;
     }
+
+    public void setEdited(Boolean edited) {
+        this.edited = edited;
+    }
 }
