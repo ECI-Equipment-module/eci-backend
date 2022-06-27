@@ -190,7 +190,8 @@ public class Design extends EntityDate {
     public FileUpdatedResult update(
             DesignUpdateRequest req,
             NewItemRepository itemRepository,
-            MemberRepository memberRepository
+            MemberRepository memberRepository,
+            AttachmentTagRepository attachmentTagRepository
     )
 
 
@@ -212,7 +213,7 @@ public class Design extends EntityDate {
                 );
 
         if(req.getAddedTag().size()>0) {
-            addUpdatedDesignAttachments(req, resultAttachment.getAddedAttachments());
+            addUpdatedDesignAttachments(req, resultAttachment.getAddedAttachments(), attachmentTagRepository);
         }
         if(req.getAddedTag().size()>0) {
             deleteDesignAttachments(resultAttachment.getDeletedAttachments());
@@ -237,7 +238,8 @@ public class Design extends EntityDate {
     public FileUpdatedResult tempEnd(
             DesignUpdateRequest req,
             NewItemRepository itemRepository,
-            MemberRepository memberRepository
+            MemberRepository memberRepository,
+            AttachmentTagRepository attachmentTagRepository
     )
 
 
@@ -262,7 +264,7 @@ public class Design extends EntityDate {
                 );
 
         if(req.getAddedTag().size()>0) {
-            addUpdatedDesignAttachments(req, resultAttachment.getAddedAttachments());
+            addUpdatedDesignAttachments(req, resultAttachment.getAddedAttachments(), attachmentTagRepository);
         }
         if(req.getAddedTag().size()>0) {
             deleteDesignAttachments(resultAttachment.getDeletedAttachments());
@@ -283,10 +285,10 @@ public class Design extends EntityDate {
         return fileUpdatedResult;
     }
 
-    private void addUpdatedDesignAttachments(DesignUpdateRequest req, List<DesignAttachment> added) {
+    private void addUpdatedDesignAttachments(DesignUpdateRequest req, List<DesignAttachment> added,
+                                             AttachmentTagRepository attachmentTagRepository) {
         SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date now = new Date();
-        AttachmentTagRepository attachmentTagRepository = null;
 
         added.forEach(i -> {
             designAttachments.add(i);
@@ -297,9 +299,13 @@ public class Design extends EntityDate {
                             (added.indexOf(i))
                     )
             );
+
+
             i.setTag(attachmentTagRepository
                     .findById(req.getAddedTag().get(added.indexOf(i))).
                     orElseThrow(AttachmentNotFoundException::new).getName());
+
+
             i.setAttachmentaddress(
                     "src/main/prodmedia/image/" +
                             sdf1.format(now).substring(0,10)

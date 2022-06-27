@@ -4,7 +4,9 @@ import eci.server.BomModule.entity.Bom;
 import eci.server.BomModule.entity.CompareBom;
 import eci.server.BomModule.entity.DevelopmentBom;
 import eci.server.BomModule.entity.PreliminaryBom;
+import eci.server.BomModule.exception.BomNotFoundException;
 import eci.server.BomModule.repository.*;
+import eci.server.BomModule.service.BomService;
 import eci.server.DesignModule.entity.design.Design;
 import eci.server.DesignModule.exception.DesignNotLinkedException;
 import eci.server.DesignModule.repository.DesignRepository;
@@ -27,7 +29,9 @@ import eci.server.ItemModule.repository.newRoute.RouteTypeRepository;
 import eci.server.NewItemModule.entity.JsonSave;
 import eci.server.NewItemModule.entity.NewItem;
 import eci.server.NewItemModule.exception.ItemTypeRequiredException;
+import eci.server.NewItemModule.repository.TempNewItemParentChildrenRepository;
 import eci.server.NewItemModule.repository.item.NewItemRepository;
+import eci.server.NewItemModule.service.TempNewItemParentChildService;
 import eci.server.ProjectModule.entity.project.Project;
 import eci.server.ProjectModule.exception.ProjectNotLinkedException;
 import eci.server.ProjectModule.repository.project.ProjectRepository;
@@ -58,6 +62,9 @@ public class RouteOrderingService {
     private final DevelopmentBomRepository developmentBomRepository;
     private final CompareBomRepository compareBomRepository;
     private final JsonSaveRepository jsonSaveRepository;
+    private final TempNewItemParentChildService tempNewItemParentChildService;
+
+    private final BomService bomService;
 
     private final RoutePreset routePreset;
 
@@ -344,7 +351,54 @@ public class RouteOrderingService {
                     //05-12 추가사항 : 이 라우트를 제작해줄 때야 비로소 프로젝트는 temp save = false 가 되는 것
                     linkedDesign.finalSaveDesign();
                 }
+
+
             }
+
+            else if (targetRoutProduct.getType().getModule().equals("DESIGN")
+                    && targetRoutProduct.getType().getName().equals("REVIEW")) {
+
+                //아이템에 링크된 맨 마지막 (최신) 디자인 데려오기
+                if (designRepository.findByNewItem(routeOrdering.getNewItem()).size() == 0) {
+                    throw new DesignNotLinkedException();
+                } else {
+                    Design linkedDesign =
+                            designRepository.findByNewItem(routeOrdering.getNewItem())
+                                    .get(
+                                            designRepository.findByNewItem(routeOrdering.getNewItem()).size() - 1
+                                    );
+
+                    // 디자인 리뷰 승인 나면 아이템 정보 관계 맺어주기
+                    bomService.makeDevBom(linkedDesign.getId());
+
+                    // dev bom 의 temp new item parent children 관계도 맺어주기
+                    bomService.makeTempDevBom(linkedDesign.getId());
+                }
+
+
+            }
+
+            else if (targetRoutProduct.getType().getModule().equals("BOM")
+                    && targetRoutProduct.getType().getName().equals("REVIEW")) {
+
+                //아이템에 링크된 봄 아이디 건네주기
+                if (bomRepository.findByNewItem(routeOrdering.getNewItem()).size() == 0) {
+                    throw new BomNotFoundException();
+                } else {
+                    Bom bom =
+                            bomRepository.findByNewItem(routeOrdering.getNewItem())
+                                    .get(
+                                            bomRepository.findByNewItem(routeOrdering.getNewItem()).size() - 1
+                                    );
+
+                    // 디자인 리뷰 승인 나면 아이템 정보 관계 맺어주기
+                    bomService.makeFinalBom(bom);
+
+                }
+
+
+            }
+
 
             RouteOrderingUpdateRequest newRouteUpdateRequest =
                     routeOrdering

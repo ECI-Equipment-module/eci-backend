@@ -2,7 +2,6 @@ package eci.server.NewItemModule.entity;
 
 import eci.server.ItemModule.entity.entitycommon.EntityDate;
 import eci.server.ItemModule.entity.item.*;
-import eci.server.ItemModule.exception.item.AttachmentNotFoundException;
 import eci.server.ItemModule.exception.item.ColorNotFoundException;
 import eci.server.ItemModule.exception.item.ItemNotFoundException;
 import eci.server.ItemModule.exception.member.sign.MemberNotFoundException;
@@ -28,7 +27,6 @@ import eci.server.ProjectModule.entity.project.CarType;
 import eci.server.ProjectModule.entity.project.ClientOrganization;
 import eci.server.ProjectModule.exception.CarTypeNotFoundException;
 import eci.server.ProjectModule.exception.ClientOrganizationNotFoundException;
-import eci.server.ProjectModule.exception.ProduceOrganizationNotFoundException;
 import eci.server.ProjectModule.repository.carType.CarTypeRepository;
 import eci.server.ProjectModule.repository.clientOrg.ClientOrganizationRepository;
 import lombok.*;
@@ -53,6 +51,7 @@ public class NewItem extends EntityDate {
  //@GeneratedValue(strategy = GenerationType.IDENTITY)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQUENCE3")
     @SequenceGenerator(name="SEQUENCE3", sequenceName="SEQUENCE3", allocationSize=1)
+
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -250,7 +249,7 @@ public class NewItem extends EntityDate {
             cascade = CascadeType.ALL,
             orphanRemoval = true,
             fetch = FetchType.LAZY)
-    private List<NewItemParentChildren> parent;
+    private Set<NewItemParentChildren> parent;
 
     /**
      * 한 아이템은 여러 자식 가지기 가능
@@ -261,7 +260,7 @@ public class NewItem extends EntityDate {
             orphanRemoval = true,
             fetch = FetchType.LAZY)
     //@JoinColumn(name = "children_id")
-    private List< NewItemParentChildren> children;
+    private Set< NewItemParentChildren> children;
     /**
      * attachment 있을 때, thumbnail 있을 때 생성자
      * @param classification
@@ -1181,11 +1180,11 @@ public class NewItem extends EntityDate {
         return fileUpdatedResult;
     }
 
-    public void setParent(List<NewItemParentChildren> parent) {
+    public void setParent(Set<NewItemParentChildren> parent) {
         this.parent = parent;
     }
 
-    public void setChildren(List<NewItemParentChildren> children) {
+    public void setChildren(Set<NewItemParentChildren> children) {
         this.children = children;
     }
 

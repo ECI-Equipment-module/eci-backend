@@ -1,8 +1,7 @@
 package eci.server.NewItemModule.repository.item;
 
-import eci.server.BomModule.entity.DevelopmentBomCard;
-import eci.server.NewItemModule.entity.NewItem;
 import eci.server.NewItemModule.entity.NewItemParentChildren;
+import eci.server.NewItemModule.entity.NewItemParentChildrenId;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

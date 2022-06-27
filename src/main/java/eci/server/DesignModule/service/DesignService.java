@@ -43,11 +43,11 @@ public class DesignService {
     private final ProjectRepository projectRepository;
     private final NewItemRepository newItemRepository;
     private final DesignAttachmentRepository designAttachmentRepository;
+    private final AttachmentTagRepository attachmentTagRepository;
 
     private final FileService fileService;
     private final RouteOrderingRepository routeOrderingRepository;
     private final RouteProductRepository routeProductRepository;
-    private final AttachmentTagRepository attachmentTagRepository;
     private final DesignRepository designRepository;
 
 //    public ProjectListDto readDashboardAll(ProjectReadCondition cond) {
@@ -155,7 +155,8 @@ public class DesignService {
         Design.FileUpdatedResult result = design.update(
                 req,
                 itemRepository,
-                memberRepository
+                memberRepository,
+                attachmentTagRepository
         );
 
 
@@ -186,7 +187,8 @@ public class DesignService {
         Design.FileUpdatedResult result = design.tempEnd(
                 req,
                 itemRepository,
-                memberRepository
+                memberRepository,
+                attachmentTagRepository
         );
 
 
