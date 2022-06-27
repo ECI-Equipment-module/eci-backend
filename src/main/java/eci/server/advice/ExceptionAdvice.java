@@ -445,5 +445,13 @@ public class ExceptionAdvice {
         return Response.failure(404, "디자인 내용은 저장 시 필수입니다.");
     }
 
+    @ExceptionHandler(AddedDevBomNotPossible.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Response AddedDevBomNotPossible(AddedDevBomNotPossible e) {
+        log.info("e = {}", e.getMessage());
+        return Response.failure(404, "부모 아이디와 자식 아이디의 길이가 다릅니다.");
+    }
+
+
 
 }

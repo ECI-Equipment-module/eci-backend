@@ -73,7 +73,7 @@ public class ProjectTemporaryCreateRequest  {
 
         private Long produceOrganizationId;
 
-        private Long carType;
+        private Long carTypeId;
 
         public static Project toEntity(
                 ProjectTemporaryCreateRequest req,
@@ -98,7 +98,8 @@ public class ProjectTemporaryCreateRequest  {
             Long projectLevelId = req.projectLevelId==null?99999L:req.projectLevelId;
             Long produceOrgId = req.produceOrganizationId==null?99999L:req.produceOrganizationId;
             Long clientOrgId = req.clientOrganizationId==null?99999L:req.clientOrganizationId;
-            Long carTypeId = req.carType==null?99999L:req.carType;
+            Long carTypeId = req.carTypeId==null?99999L:req.carTypeId;
+
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
             if(req.getTag().size()>0) {
@@ -110,7 +111,7 @@ public class ProjectTemporaryCreateRequest  {
 
                         req.clientItemNumber,
 
-                        req.protoStartPeriod.toString().isBlank() ? LocalDate.parse(LocalDate.now().format(formatter)) :
+                        req.protoStartPeriod.isBlank() ? LocalDate.parse(LocalDate.now().format(formatter)) :
                                 LocalDate.parse(req.protoStartPeriod, DateTimeFormatter.ISO_DATE),
 
                         req.protoOverPeriod.toString().isBlank() ? LocalDate.parse(LocalDate.now().format(formatter)) :
@@ -179,7 +180,7 @@ public class ProjectTemporaryCreateRequest  {
 
                         //Project 생성자에 들이밀기
 
-                        carTypeRepository.findById(req.carType)
+                        carTypeRepository.findById(req.carTypeId)
                                 .orElseThrow(ClientOrganizationNotFoundException::new)
 
 //                    req.carType.toString().isBlank()?"":req.carType

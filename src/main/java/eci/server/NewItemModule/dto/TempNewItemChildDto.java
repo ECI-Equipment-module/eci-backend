@@ -1,11 +1,10 @@
-package eci.server.NewItemModule.dto.newItem;
+package eci.server.NewItemModule.dto;
 
-import eci.server.ItemModule.helper.NestedConvertHelper;
-import eci.server.ItemModule.repository.newRoute.RouteOrderingRepository;
+import eci.server.BomModule.entity.DevelopmentBom;
 import eci.server.NewItemModule.entity.NewItem;
-import eci.server.NewItemModule.entity.NewItemParentChildren;
-import eci.server.NewItemModule.repository.item.NewItemParentChildrenRepository;
-import eci.server.NewItemModule.service.item.NewItemService;
+import eci.server.NewItemModule.entity.TempNewItemParentChildren;
+import eci.server.NewItemModule.repository.TempNewItemParentChildrenRepository;
+import eci.server.NewItemModule.service.TempNewItemParentChildService;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,7 +18,7 @@ import java.util.stream.Collectors;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class NewItemChildDto {
+public class TempNewItemChildDto {
 
     private Long id;
     private String classification;
@@ -29,16 +28,36 @@ public class NewItemChildDto {
     //private String thumbnailAddress;
     private String sharing;
     private boolean plusPossible;
-    private List<NewItemChildDto> children;
+    private List<TempNewItemChildDto> children;
 
+    public static TempNewItemChildDto toDevelopmentBomDto(
+            NewItem newItem,
+            List<TempNewItemChildDto> children
+    ){
+        return new TempNewItemChildDto(
+                newItem.getId(),
+                newItem.getClassification().getClassification1().getName()
+                        +"/" + newItem.getClassification().getClassification2().getName()+
+                        ( newItem.getClassification().getClassification3().getId().equals(99999L)?
+                                "":
+                                "/" + newItem.getClassification().getClassification3().getName()
+                        ),
+                newItem.getName(),
+                newItem.getItemTypes().getItemType().name(),
+                newItem.getItemNumber(),
+                newItem.isSharing()?"공용":"전용",
+                true,
+                children
 
+        );
+    }
 
-    public static List<NewItemChildDto> toDtoList(
-            List<NewItemParentChildren> NewItems,
-            NewItemParentChildrenRepository newItemParentChildrenRepository
+    public static List<TempNewItemChildDto> toDtoList(
+            List<TempNewItemParentChildren> NewItems,
+            TempNewItemParentChildrenRepository newItemParentChildrenRepository
     ) {
-        List<NewItemChildDto> newItemChildDtos = NewItems.stream().map(
-                c -> new NewItemChildDto(
+        List<TempNewItemChildDto> tempNewItemChildDtos = NewItems.stream().map(
+                c -> new TempNewItemChildDto(
                         c.getChildren().getId(),//엔티티를 DTO로 변환하는 함수
                         c.getChildren().getClassification().getClassification1().getName()
                                 +"/"+c.getChildren().getClassification().getClassification2().getName()+
@@ -60,7 +79,7 @@ public class NewItemChildDto {
                 )
         ).collect(Collectors.toList());
 
-        return newItemChildDtos;
+        return tempNewItemChildDtos;
 
     }
 
@@ -69,11 +88,11 @@ public class NewItemChildDto {
      * @param NewItems
      * @return
      */
-    public static Page<NewItemChildDto> toGeneralDtoList(
+    public static Page<TempNewItemChildDto> toGeneralDtoList(
             List<NewItem> NewItems
     ) {
-        List<NewItemChildDto> newItemChildDtos = NewItems.stream().map(
-                c -> new NewItemChildDto(
+        List<TempNewItemChildDto> tempNewItemChildDtos = NewItems.stream().map(
+                c -> new TempNewItemChildDto(
                         c.getId(),//엔티티를 DTO로 변환하는 함수
                         c.getClassification().getClassification1().getName()
                                 +"/"+c.getClassification().getClassification2().getName()+
@@ -93,20 +112,20 @@ public class NewItemChildDto {
                 )
         ).collect(Collectors.toList());
 
-        Page<NewItemChildDto> itemProductList = new PageImpl<>(newItemChildDtos);
+        Page<TempNewItemChildDto> itemProductList = new PageImpl<>(tempNewItemChildDtos);
 
         return itemProductList;
 
     }
 
 
-    public static Page<NewItemChildDto> toAddChildDtoList(
+    public static Page<TempNewItemChildDto> toAddChildDtoList(
             Page<NewItem> NewItem,
-            NewItemService newItemService    ) {
+            TempNewItemParentChildService newItemService    ) {
 
 
-        List<NewItemChildDto> newItemChildDtos = NewItem.stream().map(
-                c -> new NewItemChildDto(
+        List<TempNewItemChildDto> tempNewItemChildDtos = NewItem.stream().map(
+                c -> new TempNewItemChildDto(
                         c.getId(),//엔티티를 DTO로 변환하는 함수
                         c.getClassification().getClassification1().getName()
                                 +"/"+c.getClassification().getClassification2().getName()+
@@ -121,13 +140,13 @@ public class NewItemChildDto {
                         c.isSharing()?"공용":"전용",
                         //c.getThumbnailAddress(),
                         c.isSubAssy(),
-                        newItemService.readChildAll(c.getId())
+                        newItemService.readTempChildAll(c.getId())
 
 
                 )
         ).collect(Collectors.toList());
 
-        Page<NewItemChildDto> itemProductList = new PageImpl<>(newItemChildDtos);
+        Page<TempNewItemChildDto> itemProductList = new PageImpl<>(tempNewItemChildDtos);
         return itemProductList;
 
     }

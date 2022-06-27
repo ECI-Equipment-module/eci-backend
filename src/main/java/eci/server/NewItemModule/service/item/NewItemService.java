@@ -1,13 +1,8 @@
 package eci.server.NewItemModule.service.item;
 
-import eci.server.BomModule.dto.DevelopmentBomCardCreateRequest;
-import eci.server.BomModule.entity.DevelopmentBom;
-import eci.server.BomModule.entity.DevelopmentBomCard;
 import eci.server.BomModule.repository.BomRepository;
-import eci.server.BomModule.repository.DevelopmentBomRepository;
 import eci.server.BomModule.repository.PreliminaryBomRepository;
 import eci.server.DesignModule.dto.DesignContentDto;
-import eci.server.DesignModule.entity.design.Design;
 import eci.server.DesignModule.repository.DesignRepository;
 import eci.server.ItemModule.dto.item.*;
 import eci.server.ItemModule.dto.newRoute.routeOrdering.RouteOrderingDto;
@@ -32,12 +27,14 @@ import eci.server.ItemModule.repository.newRoute.RouteOrderingRepository;
 import eci.server.ItemModule.repository.newRoute.RouteProductRepository;
 import eci.server.ItemModule.service.file.FileService;
 import eci.server.ItemModule.service.file.LocalFileService;
+import eci.server.NewItemModule.dto.TempNewItemChildDto;
 import eci.server.NewItemModule.dto.newItem.*;
 import eci.server.NewItemModule.dto.newItem.create.NewItemCreateRequest;
 import eci.server.NewItemModule.dto.newItem.create.NewItemCreateResponse;
 import eci.server.NewItemModule.dto.newItem.create.NewItemTemporaryCreateRequest;
 import eci.server.NewItemModule.dto.newItem.update.NewItemUpdateRequest;
 import eci.server.NewItemModule.entity.*;
+import eci.server.NewItemModule.repository.TempNewItemParentChildrenRepository;
 import eci.server.NewItemModule.repository.attachment.AttachmentTagRepository;
 import eci.server.NewItemModule.repository.attachment.NewItemAttachmentRepository;
 import eci.server.NewItemModule.repository.classification.Classification1Repository;
@@ -48,7 +45,6 @@ import eci.server.NewItemModule.repository.coatingWay.CoatingWayRepository;
 import eci.server.NewItemModule.repository.item.NewItemParentChildrenRepository;
 import eci.server.NewItemModule.repository.item.NewItemRepository;
 import eci.server.NewItemModule.repository.maker.MakerRepository;
-//import eci.server.NewItemModule.repository.maker.NewItemMakerRepository;
 import eci.server.NewItemModule.repository.supplier.SupplierRepository;
 import eci.server.NewItemModule.service.classification.ClassificationService;
 import eci.server.ProjectModule.repository.carType.CarTypeRepository;
@@ -62,7 +58,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -89,13 +84,10 @@ public class NewItemService {
     private final NewItemRepository newItemRepository;
     private final RouteOrderingRepository routeOrderingRepository;
     private final RouteProductRepository routeProductRepository;
-//    private final NewItemMakerRepository itemMakerRepository;
     private final ProjectRepository projectRepository;
     private final FileService fileService;
     private final LocalFileService localFileService;
-    private final ClassificationService classificationService;
     private final AuthHelper authHelper;
-    private final RoutePreset routePreset;
     private final AttachmentTagRepository attachmentTagRepository;
     private final DesignRepository designRepository;
     private final BomRepository bomRepository;
@@ -105,6 +97,7 @@ public class NewItemService {
     private final NewItemParentChildrenRepository newItemParentChildrenRepository;
 
     private final NewItemAttachmentRepository newItemAttachmentRepository;
+    private final TempNewItemParentChildrenRepository tempNewItemParentChildrenRepository;
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -220,9 +213,9 @@ public class NewItemService {
         // 실제 이미지 파일을 가지고 있는 Multipart 파일을
         // 이미지가 가지는 uniquename을 파일명으로 해서 파일저장소 업로드
         fileService.upload
-                                (
-                                        fileImages,
-                                        images.getUniqueName()
+                (
+                        fileImages,
+                        images.getUniqueName()
                 );
     }
 
@@ -314,7 +307,7 @@ public class NewItemService {
     private void deleteImages(NewItemImage images) {
         fileService.delete(
                 images.getUniqueName()
-                );
+        );
     }
 
     private void deleteAttachments(List<NewItemAttachment> attachments) {
@@ -423,7 +416,7 @@ public class NewItemService {
 
         if(
                 result.getImageUpdatedResult()!=null &&
-                result.getImageUpdatedResult().getAddedImages()!=null
+                        result.getImageUpdatedResult().getAddedImages()!=null
         ){
 
             uploadImages(
@@ -510,6 +503,18 @@ public class NewItemService {
         );
 
     }
+
+    public List<TempNewItemChildDto> readDevChildAll(Long id) {
+
+        return TempNewItemChildDto.toDtoList(
+                tempNewItemParentChildrenRepository.
+                        findAllWithParentByParentId(id),//ByParentIdOrderByParentIdAscNullsFirst(
+                tempNewItemParentChildrenRepository
+
+        );
+
+    }
+
 
 
     /**
@@ -611,16 +616,16 @@ public class NewItemService {
                 );
 
 
-                 // 06-25 newParentItemId 는
+                // 06-25 newParentItemId 는
 
                 Long newId = Long.parseLong((parentNewItem.getId().toString()+
                         children.getId().toString()));
 
                 newItemParentChildrenRepository.save(
-                            new NewItemParentChildren(
-                        newId,
-                        parentNewItem,
-                        children
+                        new NewItemParentChildren(
+                                newId,
+                                parentNewItem,
+                                children
                         )
                 );
 
@@ -652,5 +657,7 @@ public class NewItemService {
             }
         }
     }
+
+
 
 }

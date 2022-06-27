@@ -1,5 +1,6 @@
 package eci.server.BomModule.controller;
 
+import eci.server.BomModule.dto.DevelopmentRequestDto;
 import eci.server.BomModule.dto.prelimianry.JsonSaveCreateRequest;
 import eci.server.BomModule.service.BomService;
 import eci.server.ItemModule.dto.response.Response;
@@ -41,11 +42,32 @@ public class BomController {
         );
     }
 
-        @GetMapping("/preliminary/{id}")
-        @ResponseStatus(HttpStatus.OK)
-        public Response getPreliminary(@PathVariable Long id) {
-            return Response.success(
-                    bomService.readPreliminary(id)
-            );
-        }
+    @GetMapping("/preliminary/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public Response getPreliminary(@PathVariable Long id) {
+        return Response.success(
+                bomService.readPreliminary(id)
+        );
+    }
+
+    @GetMapping("/development/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public Response getDevelopment(@PathVariable Long id) {
+        return Response.success(
+                bomService.readDevelopment(id)
+        );
+    }
+
+    @CrossOrigin(origins = "https://localhost:3000")
+    @PostMapping("/development")
+    @ResponseStatus(HttpStatus.CREATED)
+    @AssignMemberId
+    public Response createDevelopment(
+            @Valid DevelopmentRequestDto req) {
+
+        return Response.success(
+                bomService.createAndDestroyTempParentChildren(req)
+        );
+    }
+
 }
