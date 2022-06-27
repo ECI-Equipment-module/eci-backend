@@ -45,20 +45,6 @@ public class DashboardController {
     }
 
     /**
-     * design to-do api
-     *
-     * @return 200 (success)
-     */
-    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
-    @GetMapping("/dashboard/bom/todo")
-    @ResponseStatus(HttpStatus.OK)
-    public Response bomTodo() {
-        return Response.success(
-                dashboardService.readBomTodo()
-        );
-    }
-
-    /**
      * project total status
      *
      * @return 200 (success)
@@ -87,18 +73,20 @@ public class DashboardController {
         );
     }
 
-//    /**
-//     * BOM to-do api
-//     *
-//     * @return 200 (success)
-//     */
-//    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
-//    @GetMapping("/dashboard/bom/to-do")
-//    @ResponseStatus(HttpStatus.OK)
-//    public Response bomTodo() {
-//        return Response.success(
-//                dashboardService.readBomTodo()
-//        );
-//    }
+
+    /**
+     * BOM to-do api
+     *
+     * @return 200 (success)
+     */
+    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
+    @GetMapping("/dashboard/bom/todo")
+    @ResponseStatus(HttpStatus.OK)
+    public Response bomTodo() {
+        return Response.success(
+                dashboardService.readBomTodo()
+        );
+    }
+
 
 }
