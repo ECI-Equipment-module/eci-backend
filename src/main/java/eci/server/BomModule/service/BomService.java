@@ -133,10 +133,11 @@ public class BomService {
         String json = developmentBom.getTempRelation();
         DevelopmentRequestDto dto = gson.fromJson(json, DevelopmentRequestDto.class);
 
-        createAndDestroyRealParentChildren( //new item parent children 만들어주기
-                dto
-        );
-
+        if(json!=null) {
+            createAndDestroyRealParentChildren( //new item parent children 만들어주기
+                    dto
+            );
+        }
     }
 
 
@@ -153,48 +154,49 @@ public class BomService {
         //temp parent - item 아이디 만들어줘야 함
 
         //06-26 : req 들어올 때마다 dev bom 의 temp relation string 으로 저장
+        if(req.getDevId()!=null && req.getParentId()!=null) {
+            DevelopmentBom developmentBom = developmentBomRepository.findById(req.getDevId())
+                    .orElseThrow(DevelopmentBomNotFoundException::new);
 
-        DevelopmentBom developmentBom = developmentBomRepository.findById(req.getDevId())
-                .orElseThrow(DevelopmentBomNotFoundException::new);
-
-        developmentBom.setTempRelation(req.toString());
+            developmentBom.setTempRelation(req.toString());
 
 
-        if((req.getChildId()).size() != req.getParentId().size()){
-            throw new AddedDevBomNotPossible();
-        }
-        if(req.getParentId()!=null) {
-            int i = 0;
-
-            while (i < req.getChildId().size()) {
-
-                Long newId = Long.parseLong(req.getParentId().get(i).toString() +
-                        req.getChildId().get(i).toString());
-
-                NewItem parent = newItemRepository.findById(req.getParentId().get(i)).orElseThrow(
-                        ItemNotFoundException::new
-                );
-
-                NewItem child = newItemRepository.findById(req.getChildId().get(i)).orElseThrow(
-                        ItemNotFoundException::new
-                );
-
-                if (newItemParentChildrenRepository.findById(
-                        newId
-                ).isEmpty()) { //안 만들어졌던 관계일 경우에만 만들어주기
-                    newItemParentChildrenRepository.save(
-                            new NewItemParentChildren(
-                                    newId,
-                                    parent,
-                                    child
-                            )
-                    );
-                }
-
-                i += 1;
+            if ((req.getChildId()).size() != req.getParentId().size()) {
+                throw new AddedDevBomNotPossible();
             }
+            if (req.getParentId() != null) {
+                int i = 0;
+
+                while (i < req.getChildId().size()) {
+
+                    Long newId = Long.parseLong(req.getParentId().get(i).toString() +
+                            req.getChildId().get(i).toString());
+
+                    NewItem parent = newItemRepository.findById(req.getParentId().get(i)).orElseThrow(
+                            ItemNotFoundException::new
+                    );
+
+                    NewItem child = newItemRepository.findById(req.getChildId().get(i)).orElseThrow(
+                            ItemNotFoundException::new
+                    );
+
+                    if (newItemParentChildrenRepository.findById(
+                            newId
+                    ).isEmpty()) { //안 만들어졌던 관계일 경우에만 만들어주기
+                        newItemParentChildrenRepository.save(
+                                new NewItemParentChildren(
+                                        newId,
+                                        parent,
+                                        child
+                                )
+                        );
+                    }
+
+                    i += 1;
+                }
+            }
+            //dev bom id return
         }
-        //dev bom id return
         return new NewItemCreateResponse(req.getDevId());
     }
 
