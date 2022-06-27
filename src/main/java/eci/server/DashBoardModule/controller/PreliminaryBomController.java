@@ -1,8 +1,8 @@
-package eci.server.BomModule.controller;
+package eci.server.DashBoardModule.controller;
 
-import eci.server.BomModule.dto.DevelopmentRequestDto;
 import eci.server.BomModule.dto.prelimianry.JsonSaveCreateRequest;
 import eci.server.BomModule.service.BomService;
+import eci.server.BomModule.service.PreliminaryBomService;
 import eci.server.ItemModule.dto.response.Response;
 import eci.server.aop.AssignMemberId;
 import lombok.RequiredArgsConstructor;
@@ -16,18 +16,9 @@ import javax.validation.Valid;
 @RequiredArgsConstructor
 @Slf4j
 @CrossOrigin(origins = "https://localhost:3000")
-public class BomController {
+public class PreliminaryBomController {
 
-    private final BomService bomService;
-
-    // 0) BOM
-    @GetMapping("/bom/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public Response getBom(@PathVariable Long id) {
-        return Response.success(
-                bomService.readBom(id)
-        );
-    }
+    private final PreliminaryBomService bomService;
 
     // 1) Preliminary BOM
     @CrossOrigin(origins = "https://localhost:3000")
@@ -49,25 +40,5 @@ public class BomController {
                 bomService.readPreliminary(id)
         );
     }
-
-    @GetMapping("/development/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public Response getDevelopment(@PathVariable Long id) {
-        return Response.success(
-                bomService.readDevelopment(id)
-        );
-    }
-
-    @CrossOrigin(origins = "https://localhost:3000")
-    @PostMapping("/development")
-    @ResponseStatus(HttpStatus.CREATED)
-    @AssignMemberId
-    public Response createDevelopment(
-            @Valid DevelopmentRequestDto req) {
-
-        return Response.success(
-                bomService.createAndDestroyTempParentChildren(req)
-        );
-    }
-
 }
+
