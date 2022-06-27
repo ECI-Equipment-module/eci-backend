@@ -28,7 +28,6 @@ public class TempNewItemParentChildService {
     public List<TempNewItemChildDto> readTempChildAll(Long id) {
 
         return TempNewItemChildDto.toDtoList(
-
                 tempNewItemParentChildrenRepository.
                         findAllWithParentByParentId(id),//ByParentIdOrderByParentIdAscNullsFirst(
                 tempNewItemParentChildrenRepository

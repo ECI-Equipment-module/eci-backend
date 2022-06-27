@@ -45,7 +45,6 @@ import eci.server.NewItemModule.repository.coatingWay.CoatingWayRepository;
 import eci.server.NewItemModule.repository.item.NewItemParentChildrenRepository;
 import eci.server.NewItemModule.repository.item.NewItemRepository;
 import eci.server.NewItemModule.repository.maker.MakerRepository;
-//import eci.server.NewItemModule.repository.maker.NewItemMakerRepository;
 import eci.server.NewItemModule.repository.supplier.SupplierRepository;
 import eci.server.NewItemModule.service.classification.ClassificationService;
 import eci.server.ProjectModule.repository.carType.CarTypeRepository;
@@ -59,7 +58,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -86,13 +84,10 @@ public class NewItemService {
     private final NewItemRepository newItemRepository;
     private final RouteOrderingRepository routeOrderingRepository;
     private final RouteProductRepository routeProductRepository;
-//    private final NewItemMakerRepository itemMakerRepository;
     private final ProjectRepository projectRepository;
     private final FileService fileService;
     private final LocalFileService localFileService;
-    private final ClassificationService classificationService;
     private final AuthHelper authHelper;
-    private final RoutePreset routePreset;
     private final AttachmentTagRepository attachmentTagRepository;
     private final DesignRepository designRepository;
     private final BomRepository bomRepository;
@@ -218,9 +213,9 @@ public class NewItemService {
         // 실제 이미지 파일을 가지고 있는 Multipart 파일을
         // 이미지가 가지는 uniquename을 파일명으로 해서 파일저장소 업로드
         fileService.upload
-                                (
-                                        fileImages,
-                                        images.getUniqueName()
+                (
+                        fileImages,
+                        images.getUniqueName()
                 );
     }
 
@@ -312,7 +307,7 @@ public class NewItemService {
     private void deleteImages(NewItemImage images) {
         fileService.delete(
                 images.getUniqueName()
-                );
+        );
     }
 
     private void deleteAttachments(List<NewItemAttachment> attachments) {
@@ -421,7 +416,7 @@ public class NewItemService {
 
         if(
                 result.getImageUpdatedResult()!=null &&
-                result.getImageUpdatedResult().getAddedImages()!=null
+                        result.getImageUpdatedResult().getAddedImages()!=null
         ){
 
             uploadImages(
@@ -621,16 +616,16 @@ public class NewItemService {
                 );
 
 
-                 // 06-25 newParentItemId 는
+                // 06-25 newParentItemId 는
 
                 Long newId = Long.parseLong((parentNewItem.getId().toString()+
                         children.getId().toString()));
 
                 newItemParentChildrenRepository.save(
-                            new NewItemParentChildren(
-                        newId,
-                        parentNewItem,
-                        children
+                        new NewItemParentChildren(
+                                newId,
+                                parentNewItem,
+                                children
                         )
                 );
 

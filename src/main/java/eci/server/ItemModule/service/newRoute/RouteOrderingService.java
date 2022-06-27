@@ -172,8 +172,8 @@ public class RouteOrderingService {
                 "\"classification\": \"" + newItem.getClassification().getClassification1().getName().toString()
                 +"/" + newItem.getClassification().getClassification2().getName().toString()+
                 ( newItem.getClassification().getClassification3().getId().equals(99999L)?
-                "":
-                "/" + newItem.getClassification().getClassification3().getName()
+                        "":
+                        "/" + newItem.getClassification().getClassification3().getName()
                 )
                 + "\","+
                 "\"cardType\": \"" + newItem.getItemTypes().getItemType().name() +"\"," +
@@ -196,7 +196,7 @@ public class RouteOrderingService {
                 )
         );
 
-            CompareBom compareBom = compareBomRepository.save(
+        CompareBom compareBom = compareBomRepository.save(
                 new CompareBom(
                         bom
                 )
@@ -307,7 +307,7 @@ public class RouteOrderingService {
 
             // 06-17 리팩토링 : module : project , name : create
             if (targetRoutProduct.getType().getModule().equals("PROJECT")
-            && targetRoutProduct.getType().getName().equals("CREATE")) {
+                    && targetRoutProduct.getType().getName().equals("CREATE")) {
 
                 //아이템에 링크된 맨 마지막 (최신) 프로젝트 데려오기
                 if (projectRepository.findByNewItem(routeOrdering.getNewItem()).size() == 0) {
