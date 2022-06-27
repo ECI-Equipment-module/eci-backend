@@ -316,8 +316,8 @@ public class DashboardService {
                 else {
                     tempSavedDesignList.add(design);
                 }
-                }
             }
+        }
 
 
         if (tempSavedDesignList.size() > 0) {

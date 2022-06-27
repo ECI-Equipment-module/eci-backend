@@ -29,6 +29,7 @@ import eci.server.ItemModule.repository.newRoute.RouteTypeRepository;
 import eci.server.NewItemModule.entity.JsonSave;
 import eci.server.NewItemModule.entity.NewItem;
 import eci.server.NewItemModule.exception.ItemTypeRequiredException;
+import eci.server.NewItemModule.repository.TempNewItemParentChildrenRepository;
 import eci.server.NewItemModule.repository.item.NewItemRepository;
 import eci.server.NewItemModule.service.TempNewItemParentChildService;
 import eci.server.ProjectModule.entity.project.Project;
@@ -436,7 +437,9 @@ public class RouteOrderingService {
                                     routeProductRepository
                             );
         }
+
         return new RouteUpdateResponse(id);
+
     }
 
     /**

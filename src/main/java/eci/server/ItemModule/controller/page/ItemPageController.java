@@ -86,7 +86,7 @@
 //    @Autowired
 //    ItemService itemService;
 //    @CrossOrigin(origins = "https://localhost:3000")
-//    @GetMapping("/item-candidates")
+//    @GetMapping("/https://localhost:3000ates")
 //    public Page<ItemProjectCreateDto> readItemCandidate(@PageableDefault(size=5)
 //                                      @SortDefault.SortDefaults({
 //                                              @SortDefault(
