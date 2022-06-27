@@ -50,4 +50,21 @@ public class DevelopmentBom {
     public void setEdited(Boolean edited) {
         this.edited = edited;
     }
+
+    /**
+     * dev bom 찐 저장 시 수행
+     */
+    public void updateReadonlyTrue(){
+        this.readonly = true;
+    }
+
+
+    /**
+     * dev bom 찐 저장 시 수행
+     */
+    public void updateTempSaveFalse(){
+        this.tempsave = false;
+    }
+
+
 }

@@ -1,4 +1,4 @@
-package eci.server.DashBoardModule.controller;
+package eci.server.BomModule.controller;
 
 import eci.server.BomModule.dto.DevelopmentRequestDto;
 import eci.server.BomModule.service.BomService;
@@ -29,11 +29,30 @@ public class DevelopmentBomController {
     }
 
     @CrossOrigin(origins = "https://localhost:3000")
+    @PostMapping("/development/temp")
+    @ResponseStatus(HttpStatus.CREATED)
+    @AssignMemberId
+    public Response createTempSavedDevelopment(
+            @Valid DevelopmentRequestDto req) {
+
+        return Response.success(
+                bomService.createAndDestroyTempParentChildren(req)
+        );
+    }
+
+    /**
+     * dev bom 의 read only = true 로 설정
+     * @param req
+     * @return
+     */
+    @CrossOrigin(origins = "https://localhost:3000")
     @PostMapping("/development")
     @ResponseStatus(HttpStatus.CREATED)
     @AssignMemberId
-    public Response createDevelopment(
+    public Response createSavedDevelopment(
             @Valid DevelopmentRequestDto req) {
+
+        bomService.updateReadonlyTrue(req.getDevId());
 
         return Response.success(
                 bomService.createAndDestroyTempParentChildren(req)

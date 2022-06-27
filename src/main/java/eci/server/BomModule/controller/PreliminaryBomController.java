@@ -1,4 +1,4 @@
-package eci.server.DashBoardModule.controller;
+package eci.server.BomModule.controller;
 
 import eci.server.BomModule.dto.prelimianry.JsonSaveCreateRequest;
 import eci.server.BomModule.service.BomService;

@@ -31,16 +31,9 @@ import java.util.List;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class DevelopmentBomService {
-    private final BomRepository bomRepository;
-    private final PreliminaryBomRepository preliminaryBomRepository;
     private final DevelopmentBomRepository developmentBomRepository;
-    private final CompareBomRepository compareBomRepository;
-    private final BomGuard bomGuard;
-    private final DesignRepository designRepository;
     private final NewItemService newItemService;
     private final NewItemRepository newItemRepository;
-    private final NewItemParentChildrenRepository newItemParentChildrenRepository;
-    private final TempNewItemParentChildService tempNewItemParentChildService;
     private final TempNewItemParentChildrenRepository tempNewItemParentChildrenRepository;
 
 
@@ -156,6 +149,25 @@ public class DevelopmentBomService {
 
         //dev bom id return
         return new NewItemCreateResponse(req.getDevId());
+    }
+
+
+    /**
+     * 찐 저장하면 read only = true 갱신
+     * @param devBomId
+     */
+    @Transactional
+    public void updateReadonlyTrue(
+            Long devBomId
+    ) {
+
+        DevelopmentBom developmentBom =
+                developmentBomRepository.findById(devBomId).orElseThrow(
+                        DevelopmentBomNotFoundException::new
+                );
+
+        developmentBom.updateReadonlyTrue();
+
     }
 
 
