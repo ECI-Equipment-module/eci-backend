@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class TempNewItemChildDto {
 
-    private Long id;
+    private Long cardId;
     private String classification;
     private String cardName;
     private String cardType;

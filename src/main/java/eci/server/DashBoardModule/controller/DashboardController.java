@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @Slf4j
-@CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
+@CrossOrigin(origins = "https://localhost:3000")
 
 public class DashboardController {
 
@@ -21,7 +21,7 @@ public class DashboardController {
      *
      * @return 200 (success)
      */
-    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
+    @CrossOrigin(origins = "https://localhost:3000")
     @GetMapping("/dashboard/project/todo")
     @ResponseStatus(HttpStatus.OK)
     public Response projectTodo() {
@@ -35,7 +35,7 @@ public class DashboardController {
      *
      * @return 200 (success)
      */
-    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
+    @CrossOrigin(origins = "https://localhost:3000")
     @GetMapping("/dashboard/design/todo")
     @ResponseStatus(HttpStatus.OK)
     public Response designTodo() {
@@ -49,7 +49,11 @@ public class DashboardController {
      *
      * @return 200 (success)
      */
+<<<<<<< HEAD
     @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
+=======
+    @CrossOrigin(origins = "https://localhost:3000")
+>>>>>>> be-feature/bom-todo
     @GetMapping("/dashboard/project/total")
     @ResponseStatus(HttpStatus.OK)
     public Response projectTotal() {
@@ -64,7 +68,11 @@ public class DashboardController {
      *
      * @return 200 (success)
      */
+<<<<<<< HEAD
     @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
+=======
+    @CrossOrigin(origins = "https://localhost:3000")
+>>>>>>> be-feature/bom-todo
     @GetMapping("/dashboard/item/todo")
     @ResponseStatus(HttpStatus.OK)
     public Response itemTodo() {
@@ -79,7 +87,11 @@ public class DashboardController {
      *
      * @return 200 (success)
      */
+<<<<<<< HEAD
     @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
+=======
+    @CrossOrigin(origins = "https://localhost:3000")
+>>>>>>> be-feature/bom-todo
     @GetMapping("/dashboard/bom/todo")
     @ResponseStatus(HttpStatus.OK)
     public Response bomTodo() {
