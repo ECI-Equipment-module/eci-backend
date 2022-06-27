@@ -1,5 +1,6 @@
 package eci.server.NewItemModule.dto;
 
+import eci.server.BomModule.entity.DevelopmentBom;
 import eci.server.NewItemModule.entity.NewItem;
 import eci.server.NewItemModule.entity.TempNewItemParentChildren;
 import eci.server.NewItemModule.repository.TempNewItemParentChildrenRepository;
@@ -29,7 +30,27 @@ public class TempNewItemChildDto {
     private boolean plusPossible;
     private List<TempNewItemChildDto> children;
 
+    public static TempNewItemChildDto toDevelopmentBomDto(
+            NewItem newItem,
+            List<TempNewItemChildDto> children
+    ){
+        return new TempNewItemChildDto(
+                newItem.getId(),
+                newItem.getClassification().getClassification1().getName()
+                        +"/" + newItem.getClassification().getClassification2().getName()+
+                        ( newItem.getClassification().getClassification3().getId().equals(99999L)?
+                                "":
+                                "/" + newItem.getClassification().getClassification3().getName()
+                        ),
+                newItem.getName(),
+                newItem.getItemTypes().getItemType().name(),
+                newItem.getItemNumber(),
+                newItem.isSharing()?"공용":"전용",
+                true,
+                children
 
+        );
+    }
 
     public static List<TempNewItemChildDto> toDtoList(
             List<TempNewItemParentChildren> NewItems,
