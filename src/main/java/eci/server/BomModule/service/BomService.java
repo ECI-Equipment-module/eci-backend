@@ -225,6 +225,7 @@ public class BomService {
             DevelopmentRequestDto req
                                                    ) {
 
+
         //temp parent - item 아이디 만들어줘야 함
 
         //06-26 : req 들어올 때마다 dev bom 의 temp relation string 으로 저장
@@ -233,6 +234,9 @@ public class BomService {
                 .orElseThrow(DevelopmentBomNotFoundException::new);
         
         developmentBom.setTempRelation(req.toString());
+
+        //06 -27 : dev bom edited 가 false 면 edited = true 갱신 ~
+        developmentBom.setEdited(true);
         
         //06-26 0) req 에 들어온 애들 newId 만들어주기  (1번 작업 진행위해서 2번에서 0번으로 순서 옮겼음)
         if((req.getChildId()).size() != req.getParentId().size()){//길이 다르면 잘못 보내준 거
