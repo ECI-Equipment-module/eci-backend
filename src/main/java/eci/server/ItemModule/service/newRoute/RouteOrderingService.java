@@ -378,6 +378,36 @@ public class RouteOrderingService {
 
             }
 
+            //06-27 데브 봄 만들고 라우트 요청하면 temp save = false & 라우트오더링에 봄 등록
+
+            else if (targetRoutProduct.getType().getModule().equals("BOM")
+                    && targetRoutProduct.getType().getName().equals("CREATE")) {
+
+                //아이템에 링크된 봄 아이디 건네주기
+                if (bomRepository.findByNewItem(routeOrdering.getNewItem()).size() == 0) {
+                    throw new BomNotFoundException();
+                } else {
+                    Bom bom =
+                            bomRepository.findByNewItem(routeOrdering.getNewItem())
+                                    .get(
+                                            bomRepository.findByNewItem(routeOrdering.getNewItem()).size() - 1
+                                    );
+
+                    //만약 지금 rejected 가 true였다면 , 이제 새로 다시 넣어주는 것이니깐 rejected풀어주기
+                    if (targetRoutProduct.isPreRejected()) {
+                        targetRoutProduct.setPreRejected(false);
+                    }
+                    //그 프로젝트를 라우트 프로덕트에 set 해주기
+                    targetRoutProduct.setBom(bom);
+                    // 해당 design 의 임시저장을 false
+                    //05-12 추가사항 : 이 라우트를 제작해줄 때야 비로소 프로젝트는 temp save = false 가 되는 것
+                    DevelopmentBom developmentBom =
+                            developmentBomRepository.findByBom(bom);
+
+                    developmentBom.updateTempSaveFalse();
+                }
+            }
+
             else if (targetRoutProduct.getType().getModule().equals("BOM")
                     && targetRoutProduct.getType().getName().equals("REVIEW")) {
 

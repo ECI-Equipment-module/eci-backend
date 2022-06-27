@@ -617,7 +617,9 @@ public class NewItemService {
 
 
                 // 06-25 newParentItemId 는
-
+                System.out.println("ㅅㅂㅂㅂㅂㅂㅂㅂㅂㅂㅂㅂㅂㅂㅂㅂㅂㅂ");
+                System.out.println(parentNewItem.getId());
+                System.out.println(children.getId());
                 Long newId = Long.parseLong((parentNewItem.getId().toString()+
                         children.getId().toString()));
 
