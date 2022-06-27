@@ -1,5 +1,6 @@
 package eci.server.NewItemModule.entity;
 
+import eci.server.BomModule.entity.DevelopmentBom;
 import lombok.*;
 
 import javax.persistence.*;
@@ -23,7 +24,7 @@ public class TempNewItemParentChildren {
     @JoinColumn(name = "children_id")
     private NewItem children;
 
-
-    @Column
-    private Long bomId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "dev_bom_id")
+    private DevelopmentBom developmentBom;
 }

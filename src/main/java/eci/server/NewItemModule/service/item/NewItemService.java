@@ -509,6 +509,17 @@ public class NewItemService {
 
     }
 
+    public List<TempNewItemChildDto> readDevChildAll(Long id) {
+
+        return TempNewItemChildDto.toDtoList(
+                tempNewItemParentChildrenRepository.
+                        findAllWithParentByParentId(id),//ByParentIdOrderByParentIdAscNullsFirst(
+                tempNewItemParentChildrenRepository
+
+        );
+
+    }
+
 
 
     /**
