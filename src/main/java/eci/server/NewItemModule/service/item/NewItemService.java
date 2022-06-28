@@ -262,7 +262,8 @@ public class NewItemService {
                         routeProductRepository,
                         routeOrderingRepository,
                         bomRepository,
-                        preliminaryBomRepository
+                        preliminaryBomRepository,
+                        defaultImageAddress
 
                 )
         ).orElseThrow(RouteNotFoundException::new);

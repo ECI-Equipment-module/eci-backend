@@ -36,6 +36,7 @@ import eci.server.ProjectModule.entity.project.Project;
 import eci.server.ProjectModule.exception.ProjectNotLinkedException;
 import eci.server.ProjectModule.repository.project.ProjectRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -64,6 +65,9 @@ public class RouteOrderingService {
     private final JsonSaveRepository jsonSaveRepository;
     private final TempNewItemParentChildService tempNewItemParentChildService;
 
+    @Value("${default.image.address}")
+    private String defaultImageAddress;
+
     private final BomService bomService;
 
     private final RoutePreset routePreset;
@@ -76,7 +80,8 @@ public class RouteOrderingService {
                 routeOrderingRepository.findById(id).orElseThrow(RouteNotFoundException::new),
                 routeProductRepository,
                 routeOrderingRepository,
-                routeRejectPossibleResponse
+                routeRejectPossibleResponse,
+                defaultImageAddress
         );
 
     }
@@ -114,7 +119,8 @@ public class RouteOrderingService {
                 routeProductRepository,
                 routeOrderingRepository,
                 bomRepository,
-                preliminaryBomRepository
+                preliminaryBomRepository,
+                defaultImageAddress
         );
     }
 
@@ -270,7 +276,8 @@ public class RouteOrderingService {
 
         // 기존 + 새 라우트프로덕트까지 해서 돌려주기
         return RouteProductDto.toProductDtoList(
-                routeProductRepository.findAllByRouteOrdering(routeOrdering)
+                routeProductRepository.findAllByRouteOrdering(routeOrdering),
+                defaultImageAddress
         );
     }
 
