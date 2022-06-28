@@ -28,7 +28,7 @@ public class DevelopmentBomController {
         );
     }
 
-    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
+    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app/")
     @PostMapping("/development/temp")
     @ResponseStatus(HttpStatus.CREATED)
     @AssignMemberId
@@ -45,7 +45,7 @@ public class DevelopmentBomController {
      * @param req
      * @return
      */
-    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
+    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app/")
     @PostMapping("/development")
     @ResponseStatus(HttpStatus.CREATED)
     @AssignMemberId
