@@ -103,7 +103,8 @@ public class ProjectDto {
                         routeProductRepository,
                         routeOrderingRepository,
                         bomRepository,
-                        preliminaryBomRepository
+                        preliminaryBomRepository,
+                        defaultImageAddress
                 )
         ).orElseThrow(RouteNotFoundException::new);
 

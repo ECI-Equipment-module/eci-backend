@@ -31,7 +31,8 @@ public class RouteProductDto {
     private List<MemberDto> member;
 
     public static List<RouteProductDto> toProductDtoList(
-            List <RouteProduct> RouteProducts
+            List <RouteProduct> RouteProducts,
+            String defaultImageAddress
     ) {
 
         List<RouteProductDto> routeProductList = RouteProducts.stream().map(
@@ -50,7 +51,8 @@ public class RouteProductDto {
                         MemberDto.toDtoList(
                                 c.getMembers().stream().map(
                                         RouteProductMember::getMember
-                                ).collect(toList())
+                                ).collect(toList()),
+                                defaultImageAddress
                         )
                 )
         ).collect(
@@ -59,7 +61,8 @@ public class RouteProductDto {
         return routeProductList;
     }
 
-    public static RouteProductDto toDto(RouteProduct routeProduct) {
+    public static RouteProductDto toDto(RouteProduct routeProduct,
+                                        String defaultImageAddress) {
 
         return new RouteProductDto(
                 routeProduct.getId(),
@@ -74,7 +77,9 @@ public class RouteProductDto {
                 MemberDto.toDtoList(
                         routeProduct.getMembers().stream().map(
                                 RouteProductMember::getMember
-                        ).collect(toList())
+                        ).collect(toList()),
+                        defaultImageAddress
+
                 )
         );
     }

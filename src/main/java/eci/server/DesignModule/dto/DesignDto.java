@@ -64,7 +64,8 @@ public class DesignDto {
                         routeProductRepository,
                         routeOrderingRepository,
                         bomRepository,
-                        preliminaryBomRepository
+                        preliminaryBomRepository,
+                        defaultImageAddress
                 )
         ).orElseThrow(RouteNotFoundException::new);
 
