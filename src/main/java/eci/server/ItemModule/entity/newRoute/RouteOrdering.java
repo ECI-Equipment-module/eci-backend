@@ -188,7 +188,7 @@ public class RouteOrdering extends EntityDate {
                     this.getProject().setTempsave(false); //라우트 만든 순간 임시저장 다시 거짓으로
                 }
                 else if(routeProductList.get(this.present).getType().getModule().equals("BOM")){
-                    this.getProject().setTempsave(false); //라우트 만든 순간 임시저장 다시 거짓으로
+                    this.getBom().setTempsave(false); //라우트 만든 순간 임시저장 다시 거짓으로
                 }
             }
 
