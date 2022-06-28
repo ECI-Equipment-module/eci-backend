@@ -28,6 +28,7 @@ import eci.server.ProjectModule.repository.clientOrg.ClientOrganizationRepositor
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.lang.Nullable;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotNull;
@@ -110,7 +111,7 @@ public class NewItemCreateRequest {
 
     private Long supplierOrganizationId;
 
-
+    @Nullable
     private MultipartFile thumbnail;
 
     private List<MultipartFile> attachments = new ArrayList<>();

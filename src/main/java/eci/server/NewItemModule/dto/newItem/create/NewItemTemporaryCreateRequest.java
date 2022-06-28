@@ -1,5 +1,6 @@
 package eci.server.NewItemModule.dto.newItem.create;
 
+import com.sun.istack.Nullable;
 import eci.server.ItemModule.exception.item.AttachmentNotFoundException;
 import eci.server.ItemModule.exception.item.ColorNotFoundException;
 import eci.server.ItemModule.exception.item.ItemNotFoundException;
@@ -107,6 +108,7 @@ public class NewItemTemporaryCreateRequest {
 
     private Long supplierOrganizationId;
 
+    @Nullable
     private MultipartFile thumbnail;
 
     private List<MultipartFile> attachments = new ArrayList<>();
