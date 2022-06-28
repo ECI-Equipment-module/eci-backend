@@ -857,6 +857,8 @@ public class DashboardService {
             );
         }
 
+        List<TodoResponse> REVIEW = new ArrayList<>(needReviewBomTodoResponses);
+
         //7) REVISE - TODO : REVISE 추가되고 작업
         List<TodoResponse> REVISE = new ArrayList<>();
 
@@ -865,7 +867,7 @@ public class DashboardService {
         ToDoSingle tempBom = new ToDoSingle("Save as Draft", TEMP_SAVE);
         ToDoSingle rejectedBom = new ToDoSingle("Rejected Item", REJECTED);
         ToDoSingle needRevise = new ToDoSingle("Need Revise", REVISE);
-        ToDoSingle reviewBom = new ToDoSingle("Waiting Review", REJECTED);
+        ToDoSingle reviewBom = new ToDoSingle("Waiting Review", REVIEW);
 
         List<ToDoSingle> toDoDoubleList = new ArrayList<ToDoSingle>();
 
