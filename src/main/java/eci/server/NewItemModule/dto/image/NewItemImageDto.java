@@ -13,6 +13,14 @@ public class NewItemImageDto {
     private String originName;
     private String uniqueName;
     private String imageAdress;
+
+    public NewItemImageDto(String defaultImageAddress) {
+        this.id = -1L;
+        this.imageAdress = defaultImageAddress;
+        this.uniqueName = "default.PNG";
+        this.originName = "default.PNG";
+    }
+
     public static NewItemImageDto toDto(NewItemImage newItemImage) {
         return new NewItemImageDto(newItemImage.getId(),
                 newItemImage.getOriginName(),
@@ -20,5 +28,6 @@ public class NewItemImageDto {
                 newItemImage.getImageaddress()
         );
     }
+
 
 }

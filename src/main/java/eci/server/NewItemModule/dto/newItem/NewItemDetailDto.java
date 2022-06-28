@@ -109,7 +109,7 @@ public class NewItemDetailDto {
 
         List<DesignResponsibleDto> tmpResponsibleDtoList = new ArrayList<>();
 
-        NewItemImageDto nullImage = new NewItemImageDto();
+        NewItemImageDto nullImage = new NewItemImageDto(defaultImageAddress);
         ClassificationDto nullClassification = new ClassificationDto();
         ItemTypesDto nullItemTypesDto = new ItemTypesDto();
         CarTypeDto nullCarTypeDto = new CarTypeDto();
@@ -349,7 +349,7 @@ public class NewItemDetailDto {
             AttachmentTagRepository attachmentTagRepository,
             String defaultImageAddress
     ){
-        NewItemImageDto nullImage = new NewItemImageDto();
+        NewItemImageDto nullImage = new NewItemImageDto(defaultImageAddress);
         ClassificationDto nullClassification = new ClassificationDto();
         ItemTypesDto nullItemTypesDto = new ItemTypesDto();
         CarTypeDto nullCarTypeDto = new CarTypeDto();

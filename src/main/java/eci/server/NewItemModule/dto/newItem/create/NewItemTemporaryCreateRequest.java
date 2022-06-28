@@ -171,14 +171,12 @@ public class NewItemTemporaryCreateRequest {
 
                     "made when saved",
 
-                    //TODO : THUMBNAIL 없어도 되기 0614
-                    (
-                            (req.getThumbnail().getSize()>0)?
-                                    new NewItemImage(
-                                            req.thumbnail.getOriginalFilename()
-                                    )
-                                    :null
-                    ),
+                    req.getThumbnail()==null?
+                            null
+                            :
+                            new NewItemImage(
+                                    req.thumbnail.getOriginalFilename()
+                            ),
 
                     req.getSharing() == null || req.getSharing().toString().isBlank() || req.sharing,
 
@@ -309,14 +307,12 @@ public class NewItemTemporaryCreateRequest {
 
                 "made when saved",
 
-                //TODO : THUMBNAIL 없어도 되기 0614
-                (
-                        (req.getThumbnail().getSize()>0)?
-                                new NewItemImage(
-                                        req.thumbnail.getOriginalFilename()
-                                )
-                                :null
-                ),
+                req.getThumbnail()==null?
+                        null
+                        :
+                        new NewItemImage(
+                                req.thumbnail.getOriginalFilename()
+                        ),
 
                 req.getSharing() == null || req.getSharing().toString().isBlank() || req.sharing,
 
