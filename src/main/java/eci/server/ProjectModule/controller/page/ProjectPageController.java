@@ -31,7 +31,7 @@ public class ProjectPageController {
     @Autowired
     ProjectRepository projectRepository;
     RouteOrderingRepository routeOrderingRepository;
-    @CrossOrigin(origins = "https://localhost:3000")
+    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
     @GetMapping("/project/page")
     @AssignMemberId
     public Page<ProjectDashboardDto> pagingProject(@PageableDefault(size=5)
