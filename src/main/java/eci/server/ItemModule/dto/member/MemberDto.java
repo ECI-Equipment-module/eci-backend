@@ -57,6 +57,7 @@ public class MemberDto {
                                 member.getContact(),
                                 member.getProfileImage().getImageaddress()
                         );
+                        memberDtos.add(memberDto);
                     }else{
                         MemberDto memberDto = new MemberDto(
                                 member.getId(),
@@ -66,6 +67,7 @@ public class MemberDto {
                                 member.getContact(),
                                 defaultImageAddress
                         );
+                        memberDtos.add(memberDto);
                     }
                 }
 
