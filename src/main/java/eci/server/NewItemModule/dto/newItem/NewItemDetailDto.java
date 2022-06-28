@@ -103,12 +103,13 @@ public class NewItemDetailDto {
             BomRepository bomRepository,
             BomGuard bomGuard,
             DesignGuard designGuard,
-            AttachmentTagRepository attachmentTagRepository
+            AttachmentTagRepository attachmentTagRepository,
+            String defaultImageAddress
     ) {
 
         List<DesignResponsibleDto> tmpResponsibleDtoList = new ArrayList<>();
 
-        NewItemImageDto nullImage = new NewItemImageDto();
+        NewItemImageDto nullImage = new NewItemImageDto(defaultImageAddress);
         ClassificationDto nullClassification = new ClassificationDto();
         ItemTypesDto nullItemTypesDto = new ItemTypesDto();
         CarTypeDto nullCarTypeDto = new CarTypeDto();
@@ -195,10 +196,10 @@ public class NewItemDetailDto {
 
                     routeOrderingDto.getId(),
                     Item.getCreatedAt(),
-                    MemberDto.toDto(Item.getMember()),
+                    MemberDto.toDto(Item.getMember(), defaultImageAddress),
 
                     Item.getModifier()==null?null:Item.getModifiedAt(),
-                    Item.getModifier()==null?null:MemberDto.toDto(Item.getModifier()),
+                    Item.getModifier()==null?null:MemberDto.toDto(Item.getModifier(), defaultImageAddress),
 
                     Item.isTempsave(),
                     Item.isReadonly(),
@@ -302,10 +303,10 @@ public class NewItemDetailDto {
                 routeOrderingDto.getLifecycleStatus(),
                 routeOrderingDto.getId(),
                 Item.getCreatedAt(),
-                MemberDto.toDto(Item.getMember()),
+                MemberDto.toDto(Item.getMember(), defaultImageAddress),
 
                 Item.getModifier()==null?null:Item.getModifiedAt(),
-                Item.getModifier()==null?null:MemberDto.toDto(Item.getModifier()),
+                Item.getModifier()==null?null:MemberDto.toDto(Item.getModifier(), defaultImageAddress),
 
                 Item.isTempsave(),
                 Item.isReadonly(),
@@ -345,9 +346,10 @@ public class NewItemDetailDto {
             //NewItemMakerRepository newItemMakerRepository,
             MakerRepository makerRepository,
             BomRepository bomRepository,
-            AttachmentTagRepository attachmentTagRepository
+            AttachmentTagRepository attachmentTagRepository,
+            String defaultImageAddress
     ){
-        NewItemImageDto nullImage = new NewItemImageDto();
+        NewItemImageDto nullImage = new NewItemImageDto(defaultImageAddress);
         ClassificationDto nullClassification = new ClassificationDto();
         ItemTypesDto nullItemTypesDto = new ItemTypesDto();
         CarTypeDto nullCarTypeDto = new CarTypeDto();
@@ -432,10 +434,10 @@ public class NewItemDetailDto {
                     "LIFECYCLE_NONE",
                     0L,
                     Item.getCreatedAt(),
-                    MemberDto.toDto(Item.getMember()),
+                    MemberDto.toDto(Item.getMember(), defaultImageAddress),
 
                     Item.getModifier()==null?null:Item.getModifiedAt(),
-                    Item.getModifier()==null?null:MemberDto.toDto(Item.getModifier()),
+                    Item.getModifier()==null?null:MemberDto.toDto(Item.getModifier(), defaultImageAddress),
 
                     Item.isTempsave(),
                     Item.isReadonly(),
@@ -526,10 +528,10 @@ public class NewItemDetailDto {
                 "LIFECYCLE_NONE",
                 0L,
                 Item.getCreatedAt(),
-                MemberDto.toDto(Item.getMember()),
+                MemberDto.toDto(Item.getMember(), defaultImageAddress),
 
                 Item.getModifier()==null?null:Item.getModifiedAt(),
-                Item.getModifier()==null?null:MemberDto.toDto(Item.getModifier()),
+                Item.getModifier()==null?null:MemberDto.toDto(Item.getModifier(), defaultImageAddress),
 
                 Item.isTempsave(),
                 Item.isReadonly(),

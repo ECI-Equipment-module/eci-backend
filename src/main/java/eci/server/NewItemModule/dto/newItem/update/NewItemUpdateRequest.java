@@ -4,6 +4,7 @@ package eci.server.NewItemModule.dto.newItem.update;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.lang.Nullable;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.Null;
@@ -76,7 +77,7 @@ public class NewItemUpdateRequest {
     @Null
     private Long modifierId;
 
-
+    @Nullable
     private MultipartFile thumbnail;
 
     /**

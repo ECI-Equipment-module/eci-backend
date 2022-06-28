@@ -33,6 +33,7 @@ import eci.server.ProjectModule.repository.projectAttachmentRepository.ProjectAt
 import eci.server.ProjectModule.repository.projectLevel.ProjectLevelRepository;
 import eci.server.ProjectModule.repository.projectType.ProjectTypeRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -64,6 +65,9 @@ public class ProjectService {
     private final BomRepository bomRepository;
     private final PreliminaryBomRepository preliminaryBomRepository;
     private final ProjectAttachmentRepository projectAttachmentRepository;
+
+    @Value("${default.image.address}")
+    private String defaultImageAddress;
 
     public ProjectListDto readDashboardAll(ProjectReadCondition cond) {
         return ProjectListDto.toDto(
@@ -250,7 +254,8 @@ public class ProjectService {
                 routeProductRepository,
                 bomRepository,
                 preliminaryBomRepository,
-                attachmentTagRepository
+                attachmentTagRepository,
+                defaultImageAddress
                 );
     }
 

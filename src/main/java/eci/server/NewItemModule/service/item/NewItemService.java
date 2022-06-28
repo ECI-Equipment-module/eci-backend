@@ -11,7 +11,6 @@ import eci.server.ItemModule.entity.item.ItemType;
 import eci.server.ItemModule.entity.item.ItemTypes;
 import eci.server.ItemModule.entity.member.Member;
 import eci.server.ItemModule.entity.newRoute.RouteOrdering;
-import eci.server.ItemModule.entity.newRoute.RoutePreset;
 import eci.server.ItemModule.entity.newRoute.RouteProduct;
 import eci.server.ItemModule.entity.newRoute.RouteProductMember;
 import eci.server.ItemModule.exception.item.ItemNotFoundException;
@@ -46,7 +45,6 @@ import eci.server.NewItemModule.repository.item.NewItemParentChildrenRepository;
 import eci.server.NewItemModule.repository.item.NewItemRepository;
 import eci.server.NewItemModule.repository.maker.MakerRepository;
 import eci.server.NewItemModule.repository.supplier.SupplierRepository;
-import eci.server.NewItemModule.service.classification.ClassificationService;
 import eci.server.ProjectModule.repository.carType.CarTypeRepository;
 import eci.server.ProjectModule.repository.clientOrg.ClientOrganizationRepository;
 import eci.server.ProjectModule.repository.project.ProjectRepository;
@@ -54,6 +52,7 @@ import eci.server.config.guard.AuthHelper;
 import eci.server.config.guard.BomGuard;
 import eci.server.config.guard.DesignGuard;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -99,7 +98,8 @@ public class NewItemService {
     private final NewItemAttachmentRepository newItemAttachmentRepository;
     private final TempNewItemParentChildrenRepository tempNewItemParentChildrenRepository;
 
-
+    @Value("${default.image.address}")
+    private String defaultImageAddress;
 //////////////////////////////////////////////////////////////////////////
 
 
@@ -132,7 +132,7 @@ public class NewItemService {
                 )
         );
 
-        if(req.getThumbnail().getSize()>0) {
+        if(req.getThumbnail()!=null && req.getThumbnail().getSize()>0) {
             uploadImages(item.getThumbnail(), req.getThumbnail());
         }
 
@@ -176,13 +176,16 @@ public class NewItemService {
 
         );
 
-        if(req.getThumbnail().getSize()>0) {
+        if(req.getThumbnail()!=null && req.getThumbnail().getSize()>0) {
             uploadImages(item.getThumbnail(), req.getThumbnail());
             if (!(req.getTag().size() == 0)) {//TODO : 나중에 함수로 빼기 (Attachment 유무 판단)
                 //attachment가 존재할 땜나
                 uploadAttachments(item.getAttachments(), req.getAttachments());
             }
+        } else {
+            //TODO 0628 기본 이미지 전달 => NONO 걍 NULL로 저장하고 DTO에서 줄 때만 기본 이미지 주소주면 끝
         }
+
         item.updateReadOnlyWhenSaved(); //저장하면 readonly = true
         saveTrueAttachment(item); //06-17 찐 저장될 때
 
@@ -281,7 +284,8 @@ public class NewItemService {
                     bomRepository,
                     bomGuard,
                     designGuard,
-                    attachmentTagRepository
+                    attachmentTagRepository,
+                    defaultImageAddress
             );
 
         }
@@ -289,7 +293,8 @@ public class NewItemService {
                 targetItem,
                 makerRepository,
                 bomRepository,
-                attachmentTagRepository
+                attachmentTagRepository,
+                defaultImageAddress
         );
     }
 

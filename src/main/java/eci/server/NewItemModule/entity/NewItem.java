@@ -48,10 +48,9 @@ import static java.util.stream.Collectors.toList;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class NewItem extends EntityDate {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQUENCE3")
-//    @SequenceGenerator(name="SEQUENCE3", sequenceName="SEQUENCE3", allocationSize=1)
-
+    //    @GeneratedValue(strategy = GenerationType.IDENTITY)
+   @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQUENCE3")
+   @SequenceGenerator(name="SEQUENCE3", sequenceName="SEQUENCE3", allocationSize=1)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -345,6 +344,8 @@ public class NewItem extends EntityDate {
         if(thumbnail!=null) { //0615 썸네일 없으면 null 로 오는데, 생성 가능케 하기 (임시저장때 없어도 저장 돼서)
             this.thumbnail = thumbnail;
             addImages(thumbnail);
+        }else{
+            this.thumbnail = null;
         }
 
         this.sharing = sharing;
@@ -495,6 +496,8 @@ public class NewItem extends EntityDate {
         if(thumbnail!=null) { //0615 썸네일 없으면 null 로 오는데, 생성 가능케 하기 (임시저장 때 없어도 저장돼서)
             this.thumbnail = thumbnail;
             addImages(thumbnail);
+        }else{
+            this.thumbnail = null;
         }
 
 

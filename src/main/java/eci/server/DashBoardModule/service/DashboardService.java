@@ -697,19 +697,7 @@ public class DashboardService {
 
         for (RouteProduct routeProduct : routeProductList) {
             for (RouteProductMember routeProductMember : routeProduct.getMembers()) {
-//                if (routeProductMember.getMember().getId().equals(member1.getId()) &&
-//                        // 내가 라우트 프로덕트에 지정되어 있고
-//
-//                        (
-//                                // 단계가 bom create 라면
-//                                routeProduct.getType().getModule().equals("BOM")
-//                                        &&
-//                                        routeProduct.getType().getName().equals("CREATE")
-//                        )
-//                ) {
-//                    myRouteBomCreateProductList.add(routeProduct);
-//                    break;
-//                }
+
                 if (routeProductMember.getMember().getId().equals(member1.getId())) {
                     // 내가 라우트 프로덕트에 지정되어 있고
 
@@ -723,7 +711,7 @@ public class DashboardService {
                         break;
 
                     } else if (
-                        // 단계가 bom create 라면
+                        // 단계가 bom review 라면
                             routeProduct.getType().getModule().equals("BOM")
                                     &&
                                     routeProduct.getType().getName().equals("REVIEW")
@@ -740,8 +728,8 @@ public class DashboardService {
         HashSet<TodoResponse> unlinkedItemTodoResponses = new HashSet<>();
 
         for (RouteProduct routeProduct : myRouteBomCreateProductList) {//현재 봄 생성 단계 중에서
-
             if ( //0621 dev Bom 의 edit = false 라면
+
                     !developmentBomRepository
                             .findByBom(
                                     bomRepository.findByNewItem(routeProduct.getRouteOrdering().getNewItem()).get(
@@ -780,7 +768,7 @@ public class DashboardService {
         List<DevelopmentBom> tempSavedDesignList = new ArrayList<>();
 
         for (DevelopmentBom bom : developmentBoms) {
-            if (bom.getTempsave()){
+            if (bom.getTempsave() && bom.getEdited()){ //06-28 edited 가 true 이며 임시저장이 true 인 것만 찾아오도록 수정
 
                 if(routeOrderingRepository.findByNewItem(bom.getBom().getNewItem()).size()>0){
                     RouteOrdering ordering = routeOrderingRepository.findByNewItem(bom.getBom().getNewItem()).get(

@@ -94,7 +94,8 @@ public class ProjectDto {
             RouteProductRepository routeProductRepository,
             BomRepository bomRepository,
             PreliminaryBomRepository preliminaryBomRepository,
-            AttachmentTagRepository attachmentTagRepository
+            AttachmentTagRepository attachmentTagRepository,
+            String defaultImageAddress
     ) {
         List<RouteOrderingDto> routeDtoList = Optional.ofNullable(
                 RouteOrderingDto.toDtoList(
@@ -125,7 +126,7 @@ public class ProjectDto {
                 project.getSopOverPeriod(),
 
                 ItemProjectDto.toDto(project.getNewItem()),
-                MemberDto.toDto(project.getMember()),
+                MemberDto.toDto(project.getMember(),defaultImageAddress),
 
                 ProjectTypeDto.toDto(project.getProjectType()),
                 ProjectLevelDto.toDto(project.getProjectLevel()),
@@ -150,10 +151,10 @@ public class ProjectDto {
 
                 //05-22추가
                 project.getCreatedAt(),
-                MemberDto.toDto(project.getMember()),
+                MemberDto.toDto(project.getMember(), defaultImageAddress),
 
                 project.getModifier()==null?null:project.getModifiedAt(),
-                project.getModifier()==null?null:MemberDto.toDto(project.getModifier()),
+                project.getModifier()==null?null:MemberDto.toDto(project.getModifier(), defaultImageAddress),
 
                 project.getTempsave(),
                 project.getReadonly()

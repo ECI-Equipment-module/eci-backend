@@ -8,6 +8,7 @@ import eci.server.ItemModule.exception.member.sign.PasswordNotSameException;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.lang.Nullable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -51,6 +52,7 @@ public class SignUpRequest {
     /**
      * 프로필 이미지 추가
      */
+    @Nullable
     private MultipartFile profileImage;
 
     public static Member toEntity(
@@ -63,20 +65,33 @@ public class SignUpRequest {
             throw new PasswordNotSameException();
         }
 
-        return new Member
-                (
-                        req.email,
-                        encoder.encode(req.password),
-                        req.username,
-                        req.department,
-                        req.contact ,
-                        List.of(role),
+        if(!(req.getProfileImage()==null)) {
+            return new Member
+                    (
+                            req.email,
+                            encoder.encode(req.password),
+                            req.username,
+                            req.department,
+                            req.contact,
+                            List.of(role),
 
-                        new ProfileImage(
-                                req.profileImage.
-                                        getOriginalFilename()
-                        )
+                            new ProfileImage(
+                                    req.profileImage.
+                                            getOriginalFilename()
+                            )
 
-                );
+                    );
+        }else{
+            return new Member
+                    (
+                            req.email,
+                            encoder.encode(req.password),
+                            req.username,
+                            req.department,
+                            req.contact,
+                            List.of(role)
+
+                    );
+        }
     }
 }
