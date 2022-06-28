@@ -10,6 +10,7 @@ import eci.server.BomModule.repository.DevelopmentBomRepository;
 import eci.server.BomModule.repository.PreliminaryBomRepository;
 import eci.server.DesignModule.repository.DesignRepository;
 import eci.server.ItemModule.exception.item.ItemNotFoundException;
+import eci.server.ItemModule.repository.newRoute.RouteOrderingRepository;
 import eci.server.NewItemModule.dto.TempNewItemChildDto;
 import eci.server.NewItemModule.dto.newItem.create.NewItemCreateResponse;
 import eci.server.NewItemModule.entity.NewItem;
@@ -19,6 +20,7 @@ import eci.server.NewItemModule.repository.item.NewItemParentChildrenRepository;
 import eci.server.NewItemModule.repository.item.NewItemRepository;
 import eci.server.NewItemModule.service.TempNewItemParentChildService;
 import eci.server.NewItemModule.service.item.NewItemService;
+import eci.server.ProjectModule.dto.project.ProjectCreateUpdateResponse;
 import eci.server.config.guard.BomGuard;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -35,7 +37,7 @@ public class DevelopmentBomService {
     private final NewItemService newItemService;
     private final NewItemRepository newItemRepository;
     private final TempNewItemParentChildrenRepository tempNewItemParentChildrenRepository;
-
+    private final RouteOrderingRepository routeOrderingRepository;
 
 
     public TempNewItemChildDto readDevelopment(Long devId){
@@ -62,17 +64,17 @@ public class DevelopmentBomService {
      */
 
     @Transactional
-    public NewItemCreateResponse createAndDestroyTempParentChildren(
+    public ProjectCreateUpdateResponse createAndDestroyTempParentChildren(
             DevelopmentRequestDto req
     ) {
 
 
         //temp parent - item 아이디 만들어줘야 함
-
+        DevelopmentBom developmentBom = developmentBomRepository.findById(req.getDevId())
+                .orElseThrow(DevelopmentBomNotFoundException::new);
         //06-26 : req 들어올 때마다 dev bom 의 temp relation string 으로 저장
         if(req.getParentId()!=null) {
-            DevelopmentBom developmentBom = developmentBomRepository.findById(req.getDevId())
-                    .orElseThrow(DevelopmentBomNotFoundException::new);
+
 
             developmentBom.setTempRelation(req.toString());
 
@@ -147,8 +149,15 @@ public class DevelopmentBomService {
                 i += 1;
             }
         }
+
+        Long routeId = routeOrderingRepository.findByNewItem(developmentBom.getBom().getNewItem())
+                .get(routeOrderingRepository.findByNewItem(developmentBom.getBom().getNewItem()).size()-1).getId();
+
         //dev bom id return
-        return new NewItemCreateResponse(req.getDevId());
+        return new ProjectCreateUpdateResponse(
+                req.getDevId(),
+                routeId
+                );
     }
 
 
