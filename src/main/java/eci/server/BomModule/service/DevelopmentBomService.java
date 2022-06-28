@@ -72,6 +72,9 @@ public class DevelopmentBomService {
         //temp parent - item 아이디 만들어줘야 함
         DevelopmentBom developmentBom = developmentBomRepository.findById(req.getDevId())
                 .orElseThrow(DevelopmentBomNotFoundException::new);
+
+        // 06-28 임시저장 시 edited false (new bom 에 안뜨게)
+        developmentBom.setEdited(true);
         //06-26 : req 들어올 때마다 dev bom 의 temp relation string 으로 저장
         if(req.getParentId()!=null) {
 
