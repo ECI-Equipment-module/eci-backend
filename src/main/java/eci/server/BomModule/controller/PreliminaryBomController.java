@@ -32,6 +32,7 @@ public class PreliminaryBomController {
                 bomService.createPreliminary(req)
         );
     }
+
     @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
     @GetMapping("/preliminary/{id}")
     @ResponseStatus(HttpStatus.OK)
