@@ -32,7 +32,7 @@ public class PreliminaryBomController {
                 bomService.createPreliminary(req)
         );
     }
-
+    @CrossOrigin(origins = "https://localhost:3000")
     @GetMapping("/preliminary/{id}")
     @ResponseStatus(HttpStatus.OK)
     public Response getPreliminary(@PathVariable Long id) {
