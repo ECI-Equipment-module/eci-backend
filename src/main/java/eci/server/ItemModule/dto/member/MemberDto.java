@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Environment;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
@@ -27,8 +28,6 @@ public class MemberDto {
     public static MemberDto toDto(Member member,
                                   String defaultImageAddress) {
 
-
-
         return new MemberDto(
                 member.getId(),
                 member.getEmail(),
@@ -42,21 +41,34 @@ public class MemberDto {
     }
 
     public static List <MemberDto> toDtoList(
-            List<Member> members
+            List<Member> members,
+            String defaultImageAddress
     ) {
 
-        List<MemberDto> memberDtos = members.stream().map(
-                member -> new MemberDto(
-                        member.getId(),
-                        member.getEmail(),
-                        member.getUsername(),
-                        member.getDepartment(),
-                        member.getContact(),
-                        member.getProfileImage().getImageaddress()
-                )
-        ).collect(
-                toList()
-        );
+        List<MemberDto> memberDtos = new ArrayList<>();
+
+                for(Member member : members) {
+                    if (member.getProfileImage()!=null) {
+                        MemberDto memberDto = new MemberDto(
+                                member.getId(),
+                                member.getEmail(),
+                                member.getUsername(),
+                                member.getDepartment(),
+                                member.getContact(),
+                                member.getProfileImage().getImageaddress()
+                        );
+                    }else{
+                        MemberDto memberDto = new MemberDto(
+                                member.getId(),
+                                member.getEmail(),
+                                member.getUsername(),
+                                member.getDepartment(),
+                                member.getContact(),
+                                defaultImageAddress
+                        );
+                    }
+                }
+
         return memberDtos;
     }
 }

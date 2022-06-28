@@ -43,7 +43,8 @@ public class RouteOrderingDto {
             RouteProductRepository routeProductRepository,
             RouteOrderingRepository routeOrderingRepository,
             BomRepository bomRepository,
-            PreliminaryBomRepository preliminaryBomRepository
+            PreliminaryBomRepository preliminaryBomRepository,
+            String defaultImageAddress
     ) {
 
         List<SeqAndName> tmpList = new ArrayList<>();
@@ -62,7 +63,8 @@ public class RouteOrderingDto {
                         RouteProductDto.toProductDtoList(
                                 routeProductRepository.findAllByRouteOrdering(
                                         routeOrderingRepository.findById(c.getId()).orElseThrow()
-                        )
+                        ),defaultImageAddress
+
                         ),
 
                         tmpRouteRejectPossibleResponse
@@ -83,7 +85,8 @@ public class RouteOrderingDto {
             RouteOrdering Route,
             RouteProductRepository routeProductRepository,
             RouteOrderingRepository routeOrderingRepository,
-            RouteRejectPossibleResponse routeRejectPossibleResponse
+            RouteRejectPossibleResponse routeRejectPossibleResponse,
+            String defaultImageAddress
     ) {
 
         return new RouteOrderingDto(
@@ -102,7 +105,8 @@ public class RouteOrderingDto {
                                 Route.getId()
                         )
                                 .orElseThrow()
-        )
+        ),
+                        defaultImageAddress
                 ),
 
                 routeRejectPossibleResponse
