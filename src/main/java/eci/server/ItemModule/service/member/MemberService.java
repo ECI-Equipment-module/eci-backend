@@ -6,6 +6,7 @@ import eci.server.ItemModule.dto.member.MemberReadCondition;
 import eci.server.ItemModule.exception.member.sign.MemberNotFoundException;
 import eci.server.ItemModule.repository.member.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,8 +16,14 @@ import org.springframework.transaction.annotation.Transactional;
 public class MemberService {
     private final MemberRepository memberRepository;
 
+    @Value("${default.image.address}")
+    private String defaultImageAddress;
+
     public MemberDto read(Long id) {
-        return MemberDto.toDto(memberRepository.findById(id).orElseThrow(MemberNotFoundException::new));
+        return MemberDto.toDto(
+                memberRepository.findById(id).orElseThrow(MemberNotFoundException::new),
+                defaultImageAddress
+        );
     }
 
     @Transactional

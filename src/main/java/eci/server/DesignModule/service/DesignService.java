@@ -20,6 +20,7 @@ import eci.server.NewItemModule.repository.item.NewItemRepository;
 import eci.server.ProjectModule.dto.project.*;
 import eci.server.ProjectModule.repository.project.ProjectRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -49,6 +50,9 @@ public class DesignService {
     private final RouteOrderingRepository routeOrderingRepository;
     private final RouteProductRepository routeProductRepository;
     private final DesignRepository designRepository;
+
+    @Value("${default.image.address}")
+    private String defaultImageAddress;
 
 //    public ProjectListDto readDashboardAll(ProjectReadCondition cond) {
 //        return ProjectListDto.toDto(
@@ -227,7 +231,8 @@ public class DesignService {
                 routeProductRepository,
                 bomRepository,
                 preliminaryBomRepository,
-                attachmentTagRepository
+                attachmentTagRepository,
+                defaultImageAddress
         );
     }
 

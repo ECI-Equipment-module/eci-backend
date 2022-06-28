@@ -52,6 +52,7 @@ import eci.server.config.guard.AuthHelper;
 import eci.server.config.guard.BomGuard;
 import eci.server.config.guard.DesignGuard;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -97,7 +98,8 @@ public class NewItemService {
     private final NewItemAttachmentRepository newItemAttachmentRepository;
     private final TempNewItemParentChildrenRepository tempNewItemParentChildrenRepository;
 
-
+    @Value("${default.image.address}")
+    private String defaultImageAddress;
 //////////////////////////////////////////////////////////////////////////
 
 
@@ -282,7 +284,8 @@ public class NewItemService {
                     bomRepository,
                     bomGuard,
                     designGuard,
-                    attachmentTagRepository
+                    attachmentTagRepository,
+                    defaultImageAddress
             );
 
         }
@@ -290,7 +293,8 @@ public class NewItemService {
                 targetItem,
                 makerRepository,
                 bomRepository,
-                attachmentTagRepository
+                attachmentTagRepository,
+                defaultImageAddress
         );
     }
 

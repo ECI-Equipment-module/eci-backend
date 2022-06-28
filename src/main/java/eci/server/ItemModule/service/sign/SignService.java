@@ -19,6 +19,7 @@ import eci.server.ItemModule.service.file.FileService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,6 +44,9 @@ public class SignService {
     private final PasswordEncoder passwordEncoder;
     private final TokenService tokenService;
 
+    @Value("${default.image.address}")
+    private String defaultImageAddress;
+
     @Transactional
     public void signUp(SignUpRequest req) {
         validateSignUpInfo(req);
@@ -52,7 +56,9 @@ public class SignService {
                 roleRepository.findByRoleType(RoleType.ROLE_NORMAL).orElseThrow(RoleNotFoundException::new),
                 passwordEncoder)
         );
-        uploadProfileImage(member.getProfileImage(), req.getProfileImage());
+        if(req.getProfileImage()!=null){
+            uploadProfileImage(member.getProfileImage(), req.getProfileImage());
+        }
     }
 
     private void uploadProfileImage(ProfileImage profileImage, MultipartFile fileImage) {
@@ -67,7 +73,10 @@ public class SignService {
         String subject = createSubject(member);
         String accessToken = tokenService.createAccessToken(subject);
         String refreshToken = tokenService.createRefreshToken(subject);
-        MemberDto member1 =  MemberDto.toDto(memberRepository.findById(member.getId()).orElseThrow(MemberNotFoundException::new));
+        MemberDto member1 =  MemberDto.toDto
+                (memberRepository.
+                        findById(member.getId()).orElseThrow(MemberNotFoundException::new),
+                        defaultImageAddress);
 
 
 
