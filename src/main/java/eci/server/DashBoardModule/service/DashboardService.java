@@ -803,7 +803,7 @@ public class DashboardService {
                 TodoResponse
                         projectTodoResponse =
                         new TodoResponse(
-                                d.getBom().getNewItem().getId(),
+                                d.getBom().getId(),
                                 d.getBom().getNewItem().getName(),
                                 d.getBom().getNewItem().getItemTypes().getItemType().toString(),
                                 d.getBom().getNewItem().getItemNumber()
@@ -828,7 +828,7 @@ public class DashboardService {
 
                 rejectedDesignTodoResponses.add(
                         new TodoResponse(
-                                targetBom.getNewItem().getId(),
+                                targetBom.getId(),
                                 targetBom.getNewItem().getName(),
                                 targetBom.getNewItem().getItemTypes().getItemType().toString(),
                                 targetBom.getNewItem().getItemNumber()
@@ -853,7 +853,7 @@ public class DashboardService {
 
             needReviewBomTodoResponses.add(
                     new TodoResponse(
-                            targetBom.getNewItem().getId(),
+                            targetBom.getId(),
                             targetBom.getNewItem().getName(),
                             targetBom.getNewItem().getItemTypes().getItemType().toString(),
                             targetBom.getNewItem().getItemNumber()
