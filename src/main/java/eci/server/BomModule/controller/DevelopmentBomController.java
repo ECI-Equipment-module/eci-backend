@@ -19,7 +19,7 @@ import javax.validation.Valid;
 public class DevelopmentBomController {
 
     private final DevelopmentBomService bomService;
-
+    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
     @GetMapping("/development/{id}")
     @ResponseStatus(HttpStatus.OK)
     public Response getDevelopment(@PathVariable Long id) {
