@@ -737,11 +737,15 @@ public class DashboardService {
                                     )
                             ).getEdited()) {
 
+                Bom bom = bomRepository.findByNewItem(routeProduct.getRouteOrdering().getNewItem()).get(
+                        bomRepository.findByNewItem(routeProduct.getRouteOrdering().getNewItem()).size() - 1
+                );
+
                 NewItem targetItem = routeProduct.getRouteOrdering().getNewItem();
 
                 unlinkedItemTodoResponses.add(
                         new TodoResponse(
-                                targetItem.getId(),
+                                bom.getId(),
                                 targetItem.getName(),
                                 targetItem.getItemTypes().getItemType().toString(),
                                 targetItem.getItemNumber().toString()
