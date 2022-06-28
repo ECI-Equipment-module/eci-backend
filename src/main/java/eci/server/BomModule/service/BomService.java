@@ -130,7 +130,14 @@ public class BomService {
 
         DevelopmentBom developmentBom = developmentBomRepository.findByBom(bom);
         Gson gson = new Gson();
-        String json = developmentBom.getTempRelation();
+        String json = developmentBom.getTempRelation().replace("(", "{");
+        json = json.replace(")", "}");
+        json = json.replace("DevelopmentRequestDto", "");
+        json = json.replace("parentId=", "\"parentId\":");
+        json = json.replace("childId=", "\"childId\":");
+        json = json.replace("devId=", "\"devId\":");
+
+        System.out.println(json);
         DevelopmentRequestDto dto = gson.fromJson(json, DevelopmentRequestDto.class);
 
         if(json!=null) {

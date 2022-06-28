@@ -728,8 +728,8 @@ public class DashboardService {
         HashSet<TodoResponse> unlinkedItemTodoResponses = new HashSet<>();
 
         for (RouteProduct routeProduct : myRouteBomCreateProductList) {//현재 봄 생성 단계 중에서
-
             if ( //0621 dev Bom 의 edit = false 라면
+
                     !developmentBomRepository
                             .findByBom(
                                     bomRepository.findByNewItem(routeProduct.getRouteOrdering().getNewItem()).get(
