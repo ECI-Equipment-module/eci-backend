@@ -21,7 +21,7 @@ public class PreliminaryBomController {
     private final PreliminaryBomService bomService;
 
     // 1) Preliminary BOM
-    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app/")
+    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
     @PostMapping("/preliminary")
     @ResponseStatus(HttpStatus.CREATED)
     @AssignMemberId
