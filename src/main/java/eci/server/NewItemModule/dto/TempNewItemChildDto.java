@@ -82,7 +82,11 @@ public class TempNewItemChildDto {
                                 :new ArrayList<>()
 
                 )
-        ).collect(Collectors.toList());
+        )
+                .collect
+                        (
+                                Collectors.toList()
+        );
 
         return tempNewItemChildDtos;
 

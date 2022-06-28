@@ -213,6 +213,7 @@ public class RouteOrderingService {
         //라우트 만들면 임시저장 해제
 
         //0607 BOM + PRELIMINARY BOM 생성되게 하기
+        newRoute.setBom(bom);
 
         return new RouteOrderingCreateResponse(newRoute.getId());
     }
