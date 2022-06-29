@@ -93,7 +93,7 @@ public class BomService {
      * 들어온 designContent 로 아이템 parent, child 관계 맺어주기 (초기 dev)
      * @param id
      */
-    public void makeTempDevBom(Long id) {
+    public void makeTempDevBom(Long id, boolean gray) {
 
         Design design = designRepository.findById(id).orElseThrow(DesignNotFoundException::new);
         Gson gson = new Gson();

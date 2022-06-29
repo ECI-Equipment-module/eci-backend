@@ -513,9 +513,11 @@ public class NewItemService {
     public List<TempNewItemChildDto> readDevChildAll(Long id) {
 
         return TempNewItemChildDto.toDtoList(
+                id,
                 tempNewItemParentChildrenRepository.
                         findAllWithParentByParentId(id),//ByParentIdOrderByParentIdAscNullsFirst(
-                tempNewItemParentChildrenRepository
+                tempNewItemParentChildrenRepository,
+                newItemRepository
 
         );
 
