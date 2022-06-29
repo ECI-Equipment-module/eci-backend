@@ -256,7 +256,7 @@ public class NewItemService {
     // read one project
     public NewItemDetailDto read(Long id){
         NewItem targetItem = newItemRepository.findById(id).orElseThrow(ItemNotFoundException::new);
-        RouteOrdering routeOrdering = routeOrderingRepository.findByNewItem(targetItem).get(0);
+
         List<RouteOrderingDto> routeDtoList = Optional.ofNullable(
                 RouteOrderingDto.toDtoList(
                         routeOrderingRepository.findByNewItem(targetItem),
@@ -275,7 +275,7 @@ public class NewItemService {
 
 
         if (routeDtoList.size() > 0) {//아이템에 딸린 routeDto가 존재할 때
-
+            RouteOrdering routeOrdering = routeOrderingRepository.findByNewItem(targetItem).get(0);
             return NewItemDetailDto.toDto(
                     targetItem,
                     routeOrdering,
@@ -293,7 +293,6 @@ public class NewItemService {
         }
         return NewItemDetailDto.noRoutetoDto(
                 targetItem,
-                routeOrdering,
                 routeProductRepository,
                 attachmentTagRepository,
                 defaultImageAddress
