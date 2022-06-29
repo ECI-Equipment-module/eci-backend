@@ -570,6 +570,10 @@ public class NewItemDetailDto {
         RouteProduct currentRouteProduct =
                 routeProductList.get(routeOrdering.getPresent());
 
+        System.out.println("rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr");
+        System.out.println(currentRouteProduct.getType().getModule());
+        System.out.println(currentRouteProduct.getType().getName());
+        System.out.println(currentRouteProduct.isPreRejected());
 
         if(Objects.equals(currentRouteProduct.getType().getModule(), "ITEM") &&
                 Objects.equals(currentRouteProduct.getType().getName(), "CREATE")){
