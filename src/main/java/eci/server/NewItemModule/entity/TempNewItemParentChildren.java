@@ -27,4 +27,7 @@ public class TempNewItemParentChildren {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "dev_bom_id")
     private DevelopmentBom developmentBom;
+
+    @Column
+    private boolean gray;
 }

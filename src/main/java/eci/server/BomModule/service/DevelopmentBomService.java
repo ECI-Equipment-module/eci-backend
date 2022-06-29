@@ -144,7 +144,8 @@ public class DevelopmentBomService {
                                     parent,
                                     child,
                                     developmentBomRepository.findById(req.getDevId())
-                                            .orElseThrow(DevelopmentBomNotFoundException::new)
+                                            .orElseThrow(DevelopmentBomNotFoundException::new),
+                                    false // 이때 만들어지는 것은 gray = false
                             )
                     );
                 }

@@ -380,7 +380,11 @@ public class RouteOrderingService {
                     bomService.makeDevBom(linkedDesign.getId());
 
                     // dev bom 의 temp new item parent children 관계도 맺어주기
-                    bomService.makeTempDevBom(linkedDesign.getId());
+                    bomService.makeTempDevBom(
+
+                            linkedDesign.getId(),
+                            true
+                    );
                 }
 
 
