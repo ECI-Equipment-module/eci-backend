@@ -256,6 +256,7 @@ public class NewItemService {
     // read one project
     public NewItemDetailDto read(Long id){
         NewItem targetItem = newItemRepository.findById(id).orElseThrow(ItemNotFoundException::new);
+        RouteOrdering routeOrdering = routeOrderingRepository.findByNewItem(targetItem).get(0);
         List<RouteOrderingDto> routeDtoList = Optional.ofNullable(
                 RouteOrderingDto.toDtoList(
                         routeOrderingRepository.findByNewItem(targetItem),
@@ -277,13 +278,13 @@ public class NewItemService {
 
             return NewItemDetailDto.toDto(
                     targetItem,
-                    makerRepository,
+                    routeOrdering,
                     //최신 라우트에 딸린 라우트프로덕트 리스트 중,
                     // 라우트의 present 인덱스에 해당하는 타입을 데리고 오기
                     routeDtoList.get(routeDtoList.size() - 1),
                     designRepository,
                     bomRepository,
-                    bomGuard,
+                    routeProductRepository,
                     designGuard,
                     attachmentTagRepository,
                     defaultImageAddress
@@ -292,8 +293,8 @@ public class NewItemService {
         }
         return NewItemDetailDto.noRoutetoDto(
                 targetItem,
-                makerRepository,
-                bomRepository,
+                routeOrdering,
+                routeProductRepository,
                 attachmentTagRepository,
                 defaultImageAddress
         );
