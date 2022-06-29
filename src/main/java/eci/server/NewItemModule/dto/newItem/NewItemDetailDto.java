@@ -572,7 +572,7 @@ public class NewItemDetailDto {
 
 
         if(Objects.equals(currentRouteProduct.getType().getModule(), "ITEM") &&
-                Objects.equals(currentRouteProduct.getType().getName(), "CREATE")){
+                Objects.equals(currentRouteProduct.getType().getName(), "REQUEST")){
             if(currentRouteProduct.isPreRejected()){
                 preRejected = true;
             }
