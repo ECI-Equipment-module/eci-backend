@@ -22,4 +22,5 @@ public class NewItemParentChildren {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "children_id")
     private NewItem children;
+
 }

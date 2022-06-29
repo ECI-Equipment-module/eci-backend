@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class TempNewItemChildDto {
 
-    private Long id;
+    private Long cardId;
     private String classification;
     private String cardName;
     private String cardType;
@@ -70,14 +70,23 @@ public class TempNewItemChildDto {
                         c.getChildren().getItemTypes().getItemType().name(),
                         c.getChildren().getItemNumber(),
                         c.getChildren().isSharing()?"공용":"전용",
-                        //c.getThumbnailAddress(),
+
                         c.getChildren().isSubAssy(),
-                        c.getChildren().getChildren().size()>0?
-                                toDtoList(newItemParentChildrenRepository.findAllWithParentByParentId(c.getChildren().getId()),
-                                        newItemParentChildrenRepository):new ArrayList<>()
+                        newItemParentChildrenRepository
+                                .findAllWithParentByParentId(c.getChildren().getId()).size()>0?
+                                toDtoList(
+                                        newItemParentChildrenRepository
+                                                .findAllWithParentByParentId(c.getChildren().getId()),
+
+                                        newItemParentChildrenRepository)
+                                :new ArrayList<>()
 
                 )
-        ).collect(Collectors.toList());
+        )
+                .collect
+                        (
+                                Collectors.toList()
+        );
 
         return tempNewItemChildDtos;
 

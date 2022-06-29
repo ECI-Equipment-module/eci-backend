@@ -8,6 +8,10 @@ import eci.server.ItemModule.dto.color.ColorDto;
 import eci.server.ItemModule.dto.manufacture.MakerSimpleDto;
 import eci.server.ItemModule.dto.member.MemberDto;
 import eci.server.ItemModule.dto.newRoute.routeOrdering.RouteOrderingDto;
+import eci.server.ItemModule.entity.newRoute.RouteOrdering;
+import eci.server.ItemModule.entity.newRoute.RouteProduct;
+import eci.server.ItemModule.repository.newRoute.RouteOrderingRepository;
+import eci.server.ItemModule.repository.newRoute.RouteProductRepository;
 import eci.server.NewItemModule.dto.ItemTypesDto;
 import eci.server.NewItemModule.dto.attachment.NewItemAttachmentDto;
 import eci.server.NewItemModule.dto.classification.ClassificationDto;
@@ -25,11 +29,14 @@ import eci.server.config.guard.BomGuard;
 import eci.server.config.guard.DesignGuard;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import org.springframework.util.RouteMatcher;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
+import static java.util.stream.Collectors.partitioningBy;
 import static java.util.stream.Collectors.toList;
 
 @Data
@@ -89,6 +96,7 @@ public class NewItemDetailDto {
 
     private Boolean tempsave;
     private boolean readonly;
+    private boolean preRejected;
 
     //private BomDesignItemDto bom;
     private Long bomId;
@@ -97,18 +105,19 @@ public class NewItemDetailDto {
 
     public static NewItemDetailDto toDto(
             NewItem Item,
-            MakerRepository makerRepository,
+            RouteOrdering routeOrdering,
             RouteOrderingDto routeOrderingDto,
             DesignRepository designRepository,
             BomRepository bomRepository,
-            BomGuard bomGuard,
+            RouteProductRepository routeProductRepository,
             DesignGuard designGuard,
-            AttachmentTagRepository attachmentTagRepository
+            AttachmentTagRepository attachmentTagRepository,
+            String defaultImageAddress
     ) {
 
         List<DesignResponsibleDto> tmpResponsibleDtoList = new ArrayList<>();
 
-        NewItemImageDto nullImage = new NewItemImageDto();
+        NewItemImageDto nullImage = new NewItemImageDto(defaultImageAddress);
         ClassificationDto nullClassification = new ClassificationDto();
         ItemTypesDto nullItemTypesDto = new ItemTypesDto();
         CarTypeDto nullCarTypeDto = new CarTypeDto();
@@ -195,13 +204,15 @@ public class NewItemDetailDto {
 
                     routeOrderingDto.getId(),
                     Item.getCreatedAt(),
-                    MemberDto.toDto(Item.getMember()),
+                    MemberDto.toDto(Item.getMember(), defaultImageAddress),
 
                     Item.getModifier()==null?null:Item.getModifiedAt(),
-                    Item.getModifier()==null?null:MemberDto.toDto(Item.getModifier()),
+                    Item.getModifier()==null?null:MemberDto.toDto(Item.getModifier(), defaultImageAddress),
 
                     Item.isTempsave(),
                     Item.isReadonly(),
+
+                    ItemPreRejected(routeOrdering,routeProductRepository),
 
                     bomRepository.findByNewItem(Item).size()>0?
                             bomRepository.findByNewItem(Item).get(0).getId()
@@ -302,13 +313,15 @@ public class NewItemDetailDto {
                 routeOrderingDto.getLifecycleStatus(),
                 routeOrderingDto.getId(),
                 Item.getCreatedAt(),
-                MemberDto.toDto(Item.getMember()),
+                MemberDto.toDto(Item.getMember(), defaultImageAddress),
 
                 Item.getModifier()==null?null:Item.getModifiedAt(),
-                Item.getModifier()==null?null:MemberDto.toDto(Item.getModifier()),
+                Item.getModifier()==null?null:MemberDto.toDto(Item.getModifier(), defaultImageAddress),
 
                 Item.isTempsave(),
                 Item.isReadonly(),
+
+                ItemPreRejected(routeOrdering,routeProductRepository),
 
 //                BomDesignItemDto.toBomDto(
 //                        Item,
@@ -343,11 +356,12 @@ public class NewItemDetailDto {
     public static NewItemDetailDto noRoutetoDto( //edit 창인 애들 불러올 때
             NewItem Item,
             //NewItemMakerRepository newItemMakerRepository,
-            MakerRepository makerRepository,
-            BomRepository bomRepository,
-            AttachmentTagRepository attachmentTagRepository
+            RouteOrdering routeOrdering,
+            RouteProductRepository routeProductRepository,
+            AttachmentTagRepository attachmentTagRepository,
+            String defaultImageAddress
     ){
-        NewItemImageDto nullImage = new NewItemImageDto();
+        NewItemImageDto nullImage = new NewItemImageDto(defaultImageAddress);
         ClassificationDto nullClassification = new ClassificationDto();
         ItemTypesDto nullItemTypesDto = new ItemTypesDto();
         CarTypeDto nullCarTypeDto = new CarTypeDto();
@@ -432,13 +446,14 @@ public class NewItemDetailDto {
                     "LIFECYCLE_NONE",
                     0L,
                     Item.getCreatedAt(),
-                    MemberDto.toDto(Item.getMember()),
+                    MemberDto.toDto(Item.getMember(), defaultImageAddress),
 
                     Item.getModifier()==null?null:Item.getModifiedAt(),
-                    Item.getModifier()==null?null:MemberDto.toDto(Item.getModifier()),
+                    Item.getModifier()==null?null:MemberDto.toDto(Item.getModifier(), defaultImageAddress),
 
                     Item.isTempsave(),
                     Item.isReadonly(),
+                    false,
 
                     -1L, //라우트 없으면 봄 안만들어짐
 
@@ -526,13 +541,15 @@ public class NewItemDetailDto {
                 "LIFECYCLE_NONE",
                 0L,
                 Item.getCreatedAt(),
-                MemberDto.toDto(Item.getMember()),
+                MemberDto.toDto(Item.getMember(), defaultImageAddress),
 
                 Item.getModifier()==null?null:Item.getModifiedAt(),
-                Item.getModifier()==null?null:MemberDto.toDto(Item.getModifier()),
+                Item.getModifier()==null?null:MemberDto.toDto(Item.getModifier(), defaultImageAddress),
 
                 Item.isTempsave(),
                 Item.isReadonly(),
+                false, //라우트 없으면 거절될 일 없음
+
                 -1L, //라우트 없으면 봄 안만들어짐
 
                 new BomDesignItemDto(
@@ -540,6 +557,28 @@ public class NewItemDetailDto {
                         tmpResponsibleDtoList
                 )
         );
+    }
+
+    private static boolean ItemPreRejected(RouteOrdering routeOrdering,
+                                           RouteProductRepository routeProductRepository){
+
+        boolean preRejected = false;
+
+        List<RouteProduct> routeProductList =
+                routeProductRepository.findAllByRouteOrdering(routeOrdering);
+
+        RouteProduct currentRouteProduct =
+                routeProductList.get(routeOrdering.getPresent());
+
+
+        if(Objects.equals(currentRouteProduct.getType().getModule(), "ITEM") &&
+                Objects.equals(currentRouteProduct.getType().getName(), "REQUEST")){
+            if(currentRouteProduct.isPreRejected()){
+                preRejected = true;
+            }
+        }
+
+        return preRejected;
     }
 
 }

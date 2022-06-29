@@ -38,9 +38,11 @@ import static java.util.stream.Collectors.toList;
 public class RouteOrdering extends EntityDate {
 
     @Id
+
 //    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQUENCE1")
-    @SequenceGenerator(name="SEQUENCE1", sequenceName="SEQUENCE1", allocationSize=1)
+  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQUENCE1")
+  @SequenceGenerator(name="SEQUENCE1", sequenceName="SEQUENCE1", allocationSize=1)
+
     private Long id;
 
     /**
@@ -186,7 +188,7 @@ public class RouteOrdering extends EntityDate {
                     this.getProject().setTempsave(false); //라우트 만든 순간 임시저장 다시 거짓으로
                 }
                 else if(routeProductList.get(this.present).getType().getModule().equals("BOM")){
-                    this.getProject().setTempsave(false); //라우트 만든 순간 임시저장 다시 거짓으로
+                    this.getBom().setTempsave(false); //라우트 만든 순간 임시저장 다시 거짓으로
                 }
             }
 

@@ -28,6 +28,7 @@ import eci.server.ProjectModule.repository.clientOrg.ClientOrganizationRepositor
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.lang.Nullable;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotNull;
@@ -110,7 +111,7 @@ public class NewItemCreateRequest {
 
     private Long supplierOrganizationId;
 
-
+    @Nullable
     private MultipartFile thumbnail;
 
     private List<MultipartFile> attachments = new ArrayList<>();
@@ -175,7 +176,8 @@ public class NewItemCreateRequest {
         if (req.getTag().size() == 0) {
 
 
-            // attachment 가 없을 경우
+            // attachment 가 없을 경우 & 썸네일은 있음
+
             return new NewItem(
 
                     new Classification(
@@ -192,8 +194,12 @@ public class NewItemCreateRequest {
                             itemTypesRepository.findById(req.typeId).get().getItemType().name()
                     ).label() * 1000000 + (int) (Math.random() * 1000)),
 
-                    new NewItemImage(req.thumbnail.getOriginalFilename()), //새로운 관계 형성
-
+                    req.getThumbnail()==null?
+                            null
+                            :
+                            new NewItemImage(
+                                    req.thumbnail.getOriginalFilename()
+                            ),
 
                     req.sharing,
 
@@ -321,7 +327,10 @@ public class NewItemCreateRequest {
                         itemTypesRepository.findById(req.typeId).get().getItemType().name()
                 ).label() * 1000000 + (int) (Math.random() * 1000)),
 
-                new NewItemImage(
+                req.getThumbnail()==null?
+                        null
+                        :
+                        new NewItemImage(
                                 req.thumbnail.getOriginalFilename()
                 ),
 

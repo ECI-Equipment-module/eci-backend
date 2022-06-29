@@ -19,8 +19,10 @@ public class ItemProjectCreateDto {
     private String itemName;
 
     private Long itemId;
+
     private char itemRevision;
     //private String itemFamily; //classification
+
     private ItemClassificationDto itemClassification;
     private String itemStatus;
 
@@ -40,6 +42,7 @@ public class ItemProjectCreateDto {
                 new ItemClassificationDto(Item.getClassification().getClassification1().getName()+"/"
                         +Item.getClassification().getClassification2().getName()+"/"
                         +Item.getClassification().getClassification3().getName()),
+
                 routeOrderingRepository.findByNewItem(Item).get(
                         routeOrderingRepository.findByNewItem(Item).size()-1
                 ).getLifecycleStatus()

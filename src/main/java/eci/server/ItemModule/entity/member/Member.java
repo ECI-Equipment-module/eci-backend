@@ -20,9 +20,9 @@ import static java.util.stream.Collectors.toSet;
 public class Member extends EntityDate { // 5
 
     @Id
-    //@GeneratedValue(strategy = GenerationType.IDENTITY)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQUENCE3")
-    @SequenceGenerator(name="SEQUENCE3", sequenceName="SEQUENCE3", allocationSize=1)
+    //    @GeneratedValue(strategy = GenerationType.IDENTITY)
+   @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQUENCE3")
+   @SequenceGenerator(name="SEQUENCE3", sequenceName="SEQUENCE3", allocationSize=1)
 
     @Column(name = "member_id")
     private Long id;
@@ -54,7 +54,7 @@ public class Member extends EntityDate { // 5
             cascade = CascadeType.ALL,
             optional = false
     )
-    @JoinColumn(name = "profile_image", nullable = false)
+    @JoinColumn(name = "profile_image")
     private ProfileImage profileImage;
 
     public Member(
@@ -79,6 +79,37 @@ public class Member extends EntityDate { // 5
         this.profileImage = profileImage;
         addProfileImages(profileImage);
     }
+
+    /**
+     * profile image가 없을 때
+     * @param email
+     * @param password
+     * @param username
+     * @param department
+     * @param contact
+     * @param roles
+     */
+    public Member(
+            String email,
+            String password,
+            String username,
+            String department,
+            String contact,
+            List<Role> roles
+    ) {
+
+        this.email = email;
+        this.password = password;
+        this.username = username;
+        this.department = department;
+        this.contact = contact;
+        this.roles =
+                roles.stream().map(r -> new MemberRole(
+                                this, r))
+                        .collect(toSet());
+        this.profileImage = null;
+    }
+
 
     public void updateDepartment(String department) {
         this.department = department;

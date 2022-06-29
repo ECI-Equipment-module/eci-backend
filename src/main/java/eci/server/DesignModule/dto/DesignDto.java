@@ -55,7 +55,8 @@ public class DesignDto {
             RouteProductRepository routeProductRepository,
             BomRepository bomRepository,
             PreliminaryBomRepository preliminaryBomRepository,
-            AttachmentTagRepository attachmentTagRepository
+            AttachmentTagRepository attachmentTagRepository,
+            String defaultImageAddress
     ) {
         List<RouteOrderingDto> routeDtoList = Optional.ofNullable(
                 RouteOrderingDto.toDtoList(
@@ -63,7 +64,8 @@ public class DesignDto {
                         routeProductRepository,
                         routeOrderingRepository,
                         bomRepository,
-                        preliminaryBomRepository
+                        preliminaryBomRepository,
+                        defaultImageAddress
                 )
         ).orElseThrow(RouteNotFoundException::new);
 
@@ -71,7 +73,7 @@ public class DesignDto {
 
                 design.getId(),
                 ItemDesignDto.toDto(design.getNewItem()),
-                MemberDto.toDto(design.getMember()),
+                MemberDto.toDto(design.getMember(), defaultImageAddress),
 
                 design.getDesignAttachments().
                         stream().
@@ -89,10 +91,10 @@ public class DesignDto {
                         .getId(),
 
                 design.getCreatedAt(),
-                MemberDto.toDto(design.getMember()),
+                MemberDto.toDto(design.getMember(), defaultImageAddress),
 
                 design.getModifier()==null?null:design.getModifiedAt(),
-                design.getModifier()==null?null:MemberDto.toDto(design.getModifier()),
+                design.getModifier()==null?null:MemberDto.toDto(design.getModifier(), defaultImageAddress),
 
                 design.getTempsave(),
                 design.getReadonly(),

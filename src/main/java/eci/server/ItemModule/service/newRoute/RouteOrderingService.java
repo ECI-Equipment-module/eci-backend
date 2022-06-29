@@ -29,12 +29,14 @@ import eci.server.ItemModule.repository.newRoute.RouteTypeRepository;
 import eci.server.NewItemModule.entity.JsonSave;
 import eci.server.NewItemModule.entity.NewItem;
 import eci.server.NewItemModule.exception.ItemTypeRequiredException;
+import eci.server.NewItemModule.repository.TempNewItemParentChildrenRepository;
 import eci.server.NewItemModule.repository.item.NewItemRepository;
 import eci.server.NewItemModule.service.TempNewItemParentChildService;
 import eci.server.ProjectModule.entity.project.Project;
 import eci.server.ProjectModule.exception.ProjectNotLinkedException;
 import eci.server.ProjectModule.repository.project.ProjectRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -63,6 +65,9 @@ public class RouteOrderingService {
     private final JsonSaveRepository jsonSaveRepository;
     private final TempNewItemParentChildService tempNewItemParentChildService;
 
+    @Value("${default.image.address}")
+    private String defaultImageAddress;
+
     private final BomService bomService;
 
     private final RoutePreset routePreset;
@@ -75,7 +80,8 @@ public class RouteOrderingService {
                 routeOrderingRepository.findById(id).orElseThrow(RouteNotFoundException::new),
                 routeProductRepository,
                 routeOrderingRepository,
-                routeRejectPossibleResponse
+                routeRejectPossibleResponse,
+                defaultImageAddress
         );
 
     }
@@ -113,7 +119,8 @@ public class RouteOrderingService {
                 routeProductRepository,
                 routeOrderingRepository,
                 bomRepository,
-                preliminaryBomRepository
+                preliminaryBomRepository,
+                defaultImageAddress
         );
     }
 
@@ -206,6 +213,7 @@ public class RouteOrderingService {
         //라우트 만들면 임시저장 해제
 
         //0607 BOM + PRELIMINARY BOM 생성되게 하기
+        newRoute.setBom(bom);
 
         return new RouteOrderingCreateResponse(newRoute.getId());
     }
@@ -269,7 +277,8 @@ public class RouteOrderingService {
 
         // 기존 + 새 라우트프로덕트까지 해서 돌려주기
         return RouteProductDto.toProductDtoList(
-                routeProductRepository.findAllByRouteOrdering(routeOrdering)
+                routeProductRepository.findAllByRouteOrdering(routeOrdering),
+                defaultImageAddress
         );
     }
 
@@ -377,6 +386,36 @@ public class RouteOrderingService {
 
             }
 
+            //06-27 데브 봄 만들고 라우트 요청하면 temp save = false & 라우트오더링에 봄 등록
+
+            else if (targetRoutProduct.getType().getModule().equals("BOM")
+                    && targetRoutProduct.getType().getName().equals("CREATE")) {
+
+                //아이템에 링크된 봄 아이디 건네주기
+                if (bomRepository.findByNewItem(routeOrdering.getNewItem()).size() == 0) {
+                    throw new BomNotFoundException();
+                } else {
+                    Bom bom =
+                            bomRepository.findByNewItem(routeOrdering.getNewItem())
+                                    .get(
+                                            bomRepository.findByNewItem(routeOrdering.getNewItem()).size() - 1
+                                    );
+
+                    //만약 지금 rejected 가 true였다면 , 이제 새로 다시 넣어주는 것이니깐 rejected풀어주기
+                    if (targetRoutProduct.isPreRejected()) {
+                        targetRoutProduct.setPreRejected(false);
+                    }
+                    //그 프로젝트를 라우트 프로덕트에 set 해주기
+                    targetRoutProduct.setBom(bom);
+                    // 해당 design 의 임시저장을 false
+                    //05-12 추가사항 : 이 라우트를 제작해줄 때야 비로소 프로젝트는 temp save = false 가 되는 것
+                    DevelopmentBom developmentBom =
+                            developmentBomRepository.findByBom(bom);
+
+                    developmentBom.updateTempSaveFalse();
+                }
+            }
+
             else if (targetRoutProduct.getType().getModule().equals("BOM")
                     && targetRoutProduct.getType().getName().equals("REVIEW")) {
 
@@ -406,7 +445,9 @@ public class RouteOrderingService {
                                     routeProductRepository
                             );
         }
+
         return new RouteUpdateResponse(id);
+
     }
 
     /**

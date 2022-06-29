@@ -1,5 +1,6 @@
 package eci.server.NewItemModule.dto.newItem.create;
 
+import com.sun.istack.Nullable;
 import eci.server.ItemModule.exception.item.AttachmentNotFoundException;
 import eci.server.ItemModule.exception.item.ColorNotFoundException;
 import eci.server.ItemModule.exception.item.ItemNotFoundException;
@@ -107,6 +108,7 @@ public class NewItemTemporaryCreateRequest {
 
     private Long supplierOrganizationId;
 
+    @Nullable
     private MultipartFile thumbnail;
 
     private List<MultipartFile> attachments = new ArrayList<>();
@@ -169,14 +171,12 @@ public class NewItemTemporaryCreateRequest {
 
                     "made when saved",
 
-                    //TODO : THUMBNAIL 없어도 되기 0614
-                    (
-                            (req.getThumbnail().getSize()>0)?
-                                    new NewItemImage(
-                                            req.thumbnail.getOriginalFilename()
-                                    )
-                                    :null
-                    ),
+                    req.getThumbnail()==null?
+                            null
+                            :
+                            new NewItemImage(
+                                    req.thumbnail.getOriginalFilename()
+                            ),
 
                     req.getSharing() == null || req.getSharing().toString().isBlank() || req.sharing,
 
@@ -307,14 +307,12 @@ public class NewItemTemporaryCreateRequest {
 
                 "made when saved",
 
-                //TODO : THUMBNAIL 없어도 되기 0614
-                (
-                        (req.getThumbnail().getSize()>0)?
-                                new NewItemImage(
-                                        req.thumbnail.getOriginalFilename()
-                                )
-                                :null
-                ),
+                req.getThumbnail()==null?
+                        null
+                        :
+                        new NewItemImage(
+                                req.thumbnail.getOriginalFilename()
+                        ),
 
                 req.getSharing() == null || req.getSharing().toString().isBlank() || req.sharing,
 

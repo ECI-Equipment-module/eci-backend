@@ -1,5 +1,7 @@
 package eci.server.DashBoardModule.service;
 
+import eci.server.BomModule.entity.Bom;
+import eci.server.BomModule.entity.DevelopmentBom;
 import eci.server.BomModule.repository.BomRepository;
 import eci.server.BomModule.repository.DevelopmentBomRepository;
 import eci.server.DashBoardModule.dto.ToDoDoubleList;
@@ -314,8 +316,8 @@ public class DashboardService {
                 else {
                     tempSavedDesignList.add(design);
                 }
-                }
             }
+        }
 
 
         if (tempSavedDesignList.size() > 0) {
@@ -385,7 +387,7 @@ public class DashboardService {
 
         // 디자인 설계이고,
         // 라우트프로덕트 멤버가 나이고,
-        // REJECTED=TRUE 인 것
+        // PRE - REJECTED=TRUE 인 것
         HashSet<TodoResponse> rejectedDesignTodoResponses = new HashSet<>();
 
         for (RouteProduct routeProduct : myRouteProductList) { //myRoute-> 내꺼 + 현재
@@ -413,9 +415,6 @@ public class DashboardService {
         }
         List<TodoResponse> REJECTED = new ArrayList<>(rejectedDesignTodoResponses);
 
-        //4) REVISE - TODO : REVISE 추가되고 작업
-        List<TodoResponse> REVISE = new ArrayList<>();
-
         //5) REVIEW
         //현재 라우트 프로덕트들 중  이름이 기구Design Review[설계팀장] 고,
         // 라우트프로덕트-멤버가 나로 지정
@@ -442,6 +441,8 @@ public class DashboardService {
         for (RouteProduct routeProduct : myDesignReviewRouteProductList) { //myRoute-> 내꺼 + 현재
 
             //현재 라우트보다 하나 이전 라우트프로덕트의 디자인만 존재함, 그 디자인을 가져와야한다.
+            System.out.println("eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeew");
+            System.out.println(routeProduct.getId() - 1);
             RouteProduct targetRouteProduct = routeProductRepository.findById(routeProduct.getId() - 1)
                     .orElseThrow(RouteProductNotFoundException::new);
 
@@ -456,6 +457,10 @@ public class DashboardService {
                     )
             );
         }
+
+
+        //4) REVISE - TODO : REVISE 추가되고 작업
+        List<TodoResponse> REVISE = new ArrayList<>();
 
 
         List<TodoResponse> NEED_REVIEW = new ArrayList<>(needReviewDesignTodoResponses);
@@ -476,87 +481,6 @@ public class DashboardService {
         return new ToDoDoubleList(toDoDoubleList);
 
     }
-
-    /**
-     * DESIGN TODO
-     *
-     * @return
-     */
-    public ToDoDoubleList readBomTodo() {
-        //0) 현재 로그인 된 유저
-        Member member1 = memberRepository.findById(authHelper.extractMemberId()).orElseThrow(
-                AuthenticationEntryPointException::new
-        );
-        //new bom -> 아이템 목록
-        //1) 현재 진행 중인 라우트 프로덕트 카드들
-        List<RouteProduct> routeProductList = routeProductRepository.findAll().stream().filter(
-                rp -> rp.getSequence().equals(
-                        rp.getRouteOrdering().getPresent()
-                )
-        ).collect(Collectors.toList());
-
-        //2) 라우트 프로덕트들 중 나에게 할당된 카드들 & 단계가 개발BOM생성[설계자] 인 것
-        List<RouteProduct> myRouteProductList = new ArrayList<>();
-
-        for (RouteProduct routeProduct : routeProductList) {
-            for (RouteProductMember routeProductMember : routeProduct.getMembers()) {
-                if (routeProductMember.getMember().getId().equals(member1.getId()) &&
-                        //routeProduct.getRoute_name().equals("개발BOM생성[설계자]")
-
-                        (
-
-                                routeProduct.getType().getModule().equals("BOM")
-                                        &&
-                                        routeProduct.getType().getName().equals("CREATE")
-                        )
-                ) {
-                    System.out.println(routeProduct.getType().getModule());
-                    System.out.println(routeProduct.getType().getName());
-                    myRouteProductList.add(routeProduct);
-                    break;
-                }
-
-            }
-        }
-
-
-        //3) new bom : 봄 링크 안된 아이템만 담기
-        HashSet<TodoResponse> unlinkedItemTodoResponses = new HashSet<>();
-
-        for (RouteProduct routeProduct : myRouteProductList) {//현재 봄 생성 단계 중에서
-
-            if ( //0621 dev Bom 의 edit = false 라면
-                    !developmentBomRepository
-                            .findByBom(
-                                    bomRepository.findByNewItem(routeProduct.getRouteOrdering().getNewItem()).get(
-                                            bomRepository.findByNewItem(routeProduct.getRouteOrdering().getNewItem()).size() - 1
-                                    )
-                            ).getEdited()) {
-
-                NewItem targetItem = routeProduct.getRouteOrdering().getNewItem();
-
-                unlinkedItemTodoResponses.add(
-                        new TodoResponse(
-                                targetItem.getId(),
-                                targetItem.getName(),
-                                targetItem.getItemTypes().getItemType().toString(),
-                                targetItem.getItemNumber().toString()
-                        )
-                );
-            }
-        }
-
-        List<TodoResponse> NEW_BOM = new ArrayList<>(unlinkedItemTodoResponses);
-
-        ToDoSingle newBom = new ToDoSingle("Add New Bom", NEW_BOM);
-        List<ToDoSingle> toDoDoubleList = new ArrayList<ToDoSingle>();
-        toDoDoubleList.add(newBom);
-
-
-        return new ToDoDoubleList(toDoDoubleList);
-
-    }
-
 
     //06-04 아이템 대쉬보드
     public ToDoDoubleList readItemTodo() {
@@ -745,4 +669,221 @@ public class DashboardService {
         return new ToDoDoubleList(toDoDoubleList);
 
     }
+
+
+    /**
+     * BOM TO-DO
+     *
+     * @return
+     */
+    public ToDoDoubleList readBomTodo() {
+        //0) 현재 로그인 된 유저
+        Member member1 = memberRepository.findById(authHelper.extractMemberId()).orElseThrow(
+                AuthenticationEntryPointException::new
+        );
+        //new bom -> 아이템 목록
+        //1) 현재 진행 중인 라우트 프로덕트 카드들
+        List<RouteProduct> routeProductList = routeProductRepository.findAll().stream().filter(
+                rp -> rp.getSequence().equals(
+                        rp.getRouteOrdering().getPresent()
+                )
+        ).collect(Collectors.toList());
+
+        //2-1 ) 라우트 프로덕트들 중 나에게 할당된 카드들 & 단계가 개발 BOM 생성[설계자] 인 것
+        List<RouteProduct> myRouteBomCreateProductList = new ArrayList<>();
+
+        // 2-2 ) // & 단계가 개발 bom review 인 것
+        List<RouteProduct> myRouteBomReviewProductList = new ArrayList<>();
+
+        for (RouteProduct routeProduct : routeProductList) {
+            for (RouteProductMember routeProductMember : routeProduct.getMembers()) {
+
+                if (routeProductMember.getMember().getId().equals(member1.getId())) {
+                    // 내가 라우트 프로덕트에 지정되어 있고
+
+                    if (
+                        // 단계가 bom create 라면
+                            routeProduct.getType().getModule().equals("BOM")
+                                    &&
+                                    routeProduct.getType().getName().equals("CREATE")
+                    ) {
+                        myRouteBomCreateProductList.add(routeProduct);
+                        break;
+
+                    } else if (
+                        // 단계가 bom review 라면
+                            routeProduct.getType().getModule().equals("BOM")
+                                    &&
+                                    routeProduct.getType().getName().equals("REVIEW")
+                    ) {
+                        myRouteBomReviewProductList.add(routeProduct);
+                        break;
+                    }
+
+                }
+            }
+        }
+
+        //3) new bom : 봄 링크 안된 아이템만 담기
+        HashSet<TodoResponse> unlinkedItemTodoResponses = new HashSet<>();
+
+        for (RouteProduct routeProduct : myRouteBomCreateProductList) {//현재 봄 생성 단계 중에서
+            if ( //0621 dev Bom 의 edit = false 라면
+
+                    !developmentBomRepository
+                            .findByBom(
+                                    bomRepository.findByNewItem(routeProduct.getRouteOrdering().getNewItem()).get(
+                                            bomRepository.findByNewItem(routeProduct.getRouteOrdering().getNewItem()).size() - 1
+                                    )
+                            ).getEdited()) {
+
+                Bom bom = bomRepository.findByNewItem(routeProduct.getRouteOrdering().getNewItem()).get(
+                        bomRepository.findByNewItem(routeProduct.getRouteOrdering().getNewItem()).size() - 1
+                );
+
+                NewItem targetItem = routeProduct.getRouteOrdering().getNewItem();
+
+                unlinkedItemTodoResponses.add(
+                        new TodoResponse(
+                                bom.getId(),
+                                targetItem.getName(),
+                                targetItem.getItemTypes().getItemType().toString(),
+                                targetItem.getItemNumber().toString()
+                        )
+                );
+            }
+        }
+
+        List<TodoResponse> NEW_BOM = new ArrayList<>(unlinkedItemTodoResponses);
+
+        // 4) 임시저장인 것
+
+        List<TodoResponse> TEMP_SAVE = new ArrayList<>();
+
+        //1-1 temp save 용 ) 내가 작성자인 모든 디자인 데려오기
+        List<Bom> myBomList = bomRepository.findByMember(member1);
+
+        List<DevelopmentBom> developmentBoms = new ArrayList<>();
+
+        for( Bom bom : myBomList){
+            developmentBoms.add(developmentBomRepository.findByBom(bom));
+        }
+        //1-2 temp-save 가 true 인 것만 담는 리스트
+        List<DevelopmentBom> tempSavedDesignList = new ArrayList<>();
+
+        for (DevelopmentBom bom : developmentBoms) {
+            if (bom.getTempsave() && bom.getEdited()){ //06-28 edited 가 true 이며 임시저장이 true 인 것만 찾아오도록 수정
+
+                if(routeOrderingRepository.findByNewItem(bom.getBom().getNewItem()).size()>0){
+                    RouteOrdering ordering = routeOrderingRepository.findByNewItem(bom.getBom().getNewItem()).get(
+                            routeOrderingRepository.findByNewItem(bom.getBom().getNewItem()).size() - 1);
+
+                    int presentIdx = ordering.getPresent();
+
+                    if(routeProductRepository.findAllByRouteOrdering(ordering).size()>
+                            presentIdx) {
+                        RouteProduct routeProduct = routeProductRepository.findAllByRouteOrdering(ordering).get(presentIdx);
+                        if (!routeProduct.isPreRejected()) {
+                            //06-18 거부된게 아닐때만 임시저장에, 거부된 것이라면 임시저장에 뜨면 안됨
+                            //06-04 : 임시저장 이고 읽기 전용이 아니라면 임시저장에 뜨도록
+                            tempSavedDesignList.add(bom);
+                            //임시저장 진행 중인 것
+                        }
+                    }
+                }
+
+                else {
+                    tempSavedDesignList.add(bom);
+                }
+            }
+        }
+
+        if (tempSavedDesignList.size() > 0) {
+            for (DevelopmentBom d : tempSavedDesignList) {
+                TodoResponse
+                        projectTodoResponse =
+                        new TodoResponse(
+                                d.getBom().getId(),
+                                d.getBom().getNewItem().getName(),
+                                d.getBom().getNewItem().getItemTypes().getItemType().toString(),
+                                d.getBom().getNewItem().getItemNumber()
+                        );
+                TEMP_SAVE.add(projectTodoResponse);
+            }
+        }
+
+        // 5) 거부된 애들
+       //  라우트 프로덕트들 중에서 현재이고,
+
+        // 봄 CREATE 이고,
+        // 라우트프로덕트 멤버가 나이고,
+        // PRE - REJECTED=TRUE 인 것
+        HashSet<TodoResponse> rejectedDesignTodoResponses = new HashSet<>();
+
+        for (RouteProduct routeProduct : myRouteBomCreateProductList) {
+            if (routeProduct.isPreRejected()
+            ) {
+
+                Bom targetBom = routeProduct.getBom();
+
+                rejectedDesignTodoResponses.add(
+                        new TodoResponse(
+                                targetBom.getId(),
+                                targetBom.getNewItem().getName(),
+                                targetBom.getNewItem().getItemTypes().getItemType().toString(),
+                                targetBom.getNewItem().getItemNumber()
+                        )
+                );
+            }
+        }
+        List<TodoResponse> REJECTED = new ArrayList<>(rejectedDesignTodoResponses);
+
+        // 6 ) BOM REVIEW 인 단계, 현재 진행 중이고, 내꺼고 단계가 봄 - 리뷰
+
+
+        HashSet<TodoResponse> needReviewBomTodoResponses = new HashSet<>();
+
+        for(RouteProduct routeProduct : myRouteBomReviewProductList){
+
+            //현재 라우트보다 하나 이전 라우트프로덕트의 봄만 존재함, 그 봄을 가져와야한다.
+            RouteProduct targetRouteProduct = routeProductRepository.findById(routeProduct.getId() - 1)
+                    .orElseThrow(RouteProductNotFoundException::new);
+
+            Bom targetBom = targetRouteProduct.getBom();
+
+            needReviewBomTodoResponses.add(
+                    new TodoResponse(
+                            targetBom.getId(),
+                            targetBom.getNewItem().getName(),
+                            targetBom.getNewItem().getItemTypes().getItemType().toString(),
+                            targetBom.getNewItem().getItemNumber()
+                    )
+            );
+        }
+
+        List<TodoResponse> REVIEW = new ArrayList<>(needReviewBomTodoResponses);
+
+        //7) REVISE - TODO : REVISE 추가되고 작업
+        List<TodoResponse> REVISE = new ArrayList<>();
+
+
+        ToDoSingle newBom = new ToDoSingle("Add New Bom", NEW_BOM);
+        ToDoSingle tempBom = new ToDoSingle("Save as Draft", TEMP_SAVE);
+        ToDoSingle rejectedBom = new ToDoSingle("Rejected Item", REJECTED);
+        ToDoSingle needRevise = new ToDoSingle("Need Revise", REVISE);
+        ToDoSingle reviewBom = new ToDoSingle("Waiting Review", REVIEW);
+
+        List<ToDoSingle> toDoDoubleList = new ArrayList<ToDoSingle>();
+
+        toDoDoubleList.add(tempBom);
+        toDoDoubleList.add(newBom);
+        toDoDoubleList.add(rejectedBom);
+        toDoDoubleList.add(needRevise);
+        toDoDoubleList.add(reviewBom);
+
+        return new ToDoDoubleList(toDoDoubleList);
+
+    }
+
+
 }
