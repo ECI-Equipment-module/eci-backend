@@ -208,7 +208,7 @@ public class NewItem extends EntityDate {
     @Column(nullable = false)
     private boolean tempsave;
 
-    @Column
+    @Column(nullable = false)
     private boolean readonly;
 
     @Column//0613 추가 - CAD에서 추가 속성, 디폴트가 false
@@ -260,6 +260,7 @@ public class NewItem extends EntityDate {
             fetch = FetchType.LAZY)
     //@JoinColumn(name = "children_id")
     private Set< NewItemParentChildren> children;
+
     /**
      * attachment 있을 때, thumbnail 있을 때 생성자
      * @param classification
