@@ -2,7 +2,7 @@ package eci.server.BomModule.service;
 
 import com.google.gson.Gson;
 import eci.server.BomModule.dto.BomDto;
-import eci.server.BomModule.dto.DevelopmentRequestDto;
+import eci.server.BomModule.dto.dev.DevelopmentRequestDto;
 import eci.server.BomModule.entity.Bom;
 import eci.server.BomModule.entity.DevelopmentBom;
 import eci.server.BomModule.exception.AddedDevBomNotPossible;

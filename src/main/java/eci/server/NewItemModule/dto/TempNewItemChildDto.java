@@ -1,17 +1,14 @@
 package eci.server.NewItemModule.dto;
 
-import eci.server.BomModule.entity.DevelopmentBom;
 import eci.server.ItemModule.exception.item.ItemNotFoundException;
 import eci.server.NewItemModule.entity.NewItem;
 import eci.server.NewItemModule.entity.TempNewItemParentChildren;
 import eci.server.NewItemModule.repository.TempNewItemParentChildrenRepository;
 import eci.server.NewItemModule.repository.item.NewItemRepository;
-import eci.server.NewItemModule.service.TempNewItemParentChildService;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 
 import java.util.ArrayList;
 import java.util.List;

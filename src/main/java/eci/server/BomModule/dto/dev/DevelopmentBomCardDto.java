@@ -1,4 +1,4 @@
-package eci.server.BomModule.dto;
+package eci.server.BomModule.dto.dev;
 
 import eci.server.BomModule.entity.DevelopmentBomCard;
 import eci.server.ItemModule.helper.NestedConvertHelper;
