@@ -565,18 +565,18 @@ public class NewItemDetailDto {
 
         List<RouteProduct> routeProductList =
                 routeProductRepository.findAllByRouteOrdering(routeOrdering);
+        if(!(routeOrdering.getPresent()==routeProductList.size())) {
+            RouteProduct currentRouteProduct =
+                    routeProductList.get(routeOrdering.getPresent());
 
-        RouteProduct currentRouteProduct =
-                routeProductList.get(routeOrdering.getPresent());
 
-
-        if(Objects.equals(currentRouteProduct.getType().getModule(), "ITEM") &&
-                Objects.equals(currentRouteProduct.getType().getName(), "REQUEST")){
-            if(currentRouteProduct.isPreRejected()){
-                preRejected = true;
+            if (Objects.equals(currentRouteProduct.getType().getModule(), "ITEM") &&
+                    Objects.equals(currentRouteProduct.getType().getName(), "REQUEST")) {
+                if (currentRouteProduct.isPreRejected()) {
+                    preRejected = true;
+                }
             }
         }
-
         return preRejected;
     }
 
