@@ -452,6 +452,12 @@ public class ExceptionAdvice {
         return Response.failure(404, "부모 아이디와 자식 아이디의 길이가 다릅니다.");
     }
 
-
+    @ExceptionHandler(InadequateRelationException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Response InadequateRelationException(InadequateRelationException e) {
+        log.info("e = {}", e.getMessage());
+        return Response.failure(400,
+                "이미 A(부모)-B(자식)으로 선언된 관계가 B(부모)-A(자식)으로 선언될 수 없습니다.");
+    }
 
 }

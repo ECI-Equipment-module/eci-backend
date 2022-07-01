@@ -115,9 +115,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET, "/dev/{id}").authenticated()
                 .antMatchers(HttpMethod.DELETE, "/dev").authenticated()
 
+                .antMatchers(HttpMethod.POST, "/compare").authenticated()
+                .antMatchers(HttpMethod.PUT, "/compare/{id}").authenticated()
+                .antMatchers(HttpMethod.GET, "compare/bom/items/page").authenticated()
+                .antMatchers(HttpMethod.DELETE, "/compare").authenticated()
+
+
+
                 .antMatchers(HttpMethod.PUT, "/project/temp/end/{id}").access("@projectGuard.check(#id)")
                 .antMatchers(HttpMethod.PUT, "/design/temp/end/{id}").access("@designGuard.check(#id)")
                 .antMatchers(HttpMethod.GET, "/**").permitAll()//위에 명시된 get 말고는 다 허용, 맨 밑으로 위치 변경
+
 
                 .anyRequest().hasAnyRole("ADMIN")//멤버의 역할이 관리자인 경우에는 모든 것을 허용
 
