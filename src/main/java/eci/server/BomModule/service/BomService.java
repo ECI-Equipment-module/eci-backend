@@ -22,6 +22,7 @@ import eci.server.NewItemModule.repository.item.NewItemParentChildrenRepository;
 import eci.server.NewItemModule.repository.item.NewItemRepository;
 import eci.server.NewItemModule.service.TempNewItemParentChildService;
 import eci.server.NewItemModule.service.item.NewItemService;
+import eci.server.Socket.dto.design.DesignSocketDto;
 import eci.server.config.guard.BomGuard;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -69,7 +70,9 @@ public class BomService {
         Design design = designRepository.findById(id).orElseThrow(DesignNotFoundException::new);
         Gson gson = new Gson();
         String json = design.getDesignContent();
-        DesignContentDto designContentDto = gson.fromJson(json, DesignContentDto.class);
+        //DesignContentDto designContentDto = gson.fromJson(json, DesignContentDto.class);
+        DesignSocketDto designSocketDto = gson.fromJson(json, DesignSocketDto.class);
+        DesignContentDto designContentDto = designSocketDto.getItem();
 
         NewItem parentNewItem = newItemRepository.findByItemNumber(designContentDto.getCardNumber());
 
@@ -98,7 +101,9 @@ public class BomService {
         Design design = designRepository.findById(id).orElseThrow(DesignNotFoundException::new);
         Gson gson = new Gson();
         String json = design.getDesignContent();
-        DesignContentDto designContentDto = gson.fromJson(json, DesignContentDto.class);
+
+        DesignSocketDto designSocketDto = gson.fromJson(json, DesignSocketDto.class);
+        DesignContentDto designContentDto = designSocketDto.getItem();
 
         NewItem parentNewItem = newItemRepository.findByItemNumber(designContentDto.getCardNumber());
 
