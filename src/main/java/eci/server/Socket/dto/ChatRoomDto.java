@@ -30,16 +30,17 @@ public class ChatRoomDto {
             ChatService chatService,
             NewItemRepository newItemRepository) throws ParseException {
 
+        NewItem targetItem = newItemRepository.findById(
+                chatMessage.getItemId()
+        ).orElseThrow(ItemNotFoundException::new);
+
         if (chatMessage.getType().equals(ChatMessage.MessageType.ENTER)) {
             sessions.add(session);
 
-            NewItem targetItem = newItemRepository.findById(
-                    chatMessage.getItemId()
-            ).orElseThrow(ItemNotFoundException::new);
-
             chatMessage.setMessage(
                     //jsonText.MatchjsonTest()
-                    DesignSocketDto.toDto(targetItem).toString()
+                    //DesignSocketDto.toDto(targetItem).toString()
+                    chatService.socketToJson(targetItem)
             );
 
             sendMessage(chatMessage, chatService);
@@ -48,7 +49,7 @@ public class ChatRoomDto {
             sessions.add(session);
 
             chatMessage.setMessage(
-                    jsonText.UnMatchjsonTest()
+                    chatService.socketToJson(targetItem)
             );
 
             sendMessage(chatMessage, chatService);
