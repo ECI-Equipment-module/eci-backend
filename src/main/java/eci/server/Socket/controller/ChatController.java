@@ -1,5 +1,6 @@
 package eci.server.Socket.controller;
 
+import eci.server.NewItemModule.repository.item.NewItemRepository;
 import eci.server.Socket.dto.ChatRoomDto;
 import eci.server.Socket.service.ChatService;
 import eci.server.aop.AssignMemberId;
@@ -23,6 +24,7 @@ public class ChatController {
     ) {
         return chatService.createRoom();
     }
+
     @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
     @GetMapping
     public List<ChatRoomDto> findAllRoom() {
