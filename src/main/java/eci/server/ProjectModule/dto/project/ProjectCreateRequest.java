@@ -73,7 +73,7 @@ public class ProjectCreateRequest {
     private Long clientOrganizationId; //양산 아니면 없어도 됨
 
     //@NotNull(message = "생산사를 입력해주세요.")
-    private Long produceOrganizationId;
+    private Long supplierId;
 
     @NotNull(message = "차종을 입력해주세요.")
     private Long carTypeId;
@@ -168,8 +168,8 @@ public class ProjectCreateRequest {
                     projectLevelRepository.findById(req.projectLevelId)
                             .orElseThrow(ProjectLevelNotFoundException::new),
                     // 예외 만들기
-                    req.produceOrganizationId==null?null:
-                            produceOrganizationRepository.findById(req.produceOrganizationId)
+                    req.supplierId==null?null:
+                            produceOrganizationRepository.findById(req.supplierId)
                             .orElseThrow(ProduceOrganizationNotFoundException::new),
                     // 예외 만들기
                     req.getClientOrganizationId()==null?null:
@@ -224,8 +224,8 @@ public class ProjectCreateRequest {
                     projectLevelRepository.findById(req.projectLevelId)
                             .orElseThrow(ProjectLevelNotFoundException::new),
                     // 예외 만들기
-                    req.produceOrganizationId==null?null:
-                    produceOrganizationRepository.findById(req.produceOrganizationId)
+                    req.supplierId==null?null:
+                    produceOrganizationRepository.findById(req.supplierId)
                             .orElseThrow(ProduceOrganizationNotFoundException::new),
                     // 예외 만들기
 
