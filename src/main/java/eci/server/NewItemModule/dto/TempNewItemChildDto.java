@@ -29,10 +29,12 @@ public class TempNewItemChildDto {
     private boolean plusPossible;
     private List<TempNewItemChildDto> children;
     private boolean gray;
+    //private Long routeId;
 
     public static TempNewItemChildDto toDevelopmentBomDto(
             NewItem newItem,
-            List<TempNewItemChildDto> children
+            List<TempNewItemChildDto> children,
+            Long routeId
     ){
         return new TempNewItemChildDto(
                 newItem.getId(),
@@ -49,6 +51,7 @@ public class TempNewItemChildDto {
                 true,
                 children,
                 true // 최상위 아이템은 항상 cad 에서 데려온 것이니
+                //routeId
 
         );
     }

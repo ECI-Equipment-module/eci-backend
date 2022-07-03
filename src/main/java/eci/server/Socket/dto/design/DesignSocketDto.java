@@ -13,6 +13,7 @@ public class DesignSocketDto {
     String title;
     DesignContentDto item;
     DesignContentDto cad;
+    int unmatched ;
 
     public static DesignSocketDto toDto(
             NewItem newItem
@@ -21,12 +22,13 @@ public class DesignSocketDto {
         return new DesignSocketDto(
 
                 newItem.getItemNumber()+ "-" +
-                newItem.getName() + "-"
-                +"desgin file",
+                        newItem.getName() + "-"
+                        +"desgin file",
 
                 DesignContentDto.toDto(newItem),
 
-                DesignContentDto.toDto(newItem)
+                DesignContentDto.toDto(newItem),
+                0
 
         );
 

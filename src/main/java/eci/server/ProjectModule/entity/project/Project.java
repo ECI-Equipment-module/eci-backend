@@ -426,9 +426,9 @@ public class Project extends EntityDate {
                                 .orElseThrow(ClientOrganizationNotFoundException::new);
 
         this.produceOrganization =
-                req.getProduceOrganizationId() == null?
+                req.getSupplierId() == null?
                         this.produceOrganization:
-                        produceOrganizationRepository.findById(req.getProduceOrganizationId())
+                        produceOrganizationRepository.findById(req.getSupplierId())
                                 .orElseThrow(ProduceOrganizationNotFoundException::new);
 
         this.carType =
@@ -711,9 +711,9 @@ public class Project extends EntityDate {
                                 .orElseThrow(ClientOrganizationNotFoundException::new);
 
         this.produceOrganization =
-                req.getProduceOrganizationId() == null?
+                req.getSupplierId() == null?
                         null:
-                        produceOrganizationRepository.findById(req.getProduceOrganizationId())
+                        produceOrganizationRepository.findById(req.getSupplierId())
                                 .orElseThrow(ProduceOrganizationNotFoundException::new);
 
         this.carType =
