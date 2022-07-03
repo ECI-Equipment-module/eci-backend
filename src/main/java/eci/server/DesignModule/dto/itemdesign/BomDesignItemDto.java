@@ -162,7 +162,7 @@ public class BomDesignItemDto {
         }
 
         //2) 봄 리뷰 담당자
-        else if(bomGuard.isBomReviewer(newItem.getId())) {
+        if(bomGuard.isBomReviewer(newItem.getId())) {
             if (bomGuard.reviewState(newItem.getId()).equals("beforeReview")) {
                 //2) 봄 리뷰 담당자
                 DesignResponsibleDtoList.add(
