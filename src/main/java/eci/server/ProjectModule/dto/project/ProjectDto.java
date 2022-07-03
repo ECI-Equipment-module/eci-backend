@@ -65,7 +65,7 @@ public class ProjectDto {
 
     private ProjectTypeDto projectType;
     private ProjectLevelDto projectLevel;
-    private ProduceOrganizationDto supplierOrganization;
+    private ProduceOrganizationDto supplierId;
     private ClientOrganizationDto clientOrganization;
     private CarTypeDto carType;
     private List<ProjectAttachmentDto> projectAttachments;
