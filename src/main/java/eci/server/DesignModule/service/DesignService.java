@@ -208,8 +208,8 @@ public class DesignService {
 
         List<RouteOrdering> routeOrdering = routeOrderingRepository.findByNewItem(design.getNewItem());
         //디자인에 딸린 라우트////////////////////////////
-        Long routeId = routeOrderingRepository.findByNewItem(design.getNewItem()).get(routeOrdering.size() - 1).getId();
-
+        Long routeId =
+                routeOrderingRepository.findByNewItem(design.getNewItem()).get(routeOrdering.size() - 1).getId();
 
         RouteOrdering setRoute =
                 routeOrderingRepository.findById(routeId).orElseThrow(RouteNotFoundException::new);

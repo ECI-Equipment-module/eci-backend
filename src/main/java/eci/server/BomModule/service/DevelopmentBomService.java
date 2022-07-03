@@ -1,11 +1,13 @@
 package eci.server.BomModule.service;
 
+import eci.server.BomModule.dto.dev.DevelopmentReadDto;
 import eci.server.BomModule.dto.dev.DevelopmentRequestDto;
 import eci.server.BomModule.entity.DevelopmentBom;
 import eci.server.BomModule.exception.AddedDevBomNotPossible;
 import eci.server.BomModule.exception.DevelopmentBomNotFoundException;
 import eci.server.BomModule.exception.InadequateRelationException;
 import eci.server.BomModule.repository.DevelopmentBomRepository;
+import eci.server.ItemModule.entity.newRoute.RouteOrdering;
 import eci.server.ItemModule.exception.item.ItemNotFoundException;
 import eci.server.ItemModule.repository.newRoute.RouteOrderingRepository;
 import eci.server.NewItemModule.dto.TempNewItemChildDto;
@@ -16,7 +18,6 @@ import eci.server.NewItemModule.repository.item.NewItemRepository;
 import eci.server.NewItemModule.service.item.NewItemService;
 import eci.server.ProjectModule.dto.project.ProjectCreateUpdateResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,19 +36,30 @@ public class DevelopmentBomService {
     private final RouteOrderingRepository routeOrderingRepository;
 
 
-    public TempNewItemChildDto readDevelopment(Long devId){
+
+    public DevelopmentReadDto readDevelopment(
+            Long devId
+    ){
 
         DevelopmentBom developmentBom = developmentBomRepository.findById(devId).
                 orElseThrow(DevelopmentBomNotFoundException::new);
 
         NewItem newItem = developmentBom.getBom().getNewItem();
+        List<RouteOrdering> routeOrdering = routeOrderingRepository.findByNewItem(newItem);
 
         List<TempNewItemChildDto> children = newItemService.readDevChildAll(newItem.getId());
 
-        TempNewItemChildDto devBom = TempNewItemChildDto
-                .toDevelopmentBomDto(newItem, children);
+        Long routeId = routeOrderingRepository.findByNewItem(newItem).get(routeOrdering.size() - 1).getId();
 
-        return devBom;
+        TempNewItemChildDto devBom = TempNewItemChildDto
+                .toDevelopmentBomDto(newItem, children, routeId);
+
+
+
+        return new DevelopmentReadDto(
+                devBom,
+                routeId
+        );
 
     }
 
