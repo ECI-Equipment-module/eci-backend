@@ -35,7 +35,7 @@ public class BomDesignItemDto {
             PreliminaryBomRepository preliminaryBomRepository,
             DevelopmentBomRepository developmentBomRepository,
             CompareBomRepository compareBomRepository
-            ){
+    ){
         List<DesignResponsibleDto> DesignResponsibleDtoList = new ArrayList<>();
 
         Long preliminaryBomId = preliminaryBomRepository.findByBom(bom).getId();
@@ -278,7 +278,7 @@ public class BomDesignItemDto {
 
         }
 
-            //3) 일반인
+        //3) 일반인
         else{
 
             if (bomGuard.reviewState(newItem.getId()).equals("beforeReview")) {
@@ -550,8 +550,8 @@ public class BomDesignItemDto {
         else{
             // 일반인
             if (designGuard.reviewState(newItem.getId()).equals("beforeDesign")
-            || designGuard.reviewState(newItem.getId()).equals("beforeAdd")
-            || designGuard.reviewState(newItem.getId()).equals("beforeEdit")
+                    || designGuard.reviewState(newItem.getId()).equals("beforeAdd")
+                    || designGuard.reviewState(newItem.getId()).equals("beforeEdit")
             ) {
 
                 DesignResponsibleDtoList.add(
@@ -580,11 +580,11 @@ public class BomDesignItemDto {
             }
         }
 
-            return new BomDesignItemDto(
-                    design.getId(),
-                    DesignResponsibleDtoList
-            );
-        }
+        return new BomDesignItemDto(
+                design.getId(),
+                DesignResponsibleDtoList
+        );
+    }
 
 
 
