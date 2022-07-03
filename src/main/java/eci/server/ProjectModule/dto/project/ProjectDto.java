@@ -65,7 +65,7 @@ public class ProjectDto {
 
     private ProjectTypeDto projectType;
     private ProjectLevelDto projectLevel;
-    private ProduceOrganizationDto produceOrganization;
+    private ProduceOrganizationDto supplierOrganization;
     private ClientOrganizationDto clientOrganization;
     private CarTypeDto carType;
     private List<ProjectAttachmentDto> projectAttachments;
@@ -126,7 +126,10 @@ public class ProjectDto {
                 project.getSopStartPeriod(),
                 project.getSopOverPeriod(),
 
-                ItemProjectDto.toDto(project.getNewItem()),
+                ItemProjectDto.toDto(
+                        project.getNewItem(),
+                        routeOrderingRepository
+                        ),
                 MemberDto.toDto(project.getMember(),defaultImageAddress),
 
                 ProjectTypeDto.toDto(project.getProjectType()),
