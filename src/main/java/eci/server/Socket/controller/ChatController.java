@@ -1,6 +1,5 @@
 package eci.server.Socket.controller;
 
-import eci.server.NewItemModule.repository.item.NewItemRepository;
 import eci.server.Socket.dto.ChatRoomDto;
 import eci.server.Socket.service.ChatService;
 import eci.server.aop.AssignMemberId;
