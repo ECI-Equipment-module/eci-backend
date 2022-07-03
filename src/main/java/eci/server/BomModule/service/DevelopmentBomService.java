@@ -1,5 +1,6 @@
 package eci.server.BomModule.service;
 
+import eci.server.BomModule.dto.dev.DevelopmentReadDto;
 import eci.server.BomModule.dto.dev.DevelopmentRequestDto;
 import eci.server.BomModule.entity.DevelopmentBom;
 import eci.server.BomModule.exception.AddedDevBomNotPossible;
@@ -33,12 +34,12 @@ public class DevelopmentBomService {
     private final NewItemRepository newItemRepository;
     private final TempNewItemParentChildrenRepository tempNewItemParentChildrenRepository;
     private final RouteOrderingRepository routeOrderingRepository;
-    private final Long routeId;
 
 
-    public TempNewItemChildDto readDevelopment(
+
+    public DevelopmentReadDto readDevelopment(
             Long devId
-                                               ){
+    ){
 
         DevelopmentBom developmentBom = developmentBomRepository.findById(devId).
                 orElseThrow(DevelopmentBomNotFoundException::new);
@@ -55,7 +56,10 @@ public class DevelopmentBomService {
 
 
 
-        return devBom;
+        return new DevelopmentReadDto(
+                devBom,
+                routeId
+        );
 
     }
 
