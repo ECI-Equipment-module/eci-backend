@@ -87,8 +87,6 @@ public class BomService {
 
             );
         }
-
-
     }
 
     /**
@@ -117,7 +115,6 @@ public class BomService {
                     tempNewItemParentChildrenRepository,
                     newItemRepository,
                     developmentBom
-
 
             );
         }

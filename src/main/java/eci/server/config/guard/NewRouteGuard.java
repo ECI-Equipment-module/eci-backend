@@ -41,8 +41,7 @@ public class NewRouteGuard {
     private boolean isResponsible(Long id) {
 
         RouteOrdering newRoute =
-
-                routeOrderingRepository.findById(id).orElseThrow(() -> { throw new RouteNotFoundException(); });
+                routeOrderingRepository.findById(id).orElseThrow(RouteNotFoundException::new);
 
         //라우트에 딸린 routeProduct들
         List<RouteProduct> routeProduct =
