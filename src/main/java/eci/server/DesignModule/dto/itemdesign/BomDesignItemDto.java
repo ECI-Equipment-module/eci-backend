@@ -101,7 +101,8 @@ public class BomDesignItemDto {
 
             }
             else if (!bomGuard.isBomReviewer(newItem.getId()) && bomGuard.reviewState(newItem.getId()).equals("bomReview")) {
-
+                System.out.println("bom reviewer 이냐아ㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏ");
+                System.out.println(bomGuard.isBomReviewer(newItem.getId()));
                 //1) 봄 생성 담당자
                 DesignResponsibleDtoList.add(
                         new DesignResponsibleDto(
@@ -128,7 +129,7 @@ public class BomDesignItemDto {
 
             }
 
-            else { //생성 완료 이후
+            else if(!bomGuard.isBomReviewer(newItem.getId())){ //생성 완료 이후
 
 
                 //1) 봄 생성 담당자
