@@ -444,7 +444,8 @@ public class NewItemCreateRequest {
                                         .findById(req.getTag().get(req.attachments.indexOf(i))).
                                         orElseThrow(AttachmentNotFoundException::new).getName(),
 
-                                req.getAttachmentComment().get(
+                                req.getAttachmentComment().isEmpty()?
+                                        "":req.getAttachmentComment().get(
                                         req.attachments.indexOf(i)
                                 )
                                 ,

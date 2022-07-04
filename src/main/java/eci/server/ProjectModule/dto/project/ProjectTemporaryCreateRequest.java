@@ -178,9 +178,10 @@ public class ProjectTemporaryCreateRequest  {
                                         attachmentTagRepository
                                                 .findById(req.getTag().get(req.attachments.indexOf(i))).
                                                 orElseThrow(AttachmentNotFoundException::new).getName(),
-                                        req.getAttachmentComment().size()>0?
-                                                req.getAttachmentComment().get(req.attachments.indexOf(i)):
-                                        "",
+                                        req.getAttachmentComment().isEmpty()?
+                                                "":req.getAttachmentComment().get(
+                                                req.attachments.indexOf(i)
+                                        ),
                                         false
                                 )
                         ).collect(

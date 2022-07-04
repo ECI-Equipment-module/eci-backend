@@ -415,9 +415,10 @@ public class NewItemTemporaryCreateRequest {
                                         .findById(req.getTag().get(req.attachments.indexOf(i))).
                                         orElseThrow(AttachmentNotFoundException::new).getName(),
 
-                                req.getAttachments().size()>0?
-                                        req.getAttachmentComment().get(req.attachments.indexOf(i)) :
-                                " ",
+                                req.getAttachmentComment().isEmpty()?
+                                        "":req.getAttachmentComment().get(
+                                        req.attachments.indexOf(i)
+                                ),
                                 false //지금은 임시저장으로 추가되는 문서들 => save = false 다
                         )
                 ).collect(
