@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
@@ -39,7 +40,8 @@ public class NewRouteGuard {
 
     @Transactional
     private boolean isResponsible(Long id) {
-
+        System.out.println("왜ㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐ");
+        System.out.println(id);
         RouteOrdering newRoute =
                 routeOrderingRepository.findById(id).orElseThrow(RouteNotFoundException::new);
 
