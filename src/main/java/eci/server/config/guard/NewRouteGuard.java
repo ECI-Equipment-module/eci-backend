@@ -40,8 +40,6 @@ public class NewRouteGuard {
 
     @Transactional
     private boolean isResponsible(Long id) {
-        System.out.println("왜ㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐ");
-        System.out.println(id);
         RouteOrdering newRoute =
                 routeOrderingRepository.findById(id).orElseThrow(RouteNotFoundException::new);
 
