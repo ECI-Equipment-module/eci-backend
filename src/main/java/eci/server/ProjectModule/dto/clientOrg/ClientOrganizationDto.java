@@ -13,7 +13,7 @@ public class ClientOrganizationDto {
     private String name;
 
     public static ClientOrganizationDto toDto(){
-        return new ClientOrganizationDto(99999L, "NONE");
+        return new ClientOrganizationDto(-1L, "NONE");
     }
     public static ClientOrganizationDto toDto(ClientOrganization clientOrganization){
 

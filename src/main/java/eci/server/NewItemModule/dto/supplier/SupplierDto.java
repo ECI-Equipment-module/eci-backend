@@ -13,7 +13,7 @@ public class SupplierDto {
     public static SupplierDto toDto(){
 
         return new SupplierDto(
-            99999L, "NONE"
+                -1L, "NONE"
         );
     }
 

@@ -148,7 +148,7 @@ public class NewItemTemporaryCreateRequest {
                         new Classification(
 
                                 (req.getClassification1Id()==null  || req.getClassification1Id()==99999L?
-                                classification1Repository.findById(99999L).orElseThrow(ClassificationNotFoundException::new) :
+                                        classification1Repository.findById(99999L).orElseThrow(ClassificationNotFoundException::new):
                                 classification1Repository.findById(req.classification1Id).orElseThrow(ClassificationNotFoundException::new)
                                 ),
 
@@ -157,7 +157,7 @@ public class NewItemTemporaryCreateRequest {
                                         classification2Repository.findById(req.classification2Id).orElseThrow(ClassificationNotFoundException::new)
                                 ),
                     (req.getClassification3Id()==null  || req.getClassification3Id()==99999L?
-                    classification3Repository.findById(99999L).orElseThrow(ClassificationNotFoundException::new):
+                            classification3Repository.findById(99999L).orElseThrow(ClassificationNotFoundException::new):
                                         classification3Repository.findById(req.classification3Id).orElseThrow(ClassificationNotFoundException::new)
                         )
             )
@@ -166,7 +166,7 @@ public class NewItemTemporaryCreateRequest {
                     req.name.isBlank() ? "이름을 입력해주세요" : req.name,
 
                     req.getTypeId()==null?
-                            itemTypesRepository.findById(99999L).orElseThrow(ItemNotFoundException::new):
+                            null:
                             itemTypesRepository.findById(req.getTypeId()).orElseThrow(ItemNotFoundException::new),
 
                     "made when saved",
@@ -183,7 +183,7 @@ public class NewItemTemporaryCreateRequest {
                     //전용일 때야 차종 생성
                     req.getCarTypeId()!=null?
                             carTypeRepository.findById(req.carTypeId).orElseThrow(CarTypeNotFoundException::new)
-                            :carTypeRepository.findById(99999L).orElseThrow(CarTypeNotFoundException::new),
+                            :null,
 
 
                     req.integrate.isBlank()?"":req.integrate,
@@ -302,7 +302,8 @@ public class NewItemTemporaryCreateRequest {
                 req.name.isBlank() ? "이름을 입력해주세요" : req.name,
 
                 req.getTypeId()==null?
-                        itemTypesRepository.findById(99999L).orElseThrow(ItemNotFoundException::new):
+                        null:
+                        //itemTypesRepository.findById(99999L).orElseThrow(ItemNotFoundException::new):
                         itemTypesRepository.findById(req.getTypeId()).orElseThrow(ItemNotFoundException::new),
 
                 "made when saved",
@@ -319,7 +320,7 @@ public class NewItemTemporaryCreateRequest {
                 //전용일 때야 차종 생성
                 req.getCarTypeId()!=null?
                         carTypeRepository.findById(req.carTypeId).orElseThrow(CarTypeNotFoundException::new)
-                        :carTypeRepository.findById(99999L).orElseThrow(CarTypeNotFoundException::new),
+                        :null,//carTypeRepository.findById(99999L).orElseThrow(CarTypeNotFoundException::new),
 
 
                 req.integrate.isBlank()?"":req.integrate,
@@ -413,7 +414,10 @@ public class NewItemTemporaryCreateRequest {
                                 attachmentTagRepository
                                         .findById(req.getTag().get(req.attachments.indexOf(i))).
                                         orElseThrow(AttachmentNotFoundException::new).getName(),
-                                req.getAttachmentComment().get(req.attachments.indexOf(i)),
+
+                                req.getAttachments().size()>0?
+                                        req.getAttachmentComment().get(req.attachments.indexOf(i)) :
+                                " ",
                                 false //지금은 임시저장으로 추가되는 문서들 => save = false 다
                         )
                 ).collect(

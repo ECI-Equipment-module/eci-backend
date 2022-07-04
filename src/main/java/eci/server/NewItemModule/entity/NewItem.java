@@ -64,9 +64,7 @@ public class NewItem extends EntityDate {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(
-            name = "itemTypes_id",
-            //name = "item_types_id",
-            nullable = false)
+            name = "itemTypes_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private ItemTypes itemTypes;
 
@@ -814,7 +812,6 @@ public class NewItem extends EntityDate {
             AttachmentTagRepository attachmentTagRepository
     ) {
 
-        this.setModifiedAt(LocalDateTime.now());
 
         AtomicInteger k = new AtomicInteger();
 
@@ -824,7 +821,7 @@ public class NewItem extends EntityDate {
                 " " : req.getName();
 
         this.itemTypes = req.getTypeId() == null ?
-                itemTypesRepository.findById(99999L).orElseThrow(ItemNotFoundException::new) :
+                null:
                 itemTypesRepository.findById(req.getTypeId()).orElseThrow(ItemNotFoundException::new);
 
 
@@ -987,6 +984,11 @@ public class NewItem extends EntityDate {
                     new NewItemFileUpdatedResult(resultAttachment, null);
 
         }
+
+        System.out.println(this.getModifiedAt());
+        this.setModifiedAt(LocalDateTime.now());
+        System.out.println(this.getModifiedAt());
+
         return fileUpdatedResult;
 
     }

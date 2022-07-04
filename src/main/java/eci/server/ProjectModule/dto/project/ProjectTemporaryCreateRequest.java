@@ -93,12 +93,12 @@ public class ProjectTemporaryCreateRequest  {
             //객체 findById 하는 애들이 빈칸이면
             //임시저장용 인스턴스 id 99999 건네주기
 
-            Long itemId = req.itemId==null?99999L:req.itemId;
-            Long projectTypeId = req.projectTypeId==null?99999L:req.projectTypeId;
-            Long projectLevelId = req.projectLevelId==null?99999L:req.projectLevelId;
-            Long produceOrgId = req.supplierId==null?99999L:req.supplierId;
-            Long clientOrgId = req.clientOrganizationId==null?99999L:req.clientOrganizationId;
-            Long carTypeId = req.carTypeId==null?99999L:req.carTypeId;
+            Long itemId = req.itemId==null?null:req.itemId;
+            Long projectTypeId = req.projectTypeId==null?null:req.projectTypeId;
+            Long projectLevelId = req.projectLevelId==null?null:req.projectLevelId;
+            Long produceOrgId = req.supplierId==null?null:req.supplierId;
+            Long clientOrgId = req.clientOrganizationId==null?null:req.clientOrganizationId;
+            Long carTypeId = req.carTypeId==null?null:req.carTypeId;
 
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
