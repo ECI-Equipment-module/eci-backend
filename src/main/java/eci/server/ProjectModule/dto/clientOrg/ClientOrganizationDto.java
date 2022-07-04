@@ -11,9 +11,10 @@ import lombok.NoArgsConstructor;
 public class ClientOrganizationDto {
     private Long id;
     private String name;
-
     public static ClientOrganizationDto toDto(){
-        return new ClientOrganizationDto(99999L, "NONE");
+
+        return new ClientOrganizationDto(
+        );
     }
     public static ClientOrganizationDto toDto(ClientOrganization clientOrganization){
 

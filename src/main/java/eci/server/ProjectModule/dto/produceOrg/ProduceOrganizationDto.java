@@ -12,6 +12,11 @@ public class ProduceOrganizationDto {
     private Long id;
     private String name;
 
+    public static ProduceOrganizationDto toDto() {
+        return new ProduceOrganizationDto(
+        );
+    }
+
     public static ProduceOrganizationDto toDto(ProduceOrganization produceOrganization){
 
         return new ProduceOrganizationDto(

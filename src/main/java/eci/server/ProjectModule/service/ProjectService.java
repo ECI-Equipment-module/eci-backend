@@ -248,8 +248,10 @@ public class ProjectService {
     // read one project
     public ProjectDto read(Long id){
         Project targetProject = projectRepository.findById(id).orElseThrow(ProjectNotFoundException::new);
+        RouteOrdering routeOrdering = routeOrderingRepository.findByNewItem(targetProject.getNewItem()).get(0);
         return ProjectDto.toDto(
                 targetProject,
+                routeOrdering,
                 routeOrderingRepository,
                 routeProductRepository,
                 bomRepository,

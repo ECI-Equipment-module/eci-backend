@@ -25,8 +25,6 @@ public class CarTypeDto {
     public static CarTypeDto toDto(){
 
         return new CarTypeDto(
-                -1L,
-                ""
         );
     }
 
