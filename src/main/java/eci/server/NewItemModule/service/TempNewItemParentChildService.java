@@ -24,13 +24,16 @@ public class TempNewItemParentChildService {
     private final TempNewItemParentChildrenRepository tempNewItemParentChildrenRepository;
     private final BomRepository bomRepository;
     private final DevelopmentBomRepository developmentBomRepository;
+    private final NewItemRepository newItemRepository;
 
     public List<TempNewItemChildDto> readTempChildAll(Long id) {
 
         return TempNewItemChildDto.toDtoList(
+                id,
                 tempNewItemParentChildrenRepository.
                         findAllWithParentByParentId(id),//ByParentIdOrderByParentIdAscNullsFirst(
-                tempNewItemParentChildrenRepository
+                tempNewItemParentChildrenRepository,
+                newItemRepository
 
         );
 
@@ -67,7 +70,8 @@ public class TempNewItemParentChildService {
                                 newId,
                                 parentNewItem,
                                 children,
-                                staticDevBom
+                                staticDevBom,
+                                true
                         )
                 );
 

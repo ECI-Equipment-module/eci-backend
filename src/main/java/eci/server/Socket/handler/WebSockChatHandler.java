@@ -1,6 +1,7 @@
 package eci.server.Socket.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import eci.server.NewItemModule.repository.item.NewItemRepository;
 import eci.server.Socket.dto.ChatMessage;
 import eci.server.Socket.dto.ChatRoomDto;
 import eci.server.Socket.service.ChatService;
@@ -22,6 +23,7 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
     public class WebSockChatHandler extends TextWebSocketHandler {
         private final ObjectMapper objectMapper;
         private final ChatService chatService;
+        private final NewItemRepository newItemRepository;
 
         @Override
         protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
@@ -30,7 +32,7 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
             log.info("payload {}", payload);
             ChatMessage chatMessage = objectMapper.readValue(payload, ChatMessage.class);
             ChatRoomDto room = chatService.findRoomById(chatMessage.getRoomId());
-            room.handleTempActions(session, chatMessage, chatService);
+            room.handleTempActions(session, chatMessage, chatService, newItemRepository);
 
         }
 

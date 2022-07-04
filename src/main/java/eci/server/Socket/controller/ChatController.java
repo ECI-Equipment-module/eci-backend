@@ -23,6 +23,7 @@ public class ChatController {
     ) {
         return chatService.createRoom();
     }
+
     @CrossOrigin(origins = "https://localhost:3000")
     @GetMapping
     public List<ChatRoomDto> findAllRoom() {

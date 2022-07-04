@@ -1,5 +1,9 @@
 package eci.server.Socket.dto;
 
+import eci.server.ItemModule.exception.item.ItemNotFoundException;
+import eci.server.NewItemModule.entity.NewItem;
+import eci.server.NewItemModule.repository.item.NewItemRepository;
+import eci.server.Socket.dto.design.DesignSocketDto;
 import eci.server.Socket.service.ChatService;
 import lombok.Builder;
 import lombok.Getter;
@@ -9,6 +13,7 @@ import java.text.ParseException;
 import java.util.*;
 
 @Getter
+
 public class ChatRoomDto {
 
     private String roomId;
@@ -19,13 +24,23 @@ public class ChatRoomDto {
         this.roomId = roomId;
     }
 
-    public void handleTempActions(WebSocketSession session, ChatMessage chatMessage, ChatService chatService) throws ParseException {
+    public void handleTempActions(
+            WebSocketSession session,
+            ChatMessage chatMessage,
+            ChatService chatService,
+            NewItemRepository newItemRepository) throws ParseException {
+
+        NewItem targetItem = newItemRepository.findById(
+                chatMessage.getItemId()
+        ).orElseThrow(ItemNotFoundException::new);
 
         if (chatMessage.getType().equals(ChatMessage.MessageType.ENTER)) {
             sessions.add(session);
 
             chatMessage.setMessage(
-                    jsonText.MatchjsonTest()
+                    //jsonText.MatchjsonTest()
+                    //DesignSocketDto.toDto(targetItem).toString()
+                    chatService.socketToJson(targetItem)
             );
 
             sendMessage(chatMessage, chatService);
@@ -34,7 +49,7 @@ public class ChatRoomDto {
             sessions.add(session);
 
             chatMessage.setMessage(
-                    jsonText.UnMatchjsonTest()
+                    chatService.socketToJson(targetItem)
             );
 
             sendMessage(chatMessage, chatService);

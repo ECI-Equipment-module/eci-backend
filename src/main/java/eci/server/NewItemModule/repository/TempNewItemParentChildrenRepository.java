@@ -1,6 +1,8 @@
 package eci.server.NewItemModule.repository;
 
 import eci.server.BomModule.entity.DevelopmentBom;
+import eci.server.NewItemModule.dto.TempNewItemChildDto;
+import eci.server.NewItemModule.entity.NewItem;
 import eci.server.NewItemModule.entity.TempNewItemParentChildren;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -20,4 +22,6 @@ public interface TempNewItemParentChildrenRepository extends JpaRepository<TempN
             (@Param("parentId")Long parentId);
 
     List<TempNewItemParentChildren> findByDevelopmentBom(DevelopmentBom developmentBom);
+
+    TempNewItemParentChildren findByParentAndChildren(NewItem parent, NewItem children);
 }

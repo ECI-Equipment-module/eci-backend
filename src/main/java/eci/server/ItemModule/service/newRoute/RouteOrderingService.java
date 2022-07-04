@@ -380,7 +380,11 @@ public class RouteOrderingService {
                     bomService.makeDevBom(linkedDesign.getId());
 
                     // dev bom 의 temp new item parent children 관계도 맺어주기
-                    bomService.makeTempDevBom(linkedDesign.getId());
+                    bomService.makeTempDevBom(
+
+                            linkedDesign.getId(),
+                            true
+                    );
                 }
 
 
@@ -514,7 +518,7 @@ public class RouteOrderingService {
                     rejectPossibleTypeId = 13L;
                     break;
                 case "12":            // 봄 리뷰
-                    rejectPossibleTypeId = 11L;
+                    rejectPossibleTypeId = 14L;
                     break;
                 default:        // 모두 해당이 안되는 경우
                     //에러 던지기

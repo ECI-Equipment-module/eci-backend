@@ -174,7 +174,8 @@ public class RouteOrdering extends EntityDate {
             routeProductList.get(this.present).setComment(req.getComment());
 
             // 지금 업데이트되는 라우트 프로덕트의 타입이 create 라면
-            if(routeProductList.get(this.present).getType().getName().equals("CREATE")){
+            if(routeProductList.get(this.present).getType().getName().equals("CREATE")
+            || routeProductList.get(this.present).getType().getName().equals("REQUEST")){
                 // 모듈이 아이템
                 if(routeProductList.get(this.present).getType().getModule().equals("ITEM")){
                     this.getNewItem().setTempsave(false); //06-18 라우트 만든 순간 임시저장 다시 거짓으로

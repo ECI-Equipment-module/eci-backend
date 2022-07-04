@@ -1,8 +1,8 @@
 package eci.server.BomModule.service;
 
 import eci.server.BomModule.dto.BomDto;
-import eci.server.BomModule.dto.DevelopmentBomCardCreateRequest;
-import eci.server.BomModule.dto.DevelopmentBomCardDto;
+import eci.server.BomModule.dto.dev.DevelopmentBomCardCreateRequest;
+import eci.server.BomModule.dto.dev.DevelopmentBomCardDto;
 import eci.server.BomModule.dto.cond.DevelopmentBomReadCondition;
 import eci.server.BomModule.entity.Bom;
 import eci.server.BomModule.entity.DevelopmentBom;

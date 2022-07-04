@@ -2,7 +2,7 @@ package eci.server.BomModule.service;
 
 import com.google.gson.Gson;
 import eci.server.BomModule.dto.BomDto;
-import eci.server.BomModule.dto.DevelopmentRequestDto;
+import eci.server.BomModule.dto.dev.DevelopmentRequestDto;
 import eci.server.BomModule.entity.Bom;
 import eci.server.BomModule.entity.DevelopmentBom;
 import eci.server.BomModule.exception.AddedDevBomNotPossible;
@@ -22,6 +22,7 @@ import eci.server.NewItemModule.repository.item.NewItemParentChildrenRepository;
 import eci.server.NewItemModule.repository.item.NewItemRepository;
 import eci.server.NewItemModule.service.TempNewItemParentChildService;
 import eci.server.NewItemModule.service.item.NewItemService;
+import eci.server.Socket.dto.design.DesignSocketDto;
 import eci.server.config.guard.BomGuard;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -69,7 +70,9 @@ public class BomService {
         Design design = designRepository.findById(id).orElseThrow(DesignNotFoundException::new);
         Gson gson = new Gson();
         String json = design.getDesignContent();
-        DesignContentDto designContentDto = gson.fromJson(json, DesignContentDto.class);
+        //DesignContentDto designContentDto = gson.fromJson(json, DesignContentDto.class);
+        DesignSocketDto designSocketDto = gson.fromJson(json, DesignSocketDto.class);
+        DesignContentDto designContentDto = designSocketDto.getItem();
 
         NewItem parentNewItem = newItemRepository.findByItemNumber(designContentDto.getCardNumber());
 
@@ -84,8 +87,6 @@ public class BomService {
 
             );
         }
-
-
     }
 
     /**
@@ -93,12 +94,14 @@ public class BomService {
      * 들어온 designContent 로 아이템 parent, child 관계 맺어주기 (초기 dev)
      * @param id
      */
-    public void makeTempDevBom(Long id) {
+    public void makeTempDevBom(Long id, boolean gray) {
 
         Design design = designRepository.findById(id).orElseThrow(DesignNotFoundException::new);
         Gson gson = new Gson();
         String json = design.getDesignContent();
-        DesignContentDto designContentDto = gson.fromJson(json, DesignContentDto.class);
+
+        DesignSocketDto designSocketDto = gson.fromJson(json, DesignSocketDto.class);
+        DesignContentDto designContentDto = designSocketDto.getItem();
 
         NewItem parentNewItem = newItemRepository.findByItemNumber(designContentDto.getCardNumber());
 
@@ -112,7 +115,6 @@ public class BomService {
                     tempNewItemParentChildrenRepository,
                     newItemRepository,
                     developmentBom
-
 
             );
         }

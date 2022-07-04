@@ -35,7 +35,7 @@ public class BomDesignItemDto {
             PreliminaryBomRepository preliminaryBomRepository,
             DevelopmentBomRepository developmentBomRepository,
             CompareBomRepository compareBomRepository
-            ){
+    ){
         List<DesignResponsibleDto> DesignResponsibleDtoList = new ArrayList<>();
 
         Long preliminaryBomId = preliminaryBomRepository.findByBom(bom).getId();
@@ -100,8 +100,9 @@ public class BomDesignItemDto {
 
 
             }
-            else if (bomGuard.reviewState(newItem.getId()).equals("bomReview")) {
-
+            else if (!bomGuard.isBomReviewer(newItem.getId()) && bomGuard.reviewState(newItem.getId()).equals("bomReview")) {
+                System.out.println("bom reviewer 이냐아ㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏ");
+                System.out.println(bomGuard.isBomReviewer(newItem.getId()));
                 //1) 봄 생성 담당자
                 DesignResponsibleDtoList.add(
                         new DesignResponsibleDto(
@@ -128,7 +129,7 @@ public class BomDesignItemDto {
 
             }
 
-            else { //생성 완료 이후
+            else if(!bomGuard.isBomReviewer(newItem.getId())){ //생성 완료 이후
 
 
                 //1) 봄 생성 담당자
@@ -162,7 +163,7 @@ public class BomDesignItemDto {
         }
 
         //2) 봄 리뷰 담당자
-        else if(bomGuard.isBomReviewer(newItem.getId())) {
+        if(bomGuard.isBomReviewer(newItem.getId())) {
             if (bomGuard.reviewState(newItem.getId()).equals("beforeReview")) {
                 //2) 봄 리뷰 담당자
                 DesignResponsibleDtoList.add(
@@ -278,7 +279,7 @@ public class BomDesignItemDto {
 
         }
 
-            //3) 일반인
+        //3) 일반인
         else{
 
             if (bomGuard.reviewState(newItem.getId()).equals("beforeReview")) {
@@ -550,8 +551,8 @@ public class BomDesignItemDto {
         else{
             // 일반인
             if (designGuard.reviewState(newItem.getId()).equals("beforeDesign")
-            || designGuard.reviewState(newItem.getId()).equals("beforeAdd")
-            || designGuard.reviewState(newItem.getId()).equals("beforeEdit")
+                    || designGuard.reviewState(newItem.getId()).equals("beforeAdd")
+                    || designGuard.reviewState(newItem.getId()).equals("beforeEdit")
             ) {
 
                 DesignResponsibleDtoList.add(
@@ -580,11 +581,11 @@ public class BomDesignItemDto {
             }
         }
 
-            return new BomDesignItemDto(
-                    design.getId(),
-                    DesignResponsibleDtoList
-            );
-        }
+        return new BomDesignItemDto(
+                design.getId(),
+                DesignResponsibleDtoList
+        );
+    }
 
 
 

@@ -1,27 +1,22 @@
 package eci.server.BomModule.service;
 
-import eci.server.BomModule.dto.DevelopmentRequestDto;
+import eci.server.BomModule.dto.dev.DevelopmentReadDto;
+import eci.server.BomModule.dto.dev.DevelopmentRequestDto;
 import eci.server.BomModule.entity.DevelopmentBom;
 import eci.server.BomModule.exception.AddedDevBomNotPossible;
 import eci.server.BomModule.exception.DevelopmentBomNotFoundException;
-import eci.server.BomModule.repository.BomRepository;
-import eci.server.BomModule.repository.CompareBomRepository;
+import eci.server.BomModule.exception.InadequateRelationException;
 import eci.server.BomModule.repository.DevelopmentBomRepository;
-import eci.server.BomModule.repository.PreliminaryBomRepository;
-import eci.server.DesignModule.repository.DesignRepository;
+import eci.server.ItemModule.entity.newRoute.RouteOrdering;
 import eci.server.ItemModule.exception.item.ItemNotFoundException;
 import eci.server.ItemModule.repository.newRoute.RouteOrderingRepository;
 import eci.server.NewItemModule.dto.TempNewItemChildDto;
-import eci.server.NewItemModule.dto.newItem.create.NewItemCreateResponse;
 import eci.server.NewItemModule.entity.NewItem;
 import eci.server.NewItemModule.entity.TempNewItemParentChildren;
 import eci.server.NewItemModule.repository.TempNewItemParentChildrenRepository;
-import eci.server.NewItemModule.repository.item.NewItemParentChildrenRepository;
 import eci.server.NewItemModule.repository.item.NewItemRepository;
-import eci.server.NewItemModule.service.TempNewItemParentChildService;
 import eci.server.NewItemModule.service.item.NewItemService;
 import eci.server.ProjectModule.dto.project.ProjectCreateUpdateResponse;
-import eci.server.config.guard.BomGuard;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,6 +28,7 @@ import java.util.List;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class DevelopmentBomService {
+
     private final DevelopmentBomRepository developmentBomRepository;
     private final NewItemService newItemService;
     private final NewItemRepository newItemRepository;
@@ -40,19 +36,30 @@ public class DevelopmentBomService {
     private final RouteOrderingRepository routeOrderingRepository;
 
 
-    public TempNewItemChildDto readDevelopment(Long devId){
+
+    public DevelopmentReadDto readDevelopment(
+            Long devId
+    ){
 
         DevelopmentBom developmentBom = developmentBomRepository.findById(devId).
                 orElseThrow(DevelopmentBomNotFoundException::new);
 
         NewItem newItem = developmentBom.getBom().getNewItem();
+        List<RouteOrdering> routeOrdering = routeOrderingRepository.findByNewItem(newItem);
 
         List<TempNewItemChildDto> children = newItemService.readDevChildAll(newItem.getId());
 
-        TempNewItemChildDto devBom = TempNewItemChildDto
-                .toDevelopmentBomDto(newItem, children);
+        Long routeId = routeOrderingRepository.findByNewItem(newItem).get(routeOrdering.size() - 1).getId();
 
-        return devBom;
+        TempNewItemChildDto devBom = TempNewItemChildDto
+                .toDevelopmentBomDto(newItem, children, routeId);
+
+
+
+        return new DevelopmentReadDto(
+                devBom,
+                routeId
+        );
 
     }
 
@@ -90,14 +97,21 @@ public class DevelopmentBomService {
             }
 
             List<Long> newIdList = new ArrayList<>();
+            List<Long> reversedIdList = new ArrayList<>(); //0630 - 무한 재귀 방지 체크
             int s = 0;
 
             while (s < req.getChildId().size()) {
 
                 Long newId = Long.parseLong(req.getParentId().get(s).toString() +
                         req.getChildId().get(s).toString());
-                System.out.println(newId);
+
                 newIdList.add(newId);
+
+                Long reversedNewId = Long.parseLong(req.getChildId().get(s).toString() +
+                        req.getParentId().get(s).toString()); //0630 - 무한 재귀 방지 체크
+
+                reversedIdList.add(reversedNewId); //0630 - 무한 재귀 방지 체크
+
                 s += 1;
 
             }
@@ -135,16 +149,34 @@ public class DevelopmentBomService {
                         ItemNotFoundException::new
                 );
 
-                if (tempNewItemParentChildrenRepository.findById(
+                if (
+                    //안 만들어졌던 관계일 경우에만 만들어주기
+                        tempNewItemParentChildrenRepository.findById(
                         newIdList.get(i)
-                ).isEmpty()) { //안 만들어졌던 관계일 경우에만 만들어주기
+                ).isEmpty()
+
+                ) {
+
+                    if(tempNewItemParentChildrenRepository.findById(
+                            reversedIdList.get(i)
+                    ).isPresent()){
+                        // (+) 06-30 : PARENT-CHILD 관계로 이미 존재하는데
+                        // CHILD가 PARENT 되고 PARENT가 이의 CHILD가 되는 관계는 ABSURD
+                        // 즉 101-102 이렇게 부모 자식인데, 102-101 이렇게 부모 자식 되면 안됨 => 막아줄 것임
+
+                        throw new InadequateRelationException();
+                    }
+
+
+
                     tempNewItemParentChildrenRepository.save(
                             new TempNewItemParentChildren(
                                     newIdList.get(i),
                                     parent,
                                     child,
                                     developmentBomRepository.findById(req.getDevId())
-                                            .orElseThrow(DevelopmentBomNotFoundException::new)
+                                            .orElseThrow(DevelopmentBomNotFoundException::new),
+                                    false // 이때 만들어지는 것은 gray = false
                             )
                     );
                 }

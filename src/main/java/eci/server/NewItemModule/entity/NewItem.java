@@ -611,9 +611,10 @@ public class NewItem extends EntityDate {
 
                     i.initNewItem(this);
 
-
+                    //
                     i.setAttach_comment(
-                            req.getAddedAttachmentComment().get(
+                            req.getAddedAttachmentComment().size()==0?
+                                    "":req.getAddedAttachmentComment().get(
                                     (added.indexOf(i))
                             )
                     );

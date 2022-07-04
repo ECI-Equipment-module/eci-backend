@@ -71,7 +71,7 @@ public class ProjectTemporaryCreateRequest  {
 
         private Long clientOrganizationId;
 
-        private Long produceOrganizationId;
+        private Long supplierId;
 
         private Long carTypeId;
 
@@ -96,7 +96,7 @@ public class ProjectTemporaryCreateRequest  {
             Long itemId = req.itemId==null?99999L:req.itemId;
             Long projectTypeId = req.projectTypeId==null?99999L:req.projectTypeId;
             Long projectLevelId = req.projectLevelId==null?99999L:req.projectLevelId;
-            Long produceOrgId = req.produceOrganizationId==null?99999L:req.produceOrganizationId;
+            Long produceOrgId = req.supplierId==null?99999L:req.supplierId;
             Long clientOrgId = req.clientOrganizationId==null?99999L:req.clientOrganizationId;
             Long carTypeId = req.carTypeId==null?99999L:req.carTypeId;
 
@@ -251,7 +251,7 @@ public class ProjectTemporaryCreateRequest  {
                             projectLevelRepository.findById(projectLevelId)
                             .orElseThrow(ProjectLevelNotFoundException::new),
 
-                    req.produceOrganizationId==null?
+                    req.supplierId==null?
                             produceOrganizationRepository.findById(99999L)
                                     .orElseThrow(ProduceOrganizationNotFoundException::new)
                             :

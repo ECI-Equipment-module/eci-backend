@@ -1,7 +1,10 @@
 package eci.server.Socket.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
+import eci.server.NewItemModule.entity.NewItem;
 import eci.server.Socket.dto.ChatRoomDto;
+import eci.server.Socket.dto.design.DesignSocketDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -49,5 +52,14 @@ public class ChatService {
         } catch (IOException e) {
             log.error(e.getMessage(), e);
         }
+    }
+
+    public String socketToJson(NewItem newItem){
+
+        DesignSocketDto dto = DesignSocketDto.toDto(newItem);
+        Gson gson = new Gson();
+        String json = gson.toJson(dto);
+
+        return json;
     }
 }

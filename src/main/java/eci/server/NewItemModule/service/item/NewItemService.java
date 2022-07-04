@@ -256,7 +256,7 @@ public class NewItemService {
     // read one project
     public NewItemDetailDto read(Long id){
         NewItem targetItem = newItemRepository.findById(id).orElseThrow(ItemNotFoundException::new);
-        RouteOrdering routeOrdering = routeOrderingRepository.findByNewItem(targetItem).get(0);
+
         List<RouteOrderingDto> routeDtoList = Optional.ofNullable(
                 RouteOrderingDto.toDtoList(
                         routeOrderingRepository.findByNewItem(targetItem),
@@ -275,7 +275,7 @@ public class NewItemService {
 
 
         if (routeDtoList.size() > 0) {//아이템에 딸린 routeDto가 존재할 때
-
+            RouteOrdering routeOrdering = routeOrderingRepository.findByNewItem(targetItem).get(0);
             return NewItemDetailDto.toDto(
                     targetItem,
                     routeOrdering,
@@ -293,7 +293,6 @@ public class NewItemService {
         }
         return NewItemDetailDto.noRoutetoDto(
                 targetItem,
-                routeOrdering,
                 routeProductRepository,
                 attachmentTagRepository,
                 defaultImageAddress
@@ -514,9 +513,11 @@ public class NewItemService {
     public List<TempNewItemChildDto> readDevChildAll(Long id) {
 
         return TempNewItemChildDto.toDtoList(
+                id,
                 tempNewItemParentChildrenRepository.
                         findAllWithParentByParentId(id),//ByParentIdOrderByParentIdAscNullsFirst(
-                tempNewItemParentChildrenRepository
+                tempNewItemParentChildrenRepository,
+                newItemRepository
 
         );
 
@@ -526,10 +527,10 @@ public class NewItemService {
 
     /**
      * 제품 중 상태가 complete 나 release 이면서
-     * 제품 아닌 건 모두다 데려오는 NewItem
+     * 제품 아닌 건 모두다 데려오는 NewItem - dev bom 추가용
      * @return
      */
-    public List<NewItem> readBomItems() {
+    public List<NewItem> readDevBomItems() {
 
         //1) 제품인 것 (상태가 complete, release 인 것만)
 
@@ -598,6 +599,49 @@ public class NewItemService {
     }
 
 
+
+    /**
+     * 제품 중 상태가 complete 나 release 인 애들만 데려오기 - compare bom 용
+     * @return
+     */
+    public List<NewItem> readCompareBomItems() {
+
+        //1) 제품인 것 (상태가 complete, release 인 것만)
+
+        // 1-1 ) 제품 타입 데려오기
+        ItemType itemType1 = ItemType.프로덕트제품;
+        ItemType itemType2 = ItemType.파트제품;
+        ItemTypes productItemTypes1 = itemTypesRepository.findByItemType(itemType1);
+        ItemTypes productItemTypes2 = itemTypesRepository.findByItemType(itemType2);
+        List<ItemTypes> itemTypes = new ArrayList<>();
+        itemTypes.add(productItemTypes1);
+        itemTypes.add(productItemTypes2);
+
+        List<NewItem> itemListProduct = newItemRepository.findByItemTypes(itemTypes);
+
+        //1-2) 상태가 release 나 complete인 것만 최종 제품에 담을 예정
+        List<NewItem> finalProducts = new ArrayList<>();
+
+        for(NewItem newItem : itemListProduct){
+            if(
+                    routeOrderingRepository.findByNewItem(newItem).size()>0
+                            && (routeOrderingRepository.findByNewItem(newItem).get(
+                            routeOrderingRepository.findByNewItem(newItem).size()-1
+                    ).getLifecycleStatus().equals("COMPLETE") ||
+                            (routeOrderingRepository.findByNewItem(newItem).get(
+                                    routeOrderingRepository.findByNewItem(newItem).size()-1
+                            ).getLifecycleStatus().equals("RELEASE")
+                            )
+                    )
+            ){
+                finalProducts.add(newItem);
+            }
+        }
+
+        return finalProducts;
+    }
+
+
     /**
      * createDevelopmentCard 에서 쓰일 것
 
@@ -622,11 +666,8 @@ public class NewItemService {
 
                 );
 
-
                 // 06-25 newParentItemId 는
-                System.out.println("ㅅㅂㅂㅂㅂㅂㅂㅂㅂㅂㅂㅂㅂㅂㅂㅂㅂㅂ");
-                System.out.println(parentNewItem.getId());
-                System.out.println(children.getId());
+
                 Long newId = Long.parseLong((parentNewItem.getId().toString()+
                         children.getId().toString()));
 

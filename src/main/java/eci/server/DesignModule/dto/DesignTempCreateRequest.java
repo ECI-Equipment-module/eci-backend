@@ -63,14 +63,21 @@ public class DesignTempCreateRequest {
                     false, //임시저장은 readonly false //05-12 수정사항반영
 
                     req.attachments.stream().map(
+
                             i -> new DesignAttachment(
                                     i.getOriginalFilename(),
                                     attachmentTagRepository
                                             .findById(req.getTag().get(req.attachments.indexOf(i))).
                                             orElseThrow(AttachmentNotFoundException::new).getName(),
-                                    req.getAttachmentComment().get(req.attachments.indexOf(i)),
+                                    req.getAttachmentComment().isEmpty()?
+                                            "":
+                                            req.getAttachmentComment().
+                                                    get(req.attachments.indexOf(i)).
+                                                    isBlank()?"":
+                                                    req.getAttachmentComment().get(req.attachments.indexOf(i)),
                                     false
                             )
+
                     ).collect(
                             toList()
                     ),

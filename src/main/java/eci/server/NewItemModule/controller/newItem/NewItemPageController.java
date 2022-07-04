@@ -140,7 +140,31 @@ public class NewItemPageController {
 
 
         Page<NewItem> concatItemList = newItemRepository.findByNewItems(
-                newItemService.readBomItems(), pageRequest
+                newItemService.readDevBomItems(), pageRequest
+        );
+
+        return NewItemChildDto.toAddChildDtoList(concatItemList, newItemService);
+    }
+
+    /**
+     * compare bom 에서 아이템 찾을 때 (봄도 데려오기)
+     * @param pageRequest
+     * @return
+     */
+
+    @CrossOrigin(origins = "https://localhost:3000")
+    @GetMapping("compare/bom/items/page")
+    public Page<NewItemChildDto> compareBomItems(@PageableDefault(size=5)
+                                             @SortDefault.SortDefaults({
+                                                     @SortDefault(
+                                                             sort = "createdAt",
+                                                             direction = Sort.Direction.DESC)
+                                             })
+                                                     Pageable pageRequest) {
+
+
+        Page<NewItem> concatItemList = newItemRepository.findByNewItems(
+                newItemService.readCompareBomItems(), pageRequest
         );
 
         return NewItemChildDto.toAddChildDtoList(concatItemList, newItemService);
