@@ -27,7 +27,7 @@ public class Classification1 {
 
     @OneToMany(
             mappedBy = "classification1",
-            cascade = CascadeType.PERSIST,
+            cascade = CascadeType.ALL,
             orphanRemoval = true
     )
     private List<Classification2> classification2List;

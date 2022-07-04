@@ -7,6 +7,8 @@ import eci.server.DesignModule.entity.design.Design;
 import eci.server.ItemModule.dto.item.ItemDesignDto;
 import eci.server.ItemModule.dto.member.MemberDto;
 import eci.server.ItemModule.dto.newRoute.routeOrdering.RouteOrderingDto;
+import eci.server.ItemModule.entity.newRoute.RouteOrdering;
+import eci.server.ItemModule.entity.newRoute.RouteProduct;
 import eci.server.ItemModule.exception.route.RouteNotFoundException;
 import eci.server.ItemModule.repository.newRoute.RouteOrderingRepository;
 import eci.server.ItemModule.repository.newRoute.RouteProductRepository;
@@ -16,6 +18,7 @@ import lombok.Data;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import static java.util.stream.Collectors.toList;
@@ -47,8 +50,10 @@ public class DesignDto {
 
     private String designContent; //단순 시연용
 
+    private boolean preRejected;
 
     public static DesignDto toDto(
+            RouteOrdering routeOrdering,
             Design design,
             RouteOrderingRepository routeOrderingRepository,
             RouteProductRepository routeProductRepository,
@@ -98,9 +103,32 @@ public class DesignDto {
                 design.getTempsave(),
                 design.getReadonly(),
 
-                design.getDesignContent() //단순 시연용
+                design.getDesignContent(), //단순 시연용
 
-
+                DesignPreRejected(routeOrdering, routeProductRepository)
         );
     }
+
+
+    private static boolean DesignPreRejected(RouteOrdering routeOrdering,
+                                              RouteProductRepository routeProductRepository){
+
+        boolean preRejected = false;
+
+        List<RouteProduct> routeProductList =
+                routeProductRepository.findAllByRouteOrdering(routeOrdering);
+        if(!(routeOrdering.getPresent()==routeProductList.size())) {
+            RouteProduct currentRouteProduct =
+                    routeProductList.get(routeOrdering.getPresent());
+
+            if (Objects.equals(currentRouteProduct.getType().getModule(), "DESIGN") &&
+                    Objects.equals(currentRouteProduct.getType().getName(), "CREATE")) {
+                if (currentRouteProduct.isPreRejected()) {
+                    preRejected = true;
+                }
+            }
+        }
+        return preRejected;
+    }
+
 }

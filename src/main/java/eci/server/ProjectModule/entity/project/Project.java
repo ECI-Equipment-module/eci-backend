@@ -54,7 +54,7 @@ public class Project extends EntityDate {
     @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false)
+    @Column
     private String projectNumber;
     //save 할 시에 type + id 값으로 지정
 
@@ -95,13 +95,14 @@ public class Project extends EntityDate {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(
             name = "member_id",
-            nullable = false)
+    nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(
-            name = "modifier_id")
+            name = "modifier_id",
+            nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Member modifier;
 
@@ -118,12 +119,12 @@ public class Project extends EntityDate {
     private String clientItemNumber;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "projectType_id", nullable = false)
+    @JoinColumn(name = "projectType_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private ProjectType projectType;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "projectLevel_id", nullable = false)
+    @JoinColumn(name = "projectLevel_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private ProjectLevel projectLevel;
 
@@ -224,6 +225,8 @@ public class Project extends EntityDate {
 
         this.clientItemNumber = clientItemNumber;
 
+        this.modifier = member;
+
     }
 
 
@@ -319,6 +322,7 @@ public class Project extends EntityDate {
 
         this.clientItemNumber = clientItemNumber;
 
+        this.modifier = member;
     }
 
 
@@ -415,25 +419,25 @@ public class Project extends EntityDate {
 
         this.projectLevel =
                 req.getProjectLevelId() == null?
-                        this.projectLevel:
+                        null:
                         projectLevelRepository.findById(req.getProjectLevelId())
                                 .orElseThrow(ProjectLevelNotFoundException::new);
 
         this.clientOrganization =
                 req.getClientOrganizationId() == null?
-                        this.clientOrganization:
-                        clientOrganizationRepository.findById(2L)//req.getProjectLevelId())
+                        null:
+                        clientOrganizationRepository.findById(req.getClientOrganizationId())//req.getProjectLevelId())
                                 .orElseThrow(ClientOrganizationNotFoundException::new);
 
         this.produceOrganization =
                 req.getSupplierId() == null?
-                        this.produceOrganization:
+                        null:
                         produceOrganizationRepository.findById(req.getSupplierId())
                                 .orElseThrow(ProduceOrganizationNotFoundException::new);
 
         this.carType =
                 req.getCarType() == null?
-                        this.carType:
+                        null:
                         carTypeRepository.findById(req.getCarType())
                                 .orElseThrow(CarTypeNotFoundException::new);
 
@@ -633,6 +637,8 @@ public class Project extends EntityDate {
             MemberRepository memberRepository,
             AttachmentTagRepository attachmentTagRepository
     ) {
+
+        this.setModifiedAt(LocalDateTime.now());
 
         this.tempsave = true; //라우트 작성하기 전이니깐 !
         this.readonly = true; //0605- 이 부분하나가 변경, 이 것은 얘를 false 에서 true로 변경 !

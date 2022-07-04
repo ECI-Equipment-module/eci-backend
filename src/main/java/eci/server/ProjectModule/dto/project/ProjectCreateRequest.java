@@ -242,10 +242,10 @@ public class ProjectCreateRequest {
                                             orElseThrow(AttachmentNotFoundException::new).getName(),
                                     req.getAttachmentComment().isEmpty()?
                                             "":
-                                    req.getAttachmentComment().
-                                            get(req.attachments.indexOf(i)).
-                                            isBlank()?"":
-                                            req.getAttachmentComment().get(req.attachments.indexOf(i)),
+                                            req.getAttachmentComment().isEmpty()?
+                                                    "":req.getAttachmentComment().get(
+                                                    req.attachments.indexOf(i)
+                                            ),
                                     true
                             )
                     ).collect(
