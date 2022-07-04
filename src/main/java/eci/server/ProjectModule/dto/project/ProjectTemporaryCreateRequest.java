@@ -111,7 +111,7 @@ public class ProjectTemporaryCreateRequest  {
 
                         req.clientItemNumber,
 
-                        req.protoStartPeriod.isBlank() ? LocalDate.parse(LocalDate.now().format(formatter)) :
+                        req.protoStartPeriod.isBlank() ? LocalDate.parse(req.protoStartPeriod, DateTimeFormatter.ISO_DATE):
                                 LocalDate.parse(req.protoStartPeriod, DateTimeFormatter.ISO_DATE),
 
                         req.protoOverPeriod.toString().isBlank() ? LocalDate.parse(LocalDate.now().format(formatter)) :
@@ -135,7 +135,6 @@ public class ProjectTemporaryCreateRequest  {
                         req.sopOverPeriod.toString().isBlank() ? LocalDate.parse(LocalDate.now().format(formatter)) :
                                 LocalDate.parse(req.sopOverPeriod, DateTimeFormatter.ISO_DATE),
 
-
                         //아이템, 프로젝트 타입 등 객체를
                         // 지정하지 않았으면 어쩌지? 임시 객체들을 만들어둬야 하나
                         //-> 그리고 찐 저장 시 해당 객체들이면 제대로 된 객체 지정 경고방식?
@@ -153,17 +152,25 @@ public class ProjectTemporaryCreateRequest  {
 
                         false, //임시저장은 readonly false //05-12 수정사항반영
 
-                        projectTypeRepository.findById(projectTypeId)
+                        req.projectTypeId==null?null
+                                :projectTypeRepository.findById(projectTypeId)
                                 .orElseThrow(ProjectTypeNotFoundException::new),
 
-                        projectLevelRepository.findById(projectLevelId)
-                                .orElseThrow(ProjectLevelNotFoundException::new),
+                        req.projectLevelId==null?
+                                null:
+                                projectLevelRepository.findById(projectLevelId)
+                                        .orElseThrow(ProjectLevelNotFoundException::new),
 
-                        produceOrganizationRepository.findById(produceOrgId)
-                                .orElseThrow(ProduceOrganizationNotFoundException::new),
+                        req.supplierId==null?
+                                null
+                                :
+                                produceOrganizationRepository.findById(produceOrgId)
+                                        .orElseThrow(ProduceOrganizationNotFoundException::new),
 
-                        clientOrganizationRepository.findById(clientOrgId)
-                                .orElseThrow(ClientOrganizationNotFoundException::new),
+                        clientOrgId == null?null:
+                                clientOrganizationRepository.findById(clientOrgId)
+                                        .orElseThrow(ClientOrganizationNotFoundException::new),
+
 
                         req.attachments.stream().map(
                                 i -> new ProjectAttachment(
@@ -171,18 +178,19 @@ public class ProjectTemporaryCreateRequest  {
                                         attachmentTagRepository
                                                 .findById(req.getTag().get(req.attachments.indexOf(i))).
                                                 orElseThrow(AttachmentNotFoundException::new).getName(),
-                                        req.getAttachmentComment().get(req.attachments.indexOf(i)),
+                                        req.getAttachmentComment().size()>0?
+                                                req.getAttachmentComment().get(req.attachments.indexOf(i)):
+                                        "",
                                         false
                                 )
                         ).collect(
                                 toList()
                         ),
 
-                        //Project 생성자에 들이밀기
 
-                        carTypeRepository.findById(req.carTypeId)
-                                .orElseThrow(ClientOrganizationNotFoundException::new)
-
+                        carTypeId==null?null:
+                                carTypeRepository.findById(carTypeId)
+                                        .orElseThrow(CarTypeNotFoundException::new)
 //                    req.carType.toString().isBlank()?"":req.carType
 
                 );
@@ -201,28 +209,36 @@ public class ProjectTemporaryCreateRequest  {
                     req.clientItemNumber,
 
 
-                    req.protoStartPeriod == null || req.protoStartPeriod.isBlank() ? LocalDate.parse(LocalDate.now().format(formatter)) :
+                    req.protoStartPeriod == null || req.protoStartPeriod.isBlank() ?
+                            null :
                             LocalDate.parse(req.protoStartPeriod, DateTimeFormatter.ISO_DATE),
 
-                    req.protoOverPeriod == null || req.protoOverPeriod.isBlank() ? LocalDate.parse(LocalDate.now().format(formatter)) :
+                    req.protoOverPeriod == null || req.protoOverPeriod.isBlank() ?
+                            null :
                             LocalDate.parse(req.protoOverPeriod, DateTimeFormatter.ISO_DATE),
 
-                    req.p1StartPeriod ==null || req.p1StartPeriod.isBlank() ? LocalDate.parse(LocalDate.now().format(formatter)) :
+                    req.p1StartPeriod ==null || req.p1StartPeriod.isBlank() ?
+                            null :
                             LocalDate.parse(req.p1StartPeriod, DateTimeFormatter.ISO_DATE),
 
-                    req.p1OverPeriod==null || req.p1OverPeriod.isBlank() ? LocalDate.parse(LocalDate.now().format(formatter)) :
+                    req.p1OverPeriod==null || req.p1OverPeriod.isBlank() ?
+                            null :
                             LocalDate.parse(req.p1OverPeriod, DateTimeFormatter.ISO_DATE),
 
-                    req.p2StartPeriod ==null || req.p2StartPeriod.isBlank()  ? LocalDate.parse(LocalDate.now().format(formatter)) :
+                    req.p2StartPeriod ==null || req.p2StartPeriod.isBlank()  ?
+                            null :
                             LocalDate.parse(req.p2StartPeriod, DateTimeFormatter.ISO_DATE),
 
-                    req.p2OverPeriod == null || req.p2OverPeriod.isBlank() ? LocalDate.parse(LocalDate.now().format(formatter)) :
+                    req.p2OverPeriod == null || req.p2OverPeriod.isBlank() ?
+                            null :
                             LocalDate.parse(req.p2OverPeriod, DateTimeFormatter.ISO_DATE),
 
-                    req.sopStartPeriod== null || req.sopStartPeriod.isBlank() ? LocalDate.parse(LocalDate.now().format(formatter)) :
+                    req.sopStartPeriod== null || req.sopStartPeriod.isBlank() ?
+                            null :
                             LocalDate.parse(req.sopStartPeriod, DateTimeFormatter.ISO_DATE),
 
-                    req.sopOverPeriod==null || req.sopOverPeriod.isBlank() ? LocalDate.parse(LocalDate.now().format(formatter)) :
+                    req.sopOverPeriod==null || req.sopOverPeriod.isBlank() ?
+                            null :
                             LocalDate.parse(req.sopOverPeriod, DateTimeFormatter.ISO_DATE),
 
                     //아이템, 프로젝트 타입 등 객체를
@@ -240,29 +256,27 @@ public class ProjectTemporaryCreateRequest  {
                     true,
                     false,
 
-                    req.projectTypeId==null?projectTypeRepository.findById(99999L)
-                            .orElseThrow(ProjectTypeNotFoundException::new)
+                    req.projectTypeId==null?null
                             :projectTypeRepository.findById(projectTypeId)
                             .orElseThrow(ProjectTypeNotFoundException::new),
 
                     req.projectLevelId==null?
-                            projectLevelRepository.findById(99999L)
-                                    .orElseThrow(ProjectLevelNotFoundException::new):
+                            null:
                             projectLevelRepository.findById(projectLevelId)
                             .orElseThrow(ProjectLevelNotFoundException::new),
 
                     req.supplierId==null?
-                            produceOrganizationRepository.findById(99999L)
-                                    .orElseThrow(ProduceOrganizationNotFoundException::new)
+                            null
                             :
                             produceOrganizationRepository.findById(produceOrgId)
                             .orElseThrow(ProduceOrganizationNotFoundException::new),
 
+                    clientOrgId == null?null:
                     clientOrganizationRepository.findById(clientOrgId)
                             .orElseThrow(ClientOrganizationNotFoundException::new),
 
                     //Project 생성자에 들이밀기
-
+                    carTypeId==null?null:
                     carTypeRepository.findById(carTypeId)
                             .orElseThrow(CarTypeNotFoundException::new)
 

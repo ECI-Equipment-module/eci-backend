@@ -985,9 +985,7 @@ public class NewItem extends EntityDate {
 
         }
 
-        System.out.println(this.getModifiedAt());
         this.setModifiedAt(LocalDateTime.now());
-        System.out.println(this.getModifiedAt());
 
         return fileUpdatedResult;
 
@@ -1184,6 +1182,8 @@ public class NewItem extends EntityDate {
                     new NewItemFileUpdatedResult(resultAttachment, null);
 
         }
+        this.setModifiedAt(LocalDateTime.now());
+
         return fileUpdatedResult;
     }
 

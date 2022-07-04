@@ -111,8 +111,8 @@ public class ProjectDto {
         return new ProjectDto(
                 project.getId(),
                 project.getName(),
-                project.getProjectNumber(),
-                project.getClientItemNumber(),
+                project.getProjectNumber()==null?"":project.getProjectNumber(),
+                project.getClientItemNumber()==null?"":project.getClientItemNumber(),
 
                 project.getProtoStartPeriod(),
                 project.getProtoOverPeriod(),
@@ -132,12 +132,12 @@ public class ProjectDto {
                         ),
                 MemberDto.toDto(project.getMember(),defaultImageAddress),
 
-                ProjectTypeDto.toDto(project.getProjectType()),
-                ProjectLevelDto.toDto(project.getProjectLevel()),
-                project.getProduceOrganization()==null?null:ProduceOrganizationDto.toDto(project.getProduceOrganization()),
-                project.getClientOrganization()==null?null:ClientOrganizationDto.toDto(project.getClientOrganization()),
+                project.getProjectType()==null?ProjectTypeDto.toDto():ProjectTypeDto.toDto(project.getProjectType()),
+                project.getProjectLevel()==null?ProjectLevelDto.toDto():ProjectLevelDto.toDto(project.getProjectLevel()),
+                project.getProduceOrganization()==null?ProduceOrganizationDto.toDto():ProduceOrganizationDto.toDto(project.getProduceOrganization()),
+                project.getClientOrganization()==null?ClientOrganizationDto.toDto():ClientOrganizationDto.toDto(project.getClientOrganization()),
 
-                CarTypeDto.toDto(project.getCarType()),
+                project.getCarType()==null?CarTypeDto.toDto():CarTypeDto.toDto(project.getCarType()),
 
                 project.getProjectAttachments().
                         stream().
