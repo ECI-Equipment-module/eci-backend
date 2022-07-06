@@ -10,6 +10,7 @@ import eci.server.BomModule.repository.DevelopmentBomRepository;
 import eci.server.ItemModule.entity.newRoute.RouteOrdering;
 import eci.server.ItemModule.exception.item.ItemNotFoundException;
 import eci.server.ItemModule.repository.newRoute.RouteOrderingRepository;
+import eci.server.ItemModule.repository.newRoute.RouteProductRepository;
 import eci.server.NewItemModule.dto.TempNewItemChildDto;
 import eci.server.NewItemModule.entity.NewItem;
 import eci.server.NewItemModule.entity.TempNewItemParentChildren;
@@ -34,6 +35,7 @@ public class DevelopmentBomService {
     private final NewItemRepository newItemRepository;
     private final TempNewItemParentChildrenRepository tempNewItemParentChildrenRepository;
     private final RouteOrderingRepository routeOrderingRepository;
+    private final RouteProductRepository routeProductRepository;
 
 
 
@@ -49,12 +51,17 @@ public class DevelopmentBomService {
 
         List<TempNewItemChildDto> children = newItemService.readDevChildAll(newItem.getId());
 
-        Long routeId = routeOrderingRepository.findByNewItem(newItem).get(routeOrdering.size() - 1).getId();
+        RouteOrdering targetRouteOrdering = routeOrderingRepository.findByNewItem(newItem).get(routeOrdering.size() - 1);
+        Long routeId = targetRouteOrdering.getId();
 
         TempNewItemChildDto devBom = TempNewItemChildDto
-                .toDevelopmentBomDto(newItem, children, routeId);
-
-
+                .toDevelopmentBomDto(
+                        targetRouteOrdering,
+                        routeProductRepository ,
+                        newItem,
+                        children,
+                        routeId
+                        );
 
         return new DevelopmentReadDto(
                 devBom,
