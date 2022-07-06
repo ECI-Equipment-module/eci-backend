@@ -29,7 +29,8 @@ public class ExceptionController {
          */
         if (!tokenService.validateAccessToken(accessToken)) {
             System.out.println("액세스가 만료");
-            throw new AccessExpiredException();
+            //throw new AccessExpiredException();
+            throw new AuthenticationEntryPointException();
         }
         System.out.println("액세스 만료가 아니라 리프레시 에러야 이거는  ");
         throw new AuthenticationEntryPointException();
