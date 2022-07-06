@@ -6,6 +6,8 @@ import eci.server.BomModule.repository.PreliminaryBomRepository;
 import eci.server.ItemModule.dto.item.ItemProjectDto;
 import eci.server.ItemModule.dto.member.MemberDto;
 import eci.server.ItemModule.dto.newRoute.routeOrdering.RouteOrderingDto;
+import eci.server.ItemModule.entity.newRoute.RouteOrdering;
+import eci.server.ItemModule.entity.newRoute.RouteProduct;
 import eci.server.ItemModule.exception.route.RouteNotFoundException;
 import eci.server.ItemModule.repository.newRoute.RouteOrderingRepository;
 import eci.server.ItemModule.repository.newRoute.RouteProductRepository;
@@ -23,6 +25,7 @@ import lombok.Data;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import static java.util.stream.Collectors.toList;
@@ -86,10 +89,13 @@ public class ProjectDto {
     private Boolean tempsave;
     private boolean readonly;
 
+    private boolean preRejected;
+
 
 
     public static ProjectDto toDto(
             Project project,
+            RouteOrdering routeOrdering,
             RouteOrderingRepository routeOrderingRepository,
             RouteProductRepository routeProductRepository,
             BomRepository bomRepository,
@@ -111,8 +117,8 @@ public class ProjectDto {
         return new ProjectDto(
                 project.getId(),
                 project.getName(),
-                project.getProjectNumber(),
-                project.getClientItemNumber(),
+                project.getProjectNumber()==null?"":project.getProjectNumber(),
+                project.getClientItemNumber()==null?"":project.getClientItemNumber(),
 
                 project.getProtoStartPeriod(),
                 project.getProtoOverPeriod(),
@@ -132,12 +138,12 @@ public class ProjectDto {
                         ),
                 MemberDto.toDto(project.getMember(),defaultImageAddress),
 
-                ProjectTypeDto.toDto(project.getProjectType()),
-                ProjectLevelDto.toDto(project.getProjectLevel()),
-                project.getProduceOrganization()==null?null:ProduceOrganizationDto.toDto(project.getProduceOrganization()),
-                project.getClientOrganization()==null?null:ClientOrganizationDto.toDto(project.getClientOrganization()),
+                project.getProjectType()==null?ProjectTypeDto.toDto():ProjectTypeDto.toDto(project.getProjectType()),
+                project.getProjectLevel()==null?ProjectLevelDto.toDto():ProjectLevelDto.toDto(project.getProjectLevel()),
+                project.getProduceOrganization()==null?ProduceOrganizationDto.toDto():ProduceOrganizationDto.toDto(project.getProduceOrganization()),
+                project.getClientOrganization()==null?ClientOrganizationDto.toDto():ClientOrganizationDto.toDto(project.getClientOrganization()),
 
-                CarTypeDto.toDto(project.getCarType()),
+                project.getCarType()==null?CarTypeDto.toDto():CarTypeDto.toDto(project.getCarType()),
 
                 project.getProjectAttachments().
                         stream().
@@ -161,9 +167,32 @@ public class ProjectDto {
                 project.getModifier()==null?null:MemberDto.toDto(project.getModifier(), defaultImageAddress),
 
                 project.getTempsave(),
-                project.getReadonly()
+                project.getReadonly(),
 
+                ProjectPreRejected(routeOrdering ,routeProductRepository)
 
         );
+    }
+
+
+    private static boolean ProjectPreRejected(RouteOrdering routeOrdering,
+                                           RouteProductRepository routeProductRepository){
+
+        boolean preRejected = false;
+
+        List<RouteProduct> routeProductList =
+                routeProductRepository.findAllByRouteOrdering(routeOrdering);
+        if(!(routeOrdering.getPresent()==routeProductList.size())) {
+            RouteProduct currentRouteProduct =
+                    routeProductList.get(routeOrdering.getPresent());
+
+            if (Objects.equals(currentRouteProduct.getType().getModule(), "PROJECT") &&
+                    Objects.equals(currentRouteProduct.getType().getName(), "CREATE")) {
+                if (currentRouteProduct.isPreRejected()) {
+                    preRejected = true;
+                }
+            }
+        }
+        return preRejected;
     }
 }

@@ -352,7 +352,14 @@ public class NewItemDetailDto {
         );
     }
 
-
+    /**
+     * temp 아이템 읽을 때 사용하는 것
+     * @param Item
+     * @param routeProductRepository
+     * @param attachmentTagRepository
+     * @param defaultImageAddress
+     * @return
+     */
     public static NewItemDetailDto noRoutetoDto( //edit 창인 애들 불러올 때
             NewItem Item,
             //NewItemMakerRepository newItemMakerRepository,

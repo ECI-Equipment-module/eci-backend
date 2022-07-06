@@ -17,6 +17,7 @@ import eci.server.ItemModule.entity.item.ItemType;
 import eci.server.ItemModule.entity.newRoute.RouteOrdering;
 import eci.server.ItemModule.entity.newRoute.RoutePreset;
 import eci.server.ItemModule.entity.newRoute.RouteProduct;
+import eci.server.ItemModule.exception.item.ItemNotFoundException;
 import eci.server.ItemModule.exception.member.MemberNotFoundException;
 import eci.server.ItemModule.exception.route.RouteNotFoundException;
 import eci.server.ItemModule.exception.route.UpdateImpossibleException;
@@ -153,67 +154,79 @@ public class RouteOrderingService {
             System.out.println(routeProduct1.getMembers().get(0).getRouteProduct());
         }
 
-        //봄 생성
-        Bom bom = bomRepository.save(
-                new Bom(
-                        newRoute.getNewItem(),
-                        memberRepository.findById(req.getMemberId()).orElseThrow(MemberNotFoundException::new)
+        String itemTypeName = (newItemRepository.findById(newRoute.getNewItem().getId()).
+                orElseThrow(ItemNotFoundException::new)
+        ).getItemTypes().getItemType().name();
+
+        if(
+                !(
+                        itemTypeName.equals("원재료")
+                                    ||
+                                itemTypeName.equals("단순외주구매품")
                 )
-        );
-        //프릴리미너리 봄 생성
-        PreliminaryBom preliminaryBom = preliminaryBomRepository.save(
-                new PreliminaryBom(
-                        bom
-                )
-        );
 
-        NewItem newItem = preliminaryBom.getBom().getNewItem();
+        ) {
+            //봄 생성
+            Bom bom = bomRepository.save(
+                    new Bom(
+                            newRoute.getNewItem(),
+                            memberRepository.findById(req.getMemberId()).orElseThrow(MemberNotFoundException::new)
+                    )
+            );
+            //프릴리미너리 봄 생성
+            PreliminaryBom preliminaryBom = preliminaryBomRepository.save(
+                    new PreliminaryBom(
+                            bom
+                    )
+            );
 
-        // 06-11 태초에 기본 프릴리머리가 있었다
+            NewItem newItem = preliminaryBom.getBom().getNewItem();
 
-        String initPreliminary = "{" +
+            // 06-11 태초에 기본 프릴리머리가 있었다
 
-                "\"cardNumber\":\""+ newItem.getItemNumber() +"\","+
-                "\"cardName\": \""+ newItem.getName() +"\","+
-                "\"classification\": \"" + newItem.getClassification().getClassification1().getName().toString()
-                +"/" + newItem.getClassification().getClassification2().getName().toString()+
-                ( newItem.getClassification().getClassification3().getId().equals(99999L)?
-                        "":
-                        "/" + newItem.getClassification().getClassification3().getName()
-                )
-                + "\","+
-                "\"cardType\": \"" + newItem.getItemTypes().getItemType().name() +"\"," +
-                "\"sharing\": \"" + (newItem.isSharing() ?"공용":"전용") +"\"," +
-                "\"preliminaryBomId\": "+ preliminaryBom.getId() +"," +
-                "\"children\": []" +
-                "}"
-                ;
+            String initPreliminary = "{" +
 
-        JsonSave initialJsonSave = jsonSaveRepository.save(
-                new JsonSave(
-                        initPreliminary,
-                        preliminaryBom
-                )
-        );
+                    "\"cardNumber\":\"" + newItem.getItemNumber() + "\"," +
+                    "\"cardName\": \"" + newItem.getName() + "\"," +
+                    "\"classification\": \"" + newItem.getClassification().getClassification1().getName().toString()
+                    + "/" + newItem.getClassification().getClassification2().getName().toString() +
+                    (newItem.getClassification().getClassification3().getId().equals(99999L) ?
+                            "" :
+                            "/" + newItem.getClassification().getClassification3().getName()
+                    )
+                    + "\"," +
+                    "\"cardType\": \"" + newItem.getItemTypes().getItemType().name() + "\"," +
+                    "\"sharing\": \"" + (newItem.isSharing() ? "공용" : "전용") + "\"," +
+                    "\"preliminaryBomId\": " + preliminaryBom.getId() + "," +
+                    "\"children\": []" +
+                    "}";
 
-        DevelopmentBom developmentBom = developmentBomRepository.save(
-                new DevelopmentBom(
-                        bom
-                )
-        );
+            JsonSave initialJsonSave = jsonSaveRepository.save(
+                    new JsonSave(
+                            initPreliminary,
+                            preliminaryBom
+                    )
+            );
 
-        CompareBom compareBom = compareBomRepository.save(
-                new CompareBom(
-                        bom
-                )
-        );
+            DevelopmentBom developmentBom = developmentBomRepository.save(
+                    new DevelopmentBom(
+                            bom
+                    )
+            );
 
+            CompareBom compareBom = compareBomRepository.save(
+                    new CompareBom(
+                            bom
+                    )
+            );
 
+            newRoute.setBom(bom);
+        }
         newRoute.getNewItem().updateTempsaveWhenMadeRoute();
         //라우트 만들면 임시저장 해제
 
         //0607 BOM + PRELIMINARY BOM 생성되게 하기
-        newRoute.setBom(bom);
+
 
         return new RouteOrderingCreateResponse(newRoute.getId());
     }

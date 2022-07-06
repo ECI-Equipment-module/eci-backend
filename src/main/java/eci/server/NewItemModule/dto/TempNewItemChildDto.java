@@ -1,6 +1,9 @@
 package eci.server.NewItemModule.dto;
 
+import eci.server.ItemModule.entity.newRoute.RouteOrdering;
+import eci.server.ItemModule.entity.newRoute.RouteProduct;
 import eci.server.ItemModule.exception.item.ItemNotFoundException;
+import eci.server.ItemModule.repository.newRoute.RouteProductRepository;
 import eci.server.NewItemModule.entity.NewItem;
 import eci.server.NewItemModule.entity.TempNewItemParentChildren;
 import eci.server.NewItemModule.repository.TempNewItemParentChildrenRepository;
@@ -9,9 +12,11 @@ import eci.server.NewItemModule.repository.item.NewItemRepository;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.boot.autoconfigure.amqp.RabbitTemplateConfigurer;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Data
@@ -30,8 +35,11 @@ public class TempNewItemChildDto {
     private List<TempNewItemChildDto> children;
     private boolean gray;
     //private Long routeId;
+    private boolean preRejected;
 
     public static TempNewItemChildDto toDevelopmentBomDto(
+            RouteOrdering routeOrdering,
+            RouteProductRepository routeProductRepository,
             NewItem newItem,
             List<TempNewItemChildDto> children,
             Long routeId
@@ -50,8 +58,9 @@ public class TempNewItemChildDto {
                 newItem.isSharing()?"공용":"전용",
                 true,
                 children,
-                true // 최상위 아이템은 항상 cad 에서 데려온 것이니
+                true, // 최상위 아이템은 항상 cad 에서 데려온 것이니
                 //routeId
+                DevPreRejected(routeOrdering, routeProductRepository)
 
         );
     }
@@ -93,7 +102,8 @@ public class TempNewItemChildDto {
                                 )
                                 :new ArrayList<>(),
 
-                        newItemParentChildrenRepository.findByParentAndChildren(parent, c.getChildren()).isGray()
+                        newItemParentChildrenRepository.findByParentAndChildren(parent, c.getChildren()).isGray(),
+                        false//preRejected 는 부모한테나 표현되면 되기 때문
 
                 )
         )
@@ -173,5 +183,28 @@ public class TempNewItemChildDto {
 //        return itemProductList;
 //
 //    }
+
+    private static boolean DevPreRejected(RouteOrdering routeOrdering,
+                                             RouteProductRepository routeProductRepository){
+
+        boolean preRejected = false;
+
+        List<RouteProduct> routeProductList =
+                routeProductRepository.findAllByRouteOrdering(routeOrdering);
+
+        if(!(routeOrdering.getPresent()==routeProductList.size())) {
+            RouteProduct currentRouteProduct =
+                    routeProductList.get(routeOrdering.getPresent());
+
+            if (Objects.equals(currentRouteProduct.getType().getModule(), "BOM") &&
+                    Objects.equals(currentRouteProduct.getType().getName(), "CREATE")) {
+
+                if (currentRouteProduct.isPreRejected()) {
+                    preRejected = true;
+                }
+            }
+        }
+        return preRejected;
+    }
 
 }

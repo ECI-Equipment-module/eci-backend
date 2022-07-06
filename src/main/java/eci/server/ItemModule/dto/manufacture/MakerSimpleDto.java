@@ -22,7 +22,7 @@ public class MakerSimpleDto {
 
     public static MakerSimpleDto toDto() {
         return new MakerSimpleDto(
-                99999L,
+                -1L,
                 "-1",
                 "NONE");
     }

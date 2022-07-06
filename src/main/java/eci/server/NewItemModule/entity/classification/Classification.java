@@ -42,4 +42,5 @@ public class Classification {
         this.classification2 = classification2;
         this.classification3 = classification3;
     }
+
 }

@@ -102,6 +102,7 @@ public class Design extends EntityDate {
         this.member = member;
         this.tempsave = tempsave;
         this.readonly = readonly;
+        this.modifier = member;
         this.designContent = designContent; // 단순 시연용
     }
 
@@ -115,6 +116,8 @@ public class Design extends EntityDate {
     ) {
         this.newItem = item;
         this.member = member;
+
+        this.modifier = member;
 
         this.tempsave = tempsave;
         this.readonly = readonly;
@@ -148,6 +151,8 @@ public class Design extends EntityDate {
         this.designAttachments = new ArrayList<>();
         addDesignAttachments(designAttachments);
 
+        this.modifier = member;
+
         this.designContent = designContent; //단순 시연용
 
     }
@@ -166,6 +171,8 @@ public class Design extends EntityDate {
 
         this.tempsave = tempsave;
         this.readonly = readonly;
+
+        this.modifier = member;
 
         this.designAttachments = new ArrayList<>();
         addDesignAttachments(designAttachments);

@@ -10,7 +10,6 @@ import eci.server.DashBoardModule.dto.myProject.TotalProject;
 import eci.server.DashBoardModule.dto.projectTodo.TodoResponse;
 import eci.server.DesignModule.entity.design.Design;
 import eci.server.DesignModule.repository.DesignRepository;
-//import eci.server.ItemModule.entity.item.Item;
 import eci.server.ItemModule.entity.member.Member;
 import eci.server.ItemModule.entity.newRoute.RouteOrdering;
 import eci.server.ItemModule.entity.newRoute.RouteProduct;
@@ -29,7 +28,6 @@ import eci.server.config.guard.AuthHelper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.RouteMatcher;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -825,15 +823,16 @@ public class DashboardService {
             ) {
 
                 Bom targetBom = routeProduct.getBom();
-
-                rejectedDesignTodoResponses.add(
-                        new TodoResponse(
-                                targetBom.getId(),
-                                targetBom.getNewItem().getName(),
-                                targetBom.getNewItem().getItemTypes().getItemType().toString(),
-                                targetBom.getNewItem().getItemNumber()
-                        )
-                );
+                if(targetBom!=null) {
+                    rejectedDesignTodoResponses.add(
+                            new TodoResponse(
+                                    targetBom.getId(),
+                                    targetBom.getNewItem().getName(),
+                                    targetBom.getNewItem().getItemTypes().getItemType().toString(),
+                                    targetBom.getNewItem().getItemNumber()
+                            )
+                    );
+                }
             }
         }
         List<TodoResponse> REJECTED = new ArrayList<>(rejectedDesignTodoResponses);
