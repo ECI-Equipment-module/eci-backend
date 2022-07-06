@@ -825,15 +825,16 @@ public class DashboardService {
             ) {
 
                 Bom targetBom = routeProduct.getBom();
-
-                rejectedDesignTodoResponses.add(
-                        new TodoResponse(
-                                targetBom.getId(),
-                                targetBom.getNewItem().getName(),
-                                targetBom.getNewItem().getItemTypes().getItemType().toString(),
-                                targetBom.getNewItem().getItemNumber()
-                        )
-                );
+                if(targetBom!=null) {
+                    rejectedDesignTodoResponses.add(
+                            new TodoResponse(
+                                    targetBom.getId(),
+                                    targetBom.getNewItem().getName(),
+                                    targetBom.getNewItem().getItemTypes().getItemType().toString(),
+                                    targetBom.getNewItem().getItemNumber()
+                            )
+                    );
+                }
             }
         }
         List<TodoResponse> REJECTED = new ArrayList<>(rejectedDesignTodoResponses);
