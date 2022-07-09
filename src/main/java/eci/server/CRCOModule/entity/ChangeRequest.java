@@ -42,9 +42,7 @@ public class ChangeRequest extends EntityDate {
     @SequenceGenerator(name="SEQUENCE3", sequenceName="SEQUENCE3", allocationSize=1)
     private Long id;
 
-    @Column(nullable = false)
-    @JoinColumn(name = "projectLevel_id")
-    @OnDelete(action = OnDeleteAction.CASCADE)
+    @Column
     private String crNumber;
 
     @ManyToOne(fetch = FetchType.LAZY)

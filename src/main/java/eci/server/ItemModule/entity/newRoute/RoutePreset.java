@@ -241,13 +241,13 @@ public String[][] routeByItemName = {
     public String[][] CORouteType = {
 
 
-            {"REQUEST", "APPROVE", "CREATE","CONFIRM"},
+            {"REQUEST", "APPROVE", "CREATE","CONFIRM", "COMPLETE"},
 
     };
 
     public String[][] CORouteTypeModule = {
 
-            {"CO" , "CO" , "CO" , "CO" }
+            {"CO" , "CO" , "CO" , "CO", "CO" }
 
     };
 }

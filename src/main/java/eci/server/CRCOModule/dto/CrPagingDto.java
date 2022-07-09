@@ -1,11 +1,14 @@
 package eci.server.CRCOModule.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import eci.server.CRCOModule.dto.featuresdtos.CrImportanceDto;
 import eci.server.CRCOModule.dto.featuresdtos.CrReasonDto;
+import eci.server.CRCOModule.dto.featuresdtos.CrSourceDto;
 import eci.server.CRCOModule.entity.ChangeRequest;
-import eci.server.CRCOModule.entity.features.CrReason;
+import eci.server.CRCOModule.entity.features.CrImportance;
+import eci.server.CRCOModule.entity.features.CrSource;
+import eci.server.ItemModule.dto.member.MemberDto;
 import eci.server.ItemModule.repository.newRoute.RouteOrderingRepository;
-import eci.server.NewItemModule.dto.classification.ClassificationDto;
 import eci.server.NewItemModule.dto.newItem.ItemClassificationDto;
 import eci.server.NewItemModule.entity.NewItem;
 import lombok.AllArgsConstructor;
@@ -32,15 +35,22 @@ public class CrPagingDto {
     private String crNumber;
     private String crType;
     private CrReasonDto crReason;
+    private CrImportanceDto crImportance;
+    private CrSourceDto crSource;
+    private String crName;
+    private MemberDto member;
+
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime createdAt;
 
 
-    public static CrPagingDto toDto(
-            NewItem Item, RouteOrderingRepository routeOrderingRepository, ChangeRequest changeRequest
-    ) {
 
-        System.out.println(routeOrderingRepository);
+    public static CrPagingDto toDto(
+            NewItem Item,
+            RouteOrderingRepository routeOrderingRepository,
+            ChangeRequest changeRequest,
+            String defaultImageAddress
+    ) {
 
         return new CrPagingDto(
                 Item.getId(),
@@ -57,14 +67,16 @@ public class CrPagingDto {
                 ),
 
 
-//                routeOrderingRepository.findByNewItem(Item).get(
-//                        routeOrderingRepository.findByNewItem(Item).size() - 1
-//                ).getLifecycleStatus(),
-                "COMPLETE",
-
+                routeOrderingRepository.findByNewItem(Item).get(
+                        routeOrderingRepository.findByNewItem(Item).size() - 1
+                ).getLifecycleStatus(),
                 changeRequest.getCrNumber(),
                 "FAST TRACK",
                 CrReasonDto.toDto(changeRequest.getCrReason()),
+                CrImportanceDto.toDto(changeRequest.getCrImportance()),
+                CrSourceDto.toDto(changeRequest.getCrSource()),
+                changeRequest.getName(),
+                MemberDto.toDto(changeRequest.getMember(), defaultImageAddress),
                 changeRequest.getCreatedAt()
         );
     }

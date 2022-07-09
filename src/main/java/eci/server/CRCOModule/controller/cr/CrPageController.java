@@ -6,6 +6,7 @@ import eci.server.CRCOModule.repository.cr.ChangeRequestRepository;
 import eci.server.ItemModule.repository.newRoute.RouteOrderingRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -29,7 +30,10 @@ public class CrPageController {
 
     @Autowired
     ChangeRequestRepository changeRequestRepository;
-    RouteOrderingRepository routeOrderingRepository;
+    private final RouteOrderingRepository routeOrderingRepository;
+    @Value("${default.image.address}")
+    private String defaultImageAddress;
+
     @CrossOrigin(origins = "https://localhost:3000")
     @GetMapping("/cr/page")
     public Page<CrPagingDto> readCrPages(@PageableDefault(size=5)
@@ -50,7 +54,8 @@ public class CrPageController {
         Page<ChangeRequest> crList = new PageImpl<>(crs);
 
         return crList.map(
-                cr -> CrPagingDto.toDto(cr.getNewItem(), routeOrderingRepository, cr)
+                cr -> CrPagingDto.toDto(
+                        cr.getNewItem(), routeOrderingRepository, cr, defaultImageAddress)
         );
 
     }
