@@ -61,7 +61,7 @@ public class CrPagingDto {
                 new ItemClassificationDto(Item.getClassification().getClassification1().getName() + "/"
                         + Item.getClassification().getClassification2().getName() + "/"
                         + (Item.getClassification().getClassification3().getId().equals(99999L) ?
-                        "" :
+                        " " :
                         "/" + Item.getClassification().getClassification3().getName()
                 )
                 ),

@@ -5,18 +5,24 @@ import eci.server.BomModule.repository.PreliminaryBomRepository;
 import eci.server.CRCOModule.dto.CrCreateRequest;
 import eci.server.CRCOModule.dto.CrReadDto;
 import eci.server.CRCOModule.dto.CrTempCreateRequest;
+import eci.server.CRCOModule.dto.CrUpdateRequest;
 import eci.server.CRCOModule.entity.ChangeRequest;
 import eci.server.CRCOModule.entity.CrAttachment;
 import eci.server.CRCOModule.entity.features.CrImportance;
 import eci.server.CRCOModule.entity.features.CrReason;
 import eci.server.CRCOModule.exception.CrNotFoundException;
+import eci.server.CRCOModule.exception.CrUpdateImpossibleException;
+import eci.server.CRCOModule.repository.CrAttachmentRepository;
 import eci.server.CRCOModule.repository.cr.ChangeRequestRepository;
 import eci.server.CRCOModule.repository.features.CrImportanceRepository;
 import eci.server.CRCOModule.repository.features.CrReasonRepository;
 import eci.server.CRCOModule.repository.features.CrSourceRepository;
+import eci.server.DesignModule.dto.DesignCreateUpdateResponse;
+import eci.server.ItemModule.dto.item.ItemUpdateResponse;
 import eci.server.ItemModule.dto.newRoute.routeOrdering.RouteOrderingDto;
 import eci.server.ItemModule.entity.newRoute.RouteOrdering;
 import eci.server.ItemModule.exception.item.ItemNotFoundException;
+import eci.server.ItemModule.exception.item.ItemUpdateImpossibleException;
 import eci.server.ItemModule.exception.route.RouteNotFoundException;
 import eci.server.ItemModule.repository.member.MemberRepository;
 import eci.server.ItemModule.repository.newRoute.RouteOrderingRepository;
@@ -24,13 +30,17 @@ import eci.server.ItemModule.repository.newRoute.RouteProductRepository;
 import eci.server.ItemModule.service.file.FileService;
 import eci.server.NewItemModule.dto.newItem.create.NewItemCreateResponse;
 
+import eci.server.NewItemModule.dto.newItem.update.NewItemUpdateRequest;
 import eci.server.NewItemModule.entity.NewItem;
 import eci.server.NewItemModule.repository.attachment.AttachmentTagRepository;
 import eci.server.NewItemModule.repository.item.NewItemRepository;
 import eci.server.ProjectModule.dto.project.ProjectDto;
+import eci.server.ProjectModule.dto.project.ProjectTempCreateUpdateResponse;
+import eci.server.ProjectModule.dto.project.ProjectUpdateRequest;
 import eci.server.ProjectModule.entity.project.Project;
 import eci.server.ProjectModule.entity.projectAttachment.ProjectAttachment;
 import eci.server.ProjectModule.exception.ProjectNotFoundException;
+import eci.server.ProjectModule.exception.ProjectUpdateImpossibleException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -58,7 +68,7 @@ public class CrService {
     private final RouteProductRepository routeProductRepository;
     private final BomRepository bomRepository;
     private final PreliminaryBomRepository preliminaryBomRepository;
-
+    private final CrAttachmentRepository crAttachmentRepository;
     @Value("${default.image.address}")
     private String defaultImageAddress;
 
@@ -193,6 +203,98 @@ public class CrService {
         ChangeRequest changeRequest = changeRequestRepository.findById(id).orElseThrow(CrNotFoundException::new);
 
         changeRequestRepository.delete(changeRequest);
+    }
+
+
+    @Transactional
+    public ProjectTempCreateUpdateResponse update(Long id, CrUpdateRequest req) {
+
+        ChangeRequest cr=
+                changeRequestRepository.findById(id).orElseThrow(CrNotFoundException::new);
+
+        if (!cr.isTempsave()) { //true면 임시저장 상태, false면 찐 저장 상태
+            //찐 저장 상태라면 UPDATE 불가, 임시저장 일때만 가능
+            throw new CrUpdateImpossibleException();
+        }
+
+        ChangeRequest.FileUpdatedResult result = cr.update(
+                req,
+                newItemRepository,
+                crReasonRepository,
+                crImportanceRepository,
+                crSourceRepository,
+                memberRepository,
+                attachmentTagRepository
+        );
+
+        uploadAttachments(
+                result.getAttachmentUpdatedResult().getAddedAttachments(),
+                result.getAttachmentUpdatedResult().getAddedAttachmentFiles()
+        );
+        deleteAttachments(
+                result.getAttachmentUpdatedResult().getDeletedAttachments()
+        );
+        return new ProjectTempCreateUpdateResponse(id);
+
+    }
+
+
+    @Transactional
+    public DesignCreateUpdateResponse tempEnd(
+            Long id, CrUpdateRequest req) {
+
+        ChangeRequest cr=
+                changeRequestRepository.findById(id).orElseThrow(CrNotFoundException::new);
+
+        if (!cr.isTempsave() || cr.isReadonly()) {
+            //tempsave가 false면 찐 저장 상태
+            //찐 저장 상태라면 UPDATE 불가, 임시저장 일때만 가능
+            //readonly가 true라면 수정 불가상태
+            throw new CrUpdateImpossibleException();
+        }
+
+        ChangeRequest.FileUpdatedResult result = cr.tempEnd(
+                req,
+                newItemRepository,
+                crReasonRepository,
+                crImportanceRepository,
+                crSourceRepository,
+                memberRepository,
+                attachmentTagRepository
+        );
+
+
+
+        uploadAttachments(
+                result.getAttachmentUpdatedResult().getAddedAttachments(),
+                result.getAttachmentUpdatedResult().getAddedAttachmentFiles()
+        );
+        deleteAttachments(
+                result.getAttachmentUpdatedResult().getDeletedAttachments()
+        );
+        Long routeId = -1L;
+        if(routeOrderingRepository.findByChangeRequest(cr).size()>0) {
+            List<RouteOrdering> routeOrdering = routeOrderingRepository.findByChangeRequest(cr);
+            routeId = routeOrderingRepository.findByChangeRequest(cr).get(routeOrdering.size() - 1).getId();
+
+            RouteOrdering setRoute =
+                    routeOrderingRepository.findById(routeId).orElseThrow(RouteNotFoundException::new);
+
+            setRoute.setChangeRequest(cr);
+        }
+        saveTrueAttachment(cr);
+        /////////////////////////////////////////////////////////////////////////
+
+        return new DesignCreateUpdateResponse(id, routeId);
+
+    }
+
+    private void saveTrueAttachment(ChangeRequest target) {
+        crAttachmentRepository.findByChangeRequest(target).
+                forEach(
+                        i->i.setSave(true)
+                );
+
     }
 
 }

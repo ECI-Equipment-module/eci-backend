@@ -75,7 +75,6 @@ public class ChangeRequest extends EntityDate {
     @JoinColumn(name = "new_item_id")
     private NewItem newItem;
 
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(
             name = "member_id",
@@ -101,6 +100,12 @@ public class ChangeRequest extends EntityDate {
             orphanRemoval = true
     )
     private List<CrAttachment> attachments;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(
+            name = "change_order_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private ChangeOrder changeOrder;
 
     /**
      * attachment 존재 시 생성자
@@ -133,6 +138,7 @@ public class ChangeRequest extends EntityDate {
     ){
         this.name = name;
         this.crNumber = crNumber;
+
         this.crReason = crReason;
         this.crImportance = crImportance;
         this.crSource = crSource;
@@ -180,6 +186,7 @@ public class ChangeRequest extends EntityDate {
     ){
         this.name = name;
         this.crNumber = crNumber;
+
         this.crReason = crReason;
         this.crImportance = crImportance;
         this.crSource = crSource;
@@ -226,7 +233,7 @@ public class ChangeRequest extends EntityDate {
                     //
                     i.setAttach_comment(
                             req.getAddedAttachmentComment().size()==0?
-                                    "":req.getAddedAttachmentComment().get(
+                                    " ":req.getAddedAttachmentComment().get(
                                     (added.indexOf(i))
                             )
                     );
@@ -361,10 +368,9 @@ public class ChangeRequest extends EntityDate {
                         req.getModifierId()
                 ).orElseThrow(MemberNotFoundException::new);//05 -22 생성자 추가
 
-
         this.crNumber =
                 req.getCrNumber() ==null?
-                        "":
+                        " ":
                         this.crNumber;
 
         this.crReason =
@@ -387,15 +393,15 @@ public class ChangeRequest extends EntityDate {
                 req.getName() == null
                         ||
                         req.getName().isBlank()?
-                        "":req.getName();
+                        " ":req.getName();
 
         this.content =
                 req.getContent().isBlank()?
-                        "":
+                        " ":
                         req.getContent();
         this.solution =
                 req.getSolution().isBlank()?
-                        "":
+                        " ":
                         req.getSolution();
 
         CrAttachmentUpdatedResult resultAttachment =
@@ -405,6 +411,7 @@ public class ChangeRequest extends EntityDate {
                         req.getDeletedAttachments(),
                         false
                 );
+
         if(req.getAddedTag().size()>0) {
             addUpdatedAttachments(
                     req,
@@ -471,15 +478,15 @@ public class ChangeRequest extends EntityDate {
                 req.getName() == null
                         ||
                         req.getName().isBlank()?
-                        "":req.getName();
+                        " ":req.getName();
 
         this.content =
                 req.getContent().isBlank()?
-                        "":
+                        " ":
                         req.getContent();
         this.solution =
                 req.getSolution().isBlank()?
-                        "":
+                        " ":
                         req.getSolution();
 
         CrAttachmentUpdatedResult resultAttachment =
@@ -505,6 +512,9 @@ public class ChangeRequest extends EntityDate {
         FileUpdatedResult fileUpdatedResult = new FileUpdatedResult(
                 resultAttachment//, updatedAddedProjectAttachmentList
         );
+
+        this.tempsave = true;
+        this.readonly = true;
 
         return fileUpdatedResult;
     }

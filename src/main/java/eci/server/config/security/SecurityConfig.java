@@ -128,11 +128,19 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
                 .antMatchers(HttpMethod.POST, "/cr").authenticated()
                 .antMatchers(HttpMethod.POST, "/cr/temp").authenticated()
-                .antMatchers(HttpMethod.PUT, "/cr/{id}").authenticated()
-                .antMatchers(HttpMethod.PUT, "/cr/temp/end/{id}").authenticated()
                 .antMatchers(HttpMethod.GET, "cr/page").authenticated()
                 .antMatchers(HttpMethod.DELETE, "/cr").authenticated()
                 .antMatchers(HttpMethod.POST, "/route/cr").authenticated()
+                .antMatchers(HttpMethod.PUT, "/cr/{id}").authenticated()
+                .antMatchers(HttpMethod.PUT, "/cr/temp/end/{id}").authenticated()
+
+                .antMatchers(HttpMethod.POST, "/co").authenticated()
+                .antMatchers(HttpMethod.POST, "/co/temp").authenticated()
+                .antMatchers(HttpMethod.PUT, "/co/{id}").authenticated()
+                .antMatchers(HttpMethod.PUT, "/co/temp/end/{id}").authenticated()
+                .antMatchers(HttpMethod.GET, "co/page").authenticated()
+                .antMatchers(HttpMethod.DELETE, "/co").authenticated()
+                .antMatchers(HttpMethod.POST, "/route/co").authenticated()
 
                 .anyRequest().hasAnyRole("ADMIN")//멤버의 역할이 관리자인 경우에는 모든 것을 허용
 

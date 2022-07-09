@@ -1,10 +1,7 @@
 package eci.server.advice;
 
 import eci.server.BomModule.exception.*;
-import eci.server.CRCOModule.exception.CrImportanceNotFoundException;
-import eci.server.CRCOModule.exception.CrNotFoundException;
-import eci.server.CRCOModule.exception.CrReasonNotFoundException;
-import eci.server.CRCOModule.exception.CrSourceNotFoundException;
+import eci.server.CRCOModule.exception.*;
 import eci.server.DesignModule.exception.DesignContentNotEmptyException;
 import eci.server.DesignModule.exception.DesignNotFoundException;
 import eci.server.DesignModule.exception.DesignNotLinkedException;
@@ -497,4 +494,14 @@ public class ExceptionAdvice {
         return Response.failure(404,
                 "존재하지 않는 CR입니다.");
     }
+
+    @ExceptionHandler(CrUpdateImpossibleException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Response CrUpdateImpossibleException(CrUpdateImpossibleException e) {
+        log.info("e = {}", e.getMessage());
+        return Response.failure(404,
+                "수정이 불가한 cr 입니다.");
+    }
+
+
 }

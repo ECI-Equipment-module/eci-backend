@@ -1,8 +1,6 @@
 package eci.server.CRCOModule.entity;
 
 import eci.server.CRCOModule.entity.cofeatures.ChangedFeature;
-import eci.server.ItemModule.entity.member.Member;
-import eci.server.ItemModule.entity.member.Role;
 import eci.server.NewItemModule.entity.NewItem;
 import lombok.*;
 import org.hibernate.annotations.OnDelete;
@@ -32,5 +30,7 @@ public class CoNewItem {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private ChangedFeature changedFeature;
 
+    @Column
+    private String changedContent;
 
 }

@@ -108,7 +108,9 @@ public class CrReadDto {
                 changeRequest.getContent(),
                 changeRequest.getSolution(),
 
-                ItemProjectDto.toDto(
+                changeRequest.getNewItem()==null?
+                        ItemProjectDto.toDto()
+                        :ItemProjectDto.toDto(
                         changeRequest.getNewItem(),
                         routeOrderingRepository
                 ),
@@ -186,7 +188,7 @@ public class CrReadDto {
                 changeRequest.getContent(),
                 changeRequest.getSolution(),
 
-                ItemProjectDto.toDto(
+                ItemProjectDto.noRoutetoDto(
                         changeRequest.getNewItem(),
                         routeOrderingRepository
                 ),

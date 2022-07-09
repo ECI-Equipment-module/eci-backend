@@ -6,10 +6,12 @@ import eci.server.NewItemModule.dto.newItem.ItemClassificationDto;
 import eci.server.NewItemModule.entity.NewItem;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class ItemProjectDto {
 
     private Long id;
@@ -68,11 +70,14 @@ public class ItemProjectDto {
                 ),
 
 
-                routeOrderingRepository.findByNewItem(Item).get(
-                        routeOrderingRepository.findByNewItem(Item).size() - 1
-                ).getLifecycleStatus()
+                "NONE"
 
 
         );
     }
+
+    public static ItemProjectDto toDto() {
+        return new ItemProjectDto();
+    }
+
 }

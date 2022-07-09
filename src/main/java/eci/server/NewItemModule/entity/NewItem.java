@@ -1,5 +1,6 @@
 package eci.server.NewItemModule.entity;
 
+import eci.server.CRCOModule.entity.CoNewItem;
 import eci.server.ItemModule.entity.entitycommon.EntityDate;
 import eci.server.ItemModule.entity.item.*;
 import eci.server.ItemModule.exception.item.ColorNotFoundException;
@@ -259,6 +260,12 @@ public class NewItem extends EntityDate {
     //@JoinColumn(name = "children_id")
     private Set< NewItemParentChildren> children;
 
+    @OneToMany(
+            mappedBy = "newItem",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true,
+            fetch = FetchType.LAZY)
+    private List<CoNewItem> coNewItems;
     /**
      * attachment 있을 때, thumbnail 있을 때 생성자
      * @param classification

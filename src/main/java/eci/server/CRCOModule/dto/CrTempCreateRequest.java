@@ -81,41 +81,99 @@ public class CrTempCreateRequest {
             NewItemRepository newItemRepository
             ){
 
-
+        System.out.println("contttttttttttttttttttent");
+        System.out.println(req.getContent()+"&"+req.getName());
 
         if (req.getTag().size() == 0) {
 
 
+
             return new ChangeRequest(
-                    req.getName(),
+                    req.getName() == null
+                            ||
+                            req.getName().isBlank()?
+                            " ":req.getName(),
+
+
                     "made when saved",
-                    crReasonRepository.findById(CrReasonId).orElseThrow(CrReasonNotFoundException::new),
-                    crImportanceRepository.findById(req.getCrImportanceId()).orElseThrow(CrImportanceNotFoundException::new),
-                    crSourceRepository.findById(req.getCrSourceId()).orElseThrow(CrSourceNotFoundException::new),
-                    req.getContent(),
-                    req.getSolution(),
+
+                    req.getCrReasonId() ==null?
+                    null:
+                    crReasonRepository.findById(req.getCrReasonId()).orElseThrow(CrReasonNotFoundException::new),
+
+                    req.getCrImportanceId() ==null?
+                            null:
+                            crImportanceRepository.findById(req.getCrImportanceId()).orElseThrow(CrImportanceNotFoundException::new),
+
+                    req.getCrSourceId() ==null?
+                            null:
+                            crSourceRepository.findById(req.getCrSourceId()).orElseThrow(CrSourceNotFoundException::new),
+
+                    req.getContent().isBlank()||
+                            req.getContent()==null?
+                            " ":
+                            req.getContent(),
+
+                    req.getSolution().isBlank()||
+                            req.getSolution()==null?
+                            " ":
+                            req.getSolution(),
+
+                    req.getItemId()==null?null:
                     newItemRepository.findById(req.getItemId()).orElseThrow(ItemNameRequiredException::new),
+
                     memberRepository.findById(
                             req.getMemberId()
                     ).orElseThrow(MemberNotFoundException::new),
+
                     true,
+
                     false
 
             );
         }
+
         return new ChangeRequest(
-                req.getName(),
+                req.getName() == null
+                        ||
+                        req.getName().isBlank()?
+                        " ":req.getName(),
+
+
                 "made when saved",
-                crReasonRepository.findById(CrReasonId).orElseThrow(CrReasonNotFoundException::new),
-                crImportanceRepository.findById(req.getCrImportanceId()).orElseThrow(CrImportanceNotFoundException::new),
-                crSourceRepository.findById(req.getCrSourceId()).orElseThrow(CrSourceNotFoundException::new),
-                req.getContent(),
-                req.getSolution(),
-                newItemRepository.findById(req.getItemId()).orElseThrow(ItemNameRequiredException::new),
+
+                req.getCrReasonId() ==null?
+                        null:
+                        crReasonRepository.findById(req.getCrReasonId()).orElseThrow(CrReasonNotFoundException::new),
+
+                req.getCrImportanceId() ==null?
+                        null:
+                        crImportanceRepository.findById(req.getCrImportanceId()).orElseThrow(CrImportanceNotFoundException::new),
+
+                req.getCrSourceId() ==null?
+                        null:
+                        crSourceRepository.findById(req.getCrSourceId()).orElseThrow(CrSourceNotFoundException::new),
+
+                req.getContent().isBlank()||
+                        req.getContent()==null?
+                        " ":
+                        req.getContent(),
+
+                req.getSolution().isBlank()||
+                        req.getSolution()==null?
+                        " ":
+                        req.getSolution(),
+
+                req.getItemId()==null?null:
+                        newItemRepository.findById(req.getItemId()).orElseThrow(ItemNameRequiredException::new),
+
+
                 memberRepository.findById(
                         req.getMemberId()
                 ).orElseThrow(MemberNotFoundException::new),
+
                 true,
+
                 false,
 
                 req.attachments.stream().map(
@@ -126,7 +184,7 @@ public class CrTempCreateRequest {
                                         orElseThrow(AttachmentNotFoundException::new).getName(),
 
                                 req.getAttachmentComment().isEmpty()?
-                                        "":req.getAttachmentComment().get(
+                                        " ":req.getAttachmentComment().get(
                                         req.attachments.indexOf(i)
                                 ),
                                 false //지금은 임시저장으로 추가되는 문서들 => save = false 다

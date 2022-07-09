@@ -158,6 +158,9 @@ public class RouteOrdering extends EntityDate {
         this.project = project;
     }
 
+    public void setChangeRequest(ChangeRequest changeRequest) {
+        this.changeRequest = changeRequest;
+    }
 
     public void setDesign(Design design) {
         this.design = design;

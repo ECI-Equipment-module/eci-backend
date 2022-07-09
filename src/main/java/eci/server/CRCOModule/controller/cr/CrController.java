@@ -3,11 +3,14 @@ package eci.server.CRCOModule.controller.cr;
 import eci.server.CRCOModule.dto.CrCreateRequest;
 import eci.server.CRCOModule.dto.CrReadCondition;
 import eci.server.CRCOModule.dto.CrTempCreateRequest;
+import eci.server.CRCOModule.dto.CrUpdateRequest;
 import eci.server.CRCOModule.service.cr.CrService;
 import eci.server.ItemModule.dto.response.Response;
 import eci.server.NewItemModule.dto.newItem.NewItemReadCondition;
 import eci.server.NewItemModule.dto.newItem.create.NewItemTemporaryCreateRequest;
+import eci.server.NewItemModule.dto.newItem.update.NewItemUpdateRequest;
 import eci.server.aop.AssignMemberId;
+import eci.server.aop.AssignModifierId;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -72,5 +75,32 @@ public class CrController {
         );
     }
 
+    @CrossOrigin(origins = "https://localhost:3000")
+    @PutMapping("/cr/{id}")
+    @ResponseStatus(HttpStatus.CREATED)
+    @AssignModifierId //0605 : 수정 시에는 글쓴이 아디 주입 아니고, 수정자 아이디 주입
+    public Response update(
+            @PathVariable Long id,
+            @Valid @ModelAttribute
+                    CrUpdateRequest req
+    ) {
+
+        return Response.success(
+                crService.update(id, req));
+    }
+
+    @CrossOrigin(origins = "https://localhost:3000")
+    @PutMapping("/cr/temp/end/{id}")
+    @ResponseStatus(HttpStatus.CREATED)
+    @AssignModifierId
+    public Response tempEnd(
+            @PathVariable Long id,
+            @Valid @ModelAttribute
+                    CrUpdateRequest req
+    ) {
+
+        return Response.success(
+                crService.tempEnd(id, req));
+    }
 
 }

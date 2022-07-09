@@ -80,7 +80,7 @@ public class CrCreateRequest {
 
             return new ChangeRequest(
                     req.getName(),
-                    String.valueOf((int) (Math.random() * 100000)),
+                    String.valueOf(req.getCrReasonId()* 1000000 + (int) (Math.random() * 1000)),
                     crReasonRepository.findById(CrReasonId).orElseThrow(CrReasonNotFoundException::new),
                     crImportanceRepository.findById(req.getCrImportanceId()).orElseThrow(CrImportanceNotFoundException::new),
                     crSourceRepository.findById(req.getCrSourceId()).orElseThrow(CrSourceNotFoundException::new),
@@ -97,7 +97,7 @@ public class CrCreateRequest {
         }
         return new ChangeRequest(
                 req.getName(),
-                String.valueOf((int) (Math.random() * 100000)),
+                String.valueOf(req.getCrReasonId()* 1000000 + (int) (Math.random() * 1000)),
                 crReasonRepository.findById(CrReasonId).orElseThrow(CrReasonNotFoundException::new),
                 crImportanceRepository.findById(req.getCrImportanceId()).orElseThrow(CrImportanceNotFoundException::new),
                 crSourceRepository.findById(req.getCrSourceId()).orElseThrow(CrSourceNotFoundException::new),
@@ -118,7 +118,7 @@ public class CrCreateRequest {
                                         orElseThrow(AttachmentNotFoundException::new).getName(),
 
                                 req.getAttachmentComment().isEmpty()?
-                                        "":req.getAttachmentComment().get(
+                                        " ":req.getAttachmentComment().get(
                                         req.attachments.indexOf(i)
                                 ),
                                 false //지금은 임시저장으로 추가되는 문서들 => save = false 다
