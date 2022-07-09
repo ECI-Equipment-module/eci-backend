@@ -1,12 +1,9 @@
-package eci.server.CRCOModule.dto;
+package eci.server.CRCOModule.dto.co;
 
 import eci.server.CRCOModule.dto.featuresdtos.ChangedFeatureDto;
 import eci.server.CRCOModule.entity.CoNewItem;
-import eci.server.CRCOModule.entity.cofeatures.ChangedFeature;
-import eci.server.ItemModule.dto.item.ItemProjectCreateDto;
 import eci.server.ItemModule.repository.newRoute.RouteOrderingRepository;
 import eci.server.NewItemModule.dto.newItem.ItemClassificationDto;
-import eci.server.NewItemModule.entity.NewItem;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

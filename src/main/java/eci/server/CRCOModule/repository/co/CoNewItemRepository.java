@@ -1,6 +1,6 @@
-package eci.server.CRCOModule.repository;
+package eci.server.CRCOModule.repository.co;
 
-import eci.server.CRCOModule.entity.ChangeOrder;
+import eci.server.CRCOModule.entity.co.ChangeOrder;
 import eci.server.CRCOModule.entity.CoNewItem;
 import org.springframework.data.jpa.repository.JpaRepository;
 

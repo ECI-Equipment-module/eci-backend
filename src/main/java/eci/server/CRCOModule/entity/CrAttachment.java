@@ -1,5 +1,6 @@
 package eci.server.CRCOModule.entity;
 
+import eci.server.CRCOModule.entity.cr.ChangeRequest;
 import eci.server.ItemModule.entitycommon.EntityDate;
 import eci.server.ItemModule.exception.image.UnsupportedImageFormatException;
 import lombok.AccessLevel;
@@ -115,7 +116,7 @@ public class CrAttachment extends EntityDate {
         this.save = save;
     }
 
-    public void initCreateRequest(ChangeRequest createRequest) {
+    public void initChangeRequest(ChangeRequest createRequest) {
 
         if (this.changeRequest == null) {
             this.changeRequest=createRequest;

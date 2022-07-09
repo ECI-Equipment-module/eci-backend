@@ -1,6 +1,6 @@
-package eci.server.CRCOModule.repository;
+package eci.server.CRCOModule.repository.cr;
 
-import eci.server.CRCOModule.entity.ChangeRequest;
+import eci.server.CRCOModule.entity.cr.ChangeRequest;
 import eci.server.CRCOModule.entity.CrAttachment;
 import org.springframework.data.jpa.repository.JpaRepository;
 

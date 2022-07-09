@@ -1,6 +1,6 @@
-package eci.server.CRCOModule.dto;
+package eci.server.CRCOModule.dto.cr;
 
-import eci.server.CRCOModule.entity.ChangeRequest;
+import eci.server.CRCOModule.entity.cr.ChangeRequest;
 import eci.server.CRCOModule.entity.CrAttachment;
 import eci.server.CRCOModule.exception.CrImportanceNotFoundException;
 import eci.server.CRCOModule.exception.CrReasonNotFoundException;

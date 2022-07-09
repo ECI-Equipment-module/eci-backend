@@ -1,5 +1,6 @@
 package eci.server.CRCOModule.entity;
 
+import eci.server.CRCOModule.entity.co.ChangeOrder;
 import eci.server.CRCOModule.entity.cofeatures.ChangedFeature;
 import eci.server.NewItemModule.entity.NewItem;
 import lombok.*;

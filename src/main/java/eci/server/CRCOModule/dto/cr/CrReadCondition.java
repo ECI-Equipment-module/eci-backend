@@ -1,4 +1,4 @@
-package eci.server.CRCOModule.dto;
+package eci.server.CRCOModule.dto.cr;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

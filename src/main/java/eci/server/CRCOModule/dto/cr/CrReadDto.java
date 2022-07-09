@@ -1,4 +1,4 @@
-package eci.server.CRCOModule.dto;
+package eci.server.CRCOModule.dto.cr;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import eci.server.BomModule.repository.BomRepository;
@@ -6,23 +6,20 @@ import eci.server.BomModule.repository.PreliminaryBomRepository;
 import eci.server.CRCOModule.dto.featuresdtos.CrImportanceDto;
 import eci.server.CRCOModule.dto.featuresdtos.CrReasonDto;
 import eci.server.CRCOModule.dto.featuresdtos.CrSourceDto;
-import eci.server.CRCOModule.entity.ChangeRequest;
+import eci.server.CRCOModule.entity.cr.ChangeRequest;
 import eci.server.ItemModule.dto.item.ItemProjectDto;
 import eci.server.ItemModule.dto.member.MemberDto;
-import eci.server.ItemModule.dto.newRoute.routeOrdering.RouteOrderingCreateRequest;
 import eci.server.ItemModule.dto.newRoute.routeOrdering.RouteOrderingDto;
 import eci.server.ItemModule.entity.newRoute.RouteOrdering;
 import eci.server.ItemModule.entity.newRoute.RouteProduct;
 import eci.server.ItemModule.exception.route.RouteNotFoundException;
 import eci.server.ItemModule.repository.newRoute.RouteOrderingRepository;
 import eci.server.ItemModule.repository.newRoute.RouteProductRepository;
-import eci.server.NewItemModule.dto.image.NewItemImageDto;
 import eci.server.NewItemModule.repository.attachment.AttachmentTagRepository;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;

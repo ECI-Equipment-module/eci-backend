@@ -1,7 +1,7 @@
 package eci.server.CRCOModule.controller.cr;
 
-import eci.server.CRCOModule.dto.CrPagingDto;
-import eci.server.CRCOModule.entity.ChangeRequest;
+import eci.server.CRCOModule.dto.cr.CrPagingDto;
+import eci.server.CRCOModule.entity.cr.ChangeRequest;
 import eci.server.CRCOModule.repository.cr.ChangeRequestRepository;
 import eci.server.ItemModule.repository.newRoute.RouteOrderingRepository;
 import lombok.RequiredArgsConstructor;

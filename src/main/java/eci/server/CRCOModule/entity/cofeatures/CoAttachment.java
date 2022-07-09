@@ -1,5 +1,6 @@
-package eci.server.CRCOModule.entity;
+package eci.server.CRCOModule.entity.cofeatures;
 
+import eci.server.CRCOModule.entity.co.ChangeOrder;
 import eci.server.ItemModule.entitycommon.EntityDate;
 import eci.server.ItemModule.exception.image.UnsupportedImageFormatException;
 import lombok.AccessLevel;

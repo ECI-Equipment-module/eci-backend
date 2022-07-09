@@ -1,8 +1,7 @@
-package eci.server.CRCOModule.dto;
+package eci.server.CRCOModule.dto.cr;
 
-import eci.server.CRCOModule.entity.ChangeRequest;
+import eci.server.CRCOModule.entity.cr.ChangeRequest;
 import eci.server.CRCOModule.entity.CrAttachment;
-import eci.server.CRCOModule.entity.features.CrReason;
 import eci.server.CRCOModule.exception.CrImportanceNotFoundException;
 import eci.server.CRCOModule.exception.CrReasonNotFoundException;
 import eci.server.CRCOModule.exception.CrSourceNotFoundException;
@@ -12,15 +11,12 @@ import eci.server.CRCOModule.repository.features.CrSourceRepository;
 import eci.server.ItemModule.exception.item.AttachmentNotFoundException;
 import eci.server.ItemModule.exception.member.sign.MemberNotFoundException;
 import eci.server.ItemModule.repository.member.MemberRepository;
-import eci.server.NewItemModule.entity.NewItemAttachment;
 import eci.server.NewItemModule.exception.ItemNameRequiredException;
 import eci.server.NewItemModule.repository.attachment.AttachmentTagRepository;
 import eci.server.NewItemModule.repository.item.NewItemRepository;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotNull;

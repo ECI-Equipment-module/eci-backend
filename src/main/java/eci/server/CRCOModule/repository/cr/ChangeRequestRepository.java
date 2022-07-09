@@ -1,6 +1,6 @@
 package eci.server.CRCOModule.repository.cr;
 
-import eci.server.CRCOModule.entity.ChangeRequest;
+import eci.server.CRCOModule.entity.cr.ChangeRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

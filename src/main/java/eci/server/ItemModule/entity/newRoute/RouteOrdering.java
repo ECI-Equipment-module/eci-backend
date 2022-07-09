@@ -1,7 +1,8 @@
 package eci.server.ItemModule.entity.newRoute;
 
 import eci.server.BomModule.entity.Bom;
-import eci.server.CRCOModule.entity.ChangeRequest;
+import eci.server.CRCOModule.entity.co.ChangeOrder;
+import eci.server.CRCOModule.entity.cr.ChangeRequest;
 import eci.server.DesignModule.entity.design.Design;
 import eci.server.ItemModule.dto.newRoute.routeOrdering.RouteOrderingUpdateRequest;
 import eci.server.ItemModule.entitycommon.EntityDate;
@@ -103,10 +104,10 @@ public class RouteOrdering extends EntityDate {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private ChangeRequest changeRequest;
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "co_id")
-//    @OnDelete(action = OnDeleteAction.CASCADE)
-//    private ChangeOrder changeOrder;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "co_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private ChangeOrder changeOrder;
 
 
 
@@ -160,6 +161,10 @@ public class RouteOrdering extends EntityDate {
 
     public void setChangeRequest(ChangeRequest changeRequest) {
         this.changeRequest = changeRequest;
+    }
+
+    public void setChangeOrder(ChangeOrder changeOrder) {
+        this.changeOrder = changeOrder;
     }
 
     public void setDesign(Design design) {
@@ -329,6 +334,10 @@ public class RouteOrdering extends EntityDate {
             case "15":
                 this.getChangeRequest().setTempsave(true);
                 this.getChangeRequest().setReadonly(false);
+
+            case "18":
+                this.getChangeOrder().setTempsave(true);
+                this.getChangeOrder().setReadonly(false);
         }
 
         /**

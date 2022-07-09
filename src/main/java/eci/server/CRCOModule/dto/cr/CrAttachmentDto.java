@@ -1,4 +1,4 @@
-package eci.server.CRCOModule.dto;
+package eci.server.CRCOModule.dto.cr;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import eci.server.CRCOModule.entity.CrAttachment;

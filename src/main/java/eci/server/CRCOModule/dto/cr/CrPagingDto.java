@@ -1,12 +1,10 @@
-package eci.server.CRCOModule.dto;
+package eci.server.CRCOModule.dto.cr;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import eci.server.CRCOModule.dto.featuresdtos.CrImportanceDto;
 import eci.server.CRCOModule.dto.featuresdtos.CrReasonDto;
 import eci.server.CRCOModule.dto.featuresdtos.CrSourceDto;
-import eci.server.CRCOModule.entity.ChangeRequest;
-import eci.server.CRCOModule.entity.features.CrImportance;
-import eci.server.CRCOModule.entity.features.CrSource;
+import eci.server.CRCOModule.entity.cr.ChangeRequest;
 import eci.server.ItemModule.dto.member.MemberDto;
 import eci.server.ItemModule.repository.newRoute.RouteOrderingRepository;
 import eci.server.NewItemModule.dto.newItem.ItemClassificationDto;
@@ -70,6 +68,7 @@ public class CrPagingDto {
                 routeOrderingRepository.findByNewItem(Item).get(
                         routeOrderingRepository.findByNewItem(Item).size() - 1
                 ).getLifecycleStatus(),
+
                 changeRequest.getCrNumber(),
                 "FAST TRACK",
                 CrReasonDto.toDto(changeRequest.getCrReason()),

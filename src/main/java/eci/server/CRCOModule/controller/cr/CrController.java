@@ -1,14 +1,10 @@
 package eci.server.CRCOModule.controller.cr;
 
-import eci.server.CRCOModule.dto.CrCreateRequest;
-import eci.server.CRCOModule.dto.CrReadCondition;
-import eci.server.CRCOModule.dto.CrTempCreateRequest;
-import eci.server.CRCOModule.dto.CrUpdateRequest;
+import eci.server.CRCOModule.dto.cr.CrCreateRequest;
+import eci.server.CRCOModule.dto.cr.CrTempCreateRequest;
+import eci.server.CRCOModule.dto.cr.CrUpdateRequest;
 import eci.server.CRCOModule.service.cr.CrService;
 import eci.server.ItemModule.dto.response.Response;
-import eci.server.NewItemModule.dto.newItem.NewItemReadCondition;
-import eci.server.NewItemModule.dto.newItem.create.NewItemTemporaryCreateRequest;
-import eci.server.NewItemModule.dto.newItem.update.NewItemUpdateRequest;
 import eci.server.aop.AssignMemberId;
 import eci.server.aop.AssignModifierId;
 import lombok.RequiredArgsConstructor;

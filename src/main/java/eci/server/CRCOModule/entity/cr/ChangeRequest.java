@@ -1,6 +1,8 @@
-package eci.server.CRCOModule.entity;
+package eci.server.CRCOModule.entity.cr;
 
-import eci.server.CRCOModule.dto.CrUpdateRequest;
+import eci.server.CRCOModule.dto.cr.CrUpdateRequest;
+import eci.server.CRCOModule.entity.co.ChangeOrder;
+import eci.server.CRCOModule.entity.CrAttachment;
 import eci.server.CRCOModule.entity.features.CrImportance;
 import eci.server.CRCOModule.entity.features.CrReason;
 import eci.server.CRCOModule.entity.features.CrSource;
@@ -209,7 +211,7 @@ public class ChangeRequest extends EntityDate {
     private void addAttachments(List<CrAttachment> added) {
         added.forEach(i -> {
                     attachments.add(i);
-                    i.initCreateRequest(this);
+                    i.initChangeRequest(this);
                 }
         );
     }
@@ -228,7 +230,7 @@ public class ChangeRequest extends EntityDate {
         added.stream().forEach(i -> {
                     attachments.add(i);
 
-                    i.initCreateRequest(this);
+                    i.initChangeRequest(this);
 
                     //
                     i.setAttach_comment(
