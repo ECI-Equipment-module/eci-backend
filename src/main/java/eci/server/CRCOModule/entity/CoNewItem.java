@@ -1,9 +1,12 @@
 package eci.server.CRCOModule.entity;
 
+import eci.server.CRCOModule.entity.cofeatures.ChangedFeature;
 import eci.server.ItemModule.entity.member.Member;
 import eci.server.ItemModule.entity.member.Role;
 import eci.server.NewItemModule.entity.NewItem;
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 
@@ -23,5 +26,11 @@ public class CoNewItem {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "new_item_id")
     private NewItem newItem;
+
+    @OneToOne
+    @JoinColumn(name = "change_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private ChangedFeature changedFeature;
+
 
 }

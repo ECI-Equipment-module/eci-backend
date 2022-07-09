@@ -9,7 +9,7 @@ import javax.persistence.*;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class CoEffect{
+public class ChangedFeature{
     @Id
     //    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQUENCE2")
@@ -20,7 +20,7 @@ public class CoEffect{
     @Column(nullable = false)
     private String name;
 
-    public CoEffect(
+    public ChangedFeature(
             String name
     ){
         this.name = name;

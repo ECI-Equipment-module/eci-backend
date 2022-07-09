@@ -1,7 +1,9 @@
 package eci.server.CRCOModule.controller.features;
 
-import eci.server.CRCOModule.dto.featurescond.CrImportanceReadCondition;
-import eci.server.CRCOModule.service.features.CrImportanceService;
+import eci.server.CRCOModule.dto.featurescond.CoEffectReadCondition;
+import eci.server.CRCOModule.dto.featurescond.CrReasonReadCondition;
+import eci.server.CRCOModule.service.features.CoEffectService;
+import eci.server.CRCOModule.service.features.CrReasonService;
 import eci.server.ItemModule.dto.response.Response;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -15,16 +17,15 @@ import javax.validation.Valid;
 @RequiredArgsConstructor
 @RestController
 @CrossOrigin(origins = "https://localhost:3000")
-public class CrImportanceController{
-    private final CrImportanceService crImportanceService;
+public class CoEffectController{
+    private final CoEffectService coEffectService;
 
-    @GetMapping("/crImportance")
+    @GetMapping("/coEffect")
     @ResponseStatus(HttpStatus.OK)
-    public Response readAll(@Valid CrImportanceReadCondition cond) {
+    public Response readAll(@Valid CoEffectReadCondition cond) {
         return Response.success(
-                crImportanceService.
+                coEffectService.
                         readAll(cond));
     }
 }
-
 
