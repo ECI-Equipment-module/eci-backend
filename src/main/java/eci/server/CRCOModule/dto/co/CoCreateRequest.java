@@ -38,7 +38,7 @@ import static java.util.stream.Collectors.toList;
 public class CoCreateRequest {
 
     private Long clientOrganizationId;
-
+    @Null
     private String coNumber;
 
     private String coPublishPeriod;

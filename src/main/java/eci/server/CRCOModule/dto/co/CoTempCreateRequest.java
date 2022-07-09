@@ -123,7 +123,8 @@ public class CoTempCreateRequest {
                             clientOrganizationRepository.findById(req.getClientOrganizationId())
                                     .orElseThrow(ClientOrganizationNotFoundException::new),
 
-                    String.valueOf(req.getCoReasonId() * 1000000 + (int) (Math.random() * 1000)),
+                    "made when saved",
+                    //String.valueOf(req.getCoReasonId() * 1000000 + (int) (Math.random() * 1000)),
 
                     req.coPublishPeriod.isEmpty() ? null : LocalDate.parse
                             (req.coPublishPeriod, DateTimeFormatter.ISO_DATE),
@@ -204,7 +205,8 @@ public class CoTempCreateRequest {
                         clientOrganizationRepository.findById(req.getClientOrganizationId())
                                 .orElseThrow(ClientOrganizationNotFoundException::new),
 
-                String.valueOf(req.getCoReasonId() * 1000000 + (int) (Math.random() * 1000)),
+                "made when saved",
+                //String.valueOf(req.getCoReasonId() * 1000000 + (int) (Math.random() * 1000)),
 
                 req.coPublishPeriod.isEmpty() ? null : LocalDate.parse
                         (req.coPublishPeriod, DateTimeFormatter.ISO_DATE),

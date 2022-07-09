@@ -1,7 +1,8 @@
-package eci.server.CRCOModule.dto.cr;
+package eci.server.CRCOModule.dto.co;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import eci.server.CRCOModule.entity.CrAttachment;
+import eci.server.CRCOModule.entity.cofeatures.CoAttachment;
 import eci.server.NewItemModule.dto.attachment.AttachmentTagDto;
 import eci.server.NewItemModule.repository.attachment.AttachmentTagRepository;
 import eci.server.ProjectModule.entity.projectAttachment.ProjectAttachment;
@@ -15,7 +16,7 @@ import static java.util.stream.Collectors.toList;
 
 @Data
 @AllArgsConstructor
-public class CrAttachmentDto  {
+public class CoAttachmentDto{
     private Long id;
     private String originName;
     private String uniqueName;
@@ -28,11 +29,11 @@ public class CrAttachmentDto  {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd hh:mm:ss.SSS", timezone = "Asia/Seoul")
     private LocalDateTime modifiedAt;
 
-    public static CrAttachmentDto  toDto(
-            CrAttachment attachment,
+    public static CoAttachmentDto toDto(
+            CoAttachment attachment,
             AttachmentTagRepository attachmentTagRepository
     ) {
-        return new CrAttachmentDto (
+        return new CoAttachmentDto(
                 attachment.getId(),
                 attachment.getOriginName(),
                 attachment.getUniqueName(),
@@ -56,7 +57,7 @@ public class CrAttachmentDto  {
 
                 attachment.getModifiedAt().toString().split("_")[0].substring(0, 10),
 
-                attachment.getChangeRequest().getMember().getUsername(),
+                attachment.getChangeOrder().getMember().getUsername(),
 
                 attachment.getModifiedAt()
 
@@ -64,14 +65,14 @@ public class CrAttachmentDto  {
     }
 
 
-    public static List<CrAttachmentDto > toDtoList(
-            List<CrAttachment> Attachments,
+    public static List<CoAttachmentDto> toDtoList(
+            List<CoAttachment> Attachments,
             AttachmentTagRepository attachmentTagRepository
     ) {
 
-        List<CrAttachmentDto > attachmentDtoList =
+        List<CoAttachmentDto> attachmentDtoList =
                 Attachments.stream().map(
-                        i -> new CrAttachmentDto (
+                        i -> new CoAttachmentDto(
                                 i.getId(),
                                 i.getOriginName(),
                                 i.getUniqueName(),
@@ -92,7 +93,7 @@ public class CrAttachmentDto  {
                                         i.getUniqueName(),
 
                                 i.getModifiedAt().toString().split("_")[0].substring(0, 10),
-                                i.getChangeRequest().getMember().getUsername(),
+                                i.getChangeOrder().getMember().getUsername(),
                                 i.getModifiedAt()
                         )
                 ).collect(

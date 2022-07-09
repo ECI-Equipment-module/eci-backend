@@ -215,7 +215,9 @@ public class ChangeOrder extends EntityDate {
         this.tempsave = tempsave;
         this.readonly = readonly;
 
-        this.changeRequests = changeRequests;
+        for(ChangeRequest cr : changeRequests) {
+            cr.setChangeOrder(this);
+        }
 
         this.coNewItems = newItems.stream().map(
 
@@ -289,8 +291,11 @@ public class ChangeOrder extends EntityDate {
         this.modifier = member;
         this.tempsave = tempsave;
         this.readonly = readonly;
+        System.out.println();
 
-        this.changeRequests = changeRequests;
+        for(ChangeRequest cr : changeRequests) {
+            cr.setChangeOrder(this);
+        }
 
         this.coNewItems = newItems.stream().map(
 
@@ -483,7 +488,7 @@ public class ChangeOrder extends EntityDate {
 
         this.modifier =
                 memberRepository.findById(
-                        req.getMemberId()
+                        req.getModifierId()
                 ).orElseThrow(MemberNotFoundException::new);
 
         this.clientOrganization = req.getClientOrganizationId()==null?
@@ -562,6 +567,20 @@ public class ChangeOrder extends EntityDate {
         this.content = req.getContent().isEmpty()||req.getContent()==null?
                 " ":req.getContent();
 
+        this.changeRequests.clear();
+//
+//        for(ChangeRequest cr : this.changeRequests){
+//            cr.setChangeOrder(null);
+//        }
+
+        List<ChangeRequest> changeRequests =
+                req.getChangeRequestIds().stream().map(
+                        cr->changeRequestRepository.findById(cr).orElseThrow(CrNotFoundException::new)
+                ).collect(toList());
+
+        for(ChangeRequest cr : changeRequests) {
+            cr.setChangeOrder(this);
+        }
 
         CoAttachmentUpdatedResult resultAttachment =
 
@@ -679,7 +698,7 @@ public class ChangeOrder extends EntityDate {
 
         this.modifier =
                 memberRepository.findById(
-                        req.getMemberId()
+                        req.getModifierId()
                 ).orElseThrow(MemberNotFoundException::new);
 
         this.clientOrganization = req.getClientOrganizationId()==null?
@@ -768,6 +787,22 @@ public class ChangeOrder extends EntityDate {
         this.content = req.getContent().isEmpty()||req.getContent()==null?
                 " ":req.getContent();
 
+
+//        for(ChangeRequest cr : this.changeRequests){
+//            cr.setChangeOrder(null);
+//        }
+//        for(ChangeRequest cr : changeRequests) {
+//            cr.setChangeOrder(this);
+//        }
+
+        List<ChangeRequest> changeRequests =
+                req.getChangeRequestIds().stream().map(
+                        cr->changeRequestRepository.findById(cr).orElseThrow(CrNotFoundException::new)
+                ).collect(toList());
+
+        for(ChangeRequest cr : changeRequests) {
+            cr.setChangeOrder(this);
+        }
 
         CoAttachmentUpdatedResult resultAttachment =
 

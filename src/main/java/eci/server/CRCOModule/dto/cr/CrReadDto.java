@@ -127,8 +127,8 @@ public class CrReadDto {
                 changeRequest.isReadonly(),
 
                 routeOrderingRepository.findByChangeRequest(changeRequest).
-                        get(routeOrderingRepository.findByNewItem(
-                                changeRequest.getNewItem()).size() - 1)
+                        get(routeOrderingRepository.findByChangeRequest(changeRequest)
+                                .size() - 1)
                         .getId(),
 
                 CrPreRejected(routeOrdering ,routeProductRepository)
@@ -211,6 +211,79 @@ public class CrReadDto {
         );
 
 }
-        }
+
+/////dto list
+
+    public static  List<CrReadDto> toDtoList(
+            List<ChangeRequest> changeRequests,
+            //RouteOrdering routeOrdering,
+            RouteOrderingRepository routeOrderingRepository,
+            RouteProductRepository routeProductRepository,
+            AttachmentTagRepository attachmentTagRepository,
+            String defaultImageAddress
+    ) {
+
+
+        List<CrReadDto> crList = changeRequests.stream().map(
+                changeRequest -> new CrReadDto(
+                        changeRequest.getId(),
+                        changeRequest.getCrNumber() == null ? "" : changeRequest.getCrNumber(),
+
+                        changeRequest.getCrReason() == null ? CrReasonDto.toDto() : CrReasonDto.toDto(changeRequest.getCrReason()),
+                        changeRequest.getCrSource() == null ? CrSourceDto.toDto() : CrSourceDto.toDto
+                                (changeRequest.getCrSource()),
+                        changeRequest.getCrImportance() == null ? CrImportanceDto.toDto() : CrImportanceDto.toDto(
+                                changeRequest.getCrImportance()),
+
+                        changeRequest.getAttachments().
+                                stream().
+                                map(i -> CrAttachmentDto.toDto(
+                                        i,
+                                        attachmentTagRepository))
+                                .collect(toList()),
+
+                        changeRequest.getName(),
+                        changeRequest.getContent(),
+                        changeRequest.getSolution(),
+
+                        changeRequest.getNewItem() == null ?
+                                ItemProjectDto.toDto()
+                                : ItemProjectDto.toDto(
+                                changeRequest.getNewItem(),
+                                routeOrderingRepository
+                        ),
+
+                        changeRequest.getCreatedAt(),
+                        MemberDto.toDto(changeRequest.getMember(),
+                                defaultImageAddress),
+
+                        changeRequest.getModifier() == null ? null :
+                                changeRequest.getModifiedAt(),
+
+                        changeRequest.getModifier() == null ? null :
+                                MemberDto.toDto(changeRequest.getModifier(),
+                                        defaultImageAddress),
+
+                        changeRequest.isTempsave(),
+                        changeRequest.isReadonly(),
+
+                        routeOrderingRepository.findByChangeRequest(changeRequest).size()>0?
+                        routeOrderingRepository.findByChangeRequest(changeRequest).
+                                get(routeOrderingRepository.findByChangeRequest(changeRequest)
+                                        .size() - 1)
+                                .getId()
+                        :-1L,
+
+                        //CrPreRejected(routeOrdering, routeProductRepository)
+                        false
+                )
+
+        ).collect(toList());
+
+        return crList;
+    }
+
+
+}
 
 

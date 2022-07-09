@@ -49,6 +49,18 @@ public class RouteOrderingController {
     }
 
 
+    @PostMapping("/route/co")
+    @ResponseStatus(HttpStatus.CREATED)
+    @AssignMemberId
+    public Response createCoRoutes(
+            @Valid RouteOrderingCreateRequest req) {
+
+        return Response.success(
+                newRouteService.createCoRoute(req)
+        );
+    }
+
+
     @GetMapping("/route/{id}")
     @ResponseStatus(HttpStatus.OK)
     public Response read(@PathVariable Long id) {

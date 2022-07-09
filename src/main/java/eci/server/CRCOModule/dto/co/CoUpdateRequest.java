@@ -46,7 +46,7 @@ public class CoUpdateRequest {
     private String content;
 
     @Null
-    private Long memberId;
+    private Long modifierId;
 
 
     //선택한 cr

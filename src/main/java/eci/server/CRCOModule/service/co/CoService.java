@@ -3,8 +3,10 @@ package eci.server.CRCOModule.service.co;
 import eci.server.BomModule.repository.BomRepository;
 import eci.server.BomModule.repository.PreliminaryBomRepository;
 import eci.server.CRCOModule.dto.co.CoCreateRequest;
+import eci.server.CRCOModule.dto.co.CoReadDto;
 import eci.server.CRCOModule.dto.co.CoTempCreateRequest;
 import eci.server.CRCOModule.dto.co.CoUpdateRequest;
+import eci.server.CRCOModule.dto.cr.CrReadDto;
 import eci.server.CRCOModule.dto.cr.CrTempCreateRequest;
 import eci.server.CRCOModule.dto.cr.CrUpdateRequest;
 import eci.server.CRCOModule.entity.co.ChangeOrder;
@@ -26,6 +28,7 @@ import eci.server.CRCOModule.repository.features.CrImportanceRepository;
 import eci.server.CRCOModule.repository.features.CrReasonRepository;
 import eci.server.CRCOModule.repository.features.CrSourceRepository;
 import eci.server.DesignModule.dto.DesignCreateUpdateResponse;
+import eci.server.ItemModule.dto.newRoute.routeOrdering.RouteOrderingDto;
 import eci.server.ItemModule.entity.newRoute.RouteOrdering;
 import eci.server.ItemModule.exception.route.RouteNotFoundException;
 import eci.server.ItemModule.repository.member.MemberRepository;
@@ -45,6 +48,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.IntStream;
 
 @Service
@@ -197,6 +201,9 @@ public class CoService{
     public ProjectTempCreateUpdateResponse update(Long id, CoUpdateRequest req) {
 
         Long coReasonId = req.getCoReasonId();
+        if(coReasonId==null){
+            coReasonId=1L;
+        }
 
         ChangeOrder co=
                 changeOrderRepository.findById(id).orElseThrow(CoNotFoundException::new);
@@ -313,6 +320,48 @@ public class CoService{
                         i->i.setSave(true)
                 );
 
+    }
+
+
+    public CoReadDto read(Long id){
+        ChangeOrder co = changeOrderRepository.findById(id).orElseThrow(CrNotFoundException::new);
+
+        List<RouteOrderingDto> routeDtoList = Optional.ofNullable(
+                RouteOrderingDto.toDtoList(
+                        routeOrderingRepository.findByChangeOrder(co),
+                        routeProductRepository,
+                        routeOrderingRepository,
+                        bomRepository,
+                        preliminaryBomRepository,
+                        defaultImageAddress
+
+                )
+        ).orElseThrow(RouteNotFoundException::new);
+
+        if (routeDtoList.size() > 0) {
+            RouteOrdering routeOrdering =
+                    routeOrderingRepository.findByChangeOrder(co).get(
+                            routeOrderingRepository.findByChangeOrder(co).size()-1
+                    );
+            return CoReadDto.toDto(
+                    co,
+                    routeOrdering,
+                    routeOrderingRepository,
+                    routeProductRepository,
+                    bomRepository,
+                    preliminaryBomRepository,
+                    attachmentTagRepository,
+                    defaultImageAddress
+            );
+        }
+        return CoReadDto.noRouteDto(
+                co,
+                //routeOr,
+                routeOrderingRepository,
+                routeProductRepository,
+                attachmentTagRepository,
+                defaultImageAddress
+        );
     }
 
 }

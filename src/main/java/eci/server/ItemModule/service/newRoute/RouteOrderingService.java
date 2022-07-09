@@ -8,6 +8,7 @@ import eci.server.BomModule.exception.BomNotFoundException;
 import eci.server.BomModule.repository.*;
 import eci.server.BomModule.service.BomService;
 import eci.server.CRCOModule.exception.CrNotFoundException;
+import eci.server.CRCOModule.repository.co.ChangeOrderRepository;
 import eci.server.CRCOModule.repository.cr.ChangeRequestRepository;
 import eci.server.DesignModule.entity.design.Design;
 import eci.server.DesignModule.exception.DesignNotLinkedException;
@@ -67,6 +68,7 @@ public class RouteOrderingService {
     private final JsonSaveRepository jsonSaveRepository;
     private final TempNewItemParentChildService tempNewItemParentChildService;
     private final ChangeRequestRepository changeRequestRepository;
+    private final ChangeOrderRepository changeOrderRepository;
 
     @Value("${default.image.address}")
     private String defaultImageAddress;
@@ -267,6 +269,43 @@ public class RouteOrderingService {
 
         return new RouteOrderingCreateResponse(newRoute.getId());
     }
+
+
+    @Transactional
+    public RouteOrderingCreateResponse createCoRoute(RouteOrderingCreateRequest req) {
+        RouteOrdering newRoute = routeOrderingRepository.save(RouteOrderingCreateRequest.toCoEntity(
+                        req,
+                        routePreset,
+                        changeOrderRepository,
+                        routeTypeRepository
+                )
+        );
+
+        List<RouteProduct> routeProductList =
+                RouteProductCreateRequest.toCOEntityList(
+                        req,
+                        newRoute,
+                        routePreset,
+                        memberRepository,
+                        routeTypeRepository
+
+                );
+
+        for (RouteProduct routeProduct : routeProductList) {
+
+            RouteProduct routeProduct1 =
+                    routeProductRepository.save(routeProduct);
+            System.out.println(routeProduct1.getRoute_name());
+            System.out.println(routeProduct1.getMembers().get(0).getMember());
+            System.out.println(routeProduct1.getMembers().get(0).getRouteProduct());
+        }
+
+        newRoute.getChangeOrder().updateTempsaveWhenMadeRoute();
+        //라우트 만들면 임시저장 해제
+
+        return new RouteOrderingCreateResponse(newRoute.getId());
+    }
+
 
     @Transactional
     public List<RouteProductDto> rejectUpdate(
@@ -604,10 +643,14 @@ public class RouteOrderingService {
                     rejectPossibleTypeId = 14L;
                     break;
 
-                case "16":            // 봄 리뷰
+                case "16":            // CR신청 APPROVE
 
-                case "17":
-                    rejectPossibleTypeId = 15L;
+                case "17":            // CR REVIEW
+                    rejectPossibleTypeId = 15L; //CR REQUEST
+
+                case "19": //CO 신청 승인 APPROVE
+                    rejectPossibleTypeId = 18L; //CO 신청
+
                     break;
                 default:        // 모두 해당이 안되는 경우
                     //에러 던지기

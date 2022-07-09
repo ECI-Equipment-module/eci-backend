@@ -109,7 +109,7 @@ public class RoutePreset {
     /**
      * 리뷰 대상인 타입 아이디
      */
-    public String[] reviewRouteList = {"4", "5", "6", "12", "16", "17"};
+    public String[] reviewRouteList = {"4", "5", "6", "12", "16", "17", "19"};//CO - 19는 신청 승인 , 얘도 신청 거절 가능
     public ArrayList<String> reviewRouteArrList = new ArrayList<>(Arrays.asList(reviewRouteList));
 
 

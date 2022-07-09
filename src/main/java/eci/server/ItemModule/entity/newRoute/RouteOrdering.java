@@ -125,7 +125,7 @@ public class RouteOrdering extends EntityDate {
     }
 
     //cr
-    //아이템 라우트용 생성자
+    // 생성자
     public RouteOrdering(
             String type,
             ChangeRequest changeRequest
@@ -136,6 +136,20 @@ public class RouteOrdering extends EntityDate {
         this.revisedCnt = 0;
         this.present = 1;
         this.changeRequest = changeRequest;
+    }
+
+    //co
+    //아이템 라우트용 생성자
+    public RouteOrdering(
+            String type,
+            ChangeOrder co
+
+    ){
+        this.type = type;
+        this.lifecycleStatus = "WORKING";
+        this.revisedCnt = 0;
+        this.present = 1;
+        this.changeOrder = co;
     }
 
     //프로젝트 라우트용 생성자
@@ -218,6 +232,12 @@ public class RouteOrdering extends EntityDate {
                 }
                 else if(routeProductList.get(this.present).getType().getModule().equals("BOM")){
                     this.getBom().setTempsave(false); //라우트 만든 순간 임시저장 다시 거짓으로
+                }
+                else if(routeProductList.get(this.present).getType().getModule().equals("CR")){
+                    this.getChangeRequest().setTempsave(false); //라우트 만든 순간 임시저장 다시 거짓으로
+                }
+                else if(routeProductList.get(this.present).getType().getModule().equals("CO")){
+                    this.getChangeOrder().setTempsave(false); //라우트 만든 순간 임시저장 다시 거짓으로
                 }
             }
 
@@ -334,7 +354,7 @@ public class RouteOrdering extends EntityDate {
             case "15":
                 this.getChangeRequest().setTempsave(true);
                 this.getChangeRequest().setReadonly(false);
-
+            // 18 (CO REQUEST)
             case "18":
                 this.getChangeOrder().setTempsave(true);
                 this.getChangeOrder().setReadonly(false);

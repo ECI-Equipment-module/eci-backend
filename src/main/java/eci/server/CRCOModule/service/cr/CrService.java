@@ -122,7 +122,6 @@ public class CrService {
 
         return new NewItemCreateResponse(changeRequest.getId());
     }
-
     public CrReadDto read(Long id){
         ChangeRequest changeRequest = changeRequestRepository.findById(id).orElseThrow(CrNotFoundException::new);
 
@@ -158,6 +157,7 @@ public class CrService {
                 routeOrderingRepository
         );
     }
+
 
 
 
