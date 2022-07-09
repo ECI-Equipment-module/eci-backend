@@ -1,14 +1,18 @@
 package eci.server.ItemModule.repository.newRoute;
 
+import eci.server.CRCOModule.entity.ChangeRequest;
 import eci.server.ItemModule.entity.newRoute.RouteOrdering;
 import eci.server.NewItemModule.entity.NewItem;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.util.RouteMatcher;
 
 import java.util.List;
 
 public interface RouteOrderingRepository extends JpaRepository<RouteOrdering, Long> {
 
     List<RouteOrdering> findByNewItem(NewItem newItem);
+
+    List<RouteOrdering> findByChangeRequest(ChangeRequest changeRequest);
 
     //
 //    /**

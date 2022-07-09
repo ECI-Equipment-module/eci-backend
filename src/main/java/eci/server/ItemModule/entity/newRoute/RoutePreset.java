@@ -109,7 +109,7 @@ public class RoutePreset {
     /**
      * 리뷰 대상인 타입 아이디
      */
-    public String[] reviewRouteList = {"4", "5", "6", "12"};
+    public String[] reviewRouteList = {"4", "5", "6", "12", "16", "17"};
     public ArrayList<String> reviewRouteArrList = new ArrayList<>(Arrays.asList(reviewRouteList));
 
 
@@ -199,6 +199,57 @@ public String[][] routeByItemName = {
         //type 4 - 제품
 
 };
+
+
+//CR ROUTE
+
+    public String[][] CRRouteName = {
+
+            {
+                    "CR 신청(요청자)",
+                    "CR 신청승인(요청부서팀장)",
+                    "CR 요청 접수(Item 설계자)",
+                    "CR Review(Item 설계팀장)"
+            }
+    };
+
+    public String[][] CRRouteType = {
+
+
+            {"REQUEST", "REVIEW", "APPROVE","REVIEW", "COMPLETE"}
+
+    };
+
+    public String[][] CRRouteTypeModule = {
+
+            {"CR", "CR", "CR", "CR", "CR"}
+
+    };
+
+    //CO ROUTE
+
+    public String[][] CORouteName = {
+
+            {
+                    "CO 신청(신청자)",
+                    "CO 신청 승인(신청자 팀장)",
+                    "CO 실행(설계변경 실행 ITEM 별 설계/담당자)",
+                    "CO 실행 확정(신청자 팀장)"
+            }
+    };
+
+    public String[][] CORouteType = {
+
+
+            {"REQUEST", "APPROVE", "CREATE","CONFIRM"},
+
+    };
+
+    public String[][] CORouteTypeModule = {
+
+            {"CO" , "CO" , "CO" , "CO" }
+
+    };
 }
 
 

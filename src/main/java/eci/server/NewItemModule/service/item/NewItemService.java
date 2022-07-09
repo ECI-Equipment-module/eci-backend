@@ -90,7 +90,6 @@ public class NewItemService {
     private final DesignRepository designRepository;
     private final BomRepository bomRepository;
     private final DesignGuard designGuard;
-    private final BomGuard bomGuard;
     private final PreliminaryBomRepository preliminaryBomRepository;
     private final NewItemParentChildrenRepository newItemParentChildrenRepository;
 

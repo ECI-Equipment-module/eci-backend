@@ -1,6 +1,10 @@
 package eci.server.advice;
 
 import eci.server.BomModule.exception.*;
+import eci.server.CRCOModule.exception.CrImportanceNotFoundException;
+import eci.server.CRCOModule.exception.CrNotFoundException;
+import eci.server.CRCOModule.exception.CrReasonNotFoundException;
+import eci.server.CRCOModule.exception.CrSourceNotFoundException;
 import eci.server.DesignModule.exception.DesignContentNotEmptyException;
 import eci.server.DesignModule.exception.DesignNotFoundException;
 import eci.server.DesignModule.exception.DesignNotLinkedException;
@@ -460,4 +464,37 @@ public class ExceptionAdvice {
                 "이미 A(부모)-B(자식)으로 선언된 관계가 B(부모)-A(자식)으로 선언될 수 없습니다.");
     }
 
+
+    @ExceptionHandler(CrReasonNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Response CrReasonNotFoundException(CrReasonNotFoundException e) {
+        log.info("e = {}", e.getMessage());
+        return Response.failure(404,
+                "존재하지 않는 CR 이유입니다.");
+    }
+
+    @ExceptionHandler(CrSourceNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Response CrSourceNotFoundException(CrSourceNotFoundException e) {
+        log.info("e = {}", e.getMessage());
+        return Response.failure(404,
+                "존재하지 않는 CR 출처입니다.");
+    }
+
+    @ExceptionHandler(CrImportanceNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Response CrImportanceNotFoundException(CrImportanceNotFoundException e) {
+        log.info("e = {}", e.getMessage());
+        return Response.failure(404,
+                "존재하지 않는 CR 중요도입니다.");
+    }
+
+
+    @ExceptionHandler(CrNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Response CrNotFoundException(CrNotFoundException e) {
+        log.info("e = {}", e.getMessage());
+        return Response.failure(404,
+                "존재하지 않는 CR입니다.");
+    }
 }

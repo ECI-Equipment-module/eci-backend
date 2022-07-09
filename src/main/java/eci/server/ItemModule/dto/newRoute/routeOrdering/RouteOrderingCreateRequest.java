@@ -1,5 +1,6 @@
 package eci.server.ItemModule.dto.newRoute.routeOrdering;
 
+import eci.server.CRCOModule.repository.cr.ChangeRequestRepository;
 import eci.server.ItemModule.entity.item.ItemType;
 import eci.server.ItemModule.entity.newRoute.RouteOrdering;
 import eci.server.ItemModule.entity.newRoute.RoutePreset;
@@ -73,5 +74,29 @@ public class RouteOrderingCreateRequest {
                         .orElseThrow(MemberNotFoundException::new)
         );
     }
+
+    public static RouteOrdering toCrEntity(
+            RouteOrderingCreateRequest req,
+            RoutePreset routePreset,
+            ChangeRequestRepository changeRequestRepository,
+            RouteTypeRepository routeTypeRepository
+    ){
+
+        List<String> typeList = new ArrayList<>();
+
+        List routeProduct = List.of((routePreset.CRRouteName[0]));
+
+        for(Object type : routeProduct){
+            typeList.add(type.toString());
+
+        }
+
+        return new RouteOrdering(
+                typeList.toString(),
+                changeRequestRepository.findById(req.itemId)
+                        .orElseThrow(MemberNotFoundException::new)
+        );
+    }
+
 
 }

@@ -7,6 +7,9 @@ import eci.server.BomModule.entity.PreliminaryBom;
 import eci.server.BomModule.exception.BomNotFoundException;
 import eci.server.BomModule.repository.*;
 import eci.server.BomModule.service.BomService;
+import eci.server.CRCOModule.entity.ChangeRequest;
+import eci.server.CRCOModule.exception.CrNotFoundException;
+import eci.server.CRCOModule.repository.cr.ChangeRequestRepository;
 import eci.server.DesignModule.entity.design.Design;
 import eci.server.DesignModule.exception.DesignNotLinkedException;
 import eci.server.DesignModule.repository.DesignRepository;
@@ -65,6 +68,7 @@ public class RouteOrderingService {
     private final CompareBomRepository compareBomRepository;
     private final JsonSaveRepository jsonSaveRepository;
     private final TempNewItemParentChildService tempNewItemParentChildService;
+    private final ChangeRequestRepository changeRequestRepository;
 
     @Value("${default.image.address}")
     private String defaultImageAddress;
@@ -232,6 +236,41 @@ public class RouteOrderingService {
     }
 
     @Transactional
+    public RouteOrderingCreateResponse createCrRoute(RouteOrderingCreateRequest req) {
+        RouteOrdering newRoute = routeOrderingRepository.save(RouteOrderingCreateRequest.toCrEntity(
+                        req,
+                routePreset,
+                        changeRequestRepository,
+                        routeTypeRepository
+                )
+        );
+
+        List<RouteProduct> routeProductList =
+                RouteProductCreateRequest.toCREntityList(
+                        req,
+                        newRoute,
+                        routePreset,
+                        memberRepository,
+                        routeTypeRepository
+
+                );
+
+        for (RouteProduct routeProduct : routeProductList) {
+
+            RouteProduct routeProduct1 =
+                    routeProductRepository.save(routeProduct);
+            System.out.println(routeProduct1.getRoute_name());
+            System.out.println(routeProduct1.getMembers().get(0).getMember());
+            System.out.println(routeProduct1.getMembers().get(0).getRouteProduct());
+        }
+
+        newRoute.getChangeRequest().updateTempsaveWhenMadeRoute();
+        //라우트 만들면 임시저장 해제
+
+        return new RouteOrderingCreateResponse(newRoute.getId());
+    }
+
+    @Transactional
     public List<RouteProductDto> rejectUpdate(
             Long id,
             String rejectComment,
@@ -373,6 +412,19 @@ public class RouteOrderingService {
                     linkedDesign.finalSaveDesign();
                 }
 
+                if (projectRepository.findByNewItem(routeOrdering.getNewItem()).size() == 0) {
+                    throw new ProjectNotLinkedException();
+                } else {
+                    Project linkedProject =
+                            projectRepository.findByNewItem(routeOrdering.getNewItem())
+                                    .get(
+                                            projectRepository.findByNewItem(routeOrdering.getNewItem()).size() - 1
+                                    );
+                    //그 프로젝트를 라우트 프로덕트에 set 해주기
+                    targetRoutProduct.setProject(linkedProject);
+                    //05-12 추가사항 : 이 라우트를 제작해줄 때야 비로소 프로젝트는 temp save = false 가 되는 것
+                    linkedProject.finalSaveProject();
+                }
 
             }
 
@@ -455,6 +507,26 @@ public class RouteOrderingService {
             }
 
 
+            else if (targetRoutProduct.getType().getModule().equals("CR")
+                    && targetRoutProduct.getType().getName().equals("CREATE")) {
+
+                //아이템에 링크된 봄 아이디 건네주기
+                if ((routeOrdering.getChangeRequest()==null)) {
+                    throw new CrNotFoundException();
+                } else {
+                    if (targetRoutProduct.isPreRejected()) {
+                        targetRoutProduct.setPreRejected(false); //06-01 손댐
+                    }
+                    targetRoutProduct.setChangeRequest(routeOrdering.getChangeRequest());
+
+                    //이 라우트를 제작해줄 때야 비로소 emp save = false 가 되는 것
+                    routeOrdering.getChangeRequest().updateTempsaveWhenMadeRoute();
+
+                }
+
+
+            }
+
             RouteOrderingUpdateRequest newRouteUpdateRequest =
                     routeOrdering
                             .update(
@@ -532,6 +604,12 @@ public class RouteOrderingService {
                     break;
                 case "12":            // 봄 리뷰
                     rejectPossibleTypeId = 14L;
+                    break;
+
+                case "16":            // 봄 리뷰
+
+                case "17":
+                    rejectPossibleTypeId = 15L;
                     break;
                 default:        // 모두 해당이 안되는 경우
                     //에러 던지기
