@@ -645,6 +645,9 @@ public class DashboardService {
             }
 
             for(NewItem reviseTarget : reviseCheckItems){
+                System.out.println("whyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy");
+                System.out.println(reviseTarget.getId());
+                System.out.println(reviseTarget.isRevise_progress());
                 if(reviseTarget.isRevise_progress()){
                     reviseNewItemTodoResponses.add(
                             new TodoResponse(

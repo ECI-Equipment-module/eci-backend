@@ -455,6 +455,11 @@ public class NewItemService {
             throw new ItemUpdateImpossibleException();
         }
 
+        if (item.isRevise_progress()) {
+            item.setRevise_progress(false);
+        }
+
+
         NewItem.NewItemFileUpdatedResult result = item.tempEnd(
                 req,
                 colorRepository,
