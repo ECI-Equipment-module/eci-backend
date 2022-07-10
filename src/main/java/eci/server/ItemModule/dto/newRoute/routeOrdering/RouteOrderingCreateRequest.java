@@ -77,6 +77,42 @@ public class RouteOrderingCreateRequest {
         );
     }
 
+
+    public static RouteOrdering toRevisedRouteOrderingEntity(
+            RouteOrderingCreateRequest req,
+            NewItemRepository newItemRepository,
+            RoutePreset routePreset,
+            RouteTypeRepository routeTypeRepository
+            //ItemType itemType
+    ){
+        NewItem targetItem = newItemRepository.findById(req.itemId).orElseThrow(ItemNotFoundException::new);
+
+        List<String> typeList = new ArrayList<>();
+
+        //아이템 타입에따라서 라우트 타입이 선택된다.
+
+        // TODO 라벨 아니고 ITEM.ROUTE_TYPE.ID 로 선택해준다
+        Integer routeType =
+                ItemType.valueOf(
+                        targetItem.getItemTypes().getItemType().name()
+                ).label();
+
+        List routeProduct = List.of((routePreset.itemRouteName[routeType]));
+
+        for(Object type : routeProduct){
+            typeList.add(type.toString());
+
+        }
+
+
+        return new RouteOrdering(
+                1, //revised_cnt
+                typeList.toString(),
+                newItemRepository.findById(req.itemId)
+                        .orElseThrow(MemberNotFoundException::new)
+        );
+    }
+
     public static RouteOrdering toCrEntity(
             RouteOrderingCreateRequest req,
             RoutePreset routePreset,

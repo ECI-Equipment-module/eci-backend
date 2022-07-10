@@ -791,6 +791,9 @@ public class NewItem extends EntityDate {
         this.readonly = true;
     }
 
+    // 라우트가 complete 되면 자손, 부모 revision 이  하나씩 더해져서 업데이트 된다.
+    public void updateRevision(){this.revision = this.revision+1;}
+
     @Getter
     @AllArgsConstructor
     public static class NewItemFileUpdatedResult {
@@ -1187,6 +1190,13 @@ public class NewItem extends EntityDate {
 
         }
         this.setModifiedAt(LocalDateTime.now());
+
+        if(this.getItemTypes().getItemType().name().equals("파트제품")||
+                this.getItemTypes().getItemType().name().equals("프로덕트제품")){
+            //0710 - 얘네 둘은 item review 가 없어서 revise 된 거 찐 저장하면 바로 개정 +=1 되도록 하기!
+            // 다른 애들은 approve route 할 때 (1) 아이템이 revise progress 이며 (2) 지금 승인하는게 ITEM REVIEW 면 revision+=1
+            this.revision= this.revision+1;
+        }
 
         return fileUpdatedResult;
     }

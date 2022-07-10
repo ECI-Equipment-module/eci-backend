@@ -455,9 +455,6 @@ public class NewItemService {
             throw new ItemUpdateImpossibleException();
         }
 
-        if (item.isRevise_progress()) {
-            item.setRevise_progress(false);
-        }
 
 
         NewItem.NewItemFileUpdatedResult result = item.tempEnd(
@@ -737,12 +734,31 @@ public class NewItemService {
 
         for(NewItem newItem : newItems){
             if(!newItem.isRevise_progress()){ //revise progress 가 아니라면 (revise 되었다면)
-                revisedItemSize+=1;
+                newItem.setRevision(newItem.getRevision()+1);
             }
 
         }
 
         return (affectedItemSize==revisedItemSize); //두개 길이가 같으면 완료, 아니라면 진행 중
+    }
+
+    /**
+     * 라우트 update 된다면 자손과 부모의 revision 을 update 한다 !
+     */
+    public void revisionUpdateAllChildrenAndParentItem(NewItem newItem){
+
+        List<NewItemParentChildren> newItemParentChildren =
+                newItemParentChildrenRepository.findAllWithParentByParentId(newItem.getId());
+
+        newItemParentChildren.stream().forEach(
+                newItemParentChildren1 -> newItemParentChildren1.getChildren().updateRevision()
+        );
+
+        newItem.getParent().stream().forEach(
+                newItemParentChildren2 -> newItemParentChildren2.getParent().updateRevision()
+
+        );
+
     }
 
 }

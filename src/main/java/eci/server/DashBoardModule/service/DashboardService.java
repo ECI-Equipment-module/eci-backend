@@ -643,12 +643,16 @@ public class DashboardService {
                 );
 
             }
-
+            // 3-4 : revise_progress 가 true 이면서 revisedCnt가 0초과인 routeOrdering이 없다면 라우트 만들어야해
             for(NewItem reviseTarget : reviseCheckItems){
-                System.out.println("whyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy");
-                System.out.println(reviseTarget.getId());
-                System.out.println(reviseTarget.isRevise_progress());
-                if(reviseTarget.isRevise_progress()){
+
+                RouteOrdering routeOrderingWhetherRevised = routeOrderingRepository.findByNewItem(reviseTarget).get(
+                        routeOrderingRepository.findByNewItem(reviseTarget).size()-1
+                );
+                // routeOrdering revised cnt = 0 인 것은 개정 완료된 것, 그럼 이때 새로 만들어야 함
+                // 따라서 아이템이 revise 중이며 아직 revise route ordering 이 안 만들어진 애들을 보여줌
+
+                if(reviseTarget.isRevise_progress() && routeOrderingWhetherRevised.getRevisedCnt()==0){
                     reviseNewItemTodoResponses.add(
                             new TodoResponse(
                                     reviseTarget.getId(),
