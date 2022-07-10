@@ -641,6 +641,33 @@ public class NewItemService {
         return finalProducts;
     }
 
+    /**
+     * affected item
+     * 상태 complete, release, 아이템 - revise_progress=false 인 아이들만
+     *
+     */
+
+
+    /**
+     * affected items
+     * 제품 중 상태가 complete 나 release 인 애들만 데려오기 - compare bom 용
+     * @return
+     */
+    public List<NewItem> readAffectedItems() {
+
+        List<NewItem> finalProducts = readCompareBomItems();
+        List<NewItem> affectedItems = new ArrayList<>();
+
+        // 최종 COMPLETE/RELEASE 된 아이들 중 지금 REVISE 중인 것이 아닌 것
+        for(NewItem newItem : finalProducts){
+
+            if(!newItem.isRevise_progress()) {
+                affectedItems.add(newItem);
+            }
+        }
+
+        return affectedItems;
+    }
 
     /**
      * createDevelopmentCard 에서 쓰일 것
