@@ -40,6 +40,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
@@ -1191,14 +1192,19 @@ public class NewItem extends EntityDate {
         }
         this.setModifiedAt(LocalDateTime.now());
 
-        if(this.getItemTypes().getItemType().name().equals("파트제품")||
-                this.getItemTypes().getItemType().name().equals("프로덕트제품")){
-            //0710 - 얘네 둘은 item review 가 없어서 revise 된 거 찐 저장하면 바로 개정 +=1 되도록 하기!
-            // 다른 애들은 approve route 할 때 (1) 아이템이 revise progress 이며 (2) 지금 승인하는게 ITEM REVIEW 면 revision+=1
-            this.revision= this.revision+1;
+        if(this.revise_progress) { //만약 지금 revise 진행 중이라면
+            if (this.getItemTypes().getItemType().name().equals("파트제품") ||
+                    this.getItemTypes().getItemType().name().equals("프로덕트제품")) {
+                //0710 - 얘네 둘은 item review 가 없어서 revise 된 거 찐 저장하면 바로 개정 +=1 되도록 하기!
+                // 다른 애들은 approve route 할 때
+                // (1) 아이템이 revise progress 이며
+                // (2) 지금 승인하는게 ITEM REVIEW 면 revision+=1
+                this.revision = this.revision + 1;
+            }
         }
 
         return fileUpdatedResult;
+
     }
 
     public void setParent(Set<NewItemParentChildren> parent) {
@@ -1208,5 +1214,11 @@ public class NewItem extends EntityDate {
     public void setChildren(Set<NewItemParentChildren> children) {
         this.children = children;
     }
+
+    public void newItem_revise_progress_done_when_co_confirmed() {
+        this.revise_progress = false;
+    }
+
+
 
 }

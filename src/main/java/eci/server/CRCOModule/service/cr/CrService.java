@@ -35,6 +35,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.IntStream;
@@ -282,6 +283,39 @@ public class CrService {
                 forEach(
                         i->i.setSave(true)
                 );
+
+    }
+
+    /**
+     *  CR 후보
+     */
+    public List<ChangeRequest> crCandidates(){
+
+        List<ChangeRequest> allCrList = changeRequestRepository.findAll();
+        List<ChangeRequest> crCandidates = new ArrayList<>();
+
+        for(ChangeRequest cr : allCrList){
+            if(
+                    routeOrderingRepository.findByChangeRequest(cr).size()>0
+                            && (routeOrderingRepository.findByChangeRequest(cr).get(
+                            routeOrderingRepository.findByChangeRequest(cr).size()-1
+                    ).getLifecycleStatus().equals("COMPLETE") ||
+                            (routeOrderingRepository.findByChangeRequest(cr).get(
+                                    routeOrderingRepository.findByChangeRequest(cr).size()-1
+                            ).getLifecycleStatus().equals("RELEASE")
+                            )
+                    )
+                     //(1) 라우트 오더링 complete, release
+
+
+            ){
+                if(cr.getDone()==null||!cr.getDone()){ //(2) 아직 cr 처리가 안됐으면){
+                crCandidates.add(cr);
+            }
+            }
+        }
+
+        return crCandidates;
 
     }
 

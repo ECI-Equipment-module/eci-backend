@@ -455,6 +455,21 @@ public class NewItemService {
             throw new ItemUpdateImpossibleException();
         }
 
+        // (2) co의 affected item 의 revise_progress = false
+
+//    List<NewItem> affectedItems =
+//            changeOrder.getCoNewItems().stream().map(
+//                    m->m.getNewItem()
+//            ).collect(Collectors.toList());
+//
+//                    for(NewItem affectedItem : affectedItems){
+//        affectedItem.newItem_revise_progress_done_when_co_confirmed();
+//    }
+//
+//                    newItemService.ReviseItem(affectedItems, changeOrder.getModifier());
+
+
+
 
 
         NewItem.NewItemFileUpdatedResult result = item.tempEnd(
