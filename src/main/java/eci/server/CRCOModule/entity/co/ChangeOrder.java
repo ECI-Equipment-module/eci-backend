@@ -493,9 +493,8 @@ public class ChangeOrder extends EntityDate {
         this.setModifiedAt(LocalDateTime.now());
 
         this.modifier =
-                memberRepository.findById(
-                        req.getModifierId()
-                ).orElseThrow(MemberNotFoundException::new);
+                memberRepository.findById(req.getModifierId())
+                        .orElseThrow(MemberNotFoundException::new);
 
         this.clientOrganization = req.getClientOrganizationId()==null?
                 null:clientOrganizationRepository.findById(

@@ -88,5 +88,18 @@ public class DashboardController {
         );
     }
 
+    /**
+     * CRCO to-do api
+     *
+     * @return 200 (success)
+     */
+    @CrossOrigin(origins = "https://localhost:3000")
+    @GetMapping("/dashboard/crco/todo")
+    @ResponseStatus(HttpStatus.OK)
+    public Response CRCOTodo() {
+        return Response.success(
+                dashboardService.readCrCoTodo()
+        );
+    }
 
 }
