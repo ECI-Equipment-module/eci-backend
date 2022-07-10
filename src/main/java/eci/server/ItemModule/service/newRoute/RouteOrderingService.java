@@ -7,6 +7,7 @@ import eci.server.BomModule.entity.PreliminaryBom;
 import eci.server.BomModule.exception.BomNotFoundException;
 import eci.server.BomModule.repository.*;
 import eci.server.BomModule.service.BomService;
+import eci.server.CRCOModule.exception.CoNotFoundException;
 import eci.server.CRCOModule.exception.CrNotFoundException;
 import eci.server.CRCOModule.repository.co.ChangeOrderRepository;
 import eci.server.CRCOModule.repository.cr.ChangeRequestRepository;
@@ -379,7 +380,7 @@ public class RouteOrderingService {
                 .orElseThrow(RouteNotFoundException::new);
 
 
-        List<RouteProduct> presentRouteProductCandidate = routeProductRepository
+         List<RouteProduct> presentRouteProductCandidate = routeProductRepository
                 .findAllByRouteOrdering(routeOrdering);
 
         //현재 진행중인 라우트프로덕트
@@ -558,6 +559,26 @@ public class RouteOrderingService {
 
                     //이 라우트를 제작해줄 때야 비로소 emp save = false 가 되는 것
                     routeOrdering.getChangeRequest().updateTempsaveWhenMadeRoute();
+
+                }
+
+
+            }
+
+            else if (targetRoutProduct.getType().getModule().equals("CO")
+                    && targetRoutProduct.getType().getName().equals("REQUEST")) {
+
+                //아이템에 링크된 봄 아이디 건네주기
+                if ((routeOrdering.getChangeOrder()==null)) {
+                    throw new CoNotFoundException();
+                } else {
+                    if (targetRoutProduct.isPreRejected()) {
+                        targetRoutProduct.setPreRejected(false); //06-01 손댐
+                    }
+                    targetRoutProduct.setChangeOrder(routeOrdering.getChangeOrder());
+
+                    //이 라우트를 제작해줄 때야 비로소 emp save = false 가 되는 것
+                    routeOrdering.getChangeOrder().updateTempsaveWhenMadeRoute();
 
                 }
 

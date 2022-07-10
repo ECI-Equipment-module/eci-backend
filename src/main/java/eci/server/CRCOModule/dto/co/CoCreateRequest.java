@@ -74,6 +74,7 @@ public class CoCreateRequest {
     //선택한 cr
     private List<Long> changeRequestIds = new ArrayList<>();
     //아래 세개가 co-
+    private List<Long> relatedCrIds = new ArrayList<>();
     private List<Long> changeFeaturesIds = new ArrayList<>();
     private List<String> changeContents = new ArrayList<>();
     private List<Long> newItemsIds = new ArrayList<>();
@@ -177,6 +178,8 @@ public class CoCreateRequest {
                     ), //changedFeatures
 
                     req.getChangeContents(), //changedContents
+
+
 
                     req.getNewItemsIds().stream().map(
                             i ->

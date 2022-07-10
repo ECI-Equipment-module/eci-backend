@@ -2,10 +2,12 @@ package eci.server.CRCOModule.entity;
 
 import eci.server.CRCOModule.entity.co.ChangeOrder;
 import eci.server.CRCOModule.entity.cofeatures.ChangedFeature;
+import eci.server.CRCOModule.entity.cr.ChangeRequest;
 import eci.server.NewItemModule.entity.NewItem;
 import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+import org.springframework.lang.Nullable;
 
 import javax.persistence.*;
 
@@ -30,6 +32,12 @@ public class CoNewItem {
     @JoinColumn(name = "change_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private ChangedFeature changedFeature;
+
+//    @OneToOne
+//    @Nullable
+//    @JoinColumn(name = "cr_id")
+//    @OnDelete(action = OnDeleteAction.CASCADE)
+//    private ChangeRequest changeRequest;
 
     @Column
     private String changedContent;

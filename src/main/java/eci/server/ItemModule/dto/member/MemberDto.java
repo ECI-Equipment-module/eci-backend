@@ -25,6 +25,11 @@ public class MemberDto {
     private String contact;
     private String profileImage;
 
+    public static MemberDto toDto()
+    {
+        return new MemberDto();
+    }
+
     public static MemberDto toDto(Member member,
                                   String defaultImageAddress) {
 

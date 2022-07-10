@@ -1,5 +1,6 @@
 package eci.server.CRCOModule.dto.co;
 
+import eci.server.CRCOModule.dto.cr.CrReadDto;
 import eci.server.CRCOModule.dto.featuresdtos.ChangedFeatureDto;
 import eci.server.CRCOModule.entity.CoNewItem;
 import eci.server.ItemModule.repository.newRoute.RouteOrderingRepository;
@@ -31,6 +32,8 @@ public class CoNewItemDto {
 
     private ChangedFeatureDto changedFeature;
 
+    private CrReadDto crNumber;
+
 
     public static CoNewItemDto toDto(
             CoNewItem coItem,
@@ -54,7 +57,9 @@ public class CoNewItemDto {
 
                 coItem.getChangedContent(),
 
-                ChangedFeatureDto.toDto(coItem.getChangedFeature())
+                ChangedFeatureDto.toDto(coItem.getChangedFeature()),
+
+                CrReadDto.toDto()
 
         );
     }
@@ -85,7 +90,9 @@ public class CoNewItemDto {
 
                 coItem.getChangedContent(),
 
-                ChangedFeatureDto.toDto(coItem.getChangedFeature())
+                ChangedFeatureDto.toDto(coItem.getChangedFeature()),
+
+                CrReadDto.toDto()
 
         )
         ).collect(Collectors.toList());

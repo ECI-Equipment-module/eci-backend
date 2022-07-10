@@ -1,6 +1,7 @@
 package eci.server.ItemModule.entity.newRoute;
 
 import eci.server.BomModule.entity.Bom;
+import eci.server.CRCOModule.entity.co.ChangeOrder;
 import eci.server.CRCOModule.entity.cr.ChangeRequest;
 import eci.server.DesignModule.entity.design.Design;
 import eci.server.ItemModule.dto.newRoute.routeProduct.RouteProductUpdateRequest;
@@ -139,6 +140,11 @@ public class RouteProduct extends EntityDate {
     @JoinColumn(name = "cr_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private ChangeRequest changeRequest;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "co_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private ChangeOrder changeOrder;
 
     /**
      * 라우트 프로덕트 생성자 (reject 시 재 생산용)
@@ -311,5 +317,9 @@ public class RouteProduct extends EntityDate {
 
     public void setChangeRequest(ChangeRequest changeRequest) {
         this.changeRequest = changeRequest;
+    }
+
+    public void setChangeOrder(ChangeOrder changeOrder) {
+        this.changeOrder = changeOrder;
     }
 }

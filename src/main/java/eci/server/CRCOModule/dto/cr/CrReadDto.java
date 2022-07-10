@@ -18,8 +18,10 @@ import eci.server.ItemModule.repository.newRoute.RouteProductRepository;
 import eci.server.NewItemModule.repository.attachment.AttachmentTagRepository;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -28,6 +30,7 @@ import static java.util.stream.Collectors.toList;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class CrReadDto {
 
     private Long id;
@@ -62,6 +65,9 @@ public class CrReadDto {
 
     private boolean preRejected;
 
+    public static CrReadDto toDto(){
+        return new CrReadDto();
+    }
 
     public static  CrReadDto toDto(
             ChangeRequest changeRequest,
@@ -282,6 +288,43 @@ public class CrReadDto {
 
         return crList;
     }
+    //
+    public static  CrReadDto toDto(
+            ChangeRequest changeRequest
+    ) {
+
+        return new  CrReadDto(
+                changeRequest.getId(),
+                changeRequest.getCrNumber()==null?"":changeRequest.getCrNumber(),
+
+                CrReasonDto.toDto(),
+                CrSourceDto.toDto(),
+                CrImportanceDto.toDto(),
+
+                new ArrayList<>(),
+
+                " ",
+                " ",
+                " ",
+
+                        ItemProjectDto.toDto(),
+
+                null,
+
+                MemberDto.toDto(),
+
+                null,
+                MemberDto.toDto(),
+
+                changeRequest.isTempsave(),
+                changeRequest.isReadonly(),
+
+                -1L,
+                false
+
+        );
+    }
+
 
 
 }
