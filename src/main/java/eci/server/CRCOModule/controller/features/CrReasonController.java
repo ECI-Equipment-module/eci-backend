@@ -20,7 +20,7 @@ import javax.validation.Valid;
 public class CrReasonController {
     private final CrReasonService crReasonService;
     @CrossOrigin(origins = "https://localhost:3000")
-    @GetMapping("/crReason")
+    @GetMapping("/crReasonId")
     @ResponseStatus(HttpStatus.OK)
     public Response readAll(@Valid CrReasonReadCondition cond) {
         return Response.success(

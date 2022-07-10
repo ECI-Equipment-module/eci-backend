@@ -23,9 +23,8 @@ public class CoEffectListDto{
     public static CoEffectListDto toDto(Page<CoEffectReadResponse> page) {
 
         List<String> indexes = new ArrayList<>(); // 인덱스 종류 추가
-        for(Field field : CrImportanceResponse.class.getDeclaredFields()){
-            indexes.add(field.getName());
-        }
+        indexes.add("id");
+        indexes.add("name");
 
         return new CoEffectListDto(indexes, page.getTotalElements(),
                 page.getTotalPages(), page.hasNext(), page.getContent());
