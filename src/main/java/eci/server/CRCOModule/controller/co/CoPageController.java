@@ -2,9 +2,8 @@ package eci.server.CRCOModule.controller.co;
 
 import eci.server.CRCOModule.dto.cr.CrPagingDto;
 import eci.server.CRCOModule.entity.co.ChangeOrder;
-import eci.server.CRCOModule.entity.cr.ChangeRequest;
 import eci.server.CRCOModule.repository.co.ChangeOrderRepository;
-import eci.server.CRCOModule.repository.cr.ChangeRequestRepository;
+import eci.server.CRCOModule.repository.co.CoNewItemRepository;
 import eci.server.ItemModule.repository.newRoute.RouteOrderingRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +32,7 @@ public class CoPageController{
     @Autowired
     ChangeOrderRepository changeOrderRepository;
     private final RouteOrderingRepository routeOrderingRepository;
+    private final CoNewItemRepository coNewItemRepository;
     @Value("${default.image.address}")
     private String defaultImageAddress;
 
@@ -54,15 +54,18 @@ public class CoPageController{
                         i-> (!i.getTempsave())
                 ).collect(Collectors.toList());
 
-        Page<ChangeOrder> crList = new PageImpl<>(crs);
+        List<CrPagingDto> crPagingDtos = CrPagingDto.toCoPageDto(
+                crs, routeOrderingRepository, defaultImageAddress
+        ,coNewItemRepository);
+
+        Page<CrPagingDto> crList = new PageImpl<>(crPagingDtos);
+
+
 
         /**
          * 수정 필요
          */
-        return crList.map(
-                cr -> CrPagingDto.toCoDto(
-                        cr.getCoNewItems().get(0).getNewItem(), routeOrderingRepository, cr, defaultImageAddress)
-        );
+        return crList;
 
     }
 
