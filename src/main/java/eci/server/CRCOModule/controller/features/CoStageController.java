@@ -17,7 +17,7 @@ import javax.validation.Valid;
 @CrossOrigin(origins = "https://localhost:3000")
 public class CoStageController{
     private final CoStageService CoStageService;
-
+    @CrossOrigin(origins = "https://localhost:3000")
     @GetMapping("/coStage")
     @ResponseStatus(HttpStatus.OK)
     public Response readAll(@Valid CoStageReadCondition cond) {
