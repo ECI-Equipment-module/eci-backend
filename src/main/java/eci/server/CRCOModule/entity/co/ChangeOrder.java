@@ -10,7 +10,6 @@ import eci.server.CRCOModule.entity.cr.ChangeRequest;
 import eci.server.CRCOModule.entity.features.CrImportance;
 import eci.server.CRCOModule.entity.features.CrReason;
 import eci.server.CRCOModule.exception.*;
-import eci.server.CRCOModule.repository.co.CoNewItemRepository;
 import eci.server.CRCOModule.repository.cofeature.ChangedFeatureRepository;
 import eci.server.CRCOModule.repository.cofeature.CoEffectRepository;
 import eci.server.CRCOModule.repository.cofeature.CoStageRepository;
@@ -64,6 +63,9 @@ public class ChangeOrder extends EntityDate {
     @JoinColumn(name = "clientOrganization_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private ClientOrganization clientOrganization;
+
+    @Column
+    private String clientItemNumber;
 
     @Column(nullable = false)
     private String coNumber;
@@ -167,6 +169,7 @@ public class ChangeOrder extends EntityDate {
      */
     public ChangeOrder(
             ClientOrganization clientOrganization,
+            String clientItemNumber,
             String coNumber,
             LocalDate coPublishPeriod,
             LocalDate coReceivedPeriod,
@@ -196,6 +199,7 @@ public class ChangeOrder extends EntityDate {
     ){
 
         this.clientOrganization = clientOrganization;
+        this.clientItemNumber = clientItemNumber;
         this.coNumber = coNumber;
         this.coPublishPeriod = coPublishPeriod;
         this.coReceivedPeriod = coReceivedPeriod;
@@ -247,6 +251,7 @@ public class ChangeOrder extends EntityDate {
      */
     public ChangeOrder(
             ClientOrganization clientOrganization,
+            String clientItemNumber,
             String coNumber,
             LocalDate coPublishPeriod,
             LocalDate coReceivedPeriod,
@@ -273,6 +278,7 @@ public class ChangeOrder extends EntityDate {
     ){
 
         this.clientOrganization = clientOrganization;
+        this.clientItemNumber = clientItemNumber;
         this.coNumber = coNumber;
         this.coPublishPeriod = coPublishPeriod;
         this.coReceivedPeriod = coReceivedPeriod;
@@ -495,6 +501,9 @@ public class ChangeOrder extends EntityDate {
                 null:clientOrganizationRepository.findById(
                         req.getClientOrganizationId())
                 .orElseThrow(ClientOrganizationNotFoundException::new);
+
+        this.clientItemNumber = req.getClientItemNumber()==null||req.getClientItemNumber().isBlank()?
+                " ":req.getClientItemNumber();
 
         this.coNumber =
                 req.getCoNumber() ==null||req.getCoNumber().isEmpty()?

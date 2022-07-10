@@ -38,6 +38,9 @@ import static java.util.stream.Collectors.toList;
 public class CoCreateRequest {
 
     private Long clientOrganizationId;
+
+    private String clientItemNumber;
+
     @Null
     private String coNumber;
 
@@ -112,6 +115,9 @@ public class CoCreateRequest {
                     req.getClientOrganizationId() == null ? null :
                             clientOrganizationRepository.findById(req.getClientOrganizationId())
                                     .orElseThrow(ClientOrganizationNotFoundException::new),
+
+                    req.getClientItemNumber()==null||req.getClientItemNumber().isBlank()?
+                            " ":req.getClientItemNumber(),
 
                     String.valueOf(req.getCoReasonId() * 1000000 + (int) (Math.random() * 1000)),
 
@@ -196,6 +202,9 @@ public class CoCreateRequest {
                 req.getClientOrganizationId() == null ? null :
                         clientOrganizationRepository.findById(req.getClientOrganizationId())
                                 .orElseThrow(ClientOrganizationNotFoundException::new),
+
+                req.getClientItemNumber()==null||req.getClientItemNumber().isBlank()?
+                        " ":req.getClientItemNumber(),
 
                 String.valueOf(req.getCoReasonId() * 1000000 + (int) (Math.random() * 1000)),
 

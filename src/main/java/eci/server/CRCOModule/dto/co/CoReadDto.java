@@ -40,6 +40,8 @@ public class CoReadDto {
     private Long id;
 
     private ClientOrganizationDto clientOrganizationDto;
+    private String clientItemNumber;
+
     private String coNumber;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
@@ -118,6 +120,9 @@ public class CoReadDto {
                 co.getClientOrganization()==null?
                         ClientOrganizationDto.toDto():
                         ClientOrganizationDto.toDto(co.getClientOrganization()),
+
+                co.getClientItemNumber()==null||co.getClientItemNumber().isBlank()?" ":
+                        co.getClientItemNumber(),
 
                 co.getCoNumber(),
 
@@ -210,6 +215,9 @@ public class CoReadDto {
                 co.getClientOrganization()==null?
                         ClientOrganizationDto.toDto():
                         ClientOrganizationDto.toDto(co.getClientOrganization()),
+
+                co.getClientItemNumber()==null||co.getClientItemNumber().isBlank()?" ":
+                        co.getClientItemNumber(),
 
                 co.getCoNumber(),
 

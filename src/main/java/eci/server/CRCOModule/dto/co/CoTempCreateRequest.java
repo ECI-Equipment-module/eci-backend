@@ -2,7 +2,6 @@ package eci.server.CRCOModule.dto.co;
 
 import eci.server.CRCOModule.entity.co.ChangeOrder;
 import eci.server.CRCOModule.entity.cofeatures.CoAttachment;
-import eci.server.CRCOModule.entity.cr.ChangeRequest;
 import eci.server.CRCOModule.exception.CrNotFoundException;
 import eci.server.CRCOModule.exception.CrReasonNotFoundException;
 import eci.server.CRCOModule.repository.cofeature.ChangedFeatureRepository;
@@ -40,6 +39,8 @@ public class CoTempCreateRequest {
 
 
     private Long clientOrganizationId;
+
+    private String clientItemNumber;
 
     private String coNumber;
 
@@ -123,6 +124,9 @@ public class CoTempCreateRequest {
                             clientOrganizationRepository.findById(req.getClientOrganizationId())
                                     .orElseThrow(ClientOrganizationNotFoundException::new),
 
+                    req.getClientItemNumber()==null||req.getClientItemNumber().isBlank()?
+                            " ":req.getClientItemNumber(),
+
                     "made when saved",
                     //String.valueOf(req.getCoReasonId() * 1000000 + (int) (Math.random() * 1000)),
 
@@ -204,6 +208,9 @@ public class CoTempCreateRequest {
                 req.getClientOrganizationId() == null ? null :
                         clientOrganizationRepository.findById(req.getClientOrganizationId())
                                 .orElseThrow(ClientOrganizationNotFoundException::new),
+
+                req.getClientItemNumber()==null||req.getClientItemNumber().isBlank()?
+                        " ":req.getClientItemNumber(),
 
                 "made when saved",
                 //String.valueOf(req.getCoReasonId() * 1000000 + (int) (Math.random() * 1000)),
