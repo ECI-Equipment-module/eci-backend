@@ -282,8 +282,8 @@ public class NewItemCreateRequest {
 //                                    makerRepository.
 //                                            findById(i).orElseThrow(ManufactureNotFoundException::new)
 //                    ).collect(
-//                            toList()
-//                    ),
+////                            toList()
+////                    ),
 
                     req.getMakersId()==null?
                             null:

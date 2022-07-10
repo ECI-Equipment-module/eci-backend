@@ -1,5 +1,7 @@
 package eci.server.ItemModule.repository.newRoute;
 
+import eci.server.CRCOModule.entity.co.ChangeOrder;
+import eci.server.CRCOModule.entity.cr.ChangeRequest;
 import eci.server.ItemModule.entity.newRoute.RouteOrdering;
 import eci.server.NewItemModule.entity.NewItem;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -10,6 +12,9 @@ public interface RouteOrderingRepository extends JpaRepository<RouteOrdering, Lo
 
     List<RouteOrdering> findByNewItem(NewItem newItem);
 
+    List<RouteOrdering> findByChangeRequest(ChangeRequest changeRequest);
+
+    List<RouteOrdering> findByChangeOrder(ChangeOrder changeOrder);
     //
 //    /**
 //     * 부모의 아이디로 오름차순 정렬, NULL 우선, 다음으로 자신의 아이디 오름차순 정렬 & 조회

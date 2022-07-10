@@ -1,16 +1,12 @@
 package eci.server.NewItemModule.controller.newItem;
 
 import eci.server.ItemModule.dto.item.ItemProjectCreateDto;
-import eci.server.ItemModule.entity.item.ItemType;
-import eci.server.ItemModule.entity.item.ItemTypes;
 import eci.server.ItemModule.repository.item.ItemTypesRepository;
 import eci.server.ItemModule.repository.newRoute.RouteOrderingRepository;
 import eci.server.NewItemModule.dto.newItem.NewItemChildDto;
 import eci.server.NewItemModule.dto.newItem.NewItemPagingDto;
 import eci.server.NewItemModule.entity.NewItem;
-import eci.server.NewItemModule.entity.NewItemParentChildren;
 import eci.server.NewItemModule.entity.page.CustomPageImpl;
-import eci.server.NewItemModule.repository.item.NewItemParentChildrenRepository;
 import eci.server.NewItemModule.repository.item.NewItemRepository;
 import eci.server.NewItemModule.service.item.NewItemService;
 import lombok.RequiredArgsConstructor;
@@ -29,8 +25,6 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 @Transactional
 @RestController
 @RequiredArgsConstructor

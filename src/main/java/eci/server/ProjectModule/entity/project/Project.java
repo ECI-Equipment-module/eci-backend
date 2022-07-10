@@ -194,7 +194,7 @@ public class Project extends EntityDate {
         this.projectNumber = projectNumber;
 
         this.member = member;
-        //생성 시에는 수정자 저장하지 않을 것이다.
+        this.modifier = member;
 
         this.tempsave = tempsave;
         this.readonly = readonly;

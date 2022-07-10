@@ -37,6 +37,29 @@ public class RouteOrderingController {
         );
     }
 
+    @PostMapping("/route/cr")
+    @ResponseStatus(HttpStatus.CREATED)
+    @AssignMemberId
+    public Response createCrRoutes(
+            @Valid RouteOrderingCreateRequest req) {
+
+        return Response.success(
+                newRouteService.createCrRoute(req)
+        );
+    }
+
+
+    @PostMapping("/route/co")
+    @ResponseStatus(HttpStatus.CREATED)
+    @AssignMemberId
+    public Response createCoRoutes(
+            @Valid RouteOrderingCreateRequest req) {
+
+        return Response.success(
+                newRouteService.createCoRoute(req)
+        );
+    }
+
 
     @GetMapping("/route/{id}")
     @ResponseStatus(HttpStatus.OK)
