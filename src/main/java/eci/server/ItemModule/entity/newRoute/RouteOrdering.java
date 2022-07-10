@@ -1,6 +1,8 @@
 package eci.server.ItemModule.entity.newRoute;
 
 import eci.server.BomModule.entity.Bom;
+import eci.server.CRCOModule.entity.co.ChangeOrder;
+import eci.server.CRCOModule.entity.cr.ChangeRequest;
 import eci.server.DesignModule.entity.design.Design;
 import eci.server.ItemModule.dto.newRoute.routeOrdering.RouteOrderingUpdateRequest;
 import eci.server.ItemModule.entitycommon.EntityDate;
@@ -96,13 +98,18 @@ public class RouteOrdering extends EntityDate {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Bom bom;
 
-//    /**
-//     * null 가능, 플젝에서 라우트 생성 시 지정
-//     */
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "project_id")
-//    @OnDelete(action = OnDeleteAction.CASCADE)
-//    private Project project;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "cr_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private ChangeRequest changeRequest;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "co_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private ChangeOrder changeOrder;
+
+
 
     //아이템 라우트용 생성자
     public RouteOrdering(
@@ -116,6 +123,35 @@ public class RouteOrdering extends EntityDate {
         this.present = 1;
         this.newItem = newItem;
     }
+
+    //cr
+    // 생성자
+    public RouteOrdering(
+            String type,
+            ChangeRequest changeRequest
+
+    ){
+        this.type = type;
+        this.lifecycleStatus = "WORKING";
+        this.revisedCnt = 0;
+        this.present = 1;
+        this.changeRequest = changeRequest;
+    }
+
+    //co
+    //아이템 라우트용 생성자
+    public RouteOrdering(
+            String type,
+            ChangeOrder co
+
+    ){
+        this.type = type;
+        this.lifecycleStatus = "WORKING";
+        this.revisedCnt = 0;
+        this.present = 1;
+        this.changeOrder = co;
+    }
+
     //프로젝트 라우트용 생성자
     public RouteOrdering(
             String type,
@@ -137,6 +173,13 @@ public class RouteOrdering extends EntityDate {
         this.project = project;
     }
 
+    public void setChangeRequest(ChangeRequest changeRequest) {
+        this.changeRequest = changeRequest;
+    }
+
+    public void setChangeOrder(ChangeOrder changeOrder) {
+        this.changeOrder = changeOrder;
+    }
 
     public void setDesign(Design design) {
         this.design = design;
@@ -189,6 +232,12 @@ public class RouteOrdering extends EntityDate {
                 }
                 else if(routeProductList.get(this.present).getType().getModule().equals("BOM")){
                     this.getBom().setTempsave(false); //라우트 만든 순간 임시저장 다시 거짓으로
+                }
+                else if(routeProductList.get(this.present).getType().getModule().equals("CR")){
+                    this.getChangeRequest().setTempsave(false); //라우트 만든 순간 임시저장 다시 거짓으로
+                }
+                else if(routeProductList.get(this.present).getType().getModule().equals("CO")){
+                    this.getChangeOrder().setTempsave(false); //라우트 만든 순간 임시저장 다시 거짓으로
                 }
             }
 
@@ -301,6 +350,14 @@ public class RouteOrdering extends EntityDate {
                 this.getBom().setTempsave(true);
                 this.getBom().setReadonly(false);
                 break;
+            // 15 (cr)
+            case "15":
+                this.getChangeRequest().setTempsave(true);
+                this.getChangeRequest().setReadonly(false);
+            // 18 (CO REQUEST)
+            case "18":
+                this.getChangeOrder().setTempsave(true);
+                this.getChangeOrder().setReadonly(false);
         }
 
         /**

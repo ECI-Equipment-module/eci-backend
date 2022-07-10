@@ -1,6 +1,5 @@
 package eci.server.NewItemModule.controller.newItem;
 
-import eci.server.NewItemModule.dto.newItem.NewItemPagingDtoList;
 import eci.server.NewItemModule.dto.newItem.NewItemReadCondition;
 import eci.server.NewItemModule.dto.newItem.create.NewItemCreateRequest;
 import eci.server.NewItemModule.dto.newItem.create.NewItemTemporaryCreateRequest;
@@ -15,7 +14,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import javax.validation.constraints.Null;
 
 @RestController
 @RequiredArgsConstructor

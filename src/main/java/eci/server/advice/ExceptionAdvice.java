@@ -1,6 +1,7 @@
 package eci.server.advice;
 
 import eci.server.BomModule.exception.*;
+import eci.server.CRCOModule.exception.*;
 import eci.server.DesignModule.exception.DesignContentNotEmptyException;
 import eci.server.DesignModule.exception.DesignNotFoundException;
 import eci.server.DesignModule.exception.DesignNotLinkedException;
@@ -459,5 +460,84 @@ public class ExceptionAdvice {
         return Response.failure(400,
                 "이미 A(부모)-B(자식)으로 선언된 관계가 B(부모)-A(자식)으로 선언될 수 없습니다.");
     }
+
+
+    @ExceptionHandler(CrReasonNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Response CrReasonNotFoundException(CrReasonNotFoundException e) {
+        log.info("e = {}", e.getMessage());
+        return Response.failure(404,
+                "존재하지 않는 CR 이유입니다.");
+    }
+
+    @ExceptionHandler(CrSourceNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Response CrSourceNotFoundException(CrSourceNotFoundException e) {
+        log.info("e = {}", e.getMessage());
+        return Response.failure(404,
+                "존재하지 않는 CR 출처입니다.");
+    }
+
+    @ExceptionHandler(CrImportanceNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Response CrImportanceNotFoundException(CrImportanceNotFoundException e) {
+        log.info("e = {}", e.getMessage());
+        return Response.failure(404,
+                "존재하지 않는 CR 중요도입니다.");
+    }
+
+
+    @ExceptionHandler(CrNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Response CrNotFoundException(CrNotFoundException e) {
+        log.info("e = {}", e.getMessage());
+        return Response.failure(404,
+                "존재하지 않는 CR입니다.");
+    }
+
+    @ExceptionHandler(CrUpdateImpossibleException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Response CrUpdateImpossibleException(CrUpdateImpossibleException e) {
+        log.info("e = {}", e.getMessage());
+        return Response.failure(404,
+                "수정이 불가한 cr 입니다.");
+    }
+
+    @ExceptionHandler(CoStageNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Response CoStageNotFoundException(CoStageNotFoundException e) {
+        log.info("e = {}", e.getMessage());
+        return Response.failure(404,
+                "존재하지 않는 CO 단계입니다.");
+    }
+
+    @ExceptionHandler(CoEffectNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Response CoEffectNotFoundException(CoEffectNotFoundException e) {
+        log.info("e = {}", e.getMessage());
+        return Response.failure(404,
+                "존재하지 않는 CO 영향 목록입니다.");
+    }
+
+    @ExceptionHandler(CoNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Response CoNotFoundException(CoNotFoundException e) {
+        log.info("e = {}", e.getMessage());
+        return Response.failure(404,
+                "존재하지 않는 CO 입니다.");
+    }
+
+    @ExceptionHandler(CoUpdateImpossibleException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Response CoUpdateImpossibleException(CoUpdateImpossibleException e) {
+        log.info("e = {}", e.getMessage());
+        return Response.failure(404,
+                "수정 불가능한 CO 입니다.");
+    }
+
+
+
+
+
 
 }

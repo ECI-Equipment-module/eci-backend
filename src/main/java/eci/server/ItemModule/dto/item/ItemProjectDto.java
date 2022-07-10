@@ -6,10 +6,12 @@ import eci.server.NewItemModule.dto.newItem.ItemClassificationDto;
 import eci.server.NewItemModule.entity.NewItem;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class ItemProjectDto {
 
     private Long id;
@@ -47,6 +49,35 @@ public class ItemProjectDto {
 
 
         );
+    }
+
+    public static ItemProjectDto noRoutetoDto(NewItem Item, RouteOrderingRepository routeOrderingRepository) {
+
+        return new ItemProjectDto(
+
+                Item.getId(),
+                Item.getName(),
+                Item.getItemTypes().getItemType().toString(),
+                Item.getItemNumber(),
+                (char) Item.getRevision(),
+
+                new ItemClassificationDto(Item.getClassification().getClassification1().getName()+"/"
+                        +Item.getClassification().getClassification2().getName()+"/"
+                        +( Item.getClassification().getClassification3().getId().equals(99999L)?
+                        "":
+                        "/" + Item.getClassification().getClassification3().getName()
+                )
+                ),
+
+
+                "NONE"
+
+
+        );
+    }
+
+    public static ItemProjectDto toDto() {
+        return new ItemProjectDto();
     }
 
 }
