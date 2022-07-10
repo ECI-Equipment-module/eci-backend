@@ -4,6 +4,10 @@ import eci.server.BomModule.entity.Bom;
 import eci.server.BomModule.entity.DevelopmentBom;
 import eci.server.BomModule.repository.BomRepository;
 import eci.server.BomModule.repository.DevelopmentBomRepository;
+import eci.server.CRCOModule.entity.CoNewItem;
+import eci.server.CRCOModule.entity.co.ChangeOrder;
+import eci.server.CRCOModule.repository.co.ChangeOrderRepository;
+import eci.server.CRCOModule.repository.cr.ChangeRequestRepository;
 import eci.server.DashBoardModule.dto.ToDoDoubleList;
 import eci.server.DashBoardModule.dto.ToDoSingle;
 import eci.server.DashBoardModule.dto.myProject.TotalProject;
@@ -46,6 +50,8 @@ public class DashboardService {
     private final NewItemRepository newItemRepository;
     private final AuthHelper authHelper;
     private final DevelopmentBomRepository developmentBomRepository;
+    private final ChangeOrderRepository changeOrderRepository;
+    private final ChangeRequestRepository changeRequestRepository;
 
     public TotalProject readProjectTotal() {
         //0) 현재 로그인 된 유저
@@ -439,7 +445,7 @@ public class DashboardService {
         for (RouteProduct routeProduct : myDesignReviewRouteProductList) { //myRoute-> 내꺼 + 현재
 
             //현재 라우트보다 하나 이전 라우트프로덕트의 디자인만 존재함, 그 디자인을 가져와야한다.
-            System.out.println("eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeew");
+
             System.out.println(routeProduct.getId() - 1);
             RouteProduct targetRouteProduct = routeProductRepository.findById(routeProduct.getId() - 1)
                     .orElseThrow(RouteProductNotFoundException::new);
@@ -499,14 +505,18 @@ public class DashboardService {
 
         for (NewItem newItem : NewItemList) {
 
-            if (newItem.isTempsave()){
+            if (newItem.isTempsave() && !newItem.isRevise_progress()){
+                                //07-10 REVISE 된 것이 아닐 때에 임시저장에 뜨게하기
+                                // (REVISE 되는 거는 REVISE 에 떠야함)
 
                 if(routeOrderingRepository.findByNewItem(newItem).size()>0){
                     RouteOrdering ordering = routeOrderingRepository.findByNewItem(newItem).get(
                             routeOrderingRepository.findByNewItem(newItem).size() - 1);
                     int presentIdx = ordering.getPresent();
                     RouteProduct routeProduct = routeProductRepository.findAllByRouteOrdering(ordering).get(presentIdx);
-                    if (!routeProduct.isPreRejected()) { //06-18 거부된게 아닐때만 임시저장에, 거부된 것이라면 임시저장에 뜨면 안됨
+                    if (!routeProduct.isPreRejected() ) {
+
+                        //06-18 거부된게 아닐때만 임시저장에, 거부된 것이라면 임시저장에 뜨면 안됨
                         //06-04 : 임시저장 이고 읽기 전용이 아니라면 임시저장에 뜨도록
                         tempSavedNewItemList.add(newItem);
                         //임시저장 진행 중인 것
@@ -604,7 +614,55 @@ public class DashboardService {
         List<TodoResponse> REJECTED = new ArrayList<>(rejectedNewItemTodoResponses);
 
         //3) REVISE - TODO : REVISE 추가되고 작업
-        List<TodoResponse> REVISE = new ArrayList<>();
+        // 아이템들 중 revise_progress = true 인 것들 모두!
+        // CO 로 찾은 라우트 오더링 중 COMPLETE 안됐고 && 작성자가 나인 것 member1
+        List<TodoResponse> reviseNewItemTodoResponses = new ArrayList<>();
+
+        //3-1 revise co 찾기 ) 내가 작성자인 모든 CO 데려오기
+        List<ChangeOrder> changeOrders = changeOrderRepository.findByMember(member1);
+
+        if(changeOrders.size()>0) {
+
+            // 3-2 : 내가 작성한 CO 라우트 오더링 찾아오기
+            List<RouteOrdering> routeOrdering = new ArrayList<>();
+
+            for (ChangeOrder changeOrder : changeOrders) {
+                List<RouteOrdering> orderings = routeOrderingRepository.findByChangeOrder(changeOrder);
+                routeOrdering.addAll(orderings);
+            }
+
+            //3-3 : & 그 오더링의 co 아이템들을 한 리스트에 모아두자
+
+            Set<NewItem> reviseCheckItems = new HashSet<>();
+            for (RouteOrdering ro : routeOrdering){
+
+                reviseCheckItems.addAll(
+                ro.getChangeOrder().getCoNewItems().stream().map(
+                        CoNewItem::getNewItem
+                ).collect(Collectors.toList())
+                );
+
+            }
+
+            for(NewItem reviseTarget : reviseCheckItems){
+                if(reviseTarget.isRevise_progress()){
+                    reviseNewItemTodoResponses.add(
+                            new TodoResponse(
+                                    reviseTarget.getId(),
+                                    reviseTarget.getName(),
+                                    reviseTarget.getItemTypes().getItemType().toString(),
+                                    reviseTarget.getItemNumber().toString()
+                            )
+                    );
+                }
+            }
+
+            // 이 routeOrdering들의 change_order의 conewitem의 newitem
+            // 리스트를 가져와서 그들 중 revise_progress=false인 것 찾기
+
+        }
+
+        List<TodoResponse> REVISE = new ArrayList<>(reviseNewItemTodoResponses);
 
         //4) REVIEW
         //현재 라우트 프로덕트들 중  이름이 Item Request Review(설계팀장) 고,
@@ -649,8 +707,6 @@ public class DashboardService {
                     )
             );
         }
-
-
         List<TodoResponse> NEED_REVIEW = new ArrayList<>(needReviewNewItemTodoResponses);
 
         ToDoSingle tempSave = new ToDoSingle("Save as Draft", TEMP_SAVE);

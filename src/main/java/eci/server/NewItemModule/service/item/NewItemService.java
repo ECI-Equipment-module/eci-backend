@@ -706,6 +706,38 @@ public class NewItemService {
         }
     }
 
+    /**
+     * route 가 co 실행되면 이 처리 수행
+     * @param newItems // affected item List
+     * @param changeOrderRequestPerson //아이템의 수정자로 revise 요청자가 들어감(guard 관련)
+     */
+    public void ReviseItem(List<NewItem> newItems, Member changeOrderRequestPerson){
+        for(NewItem newItem : newItems){
+            newItem.setRevise_progress(true);
+            // revise 진행 중 알리기
+            newItem.setModifier(changeOrderRequestPerson);
+            // 아이템 수정할 수 있게 modifier 로 요청자 설정
+            newItem.setReadonly(false); newItem.setTempsave(true); // 아이템 수정 가능 모드로 변경
+        }
+    }
 
+    /**
+     * revise 완료 여부 , true 면 revise 완료 , false 면 revise 진행 중
+     * @param newItems //affected item List
+     */
+    public boolean checkReviseCompleted(List<NewItem> newItems){
+
+        int affectedItemSize = newItems.size();
+        int revisedItemSize = 0;
+
+        for(NewItem newItem : newItems){
+            if(!newItem.isRevise_progress()){ //revise progress 가 아니라면 (revise 되었다면)
+                revisedItemSize+=1;
+            }
+
+        }
+
+        return (affectedItemSize==revisedItemSize); //두개 길이가 같으면 완료, 아니라면 진행 중
+    }
 
 }

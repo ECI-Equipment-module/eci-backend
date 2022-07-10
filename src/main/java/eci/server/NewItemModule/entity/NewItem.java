@@ -1065,17 +1065,17 @@ public class NewItem extends EntityDate {
         //carTypeRepository.findById(99999L).orElseThrow(CarTypeNotFoundException::new);
 
 
-        this.integrate = req.getIntegrate().isBlank()?null:req.getIntegrate();
+        this.integrate = req.getIntegrate().isBlank()?" ":req.getIntegrate();
 
-        this.curve = req.getCurve().isBlank()?null:req.getCurve();
+        this.curve = req.getCurve().isBlank()?" ":req.getCurve();
 
-        this.width = req.getWidth().isBlank()?this.width:req.getWidth();
+        this.width = req.getWidth().isBlank()?" ":req.getWidth();
 
-        this.height= req.getHeight().isBlank()?this.height:req.getHeight();
+        this.height= req.getHeight().isBlank()?" ":req.getHeight();
 
-        this.thickness = req.getThickness().isBlank()?this.thickness:req.getThickness();
+        this.thickness = req.getThickness().isBlank()?" ":req.getThickness();
 
-        this.weight = req.getWeight().isBlank()?this.weight:req.getWeight();
+        this.weight = req.getWeight().isBlank()?" ":req.getWeight();
 
         this.importance = req.getImportance().isBlank()?this.importance:req.getImportance();
 
@@ -1083,9 +1083,9 @@ public class NewItem extends EntityDate {
         this.color = req.getColorId()==null?this.color:colorRepository.findById(req.getColorId())
                 .orElseThrow(ColorNotFoundException::new);
 
-        this.loadQuantity = req.getLoadQuantity().isBlank()?this.loadQuantity:req.getLoadQuantity();
+        this.loadQuantity = req.getLoadQuantity().isBlank()?" ":req.getLoadQuantity();
 
-        this.forming = req.getForming().isBlank()?this.forming:req.getForming();
+        this.forming = req.getForming().isBlank()?" ":req.getForming();
 
         this.coatingWay = req.getCoatingWayId()==null?this.coatingWay:
                 coatingWayRepository.findById
@@ -1096,17 +1096,17 @@ public class NewItem extends EntityDate {
                         (req.getCoatingTypeId()).orElseThrow(CoatingNotFoundException::new);
 
 
-        this.modulus = req.getModulus().isBlank()?this.modulus:req.getModulus();
+        this.modulus = req.getModulus().isBlank()?" ":req.getModulus();
 
-        this.screw = req.getScrew().isBlank()?this.screw:req.getScrew();
+        this.screw = req.getScrew().isBlank()?" ":req.getScrew();
 
-        this.cuttingType = req.getCuttingType().isBlank()?this.cuttingType:req.getCuttingType();
+        this.cuttingType = req.getCuttingType().isBlank()?" ":req.getCuttingType();
 
-        this.lcd = req.getLcd().isBlank()?this.lcd:req.getLcd();
+        this.lcd = req.getLcd().isBlank()?" ":req.getLcd();
 
-        this.displaySize = req.getDisplaySize().isBlank()?this.displaySize:req.getDisplaySize();
+        this.displaySize = req.getDisplaySize().isBlank()?" ":req.getDisplaySize();
 
-        this.screwHeight = req.getScrewHeight().isBlank()?this.screwHeight:req.getScrewHeight();
+        this.screwHeight = req.getScrewHeight().isBlank()?" ":req.getScrewHeight();
 
         this.clientOrganization = req.getClientOrganizationId()==null?this.clientOrganization:
                 clientOrganizationRepository.findById(req.getClientOrganizationId())
@@ -1128,7 +1128,7 @@ public class NewItem extends EntityDate {
 //                                )
 //                        )
 //                        .collect(toList());
-        this.partNumber = req.getPartnumbers().isBlank()?"":req.getPartnumbers();
+        this.partNumber = req.getPartnumbers().isBlank()?" ":req.getPartnumbers();
         this.tempsave = true;
         this.readonly = true; //0605- 이 부분하나가 변경, 이 것은 얘를 false 에서 true로 변경 !
 

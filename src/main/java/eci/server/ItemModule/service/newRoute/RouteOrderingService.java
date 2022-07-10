@@ -7,6 +7,7 @@ import eci.server.BomModule.entity.PreliminaryBom;
 import eci.server.BomModule.exception.BomNotFoundException;
 import eci.server.BomModule.repository.*;
 import eci.server.BomModule.service.BomService;
+import eci.server.CRCOModule.entity.co.ChangeOrder;
 import eci.server.CRCOModule.exception.CoNotFoundException;
 import eci.server.CRCOModule.exception.CrNotFoundException;
 import eci.server.CRCOModule.repository.co.ChangeOrderRepository;
@@ -36,6 +37,7 @@ import eci.server.NewItemModule.entity.NewItem;
 import eci.server.NewItemModule.exception.ItemTypeRequiredException;
 import eci.server.NewItemModule.repository.item.NewItemRepository;
 import eci.server.NewItemModule.service.TempNewItemParentChildService;
+import eci.server.NewItemModule.service.item.NewItemService;
 import eci.server.ProjectModule.entity.project.Project;
 import eci.server.ProjectModule.exception.ProjectNotLinkedException;
 import eci.server.ProjectModule.repository.project.ProjectRepository;
@@ -70,6 +72,7 @@ public class RouteOrderingService {
     private final TempNewItemParentChildService tempNewItemParentChildService;
     private final ChangeRequestRepository changeRequestRepository;
     private final ChangeOrderRepository changeOrderRepository;
+    private final NewItemService newItemService;
 
     @Value("${default.image.address}")
     private String defaultImageAddress;
@@ -579,6 +582,28 @@ public class RouteOrderingService {
 
                     //이 라우트를 제작해줄 때야 비로소 emp save = false 가 되는 것
                     routeOrdering.getChangeOrder().updateTempsaveWhenMadeRoute();
+
+                }
+
+
+            }
+
+            else if (targetRoutProduct.getType().getModule().equals("CO")
+                    && targetRoutProduct.getType().getName().equals("APPROVE")) {
+
+                //아이템에 링크된 봄 아이디 건네주기
+                if ((routeOrdering.getChangeOrder()==null)) {
+                    throw new CoNotFoundException();
+                } else {
+                    ChangeOrder changeOrder=routeOrdering.getChangeOrder();
+
+                    List<NewItem> affectedItems =
+                            changeOrder.getCoNewItems().stream().map(
+                                    m->m.getNewItem()
+                            ).collect(Collectors.toList());
+
+                    newItemService.ReviseItem(affectedItems, changeOrder.getModifier());
+
 
                 }
 
