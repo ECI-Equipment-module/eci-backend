@@ -888,17 +888,18 @@ public class NewItem extends EntityDate {
                         (req.getCarTypeId()).orElseThrow(CoatingNotFoundException::new);
 
 
-        this.modulus = req.getModulus().isBlank() ? "" : req.getModulus();
+        this.modulus = req.getModulus()==null||req.getModulus().isBlank()?" ":req.getModulus();
 
-        this.screw = req.getScrew().isBlank() ? "" : req.getScrew();
+        this.screw = req.getScrew()==null||req.getScrew().isBlank()?" ":req.getScrew();
 
-        this.cuttingType = req.getCuttingType().isBlank() ? "" : req.getCuttingType();
+        this.cuttingType = req.getCuttingType()==null||req.getCuttingType().isBlank()?" ":req.getCuttingType();
 
-        this.lcd = req.getLcd().isBlank() ? "": req.getLcd();
+        this.lcd = req.getLcd()==null||req.getLcd().isBlank()?" ":req.getLcd();
 
-        this.displaySize = req.getDisplaySize().isBlank() ? "" : req.getDisplaySize();
+        this.displaySize = req.getDisplaySize()==null||req.getDisplaySize().isBlank()?" ":req.getDisplaySize();
 
-        this.screwHeight = req.getScrewHeight().isBlank() ? "" : req.getScrewHeight();
+        this.screwHeight = req.getScrewHeight()==null||req.getScrewHeight().isBlank()?" ":req.getScrewHeight();
+
 
         this.clientOrganization = req.getClientOrganizationId() == null ?
                 null
@@ -1087,9 +1088,9 @@ public class NewItem extends EntityDate {
         this.color = req.getColorId()==null?this.color:colorRepository.findById(req.getColorId())
                 .orElseThrow(ColorNotFoundException::new);
 
-        this.loadQuantity = req.getLoadQuantity().isBlank()||req.getLoadQuantity()==null?" ":req.getLoadQuantity();
+        this.loadQuantity = req.getLoadQuantity()==null||req.getLoadQuantity().isBlank()?" ":req.getLoadQuantity();
 
-        this.forming = req.getForming().isBlank()||req.getForming()==null?" ":req.getForming();
+        this.forming = req.getForming()==null||req.getForming().isBlank()?" ":req.getForming();
 
         this.coatingWay = req.getCoatingWayId()==null?this.coatingWay:
                 coatingWayRepository.findById
@@ -1100,17 +1101,17 @@ public class NewItem extends EntityDate {
                         (req.getCoatingTypeId()).orElseThrow(CoatingNotFoundException::new);
 
 
-        this.modulus = req.getModulus().isBlank()||req.getModulus()==null?" ":req.getModulus();
+        this.modulus = req.getModulus()==null||req.getModulus().isBlank()?" ":req.getModulus();
 
-        this.screw = req.getScrew().isBlank()||req.getScrew()==null?" ":req.getScrew();
+        this.screw = req.getScrew()==null||req.getScrew().isBlank()?" ":req.getScrew();
 
-        this.cuttingType = req.getCuttingType().isBlank()||req.getCuttingType()==null?" ":req.getCuttingType();
+        this.cuttingType = req.getCuttingType()==null||req.getCuttingType().isBlank()?" ":req.getCuttingType();
 
-        this.lcd = req.getLcd().isBlank()||req.getLcd()==null?" ":req.getLcd();
+        this.lcd = req.getLcd()==null||req.getLcd().isBlank()?" ":req.getLcd();
 
-        this.displaySize = req.getDisplaySize().isBlank()||req.getDisplaySize()==null?" ":req.getDisplaySize();
+        this.displaySize = req.getDisplaySize()==null||req.getDisplaySize().isBlank()?" ":req.getDisplaySize();
 
-        this.screwHeight = req.getScrewHeight().isBlank()||req.getScrewHeight()==null?" ":req.getScrewHeight();
+        this.screwHeight = req.getScrewHeight()==null||req.getScrewHeight().isBlank()?" ":req.getScrewHeight();
 
         this.clientOrganization = req.getClientOrganizationId()==null?this.clientOrganization:
                 clientOrganizationRepository.findById(req.getClientOrganizationId())
