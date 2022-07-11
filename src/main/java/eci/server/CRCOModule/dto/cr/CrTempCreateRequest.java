@@ -17,6 +17,7 @@ import eci.server.NewItemModule.repository.item.NewItemRepository;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.lang.Nullable;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotNull;
@@ -36,6 +37,7 @@ public class CrTempCreateRequest {
 
     private Long crReasonId;
 
+    @Nullable
     private String crReason; //없을 경우 직접 입력
 
     private Long crImportanceId;

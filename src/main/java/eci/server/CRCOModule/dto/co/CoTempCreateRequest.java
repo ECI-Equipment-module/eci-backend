@@ -52,6 +52,7 @@ public class CoTempCreateRequest {
 
     private Boolean difference;
 
+    @Nullable
     private Long carTypeId;
 
     private Boolean costDifferent;

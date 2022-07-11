@@ -1,5 +1,6 @@
 package eci.server.CRCOModule.dto.cr;
 
+import com.sun.istack.Nullable;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,6 +18,9 @@ public class CrUpdateRequest {
     private String crNumber;
 
     private Long crReasonId;
+
+    @Nullable
+    private String crReason;
 
     private Long crImportanceId;
 

@@ -445,6 +445,7 @@ public class ChangeRequest extends EntityDate {
 
     public FileUpdatedResult tempEnd(
             CrUpdateRequest req,
+            Long crReasonId,
             NewItemRepository newItemRepository,
             CrReasonRepository crReasonRepository,
             CrImportanceRepository crImportanceRepository,
@@ -466,10 +467,8 @@ public class ChangeRequest extends EntityDate {
         this.crNumber =
                 String.valueOf(this.getId()* 1000000 + (int) (Math.random() * 1000));
 
-        this.crReason = req.getCrReasonId()==null?
-                crReasonRepository.findById(-1L).orElseThrow(CrReasonNotFoundException::new):
-
-        crReasonRepository.findById(req.getCrReasonId()).orElseThrow(CrReasonNotFoundException::new);
+        this.crReason = crReasonRepository.findById(crReasonId)
+                .orElseThrow(CrReasonNotFoundException::new);
 
 
         this.crImportance =
