@@ -152,6 +152,7 @@ public class ChangeOrder extends EntityDate {
             cascade = CascadeType.ALL,
             orphanRemoval = true,
             fetch = FetchType.LAZY)
+    //affected item
     private List<CoNewItem> coNewItems;
 
     @OneToMany(

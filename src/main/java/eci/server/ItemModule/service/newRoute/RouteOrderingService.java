@@ -7,11 +7,13 @@ import eci.server.BomModule.entity.PreliminaryBom;
 import eci.server.BomModule.exception.BomNotFoundException;
 import eci.server.BomModule.repository.*;
 import eci.server.BomModule.service.BomService;
+import eci.server.CRCOModule.entity.CoNewItem;
 import eci.server.CRCOModule.entity.co.ChangeOrder;
 import eci.server.CRCOModule.entity.cr.ChangeRequest;
 import eci.server.CRCOModule.exception.CoNotFoundException;
 import eci.server.CRCOModule.exception.CrNotFoundException;
 import eci.server.CRCOModule.repository.co.ChangeOrderRepository;
+import eci.server.CRCOModule.repository.co.CoNewItemRepository;
 import eci.server.CRCOModule.repository.cr.ChangeRequestRepository;
 import eci.server.DesignModule.entity.design.Design;
 import eci.server.DesignModule.exception.DesignNotLinkedException;
@@ -70,10 +72,10 @@ public class RouteOrderingService {
     private final DevelopmentBomRepository developmentBomRepository;
     private final CompareBomRepository compareBomRepository;
     private final JsonSaveRepository jsonSaveRepository;
-    private final TempNewItemParentChildService tempNewItemParentChildService;
     private final ChangeRequestRepository changeRequestRepository;
     private final ChangeOrderRepository changeOrderRepository;
     private final NewItemService newItemService;
+    private final CoNewItemRepository coNewItemRepository;
 
     @Value("${default.image.address}")
     private String defaultImageAddress;
@@ -507,17 +509,57 @@ public class RouteOrderingService {
             //만약 present 가 끝까지 닿았으면 현재 complete 된 상황!
             routeOrdering.updateToComplete();
 
+            // 라우트 오더링의 revised cnt 가 0보다 컸다면,
+            // revise 당한 아이템의 라우트 오더링이므로 무조건 아이템 존재할 수 밖에 없음
             if(routeOrdering.getRevisedCnt()>0){
                 routeOrdering.setRevisedCnt(0);
                 //0710 revise 로 생긴 route ordering 이었다면 다시 0으로 복구;
-            }
-            if(routeOrdering.getNewItem().isRevise_progress()){
-                routeOrdering.getNewItem().setRevise_progress(false);
-                //0710 revise progress 가 진행 중이라면 라우트 complete 될 때 false 로 갱신
-            }
+
+                if(routeOrdering.getNewItem()==null){
+                    //revise 인데도 안 묶여있으면 뭔가 잘못됐어,
+                    throw new ItemNotFoundException();//에러 던지기
+                }
+
+                if (routeOrdering.getNewItem().isRevise_progress()) {
+                    routeOrdering.getNewItem().setRevise_progress(false);
+                    //0710 revise progress 가 진행 중이라면 라우트 complete 될 때 false 로 갱신
+                }
+
+                if(coNewItemRepository.findByNewItemOrderByCreatedAtAsc(routeOrdering.getNewItem()).size()>0) {
+                    // (1) 지금 revise 완료 된 아이템의 CO 를 검사하기 위해 check co 찾기
+                    ChangeOrder checkCo =
+                            coNewItemRepository.findByNewItemOrderByCreatedAtAsc(routeOrdering.getNewItem()).get(
+                                    coNewItemRepository.findByNewItemOrderByCreatedAtAsc(routeOrdering.getNewItem()).size()-1
+                            )//가장 최근에 맺어진 co-new item 관계 중 가장 최신 아이의 co를 검사하기
+                                    .getChangeOrder();
+
+                    // (2) check co 의 affected item 리스트
+                    List<CoNewItem> coNewItemsOfChkCo = checkCo.getCoNewItems();
+                    List<NewItem> affectedItemOfChkCo = coNewItemsOfChkCo.stream().map(
+                            i->i.getNewItem()
+                    ).collect(Collectors.toList());
+
+                    // (3) checkCo의 routeOrdering 찾아오기
+                    RouteOrdering routeOrderingOfChkCo =
+                            routeOrderingRepository.findByChangeOrder(checkCo).get(
+                                    routeOrderingRepository.findByChangeOrder(checkCo).size()-1
+                            );
+
+                    // (4) affected item 이 모두 revise 완료된다면 update route
+                    if(newItemService.checkReviseCompleted(affectedItemOfChkCo)){
+                        routeOrderingOfChkCo.CoUpdate(routeProductRepository);
+                    }
+
+                }
+
             //throw new UpdateImpossibleException();
-            // 0710 : 이 아이템과 엮인 아이들 (CHILDREN , PARENT )들의 REVISION +=1 진행 !
-            newItemService.revisionUpdateAllChildrenAndParentItem(routeOrdering.getNewItem());
+                // 0710 : 이 아이템과 엮인 아이들 (CHILDREN , PARENT )들의 REVISION +=1 진행 !
+                // 대상 아이템들은 이미 각각 아이템 리뷰 / 프로젝트 링크할 때 REVISION+1 당함
+                newItemService.revisionUpdateAllChildrenAndParentItem(routeOrdering.getNewItem());
+
+
+
+            }
 
         } else {
             RouteProduct targetRoutProduct = presentRouteProductCandidate.get(routeOrdering.getPresent());
@@ -746,7 +788,7 @@ public class RouteOrderingService {
 
                     List<ChangeRequest> changeRequests = changeOrder.getChangeRequests();
                     for(ChangeRequest cr : changeRequests){
-                        cr.setDone(true);
+                        cr.crCompletedByCo();
                     }
 
                 }
@@ -761,31 +803,32 @@ public class RouteOrderingService {
                 // (1) 아이템이 revise progress 이며
                 // (2) 지금 승인하는게 ITEM REVIEW 면 revision+=1
                 NewItem chkItem = targetRoutProduct.getRouteOrdering().getNewItem();
-                if(chkItem.isRevise_progress()){
-                    if(!(chkItem.getItemTypes().getItemType().name().equals("파트제품") ||
+                if (chkItem.isRevise_progress()) {
+                    if (!(chkItem.getItemTypes().getItemType().name().equals("파트제품") ||
                             chkItem.getItemTypes().getItemType().name().equals("프로덕트제품"))
-                    ){
+                    ) {
                         chkItem.updateRevision(); //revision+=1
                     }
-                }
 
-                // CO 안에 있는 CR 들의 crCompletedByCo() 호출해서 DONE = TRUE 로 바꾸기
 
-                if ((routeOrdering.getChangeOrder()==null)) {
-                    throw new CoNotFoundException();
-                } else {
+                    // CO 안에 있는 CR 들의 crCompletedByCo() 호출해서 DONE = TRUE 로 바꾸기
 
-                    // (1)  이 co의 cr 들의 done=true
-                    ChangeOrder changeOrder=routeOrdering.getChangeOrder();
+                    if ((routeOrdering.getChangeOrder() == null)) {
+                        throw new CoNotFoundException();
+                    } else {
 
-                    List<ChangeRequest> changeRequests = changeOrder.getChangeRequests();
-                    for(ChangeRequest cr : changeRequests){
-                        cr.setDone(true);
+                        // (1)  이 co의 cr 들의 done=true
+                        ChangeOrder changeOrder = routeOrdering.getChangeOrder();
+
+                        List<ChangeRequest> changeRequests = changeOrder.getChangeRequests();
+                        for (ChangeRequest cr : changeRequests) {
+                            cr.setDone(true);
+                        }
+
                     }
 
+
                 }
-
-
             }
 
             RouteOrderingUpdateRequest newRouteUpdateRequest =

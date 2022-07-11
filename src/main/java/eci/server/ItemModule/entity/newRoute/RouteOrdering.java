@@ -208,6 +208,12 @@ public class RouteOrdering extends EntityDate {
         this.bom = bom;
     }
 
+    /**
+     * 일반 라우트
+     * @param req
+     * @param routeProductRepository
+     * @return
+     */
     public RouteOrderingUpdateRequest update(
             RouteOrderingUpdateRequest req,
             RouteProductRepository routeProductRepository
@@ -255,7 +261,9 @@ public class RouteOrdering extends EntityDate {
                 else if(routeProductList.get(this.present).getType().getModule().equals("CR")){
                     this.getChangeRequest().setTempsave(false); //라우트 만든 순간 임시저장 다시 거짓으로
                 }
-                else if(routeProductList.get(this.present).getType().getModule().equals("CO")){
+                else if(routeProductList.get(this.present).getType().getModule().equals("CO")
+                && routeProductList.get(this.present).getType().getName().equals("REQUEST")){
+                    //얘는 create인 상태에선 ㄴㄴ 오로지 request 상태만 tempsave 여기서 false 돼야함
                     this.getChangeOrder().setTempsave(false); //라우트 만든 순간 임시저장 다시 거짓으로
                 }
             }
@@ -285,6 +293,64 @@ public class RouteOrdering extends EntityDate {
 
 
         return req;
+    }
+
+    /**
+     * CO 를 위한 UPDATE 라우트
+     */
+    public void CoUpdate(
+            RouteProductRepository routeProductRepository
+
+    ) {
+        List<RouteProduct> routeProductList =
+                routeProductRepository.findAllByRouteOrdering(this);
+
+        //이미 승인 완료됐을 시에는 더이상 승인이 불가능해 에러 던지기
+        if(this.present==routeProductList.size()){
+            throw new UpdateImpossibleException();
+        }
+
+        /**
+         * update에서 받은 코멘트를 현재 진행중인 routeProduct에 set
+         */
+        //지금 애는 패스
+        //내 앞에 완료됐던 애는 pass로 바꿔주기
+        routeProductList.get(this.present-1).setPassed(true);
+
+
+        if(this.present<routeProductList.size()-1) {//05-24 <= => < 로 수정
+            //지금 들어온 코멘트는 현재 애 다음에
+            routeProductList.get(this.present).setComment("자동 업데이트 완료오 오오오오");
+
+            // 지금 업데이트되는 라우트 프로덕트의 타입은 무조건 co / create , 아니라면 에러
+            if(!(routeProductList.get(this.present).getType().getName().equals("CO")
+                    && routeProductList.get(this.present).getType().getName().equals("REQUEST"))){
+                System.out.println("SOMETHING IS WRRRRRRRRRRRROOOOOOOOONG");
+                throw new RuntimeException();
+            }
+
+        }else{
+            //만약 present가 size() 가 됐다면 다 왔다는 거다.
+            System.out.println("complete");
+            this.lifecycleStatus = "COMPLETE";
+        }
+
+        /**
+         * 라우트프로덕트 맨 마지막 인덱스 값 찾기 위한 변수
+         */
+        Integer lastIndexofRouteProduct =
+                routeProductList.size()-1;
+
+        /**
+         * 승인, 거부 시 갱신
+         * 서비스 단에서 routeProduct 승인 혹은 거절 후
+         * 라우트 업데이트 호출해서 present 갱신해줄거야
+         */
+        //present 를 다음 진행될 애로 갱신해주기
+        if(this.present<routeProductList.size()) {
+            this.present = this.present + 1;
+        }
+
     }
 
 
