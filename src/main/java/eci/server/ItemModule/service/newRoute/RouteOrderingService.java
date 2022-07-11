@@ -811,23 +811,6 @@ public class RouteOrderingService {
                     }
 
 
-                    // CO 안에 있는 CR 들의 crCompletedByCo() 호출해서 DONE = TRUE 로 바꾸기
-
-                    if ((routeOrdering.getChangeOrder() == null)) {
-                        throw new CoNotFoundException();
-                    } else {
-
-                        // (1)  이 co의 cr 들의 done=true
-                        ChangeOrder changeOrder = routeOrdering.getChangeOrder();
-
-                        List<ChangeRequest> changeRequests = changeOrder.getChangeRequests();
-                        for (ChangeRequest cr : changeRequests) {
-                            cr.setDone(true);
-                        }
-
-                    }
-
-
                 }
             }
 
