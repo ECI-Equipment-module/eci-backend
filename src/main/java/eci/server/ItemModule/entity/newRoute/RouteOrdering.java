@@ -332,6 +332,9 @@ public class RouteOrdering extends EntityDate {
         }else{
             //만약 present가 size() 가 됐다면 다 왔다는 거다.
             System.out.println("complete");
+            System.out.println(this.present +" 여기서 하나 빼자이이이이잉");
+            this.present=this.present-1;
+            System.out.println(this.present +" 여기서 하나 빼자이이이이잉");
             this.lifecycleStatus = "COMPLETE";
         }
 
