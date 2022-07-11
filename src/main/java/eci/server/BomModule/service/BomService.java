@@ -25,6 +25,7 @@ import eci.server.NewItemModule.service.item.NewItemService;
 import eci.server.Socket.dto.design.DesignSocketDto;
 import eci.server.config.guard.BomGuard;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -45,6 +46,10 @@ public class BomService {
     private final TempNewItemParentChildService tempNewItemParentChildService;
     private final TempNewItemParentChildrenRepository tempNewItemParentChildrenRepository;
 
+    @Value("${default.image.address}")
+    private String defaultImageAddress;
+
+
     // 0) BOM
     public BomDto readBom(Long bomId){
 
@@ -56,7 +61,8 @@ public class BomService {
                 bomGuard,
                 preliminaryBomRepository,
                 developmentBomRepository,
-                compareBomRepository
+                compareBomRepository,
+                defaultImageAddress
         );
 
     }
