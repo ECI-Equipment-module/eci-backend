@@ -25,6 +25,7 @@ import java.util.Set;
 @AllArgsConstructor
 public class CrPagingDto {
 
+    private String imageAddress;
     // item part
     private Long itemId;
     private String itemName;
@@ -57,6 +58,11 @@ public class CrPagingDto {
     ) {
 
         return new CrPagingDto(
+
+                Item.getThumbnail()==null?
+                        defaultImageAddress :
+                        Item.getThumbnail().getImageaddress(),
+
                 Item.getId(),
                 Item.getName(),
                 Item.getItemNumber(),
@@ -98,6 +104,11 @@ public class CrPagingDto {
     ) {
         //List<NewItem> newItems = coNewItemList.get
         return new CrPagingDto(
+
+                Item.getThumbnail()==null?
+                        defaultImageAddress :
+                        Item.getThumbnail().getImageaddress(),
+
                 Item.getId(),
                 Item.getName(),
                 Item.getItemNumber(),
@@ -156,6 +167,11 @@ public class CrPagingDto {
                         .getChangeOrder();
 
                 crPagingDtoList.add(new CrPagingDto(
+
+                        Item.getThumbnail()==null?
+                                defaultImageAddress :
+                                Item.getThumbnail().getImageaddress(),
+
                                 Item.getId(),
                                 Item.getName(),
                                 Item.getItemNumber(),

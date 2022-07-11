@@ -29,7 +29,8 @@ public class BomDto {
             BomGuard bomGuard,
             PreliminaryBomRepository preliminaryBomRepository,
             DevelopmentBomRepository developmentBomRepository,
-            CompareBomRepository compareBomRepository
+            CompareBomRepository compareBomRepository,
+            String defaultImageAddress
     ) {
 
         BomDesignItemDto bomDesignItemDto = BomDesignItemDto.toBomDto(
@@ -44,7 +45,7 @@ public class BomDto {
         List<DesignResponsibleDto> responsibleDtoList = bomDesignItemDto.getResponsibleList();
 
         return new BomDto(
-                ItemDesignDto.toDto(newItem),
+                ItemDesignDto.toDto(newItem, defaultImageAddress),
                 responsibleDtoList
         );
     }
