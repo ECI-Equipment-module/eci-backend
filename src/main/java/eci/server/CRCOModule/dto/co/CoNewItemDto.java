@@ -29,7 +29,7 @@ public class CoNewItemDto {
     private Long itemId;
 
     private char itemRevision;
-    
+
     //private String itemFamily; //classification
 
     private ItemClassificationDto itemClassification;
@@ -53,14 +53,14 @@ public class CoNewItemDto {
 
                 coItem.getNewItem().getId(),
 
-                (char)(coItem.getNewItem().getRevision()),
+                (char) (coItem.getNewItem().getRevision()),
 
-                new ItemClassificationDto(coItem.getNewItem().getClassification().getClassification1().getName()+"/"
-                        +coItem.getNewItem().getClassification().getClassification2().getName()+"/"
-                        +coItem.getNewItem().getClassification().getClassification3().getName()),
+                new ItemClassificationDto(coItem.getNewItem().getClassification().getClassification1().getName() + "/"
+                        + coItem.getNewItem().getClassification().getClassification2().getName() + "/"
+                        + coItem.getNewItem().getClassification().getClassification3().getName()),
 
                 routeOrderingRepository.findByNewItem(coItem.getNewItem()).get(
-                        routeOrderingRepository.findByNewItem(coItem.getNewItem()).size()-1
+                        routeOrderingRepository.findByNewItem(coItem.getNewItem()).size() - 1
                 ).getLifecycleStatus(),
 
                 coItem.getChangedContent(),
@@ -78,51 +78,48 @@ public class CoNewItemDto {
             List<CoNewItem> coItems,
             RouteOrderingRepository routeOrderingRepository) {
 
-        List<CoNewItemDto> coNewItemDtoList=
-        coItems.stream().map(
-                coItem ->
-        new CoNewItemDto(
-                coItem.getNewItem().getItemNumber(),
-                coItem.getNewItem().getName(),
+        List<CoNewItemDto> coNewItemDtoList =
+                coItems.stream().map(
+                        coItem ->
+                                new CoNewItemDto(
+                                        coItem.getNewItem().getItemNumber(),
+                                        coItem.getNewItem().getName(),
 
-                coItem.getNewItem().getId(),
+                                        coItem.getNewItem().getId(),
 
-                (char)(coItem.getNewItem().getRevision()),
+                                        (char) (coItem.getNewItem().getRevision()),
 
-                new ItemClassificationDto(coItem.getNewItem().getClassification().getClassification1().getName()+"/"
-                        +coItem.getNewItem().getClassification().getClassification2().getName()+"/"
-                        +coItem.getNewItem().getClassification().getClassification3().getName()),
+                                        new ItemClassificationDto(coItem.getNewItem().getClassification().getClassification1().getName() + "/"
+                                                + coItem.getNewItem().getClassification().getClassification2().getName() + "/"
+                                                + coItem.getNewItem().getClassification().getClassification3().getName()),
 
-                routeOrderingRepository.findByNewItem(coItem.getNewItem()).get(
-                        routeOrderingRepository.findByNewItem(coItem.getNewItem()).size()-1
-                ).getLifecycleStatus(),
+                                        routeOrderingRepository.findByNewItem(coItem.getNewItem()).get(
+                                                routeOrderingRepository.findByNewItem(coItem.getNewItem()).size() - 1
+                                        ).getLifecycleStatus(),
 
-                coItem.getChangedContent(),
+                                        coItem.getChangedContent(),
 
-                ChangedFeatureDto.toDto(coItem.getChangedFeature()),
+                                        ChangedFeatureDto.toDto(coItem.getChangedFeature()),
 
-                crNumberCheckAndMake(CrinCo, coItem.getNewItem())
+                                        crNumberCheckAndMake(CrinCo, coItem.getNewItem())
 
-        )
-        ).collect(Collectors.toList());
+                                )
+                ).collect(Collectors.toList());
 
         return coNewItemDtoList;
     }
 
     /**
-     *이 newItem 이 cr 에 있는 놈인지 여부 체크 && 있다면 coNumber return
+     * 이 newItem 이 cr 에 있는 놈인지 여부 체크 && 있다면 coNumber return
+     *
      * @param crInCo
      * @param newItem
      * @return coNumber
      */
-    private static String crNumberCheckAndMake(List<ChangeRequest> crInCo, NewItem newItem){
+    private static String crNumberCheckAndMake(List<ChangeRequest> crInCo, NewItem newItem) {
 
-
-
-        Collections.sort(crInCo, crComparator);
-
-        for (ChangeRequest cr : crInCo){
-            if(cr.getNewItem()==newItem){
+        for (ChangeRequest cr : crInCo) {
+            if (cr.getNewItem() == newItem) {
                 return cr.getCrNumber();
             }
         }
@@ -133,8 +130,8 @@ public class CoNewItemDto {
     static Comparator<ChangeRequest> crComparator = new Comparator<ChangeRequest>() {
         @Override
         public int compare(ChangeRequest o1, ChangeRequest o2) {
-            return (int) (o2.getId()-o1.getId());
+            return (int) (o2.getId() - o1.getId());
         }
 
-
+    };
 }
