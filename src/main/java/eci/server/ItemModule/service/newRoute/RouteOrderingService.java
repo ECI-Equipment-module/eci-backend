@@ -617,19 +617,19 @@ public class RouteOrderingService {
                     linkedDesign.finalSaveDesign();
                 }
 
-                if (projectRepository.findByNewItem(routeOrdering.getNewItem()).size() == 0) {
-                    throw new ProjectNotLinkedException();
-                } else {
-                    Project linkedProject =
-                            projectRepository.findByNewItem(routeOrdering.getNewItem())
-                                    .get(
-                                            projectRepository.findByNewItem(routeOrdering.getNewItem()).size() - 1
-                                    );
-                    //그 프로젝트를 라우트 프로덕트에 set 해주기
-                    targetRoutProduct.setProject(linkedProject);
-                    //05-12 추가사항 : 이 라우트를 제작해줄 때야 비로소 프로젝트는 temp save = false 가 되는 것
-                    linkedProject.finalSaveProject();
-                }
+//                if (projectRepository.findByNewItem(routeOrdering.getNewItem()).size() == 0) {
+//                    throw new ProjectNotLinkedException();
+//                } else {
+//                    Project linkedProject =
+//                            projectRepository.findByNewItem(routeOrdering.getNewItem())
+//                                    .get(
+//                                            projectRepository.findByNewItem(routeOrdering.getNewItem()).size() - 1
+//                                    );
+//                    //그 프로젝트를 라우트 프로덕트에 set 해주기
+//                    targetRoutProduct.setProject(linkedProject);
+//                    //05-12 추가사항 : 이 라우트를 제작해줄 때야 비로소 프로젝트는 temp save = false 가 되는 것
+//                    linkedProject.finalSaveProject();
+//                }
 
             }
 
