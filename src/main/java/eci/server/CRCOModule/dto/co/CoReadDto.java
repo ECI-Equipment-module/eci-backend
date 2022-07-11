@@ -39,7 +39,7 @@ public class CoReadDto {
 
     private Long id;
 
-    private ClientOrganizationDto clientOrganizationDto;
+    private ClientOrganizationDto clientOrganizationId;
     private String clientItemNumber;
 
     private String coNumber;
@@ -52,22 +52,22 @@ public class CoReadDto {
 
     private Boolean difference;
 
-    private CarTypeDto carType;
+    private CarTypeDto carTypeId;
 
     private Boolean costDifferent;
 
     private String costDifference;
 
-    private CrReasonDto coReason;
+    private CrReasonDto coReasonId;
 
-    private CoStageDto coStage;
+    private CoStageDto coStageId;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
     private LocalDate applyPeriod;
 
-    private CoEffectDto coEffect;
+    private CoEffectDto coEffectId;
 
-    private CrImportanceDto crImportanceDto;
+    private CrImportanceDto crImportanceId;
 
     private String name;
     private String content;
