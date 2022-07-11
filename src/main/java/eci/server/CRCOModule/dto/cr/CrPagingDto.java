@@ -36,7 +36,7 @@ public class CrPagingDto {
     private String itemStatus;
 
     // cr part
-
+    private Long crId;
     private String crNumber;
     private String crType;
     private CrReasonDto crReason;
@@ -74,6 +74,8 @@ public class CrPagingDto {
                 routeOrderingRepository.findByNewItem(Item).get(
                         routeOrderingRepository.findByNewItem(Item).size() - 1
                 ).getLifecycleStatus(),
+
+                changeRequest.getId(),
 
                 changeRequest.getCrNumber(),
                 "FAST TRACK",
@@ -113,6 +115,8 @@ public class CrPagingDto {
                 routeOrderingRepository.findByNewItem(Item).get(
                         routeOrderingRepository.findByNewItem(Item).size() - 1
                 ).getLifecycleStatus(),
+
+                co.getId(),
 
                 co.getCoNumber(),
                 "NONE",
@@ -169,6 +173,8 @@ public class CrPagingDto {
                                 routeOrderingRepository.findByNewItem(Item).get(
                                         routeOrderingRepository.findByNewItem(Item).size() - 1
                                 ).getLifecycleStatus(),
+
+                                co.getId(),
 
                                 co.getCoNumber(),
                                 "NONE",
