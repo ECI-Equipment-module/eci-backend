@@ -50,11 +50,11 @@ public class CoReadDto {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
     private LocalDate coReceivedPeriod;
 
-    private Boolean difference;
+    private String difference;
 
     private CarTypeDto carTypeId;
 
-    private Boolean costDifferent;
+    private String costDifferent;
 
     private String costDifference;
 
@@ -130,13 +130,13 @@ public class CoReadDto {
 
                 co.getCoReceivedPeriod()==null?null: (co.getCoReceivedPeriod()),
 
-                co.getDifference(),
+                co.getDifference()==true?"true":"false",
 
                 co.getCarType()==null?
                         CarTypeDto.toDto():
                         CarTypeDto.toDto(co.getCarType()),
 
-                co.getCostDifferent(),
+                co.getCostDifferent()==true?"true":"false",
 
                 co.getCostDifference(),
 
@@ -225,13 +225,13 @@ public class CoReadDto {
 
                 co.getCoReceivedPeriod()==null?null: (co.getCoReceivedPeriod()),
 
-                co.getDifference(),
+                co.getDifference()==true?"true":"false",
 
                 co.getCarType()==null?
                         CarTypeDto.toDto():
                         CarTypeDto.toDto(co.getCarType()),
 
-                co.getCostDifferent(),
+                co.getCostDifferent()==true?"true":"false",
 
                 co.getCostDifference(),
 

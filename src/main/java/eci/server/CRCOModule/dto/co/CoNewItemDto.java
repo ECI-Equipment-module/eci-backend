@@ -23,6 +23,7 @@ public class CoNewItemDto {
     private Long itemId;
 
     private char itemRevision;
+    
     //private String itemFamily; //classification
 
     private ItemClassificationDto itemClassification;
