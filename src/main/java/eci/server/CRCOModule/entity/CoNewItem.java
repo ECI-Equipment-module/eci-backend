@@ -3,6 +3,7 @@ package eci.server.CRCOModule.entity;
 import eci.server.CRCOModule.entity.co.ChangeOrder;
 import eci.server.CRCOModule.entity.cofeatures.ChangedFeature;
 import eci.server.CRCOModule.entity.cr.ChangeRequest;
+import eci.server.ItemModule.entity.entitycommon.EntityDate;
 import eci.server.NewItemModule.entity.NewItem;
 import lombok.*;
 import org.hibernate.annotations.OnDelete;
@@ -17,7 +18,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @EqualsAndHashCode
 @IdClass(CoNewItemId.class)
-public class CoNewItem {
+public class CoNewItem extends EntityDate{
     @Id
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "co_id")
