@@ -32,7 +32,7 @@ public class CoNewItemDto {
 
     private ChangedFeatureDto changedFeature;
 
-    private CrReadDto crNumber;
+    private String crNumber;//CrReadDto crNumber;
 
 
     public static CoNewItemDto toDto(
@@ -59,7 +59,8 @@ public class CoNewItemDto {
 
                 ChangedFeatureDto.toDto(coItem.getChangedFeature()),
 
-                CrReadDto.toDto()
+                //TODO : CRNUMBER
+                "12345678"
 
         );
     }
@@ -92,7 +93,7 @@ public class CoNewItemDto {
 
                 ChangedFeatureDto.toDto(coItem.getChangedFeature()),
 
-                CrReadDto.toDto()
+                "12345678"
 
         )
         ).collect(Collectors.toList());
