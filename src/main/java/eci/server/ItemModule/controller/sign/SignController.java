@@ -29,7 +29,7 @@ public class SignController {
     private final SignService signService;
 
     Logger logger = LoggerFactory.getLogger(SignController.class);
-
+    @CrossOrigin(origins = "https://localhost:3000")
     @PostMapping("sign-up")
     @ResponseStatus(HttpStatus.CREATED)
 
@@ -37,7 +37,7 @@ public class SignController {
         signService.signUp(req);
         return success();
     }
-
+    @CrossOrigin(origins = "https://localhost:3000")
     @PostMapping("/sign-in")
     @ResponseBody
     public Response signIn(@Valid SignInRequest req, HttpServletResponse response) throws IOException {

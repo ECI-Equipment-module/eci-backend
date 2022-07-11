@@ -244,7 +244,7 @@ public class DashboardService {
         HashSet<TodoResponse> unlinkedItemTodoResponses = new HashSet<>();
 
         for (RouteProduct routeProduct : myRouteProductList) {
-            if (projectRepository.findByNewItem(routeProduct.getRouteOrdering().getNewItem()).size() == 0) {
+            if (routeProduct.getRouteOrdering().getProject()==null) {
 
                 NewItem targetItem = routeProduct.getRouteOrdering().getNewItem();
 
@@ -370,8 +370,9 @@ public class DashboardService {
         //3) 디자인 링크 안된 아이템만 담기
         HashSet<TodoResponse> unlinkedItemTodoResponses = new HashSet<>();
 
-        for (RouteProduct routeProduct : myRouteProductList) {
-            if (designRepository.findByNewItem(routeProduct.getRouteOrdering().getNewItem()).size() == 0) {
+        for (RouteProduct routeProduct : myRouteProductList) { //design create 단계에 처한 애들
+
+            if (routeProduct.getRouteOrdering().getDesign()==null) {
 
                 NewItem targetItem = routeProduct.getRouteOrdering().getNewItem();
 
