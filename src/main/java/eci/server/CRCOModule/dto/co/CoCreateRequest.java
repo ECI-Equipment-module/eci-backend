@@ -2,6 +2,7 @@ package eci.server.CRCOModule.dto.co;
 
 import eci.server.CRCOModule.entity.co.ChangeOrder;
 import eci.server.CRCOModule.entity.cofeatures.CoAttachment;
+import eci.server.CRCOModule.exception.CrEffectNotFoundException;
 import eci.server.CRCOModule.exception.CrNotFoundException;
 import eci.server.CRCOModule.exception.CrReasonNotFoundException;
 import eci.server.CRCOModule.repository.cofeature.ChangedFeatureRepository;
@@ -63,7 +64,8 @@ public class CoCreateRequest {
 
     private String applyPeriod;
 
-    private Long coEffectId;
+    //private Long coEffectId;
+    private List<Long> coEffectId;
 
     private Long coImportanceId;
 
@@ -150,8 +152,16 @@ public class CoCreateRequest {
                     req.applyPeriod.isEmpty() ? null : LocalDate.parse
                             (req.applyPeriod, DateTimeFormatter.ISO_DATE),
 
-                    req.coEffectId == null ? coEffectRepository.findById(-1L).orElseThrow(CrReasonNotFoundException::new):
-                    coEffectRepository.findById(req.coEffectId).orElseThrow(CrReasonNotFoundException::new),
+                    req.coEffectId == null || req.getCoEffectId().size()==0?
+                            req.getCoEffectId().stream().map(
+                                    i->coEffectRepository.findById(-1L).orElseThrow(CrEffectNotFoundException::new)
+                            ).collect(toList())
+                            :
+                            req.getCoEffectId().stream().map(
+                                    i->coEffectRepository.findById(i).orElseThrow(CrEffectNotFoundException::new)
+                            ).collect(toList()),
+
+                            //coEffectRepository.findById(req.coEffectId).orElseThrow(CrReasonNotFoundException::new),
 
                     req.coImportanceId == null ? crImportanceRepository.findById(-1L).orElseThrow(CrReasonNotFoundException::new):
                     crImportanceRepository.findById(req.coImportanceId).orElseThrow(CrReasonNotFoundException::new),
@@ -237,8 +247,15 @@ public class CoCreateRequest {
                 req.applyPeriod.isEmpty() ? null : LocalDate.parse
                         (req.applyPeriod, DateTimeFormatter.ISO_DATE),
 
-                req.coEffectId == null ? coEffectRepository.findById(-1L).orElseThrow(CrReasonNotFoundException::new):
-                coEffectRepository.findById(req.coEffectId).orElseThrow(CrReasonNotFoundException::new),
+                req.coEffectId == null || req.getCoEffectId().size()==0?
+                        req.getCoEffectId().stream().map(
+                                i->coEffectRepository.findById(-1L).orElseThrow(CrEffectNotFoundException::new)
+                        ).collect(toList())
+                        :
+                        req.getCoEffectId().stream().map(
+                                i->coEffectRepository.findById(i).orElseThrow(CrEffectNotFoundException::new)
+                        ).collect(toList()),
+
 
                 req.coImportanceId == null ? crImportanceRepository.findById(-1L).orElseThrow(CrReasonNotFoundException::new):
                 crImportanceRepository.findById(req.coImportanceId).orElseThrow(CrReasonNotFoundException::new),

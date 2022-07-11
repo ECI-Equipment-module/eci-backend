@@ -65,7 +65,7 @@ public class CoReadDto {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
     private LocalDate applyPeriod;
 
-    private CoEffectDto coEffectId;
+    private List<CoEffectDto> coEffectId;
 
     private CrImportanceDto crImportanceId;
 
@@ -150,8 +150,8 @@ public class CoReadDto {
 
                 co.getApplyPeriod()==null?null:co.getApplyPeriod(),
 
-                co.getCoEffect()==null?CoEffectDto.toDto():
-                        CoEffectDto.toDto(co.getCoEffect()),
+                co.getCoEffect()==null?CoEffectDto.toDtoList():
+                        CoEffectDto.toDtoList(co.getCoEffect()),
 
                 co.getCoImportance()==null?CrImportanceDto.toDto():
                         CrImportanceDto.toDto(co.getCoImportance()),
@@ -245,8 +245,8 @@ public class CoReadDto {
 
                 co.getApplyPeriod()==null?null:co.getApplyPeriod(),
 
-                co.getCoEffect()==null?CoEffectDto.toDto():
-                        CoEffectDto.toDto(co.getCoEffect()),
+                co.getCoEffect()==null?CoEffectDto.toDtoList():
+                        CoEffectDto.toDtoList(co.getCoEffect()),
 
                 co.getCoImportance()==null?CrImportanceDto.toDto():
                         CrImportanceDto.toDto(co.getCoImportance()),
