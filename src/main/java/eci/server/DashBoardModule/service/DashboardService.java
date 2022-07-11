@@ -474,14 +474,14 @@ public class DashboardService {
         ToDoSingle tempSave = new ToDoSingle("Save as Draft", TEMP_SAVE);
         ToDoSingle newDesign = new ToDoSingle("New Design", NEW_DESIGN);
         ToDoSingle rejectedDesign = new ToDoSingle("Rejected Design", REJECTED);
-        ToDoSingle needRevise = new ToDoSingle("Need Revise", REVISE);
+        //ToDoSingle needRevise = new ToDoSingle("Need Revise", REVISE);
         ToDoSingle needReview = new ToDoSingle("Waiting Review", NEED_REVIEW);
 
         List<ToDoSingle> toDoDoubleList = new ArrayList<ToDoSingle>();
         toDoDoubleList.add(tempSave);
         toDoDoubleList.add(newDesign);
         toDoDoubleList.add(rejectedDesign);
-        toDoDoubleList.add(needRevise);
+        //toDoDoubleList.add(needRevise);
         toDoDoubleList.add(needReview);
 
         return new ToDoDoubleList(toDoDoubleList);
@@ -934,7 +934,7 @@ public class DashboardService {
         ToDoSingle newBom = new ToDoSingle("Add New Bom", NEW_BOM);
         ToDoSingle tempBom = new ToDoSingle("Save as Draft", TEMP_SAVE);
         ToDoSingle rejectedBom = new ToDoSingle("Rejected Item", REJECTED);
-        ToDoSingle needRevise = new ToDoSingle("Need Revise", REVISE);
+        //ToDoSingle needRevise = new ToDoSingle("Need Revise", REVISE);
         ToDoSingle reviewBom = new ToDoSingle("Waiting Review", REVIEW);
 
         List<ToDoSingle> toDoDoubleList = new ArrayList<ToDoSingle>();
@@ -942,7 +942,7 @@ public class DashboardService {
         toDoDoubleList.add(tempBom);
         toDoDoubleList.add(newBom);
         toDoDoubleList.add(rejectedBom);
-        toDoDoubleList.add(needRevise);
+        //toDoDoubleList.add(needRevise);
         toDoDoubleList.add(reviewBom);
 
         return new ToDoDoubleList(toDoDoubleList);
