@@ -170,6 +170,9 @@ public class CoReadDto {
                         ),
 
                 CoNewItemDto.toDtoList(
+
+                        co.getChangeRequests(),
+
                         co.getCoNewItems(),
                         routeOrderingRepository
                 ),
@@ -265,6 +268,9 @@ public class CoReadDto {
                 ), //related cr
 
                 CoNewItemDto.toDtoList(
+
+                        co.getChangeRequests(), //co 에 딸린 cr들
+
                         co.getCoNewItems(),
                         routeOrderingRepository
                 ),//affected ote,

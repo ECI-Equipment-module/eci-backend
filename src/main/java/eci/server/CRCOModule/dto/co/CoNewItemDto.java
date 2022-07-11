@@ -3,12 +3,18 @@ package eci.server.CRCOModule.dto.co;
 import eci.server.CRCOModule.dto.cr.CrReadDto;
 import eci.server.CRCOModule.dto.featuresdtos.ChangedFeatureDto;
 import eci.server.CRCOModule.entity.CoNewItem;
+import eci.server.CRCOModule.entity.co.ChangeOrder;
+import eci.server.CRCOModule.entity.cr.ChangeRequest;
 import eci.server.ItemModule.repository.newRoute.RouteOrderingRepository;
 import eci.server.NewItemModule.dto.newItem.ItemClassificationDto;
+import eci.server.NewItemModule.entity.NewItem;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.mapping.Collection;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -37,6 +43,7 @@ public class CoNewItemDto {
 
 
     public static CoNewItemDto toDto(
+            List<ChangeRequest> CrinCo,
             CoNewItem coItem,
             RouteOrderingRepository routeOrderingRepository) {
 
@@ -60,14 +67,14 @@ public class CoNewItemDto {
 
                 ChangedFeatureDto.toDto(coItem.getChangedFeature()),
 
-                //TODO : CRNUMBER
-                "12345678"
+                crNumberCheckAndMake(CrinCo, coItem.getNewItem())
 
         );
     }
 
 
     public static List<CoNewItemDto> toDtoList(
+            List<ChangeRequest> CrinCo,
             List<CoNewItem> coItems,
             RouteOrderingRepository routeOrderingRepository) {
 
@@ -94,12 +101,40 @@ public class CoNewItemDto {
 
                 ChangedFeatureDto.toDto(coItem.getChangedFeature()),
 
-                "12345678"
+                crNumberCheckAndMake(CrinCo, coItem.getNewItem())
 
         )
         ).collect(Collectors.toList());
 
         return coNewItemDtoList;
     }
+
+    /**
+     *이 newItem 이 cr 에 있는 놈인지 여부 체크 && 있다면 coNumber return
+     * @param crInCo
+     * @param newItem
+     * @return coNumber
+     */
+    private static String crNumberCheckAndMake(List<ChangeRequest> crInCo, NewItem newItem){
+
+
+
+        Collections.sort(crInCo, crComparator);
+
+        for (ChangeRequest cr : crInCo){
+            if(cr.getNewItem()==newItem){
+                return cr.getCrNumber();
+            }
+        }
+        return " "; // CR 에 없으면 CR NUMBER 안줘도 됨
+    }
+
+
+    static Comparator<ChangeRequest> crComparator = new Comparator<ChangeRequest>() {
+        @Override
+        public int compare(ChangeRequest o1, ChangeRequest o2) {
+            return (int) (o2.getId()-o1.getId());
+        }
+
 
 }
