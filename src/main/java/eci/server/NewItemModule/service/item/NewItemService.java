@@ -96,6 +96,7 @@ public class NewItemService {
     private final NewItemAttachmentRepository newItemAttachmentRepository;
     private final TempNewItemParentChildrenRepository tempNewItemParentChildrenRepository;
 
+
     @Value("${default.image.address}")
     private String defaultImageAddress;
 //////////////////////////////////////////////////////////////////////////
@@ -467,8 +468,6 @@ public class NewItemService {
 //    }
 //
 //                    newItemService.ReviseItem(affectedItems, changeOrder.getModifier());
-
-
 
 
 
