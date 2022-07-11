@@ -22,9 +22,8 @@ public class ChangedFeatureListDto{
     public static ChangedFeatureListDto toDto(Page<ChangedFeatureReadResponse> page) {
 
         List<String> indexes = new ArrayList<>(); // 인덱스 종류 추가
-        for(Field field : ChangedFeatureReadResponse.class.getDeclaredFields()){
-            indexes.add(field.getName());
-        }
+        indexes.add("id");
+        indexes.add("변경항목");
 
         return new ChangedFeatureListDto(indexes, page.getTotalElements(),
                 page.getTotalPages(), page.hasNext(), page.getContent());

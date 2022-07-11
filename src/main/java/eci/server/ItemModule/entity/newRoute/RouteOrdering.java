@@ -164,9 +164,28 @@ public class RouteOrdering extends EntityDate {
         this.present = 1;
     }
 
+    //revise 된 아이템 라우트용 생성자
+    public RouteOrdering(
+            Integer revised_cnt,
+            String type,
+            NewItem newItem
+
+    ){
+        this.type = type;
+        this.lifecycleStatus = "WORKING";
+        this.revisedCnt = 1; //revise 표시는 revisedCnt > 0
+        this.present = 1;
+        this.newItem = newItem;
+    }
+
+
     public void setPresent(Integer present) {
         //초기 값은 1(진행 중인 아이)
         this.present = present;
+    }
+
+    public void setRevisedCnt(Integer revisedCnt) {
+        this.revisedCnt = revisedCnt;
     }
 
     public void setProject(Project project) {

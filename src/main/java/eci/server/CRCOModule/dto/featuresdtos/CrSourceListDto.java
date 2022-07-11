@@ -24,9 +24,8 @@ public class CrSourceListDto {
     public static CrSourceListDto toDto(Page<CrSourceReadResponse> page) {
 
         List<String> indexes = new ArrayList<>(); // 인덱스 종류 추가
-        for(Field field : CrImportanceResponse.class.getDeclaredFields()){
-            indexes.add(field.getName());
-        }
+        indexes.add("id");
+        indexes.add("CR 출처");
 
         return new CrSourceListDto(indexes, page.getTotalElements(),
                 page.getTotalPages(), page.hasNext(), page.getContent());

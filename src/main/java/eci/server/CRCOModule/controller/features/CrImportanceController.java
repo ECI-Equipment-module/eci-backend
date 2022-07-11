@@ -17,8 +17,8 @@ import javax.validation.Valid;
 @CrossOrigin(origins = "https://localhost:3000")
 public class CrImportanceController{
     private final CrImportanceService crImportanceService;
-
-    @GetMapping("/crImportance")
+    @CrossOrigin(origins = "https://localhost:3000")
+    @GetMapping("/crImportanceId")
     @ResponseStatus(HttpStatus.OK)
     public Response readAll(@Valid CrImportanceReadCondition cond) {
         return Response.success(

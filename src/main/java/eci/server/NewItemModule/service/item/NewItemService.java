@@ -455,9 +455,21 @@ public class NewItemService {
             throw new ItemUpdateImpossibleException();
         }
 
-        if (item.isRevise_progress()) {
-            item.setRevise_progress(false);
-        }
+        // (2) co의 affected item 의 revise_progress = false
+
+//    List<NewItem> affectedItems =
+//            changeOrder.getCoNewItems().stream().map(
+//                    m->m.getNewItem()
+//            ).collect(Collectors.toList());
+//
+//                    for(NewItem affectedItem : affectedItems){
+//        affectedItem.newItem_revise_progress_done_when_co_confirmed();
+//    }
+//
+//                    newItemService.ReviseItem(affectedItems, changeOrder.getModifier());
+
+
+
 
 
         NewItem.NewItemFileUpdatedResult result = item.tempEnd(
@@ -644,6 +656,33 @@ public class NewItemService {
         return finalProducts;
     }
 
+    /**
+     * affected item
+     * 상태 complete, release, 아이템 - revise_progress=false 인 아이들만
+     *
+     */
+
+
+    /**
+     * affected items
+     * 제품 중 상태가 complete 나 release 인 애들만 데려오기 - compare bom 용
+     * @return
+     */
+    public List<NewItem> readAffectedItems() {
+
+        List<NewItem> finalProducts = readCompareBomItems();
+        List<NewItem> affectedItems = new ArrayList<>();
+
+        // 최종 COMPLETE/RELEASE 된 아이들 중 지금 REVISE 중인 것이 아닌 것
+        for(NewItem newItem : finalProducts){
+
+            if(!newItem.isRevise_progress()) {
+                affectedItems.add(newItem);
+            }
+        }
+
+        return affectedItems;
+    }
 
     /**
      * createDevelopmentCard 에서 쓰일 것
@@ -737,12 +776,31 @@ public class NewItemService {
 
         for(NewItem newItem : newItems){
             if(!newItem.isRevise_progress()){ //revise progress 가 아니라면 (revise 되었다면)
-                revisedItemSize+=1;
+                newItem.setRevision(newItem.getRevision()+1);
             }
 
         }
 
         return (affectedItemSize==revisedItemSize); //두개 길이가 같으면 완료, 아니라면 진행 중
+    }
+
+    /**
+     * 라우트 update 된다면 자손과 부모의 revision 을 update 한다 !
+     */
+    public void revisionUpdateAllChildrenAndParentItem(NewItem newItem){
+
+        List<NewItemParentChildren> newItemParentChildren =
+                newItemParentChildrenRepository.findAllWithParentByParentId(newItem.getId());
+
+        newItemParentChildren.stream().forEach(
+                newItemParentChildren1 -> newItemParentChildren1.getChildren().updateRevision()
+        );
+
+        newItem.getParent().stream().forEach(
+                newItemParentChildren2 -> newItemParentChildren2.getParent().updateRevision()
+
+        );
+
     }
 
 }

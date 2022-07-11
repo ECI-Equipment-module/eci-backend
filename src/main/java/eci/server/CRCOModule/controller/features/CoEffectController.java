@@ -19,8 +19,8 @@ import javax.validation.Valid;
 @CrossOrigin(origins = "https://localhost:3000")
 public class CoEffectController{
     private final CoEffectService coEffectService;
-
-    @GetMapping("/coEffect")
+    @CrossOrigin(origins = "https://localhost:3000")
+    @GetMapping("/coEffectId")
     @ResponseStatus(HttpStatus.OK)
     public Response readAll(@Valid CoEffectReadCondition cond) {
         return Response.success(

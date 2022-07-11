@@ -6,6 +6,7 @@ import eci.server.BomModule.repository.BomRepository;
 import eci.server.BomModule.repository.DevelopmentBomRepository;
 import eci.server.CRCOModule.entity.CoNewItem;
 import eci.server.CRCOModule.entity.co.ChangeOrder;
+import eci.server.CRCOModule.entity.cr.ChangeRequest;
 import eci.server.CRCOModule.repository.co.ChangeOrderRepository;
 import eci.server.CRCOModule.repository.cr.ChangeRequestRepository;
 import eci.server.DashBoardModule.dto.ToDoDoubleList;
@@ -643,12 +644,16 @@ public class DashboardService {
                 );
 
             }
-
+            // 3-4 : revise_progress 가 true 이면서 revisedCnt가 0초과인 routeOrdering이 없다면 라우트 만들어야해
             for(NewItem reviseTarget : reviseCheckItems){
-                System.out.println("whyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy");
-                System.out.println(reviseTarget.getId());
-                System.out.println(reviseTarget.isRevise_progress());
-                if(reviseTarget.isRevise_progress()){
+
+                RouteOrdering routeOrderingWhetherRevised = routeOrderingRepository.findByNewItem(reviseTarget).get(
+                        routeOrderingRepository.findByNewItem(reviseTarget).size()-1
+                );
+                // routeOrdering revised cnt = 0 인 것은 개정 완료된 것, 그럼 이때 새로 만들어야 함
+                // 따라서 아이템이 revise 중이며 아직 revise route ordering 이 안 만들어진 애들을 보여줌
+
+                if(reviseTarget.isRevise_progress() && routeOrderingWhetherRevised.getRevisedCnt()==0){
                     reviseNewItemTodoResponses.add(
                             new TodoResponse(
                                     reviseTarget.getId(),
@@ -938,6 +943,314 @@ public class DashboardService {
         toDoDoubleList.add(rejectedBom);
         toDoDoubleList.add(needRevise);
         toDoDoubleList.add(reviewBom);
+
+        return new ToDoDoubleList(toDoDoubleList);
+
+    }
+
+    //////////////revise
+
+    //0710 CR CO
+    public ToDoDoubleList readCrCoTodo() {
+
+        //0) 현재 로그인 된 유저
+        Member member1 = memberRepository.findById(authHelper.extractMemberId()).orElseThrow(
+                AccessExpiredException::new
+        );
+        // 1. CR 임시저장
+        //1-1 cr temp save 용 ) 내가 작성자인 모든 CR 데려오기
+        List<TodoResponse> CR_TEMP_SAVE = new ArrayList<>();
+
+        List<ChangeRequest> myChangeRequests = changeRequestRepository.findByMember(member1);
+
+        //1-2 temp-save 가 true 이며 temp-save 가 pre rejected  것만 담는 리스트
+        List<ChangeRequest> tempSavedCrList = new ArrayList<>();
+
+        for (ChangeRequest cr : myChangeRequests) {
+
+            if (cr.isTempsave()){
+                // (1) 한번 찐 저장했지만 거절 당한 CR REQUEST
+                if(routeOrderingRepository.findByChangeRequest(cr).size()>0){
+
+                    // cr의 라우트 오더링 중 가장 최신
+                    RouteOrdering ordering = routeOrderingRepository.findByChangeRequest(cr).get(
+                            routeOrderingRepository.findByChangeRequest(cr).size() - 1);
+
+                    int presentIdx = ordering.getPresent();
+                    RouteProduct routeProduct = routeProductRepository.findAllByRouteOrdering(ordering).get(presentIdx);
+                    if (!routeProduct.isPreRejected() ) {
+
+                        tempSavedCrList.add(cr);
+
+                    }
+                }
+                // (2) 한번도 저장 안됐던 임시저장 CR
+                else {
+                    tempSavedCrList.add(cr);
+                }
+            }
+        }
+
+        if (tempSavedCrList.size() > 0) {
+            for (ChangeRequest d: tempSavedCrList) {
+//                String type=null;
+//                if(d.getNewItem()!=null){
+//                    type = d.getNewItem().getItemTypes().getItemType().toString();
+//                }else{
+//                    type = "None";
+//                }
+                TodoResponse
+                        crTempSaveTodoResponse =
+                        new TodoResponse(
+                                d.getId(),
+                                d.getName(),
+                                "CR",
+                                d.getCrNumber()
+                        );
+                CR_TEMP_SAVE.add(crTempSaveTodoResponse);
+            }
+        }
+
+        // 2. CO 임시저장
+        //1-1 cr temp save 용 ) 내가 작성자인 모든 CR 데려오기
+        List<TodoResponse> CO_TEMP_SAVE = new ArrayList<>();
+
+        List<ChangeOrder> myChangeOrders = changeOrderRepository.findByMember(member1);
+
+        //1-2 temp-save 가 true 이며 temp-save 가 pre rejected  것만 담는 리스트
+        List<ChangeOrder> tempSavedCoList = new ArrayList<>();
+
+        for (ChangeOrder co : myChangeOrders) {
+
+            if (co.getTempsave()){
+                // (1) 한번 찐 저장했지만 거절 당한 Co REQUEST
+                if(routeOrderingRepository.findByChangeOrder(co).size()>0){
+
+                    // cr의 라우트 오더링 중 가장 최신
+                    RouteOrdering ordering = routeOrderingRepository.findByChangeOrder(co).get(
+                            routeOrderingRepository.findByChangeOrder(co).size() - 1);
+
+                    int presentIdx = ordering.getPresent();
+                    RouteProduct routeProduct = routeProductRepository.findAllByRouteOrdering(ordering).get(presentIdx);
+                    if (!routeProduct.isPreRejected() ) {
+
+                        tempSavedCoList.add(co);
+
+                    }
+                }
+                // (2) 한번도 저장 안됐던 임시저장 Co
+                else {
+                    tempSavedCoList.add(co);
+                }
+            }
+        }
+
+        if (tempSavedCoList.size() > 0) {
+
+            for (ChangeOrder d: tempSavedCoList) {
+                String type=null;
+
+                TodoResponse
+                        coTempSaveTodoResponse =
+                        new TodoResponse(
+                                d.getId(),
+                                d.getName(),
+                                "CO",
+                                d.getCoNumber()
+                        );
+                CO_TEMP_SAVE.add(coTempSaveTodoResponse);
+            }
+        }
+
+
+        //1) 현재 진행 중인 라우트 프로덕트 카드들
+        List<RouteProduct> routeProductList = routeProductRepository.findAll().stream().filter(
+                rp -> rp.getSequence().equals(
+                        rp.getRouteOrdering().getPresent()
+                )
+        ).collect(Collectors.toList());
+
+        //2) 라우트 프로덕트들 중 나에게 할당된 카드들 & 단계가 CO REVIEW 인 것
+        List<RouteProduct> myRouteProductList = new ArrayList<>();
+
+        for (RouteProduct routeProduct : routeProductList) {
+            for (RouteProductMember routeProductMember : routeProduct.getMembers()) {
+                if (routeProductMember.getMember().getId().equals(member1.getId()) &&
+
+                        (
+                                routeProduct.getType().getModule().equals("CO")
+                                        &&
+                                        routeProduct.getType().getName().equals("REVIEW")
+                        )
+                ) {
+                    myRouteProductList.add(routeProduct);
+                    break;
+                }
+
+            }
+        }
+
+        //3) CR_REJECT - 라우트 프로덕트들 중에서 현재이고,,
+        // 라우트프로덕트 멤버가 나이고,
+        // preREJECTED=TRUE 인 것
+        List<TodoResponse> rejectedCRTodoResponses = new ArrayList<>();
+
+        for (RouteProduct routeProduct : routeProductList) { //myRoute-> 내꺼 + 현재 진행 중
+            //06-01 수정
+            for (RouteProductMember routeProductMember : routeProduct.getMembers()) {
+                if (routeProductMember.getMember().getId().equals(member1.getId())) {
+                    if (routeProduct.isPreRejected() &&
+
+                            (
+                                    routeProduct.getType().getModule().equals("CR")
+                                            &&
+                                            routeProduct.getType().getName().equals("REQUEST")
+
+                            )
+
+                    ) {
+
+                        ChangeRequest target = routeProduct.getRouteOrdering().getChangeRequest();
+
+                        rejectedCRTodoResponses.add(
+                                new TodoResponse(
+                                        target.getId(),
+                                        target.getName(),
+                                        "CR",
+                                        target.getCrNumber()
+                                )
+                        );
+                    }
+                }
+            }
+        }
+        List<TodoResponse> CR_REJECTED = new ArrayList<>(rejectedCRTodoResponses);
+
+
+        //4) C0_REJECTED- 라우트 프로덕트들 중에서 현재이고,,
+        // 라우트프로덕트 멤버가 나이고,
+        // preREJECTED=TRUE 인 것
+        List<TodoResponse> rejectedCOTodoResponses = new ArrayList<>();
+
+        for (RouteProduct routeProduct : routeProductList) { //myRoute-> 내꺼 + 현재 진행 중
+            //06-01 수정
+            for (RouteProductMember routeProductMember : routeProduct.getMembers()) {
+                if (routeProductMember.getMember().getId().equals(member1.getId())) {
+                    if (routeProduct.isPreRejected() &&
+
+                            (
+                                    routeProduct.getType().getModule().equals("CO")
+                                            &&
+                                            routeProduct.getType().getName().equals("REQUEST")
+
+                            )
+
+                    ) {
+
+                        ChangeOrder target = routeProduct.getRouteOrdering().getChangeOrder();
+
+                        rejectedCOTodoResponses.add(
+                                new TodoResponse(
+                                        target.getId(),
+                                        target.getName(),
+                                        "CO",
+                                        target.getCoNumber()
+                                )
+                        );
+                    }
+                }
+            }
+        }
+        List<TodoResponse> CO_REJECTED = new ArrayList<>(rejectedCOTodoResponses);
+
+        //5) CR_REVIEW
+        //현재 라우트 프로덕트들 중  이름이 Item Request Review(설계팀장) 고,
+        // 라우트프로덕트-멤버가 나로 지정
+
+        List<ChangeRequest> myCRReviewRouteProductList = new ArrayList<>();
+
+        for (RouteProduct routeProduct : routeProductList) {
+            for (RouteProductMember routeProductMember : routeProduct.getMembers()) {
+                if (routeProductMember.getMember().getId().equals(member1.getId()) &&
+                        (
+                                routeProduct.getType().getModule().equals("CR")
+                                        &&
+                                        routeProduct.getType().getName().equals("REVIEW")
+                        )
+
+                ) {
+                    myCRReviewRouteProductList.add(routeProduct.getRouteOrdering().getChangeRequest());
+                    break;
+                }
+
+            }
+        }
+
+        HashSet<TodoResponse> needReviewCRTodoResponses = new HashSet<>();
+        for (ChangeRequest cr : myCRReviewRouteProductList) {
+
+            needReviewCRTodoResponses.add(
+                    new TodoResponse(
+                            cr.getId(),
+                            cr.getName(),
+                            "CR",
+                            cr.getCrNumber()
+                    )
+            );
+        }
+        List<TodoResponse> CR_NEED_REVIEW = new ArrayList<>(needReviewCRTodoResponses);
+
+        //6) CO-REVIEW : APPROVE
+
+        List<ChangeOrder> myCOReviewRouteProductList = new ArrayList<>();
+
+        for (RouteProduct routeProduct : routeProductList) {
+            for (RouteProductMember routeProductMember : routeProduct.getMembers()) {
+                if (routeProductMember.getMember().getId().equals(member1.getId()) &&
+                        (
+                                routeProduct.getType().getModule().equals("CO")
+                                        &&
+                                        routeProduct.getType().getName().equals("APPROVE")
+                        )
+
+                ) {
+                    myCOReviewRouteProductList.add(routeProduct.getRouteOrdering().getChangeOrder());
+                    break;
+                }
+
+            }
+        }
+
+        HashSet<TodoResponse> needReviewCOTodoResponses = new HashSet<>();
+        for (ChangeOrder co : myCOReviewRouteProductList) {
+
+            needReviewCOTodoResponses.add(
+                    new TodoResponse(
+                            co.getId(),
+                            co.getName(),
+                            "CO",
+                            co.getCoNumber()
+                    )
+            );
+        }
+        List<TodoResponse> CO_NEED_REVIEW = new ArrayList<>(needReviewCOTodoResponses);
+
+
+
+        ToDoSingle CRTempSave = new ToDoSingle("Save as Draft CR", CR_TEMP_SAVE);
+        ToDoSingle COTempSave = new ToDoSingle("Save as Draft CO", CO_TEMP_SAVE);
+        ToDoSingle rejectedCR = new ToDoSingle("Rejected CR", CR_REJECTED);
+        ToDoSingle rejectedCO = new ToDoSingle("Rejected CO", CO_REJECTED);
+        ToDoSingle CRNeedReview = new ToDoSingle("Waiting Review CR", CR_NEED_REVIEW);
+        ToDoSingle CONeedReview = new ToDoSingle("Waiting Review CO", CO_NEED_REVIEW);
+
+        List<ToDoSingle> toDoDoubleList = new ArrayList<ToDoSingle>();
+        toDoDoubleList.add(CRTempSave);
+        toDoDoubleList.add(COTempSave);
+        toDoDoubleList.add(rejectedCR);
+        toDoDoubleList.add(rejectedCO);
+        toDoDoubleList.add(CRNeedReview);
+        toDoDoubleList.add(CONeedReview);
 
         return new ToDoDoubleList(toDoDoubleList);
 

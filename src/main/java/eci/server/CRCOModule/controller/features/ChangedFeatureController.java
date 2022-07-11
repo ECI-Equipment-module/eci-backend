@@ -19,8 +19,8 @@ import javax.validation.Valid;
 @CrossOrigin(origins = "https://localhost:3000")
 public class ChangedFeatureController{
     private final ChangedFeatureService changedFeatureService;
-
-    @GetMapping("/changedFeature")
+    @CrossOrigin(origins = "https://localhost:3000")
+    @GetMapping("/changedFeatureId")
     @ResponseStatus(HttpStatus.OK)
     public Response readAll(@Valid ChangedFeatureReadCondition cond) {
         return Response.success(

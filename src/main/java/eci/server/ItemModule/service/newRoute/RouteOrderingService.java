@@ -8,6 +8,7 @@ import eci.server.BomModule.exception.BomNotFoundException;
 import eci.server.BomModule.repository.*;
 import eci.server.BomModule.service.BomService;
 import eci.server.CRCOModule.entity.co.ChangeOrder;
+import eci.server.CRCOModule.entity.cr.ChangeRequest;
 import eci.server.CRCOModule.exception.CoNotFoundException;
 import eci.server.CRCOModule.exception.CrNotFoundException;
 import eci.server.CRCOModule.repository.co.ChangeOrderRepository;
@@ -135,108 +136,218 @@ public class RouteOrderingService {
 
     @Transactional
     public RouteOrderingCreateResponse createItemRoute(RouteOrderingCreateRequest req) {
-        RouteOrdering newRoute = routeOrderingRepository.save(RouteOrderingCreateRequest.toEntity(
-                        req,
-                        newItemRepository,
-                        routePreset,
-                        routeTypeRepository
-                )
-        );
 
-        List<RouteProduct> routeProductList =
-                RouteProductCreateRequest.toEntityList(
-                        req,
-                        newRoute,
-                        routePreset,
-                        memberRepository,
-                        routeTypeRepository
+        NewItem routeMadeItem = newItemRepository.findById(req.getItemId()).orElseThrow(ItemNotFoundException::new);
 
+        if(!routeMadeItem.isRevise_progress()) {
+
+            RouteOrdering newRoute = routeOrderingRepository.save(RouteOrderingCreateRequest.toEntity(
+                            req,
+                            newItemRepository,
+                            routePreset,
+                            routeTypeRepository
+                    )
+            );
+
+            List<RouteProduct> routeProductList =
+                    RouteProductCreateRequest.toEntityList(
+                            req,
+                            newRoute,
+                            routePreset,
+                            memberRepository,
+                            routeTypeRepository
+
+                    );
+
+            for (RouteProduct routeProduct : routeProductList) {
+
+                RouteProduct routeProduct1 =
+                        routeProductRepository.save(routeProduct);
+                System.out.println(routeProduct1.getRoute_name());
+                System.out.println(routeProduct1.getMembers().get(0).getMember());
+                System.out.println(routeProduct1.getMembers().get(0).getRouteProduct());
+            }
+
+            String itemTypeName = (newItemRepository.findById(newRoute.getNewItem().getId()).
+                    orElseThrow(ItemNotFoundException::new)
+            ).getItemTypes().getItemType().name();
+
+            if (
+                    !(
+                            itemTypeName.equals("원재료")
+                                    ||
+                                    itemTypeName.equals("단순외주구매품")
+                    )
+
+            ) {
+                //봄 생성
+                Bom bom = bomRepository.save(
+                        new Bom(
+                                newRoute.getNewItem(),
+                                memberRepository.findById(req.getMemberId()).orElseThrow(MemberNotFoundException::new)
+                        )
+                );
+                //프릴리미너리 봄 생성
+                PreliminaryBom preliminaryBom = preliminaryBomRepository.save(
+                        new PreliminaryBom(
+                                bom
+                        )
                 );
 
-        for (RouteProduct routeProduct : routeProductList) {
+                NewItem newItem = preliminaryBom.getBom().getNewItem();
 
-            RouteProduct routeProduct1 =
-                    routeProductRepository.save(routeProduct);
-            System.out.println(routeProduct1.getRoute_name());
-            System.out.println(routeProduct1.getMembers().get(0).getMember());
-            System.out.println(routeProduct1.getMembers().get(0).getRouteProduct());
+                // 06-11 태초에 기본 프릴리머리가 있었다
+
+                String initPreliminary = "{" +
+
+                        "\"cardNumber\":\"" + newItem.getItemNumber() + "\"," +
+                        "\"cardName\": \"" + newItem.getName() + "\"," +
+                        "\"classification\": \"" + newItem.getClassification().getClassification1().getName().toString()
+                        + "/" + newItem.getClassification().getClassification2().getName().toString() +
+                        (newItem.getClassification().getClassification3().getId().equals(99999L) ?
+                                "" :
+                                "/" + newItem.getClassification().getClassification3().getName()
+                        )
+                        + "\"," +
+                        "\"cardType\": \"" + newItem.getItemTypes().getItemType().name() + "\"," +
+                        "\"sharing\": \"" + (newItem.isSharing() ? "공용" : "전용") + "\"," +
+                        "\"preliminaryBomId\": " + preliminaryBom.getId() + "," +
+                        "\"children\": []" +
+                        "}";
+
+                JsonSave initialJsonSave = jsonSaveRepository.save(
+                        new JsonSave(
+                                initPreliminary,
+                                preliminaryBom
+                        )
+                );
+
+                DevelopmentBom developmentBom = developmentBomRepository.save(
+                        new DevelopmentBom(
+                                bom
+                        )
+                );
+
+                CompareBom compareBom = compareBomRepository.save(
+                        new CompareBom(
+                                bom
+                        )
+                );
+
+                newRoute.setBom(bom);
+            }
+            newRoute.getNewItem().updateTempsaveWhenMadeRoute();
+            //라우트 만들면 임시저장 해제
+
+            //0607 BOM + PRELIMINARY BOM 생성되게 하기
+            return new RouteOrderingCreateResponse(newRoute.getId());
         }
+        else{ //revise_progress 로 라우트 만드는 것이라면
 
-        String itemTypeName = (newItemRepository.findById(newRoute.getNewItem().getId()).
-                orElseThrow(ItemNotFoundException::new)
-        ).getItemTypes().getItemType().name();
+            RouteOrdering newRoute = routeOrderingRepository.save(RouteOrderingCreateRequest.toRevisedRouteOrderingEntity(
+                            req,
+                            newItemRepository,
+                            routePreset,
+                            routeTypeRepository
+                    )
+            );
 
-        if(
-                !(
-                        itemTypeName.equals("원재료")
+            List<RouteProduct> routeProductList =
+                    RouteProductCreateRequest.toEntityList(
+                            req,
+                            newRoute,
+                            routePreset,
+                            memberRepository,
+                            routeTypeRepository
+
+                    );
+
+            for (RouteProduct routeProduct : routeProductList) {
+
+                RouteProduct routeProduct1 =
+                        routeProductRepository.save(routeProduct);
+                System.out.println(routeProduct1.getRoute_name());
+                System.out.println(routeProduct1.getMembers().get(0).getMember());
+                System.out.println(routeProduct1.getMembers().get(0).getRouteProduct());
+            }
+
+            String itemTypeName = (newItemRepository.findById(newRoute.getNewItem().getId()).
+                    orElseThrow(ItemNotFoundException::new)
+            ).getItemTypes().getItemType().name();
+
+            if (
+                    !(
+                            itemTypeName.equals("원재료")
                                     ||
-                                itemTypeName.equals("단순외주구매품")
-                )
-
-        ) {
-            //봄 생성
-            Bom bom = bomRepository.save(
-                    new Bom(
-                            newRoute.getNewItem(),
-                            memberRepository.findById(req.getMemberId()).orElseThrow(MemberNotFoundException::new)
+                                    itemTypeName.equals("단순외주구매품")
                     )
-            );
-            //프릴리미너리 봄 생성
-            PreliminaryBom preliminaryBom = preliminaryBomRepository.save(
-                    new PreliminaryBom(
-                            bom
-                    )
-            );
 
-            NewItem newItem = preliminaryBom.getBom().getNewItem();
+            ) {
+                //봄 생성
+                Bom bom = bomRepository.save(
+                        new Bom(
+                                newRoute.getNewItem(),
+                                memberRepository.findById(req.getMemberId()).orElseThrow(MemberNotFoundException::new)
+                        )
+                );
+                //프릴리미너리 봄 생성
+                PreliminaryBom preliminaryBom = preliminaryBomRepository.save(
+                        new PreliminaryBom(
+                                bom
+                        )
+                );
 
-            // 06-11 태초에 기본 프릴리머리가 있었다
+                NewItem newItem = preliminaryBom.getBom().getNewItem();
 
-            String initPreliminary = "{" +
+                // 06-11 태초에 기본 프릴리머리가 있었다
 
-                    "\"cardNumber\":\"" + newItem.getItemNumber() + "\"," +
-                    "\"cardName\": \"" + newItem.getName() + "\"," +
-                    "\"classification\": \"" + newItem.getClassification().getClassification1().getName().toString()
-                    + "/" + newItem.getClassification().getClassification2().getName().toString() +
-                    (newItem.getClassification().getClassification3().getId().equals(99999L) ?
-                            "" :
-                            "/" + newItem.getClassification().getClassification3().getName()
-                    )
-                    + "\"," +
-                    "\"cardType\": \"" + newItem.getItemTypes().getItemType().name() + "\"," +
-                    "\"sharing\": \"" + (newItem.isSharing() ? "공용" : "전용") + "\"," +
-                    "\"preliminaryBomId\": " + preliminaryBom.getId() + "," +
-                    "\"children\": []" +
-                    "}";
+                String initPreliminary = "{" +
 
-            JsonSave initialJsonSave = jsonSaveRepository.save(
-                    new JsonSave(
-                            initPreliminary,
-                            preliminaryBom
-                    )
-            );
+                        "\"cardNumber\":\"" + newItem.getItemNumber() + "\"," +
+                        "\"cardName\": \"" + newItem.getName() + "\"," +
+                        "\"classification\": \"" + newItem.getClassification().getClassification1().getName().toString()
+                        + "/" + newItem.getClassification().getClassification2().getName().toString() +
+                        (newItem.getClassification().getClassification3().getId().equals(99999L) ?
+                                "" :
+                                "/" + newItem.getClassification().getClassification3().getName()
+                        )
+                        + "\"," +
+                        "\"cardType\": \"" + newItem.getItemTypes().getItemType().name() + "\"," +
+                        "\"sharing\": \"" + (newItem.isSharing() ? "공용" : "전용") + "\"," +
+                        "\"preliminaryBomId\": " + preliminaryBom.getId() + "," +
+                        "\"children\": []" +
+                        "}";
 
-            DevelopmentBom developmentBom = developmentBomRepository.save(
-                    new DevelopmentBom(
-                            bom
-                    )
-            );
+                JsonSave initialJsonSave = jsonSaveRepository.save(
+                        new JsonSave(
+                                initPreliminary,
+                                preliminaryBom
+                        )
+                );
 
-            CompareBom compareBom = compareBomRepository.save(
-                    new CompareBom(
-                            bom
-                    )
-            );
+                DevelopmentBom developmentBom = developmentBomRepository.save(
+                        new DevelopmentBom(
+                                bom
+                        )
+                );
 
-            newRoute.setBom(bom);
+                CompareBom compareBom = compareBomRepository.save(
+                        new CompareBom(
+                                bom
+                        )
+                );
+
+                newRoute.setBom(bom);
+            }
+            newRoute.getNewItem().updateTempsaveWhenMadeRoute();
+            //라우트 만들면 임시저장 해제
+
+            //0607 BOM + PRELIMINARY BOM 생성되게 하기
+            return new RouteOrderingCreateResponse(newRoute.getId());
+
         }
-        newRoute.getNewItem().updateTempsaveWhenMadeRoute();
-        //라우트 만들면 임시저장 해제
-
-        //0607 BOM + PRELIMINARY BOM 생성되게 하기
 
 
-        return new RouteOrderingCreateResponse(newRoute.getId());
     }
 
     @Transactional
@@ -395,7 +506,18 @@ public class RouteOrderingService {
         if (presentRouteProductCandidate.size() == routeOrdering.getPresent()) {
             //만약 present 가 끝까지 닿았으면 현재 complete 된 상황!
             routeOrdering.updateToComplete();
+
+            if(routeOrdering.getRevisedCnt()>0){
+                routeOrdering.setRevisedCnt(0);
+                //0710 revise 로 생긴 route ordering 이었다면 다시 0으로 복구;
+            }
+            if(routeOrdering.getNewItem().isRevise_progress()){
+                routeOrdering.getNewItem().setRevise_progress(false);
+                //0710 revise progress 가 진행 중이라면 라우트 complete 될 때 false 로 갱신
+            }
             //throw new UpdateImpossibleException();
+            // 0710 : 이 아이템과 엮인 아이들 (CHILDREN , PARENT )들의 REVISION +=1 진행 !
+            newItemService.revisionUpdateAllChildrenAndParentItem(routeOrdering.getNewItem());
 
         } else {
             RouteProduct targetRoutProduct = presentRouteProductCandidate.get(routeOrdering.getPresent());
@@ -604,6 +726,62 @@ public class RouteOrderingService {
 
                     newItemService.ReviseItem(affectedItems, changeOrder.getModifier());
 
+
+                }
+
+
+            }
+
+            else if (targetRoutProduct.getType().getModule().equals("CO")
+                    && targetRoutProduct.getType().getName().equals("CONFIRM")) {
+
+                // CO 안에 있는 CR 들의 crCompletedByCo() 호출해서 DONE = TRUE 로 바꾸기
+
+                if ((routeOrdering.getChangeOrder()==null)) {
+                    throw new CoNotFoundException();
+                } else {
+
+                    // (1)  이 co의 cr 들의 done=true
+                    ChangeOrder changeOrder=routeOrdering.getChangeOrder();
+
+                    List<ChangeRequest> changeRequests = changeOrder.getChangeRequests();
+                    for(ChangeRequest cr : changeRequests){
+                        cr.setDone(true);
+                    }
+
+                }
+
+
+            }
+
+            else if (targetRoutProduct.getType().getModule().equals("ITEM")
+                    && targetRoutProduct.getType().getName().equals("REVIEW")) {
+
+                // 파트제품, 프로덕트 제품 제외한 다른 애들은 approve route 할 때
+                // (1) 아이템이 revise progress 이며
+                // (2) 지금 승인하는게 ITEM REVIEW 면 revision+=1
+                NewItem chkItem = targetRoutProduct.getRouteOrdering().getNewItem();
+                if(chkItem.isRevise_progress()){
+                    if(!(chkItem.getItemTypes().getItemType().name().equals("파트제품") ||
+                            chkItem.getItemTypes().getItemType().name().equals("프로덕트제품"))
+                    ){
+                        chkItem.updateRevision(); //revision+=1
+                    }
+                }
+
+                // CO 안에 있는 CR 들의 crCompletedByCo() 호출해서 DONE = TRUE 로 바꾸기
+
+                if ((routeOrdering.getChangeOrder()==null)) {
+                    throw new CoNotFoundException();
+                } else {
+
+                    // (1)  이 co의 cr 들의 done=true
+                    ChangeOrder changeOrder=routeOrdering.getChangeOrder();
+
+                    List<ChangeRequest> changeRequests = changeOrder.getChangeRequests();
+                    for(ChangeRequest cr : changeRequests){
+                        cr.setDone(true);
+                    }
 
                 }
 

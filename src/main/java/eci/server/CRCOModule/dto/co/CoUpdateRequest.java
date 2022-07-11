@@ -16,6 +16,8 @@ public class CoUpdateRequest {
 
     private Long clientOrganizationId;
 
+    private String clientItemNumber;
+
     private String coNumber;
 
     private String coPublishPeriod;

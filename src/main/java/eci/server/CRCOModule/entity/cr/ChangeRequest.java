@@ -96,6 +96,10 @@ public class ChangeRequest extends EntityDate {
     @Column(nullable = false)
     private boolean readonly;
 
+    @Column
+    private Boolean done;
+
+
     @OneToMany(
             mappedBy = "changeRequest",
             cascade = CascadeType.PERSIST,
@@ -152,6 +156,7 @@ public class ChangeRequest extends EntityDate {
 
         this.tempsave = tempsave;
         this.readonly = readonly;
+        this.done = false;
 
         this.attachments = new ArrayList<>();
         addAttachments(attachments);
@@ -200,6 +205,7 @@ public class ChangeRequest extends EntityDate {
 
         this.tempsave = tempsave;
         this.readonly = readonly;
+        this.done = false;
     }
 
 
@@ -519,6 +525,14 @@ public class ChangeRequest extends EntityDate {
         this.readonly = true;
 
         return fileUpdatedResult;
+    }
+
+    /**
+     * CO가 COMPLETE 되면
+     * CO 에 딸린 CR 의 DONE = TRUE
+     */
+    public void crCompletedByCo(){
+        this.done = true;
     }
 
 }
