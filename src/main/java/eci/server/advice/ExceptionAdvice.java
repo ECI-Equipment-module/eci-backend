@@ -531,11 +531,17 @@ public class ExceptionAdvice {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public Response CoUpdateImpossibleException(CoUpdateImpossibleException e) {
         log.info("e = {}", e.getMessage());
-        return Response.failure(404,
+        return Response.failure(400,
                 "수정 불가능한 CO 입니다.");
     }
 
-
+    @ExceptionHandler(CrEffectNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Response CrEffectNotFoundException(CrEffectNotFoundException e) {
+        log.info("e = {}", e.getMessage());
+        return Response.failure(404,
+                "없는 CrEffect  입니다.");
+    }
 
 
 

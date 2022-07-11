@@ -37,9 +37,9 @@ public class CrReadDto {
     
     private String crNumber;
 
-    private CrReasonDto crReasonDto;
-    private CrSourceDto crSourceDto;
-    private CrImportanceDto crImportanceDto;
+    private CrReasonDto crReasonId;
+    private CrSourceDto crSourceId;
+    private CrImportanceDto crImportanceId;
 
     private List<CrAttachmentDto>  attachments;
 

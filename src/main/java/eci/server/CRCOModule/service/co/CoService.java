@@ -6,12 +6,8 @@ import eci.server.CRCOModule.dto.co.CoCreateRequest;
 import eci.server.CRCOModule.dto.co.CoReadDto;
 import eci.server.CRCOModule.dto.co.CoTempCreateRequest;
 import eci.server.CRCOModule.dto.co.CoUpdateRequest;
-import eci.server.CRCOModule.dto.cr.CrReadDto;
-import eci.server.CRCOModule.dto.cr.CrTempCreateRequest;
-import eci.server.CRCOModule.dto.cr.CrUpdateRequest;
 import eci.server.CRCOModule.entity.co.ChangeOrder;
 import eci.server.CRCOModule.entity.cofeatures.CoAttachment;
-import eci.server.CRCOModule.entity.cr.ChangeRequest;
 import eci.server.CRCOModule.entity.features.CrReason;
 import eci.server.CRCOModule.exception.CoNotFoundException;
 import eci.server.CRCOModule.exception.CoUpdateImpossibleException;
@@ -60,7 +56,6 @@ public class CoService{
     private final FileService fileService;
     private final CrReasonRepository crReasonRepository;
     private final ChangeRequestRepository changeRequestRepository;
-    private final CrSourceRepository crSourceRepository;
     private final CrImportanceRepository crImportanceRepository;
     private final MemberRepository memberRepository;
     private final AttachmentTagRepository attachmentTagRepository;
@@ -69,7 +64,6 @@ public class CoService{
     private final RouteProductRepository routeProductRepository;
     private final BomRepository bomRepository;
     private final PreliminaryBomRepository preliminaryBomRepository;
-    private final CrAttachmentRepository crAttachmentRepository;
     private final ChangeOrderRepository changeOrderRepository;
     private final ClientOrganizationRepository clientOrganizationRepository;
     private final CarTypeRepository carTypeRepository;

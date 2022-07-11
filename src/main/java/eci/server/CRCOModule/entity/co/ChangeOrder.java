@@ -1,6 +1,7 @@
 package eci.server.CRCOModule.entity.co;
 
 import eci.server.CRCOModule.dto.co.CoUpdateRequest;
+import eci.server.CRCOModule.entity.CoCoEffect;
 import eci.server.CRCOModule.entity.CoNewItem;
 import eci.server.CRCOModule.entity.cofeatures.ChangedFeature;
 import eci.server.CRCOModule.entity.cofeatures.CoAttachment;
@@ -103,10 +104,17 @@ public class ChangeOrder extends EntityDate {
     @Column
     private LocalDate applyPeriod;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "co_effect_id")
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private CoEffect coEffect;
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "co_effect_id")
+//    @OnDelete(action = OnDeleteAction.CASCADE)
+//    private CoEffect coEffect;
+    @OneToMany(
+            mappedBy = "changeOrder",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true,
+            fetch = FetchType.LAZY)
+    //affected item
+    private List<CoCoEffect> coEffect;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "co_importance_id")
@@ -181,7 +189,10 @@ public class ChangeOrder extends EntityDate {
             CrReason coReason,
             CoStage coStage,
             LocalDate applyPeriod,
-            CoEffect coEffect,
+
+            //CoEffect coEffect,
+            List<CoEffect> coEffect,
+
             CrImportance coImportance,
             String name,
             String content,
@@ -211,7 +222,17 @@ public class ChangeOrder extends EntityDate {
         this.coReason = coReason;
         this.coStage = coStage;
         this.applyPeriod = applyPeriod;
-        this.coEffect = coEffect;
+
+        this.coEffect = coEffect.stream().map(
+                        //다대다 관계를 만드는 구간
+                        effect -> new CoCoEffect(
+                                this,
+                                effect
+                        )
+                )
+                .collect(toList());
+
+
         this.coImportance = coImportance;
         this.name = name;
         this.content = content;
@@ -263,7 +284,10 @@ public class ChangeOrder extends EntityDate {
             CrReason coReason,
             CoStage coStage,
             LocalDate applyPeriod,
-            CoEffect coEffect,
+
+            //CoEffect coEffect,
+            List<CoEffect> coEffect,
+
             CrImportance coImportance,
             String name,
             String content,
@@ -290,7 +314,16 @@ public class ChangeOrder extends EntityDate {
         this.coReason = coReason;
         this.coStage = coStage;
         this.applyPeriod = applyPeriod;
-        this.coEffect = coEffect;
+
+        this.coEffect = coEffect.stream().map(
+                        //다대다 관계를 만드는 구간
+                        effect -> new CoCoEffect(
+                                this,
+                                effect
+                        )
+                )
+                .collect(toList());
+
         this.coImportance = coImportance;
         this.name = name;
         this.content = content;
@@ -559,11 +592,24 @@ public class ChangeOrder extends EntityDate {
                                 LocalDate.parse
                                         (req.getApplyPeriod(), DateTimeFormatter.ISO_DATE);
 
-        this.coEffect =
-                req.getCoEffectId()==null?
-                        null:
-                        coEffectRepository.findById(req.getCoEffectId()).
-                                orElseThrow(CoEffectNotFoundException::new);
+        List<CoEffect> coEffects = new ArrayList<>();
+        if(!(req.getCoEffectId()==null) && req.getCoEffectId().size()>0) {
+            ;
+
+        }
+
+        this.coEffect = req.getCoEffectId()==null || req.getCoEffectId().size()==0?
+                null
+                :(req.getCoEffectId().stream().map(
+                i -> coEffectRepository.findById(i).orElseThrow(CrEffectNotFoundException::new)
+        ).collect(toList())) //입력으로 받아온 co effect 값
+                .stream().map(
+                //다대다 관계를 만드는 구간
+                effect -> new CoCoEffect(
+                        this,
+                        effect
+                )
+        ).collect(toList());
 
         this.coImportance = req.getCoImportanceId()==null?
                 null:
@@ -775,13 +821,19 @@ public class ChangeOrder extends EntityDate {
                         LocalDate.parse
                                 (req.getApplyPeriod(), DateTimeFormatter.ISO_DATE);
 
-        this.coEffect =
-                req.getCoEffectId()==null?
-                        coEffectRepository.findById(-1L).
-                                orElseThrow(CoEffectNotFoundException::new)
-                        :
-                        coEffectRepository.findById(req.getCoEffectId()).
-                                orElseThrow(CoEffectNotFoundException::new);
+        this.coEffect = req.getCoEffectId()==null || req.getCoEffectId().size()==0?
+                null
+                :(req.getCoEffectId().stream().map(
+                i -> coEffectRepository.findById(i).orElseThrow(CrEffectNotFoundException::new)
+        ).collect(toList())) //입력으로 받아온 co effect 값
+                .stream().map(
+                        //다대다 관계를 만드는 구간
+                        effect -> new CoCoEffect(
+                                this,
+                                effect
+                        )
+                ).collect(toList());
+
 
         this.coImportance = req.getCoImportanceId()==null?
                 coImportanceRepository.findById(-1L).

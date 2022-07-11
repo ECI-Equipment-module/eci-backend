@@ -39,7 +39,7 @@ public class CoUpdateRequest {
 
     private String applyPeriod;
 
-    private Long coEffectId;
+    private List<Long> coEffectId;
 
     private Long coImportanceId;
 
