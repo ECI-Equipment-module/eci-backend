@@ -1,5 +1,6 @@
 package eci.server.CRCOModule.dto.cr;
 
+import com.sun.istack.Nullable;
 import eci.server.CRCOModule.entity.cr.ChangeRequest;
 import eci.server.CRCOModule.entity.CrAttachment;
 import eci.server.CRCOModule.exception.CrImportanceNotFoundException;
@@ -35,6 +36,7 @@ public class CrCreateRequest {
 
     private Long crReasonId; //기타 선택 시 -1
 
+    @Nullable
     private String crReason;
 
     private Long crImportanceId;

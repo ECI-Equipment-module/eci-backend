@@ -39,7 +39,6 @@ import eci.server.NewItemModule.entity.JsonSave;
 import eci.server.NewItemModule.entity.NewItem;
 import eci.server.NewItemModule.exception.ItemTypeRequiredException;
 import eci.server.NewItemModule.repository.item.NewItemRepository;
-import eci.server.NewItemModule.service.TempNewItemParentChildService;
 import eci.server.NewItemModule.service.item.NewItemService;
 import eci.server.ProjectModule.entity.project.Project;
 import eci.server.ProjectModule.exception.ProjectNotLinkedException;
@@ -317,6 +316,7 @@ public class RouteOrderingService {
                         "\"cardType\": \"" + newItem.getItemTypes().getItemType().name() + "\"," +
                         "\"sharing\": \"" + (newItem.isSharing() ? "공용" : "전용") + "\"," +
                         "\"preliminaryBomId\": " + preliminaryBom.getId() + "," +
+                        "\"plusPossible\": " + true + "," +
                         "\"children\": []" +
                         "}";
 

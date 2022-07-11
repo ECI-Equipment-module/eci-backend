@@ -1,5 +1,6 @@
 package eci.server.CRCOModule.dto.co;
 
+import com.sun.istack.Nullable;
 import eci.server.CRCOModule.entity.co.ChangeOrder;
 import eci.server.CRCOModule.entity.cofeatures.CoAttachment;
 import eci.server.CRCOModule.exception.CrEffectNotFoundException;
@@ -51,6 +52,7 @@ public class CoCreateRequest {
 
     private Boolean difference;
 
+    @Nullable
     private Long carTypeId;
 
     private Boolean costDifferent;
@@ -132,8 +134,7 @@ public class CoCreateRequest {
                     req.getDifference(),
 
                     req.getCarTypeId() == null ?
-                            carTypeRepository.findById(-1L)
-                                    .orElseThrow(CarTypeNotFoundException::new)
+                            null
                             :
                             carTypeRepository.findById(req.carTypeId)
                                     .orElseThrow(CarTypeNotFoundException::new),
@@ -227,8 +228,7 @@ public class CoCreateRequest {
                 req.getDifference(),
 
                 req.getCarTypeId() == null ?
-                        carTypeRepository.findById(-1L)
-                                .orElseThrow(CarTypeNotFoundException::new)
+                        null
                         :
                         carTypeRepository.findById(req.carTypeId)
                                 .orElseThrow(CarTypeNotFoundException::new),

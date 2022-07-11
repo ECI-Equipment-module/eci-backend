@@ -92,7 +92,7 @@ public class CrService {
 
         Long crReasonId = req.getCrReasonId();
 
-        if(crReasonId==1L) {
+        if(crReasonId==1L&&!(req.getCrReason().isBlank())) {
             if ((!req.getCrReason().isBlank()) || !(req.getCrReason() == null)) {
                 CrReason addCrReason = crReasonRepository.save(
                         new CrReason(
@@ -242,8 +242,22 @@ public class CrService {
             throw new CrUpdateImpossibleException();
         }
 
+        Long crReasonId = req.getCrReasonId();
+
+        if(crReasonId==1L&&!(req.getCrReason().isBlank())) {
+            if ((!req.getCrReason().isBlank()) || !(req.getCrReason() == null)) {
+                CrReason addCrReason = crReasonRepository.save(
+                        new CrReason(
+                                req.getCrReason()
+                        )
+                );
+                crReasonId = addCrReason.getId();
+            }
+        }
+
         ChangeRequest.FileUpdatedResult result = cr.tempEnd(
                 req,
+                crReasonId,
                 newItemRepository,
                 crReasonRepository,
                 crImportanceRepository,

@@ -1,5 +1,6 @@
 package eci.server.CRCOModule.dto.co;
 
+import com.sun.istack.Nullable;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -26,6 +27,7 @@ public class CoUpdateRequest {
 
     private Boolean difference;
 
+    @Nullable
     private Long carTypeId;
 
     private Boolean costDifferent;
