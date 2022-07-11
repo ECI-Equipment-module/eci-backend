@@ -262,12 +262,12 @@ public class CoReadDto {
                         routeProductRepository,
                         attachmentTagRepository,
                         defaultImageAddress
-                ),
+                ), //related cr
 
                 CoNewItemDto.toDtoList(
                         co.getCoNewItems(),
                         routeOrderingRepository
-                ),
+                ),//affected ote,
 
                 co.getCreatedAt(),
                 MemberDto.toDto(co.getMember(),
