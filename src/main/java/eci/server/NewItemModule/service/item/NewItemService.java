@@ -670,7 +670,28 @@ public class NewItemService {
      */
     public List<NewItem> readAffectedItems() {
 
-        List<NewItem> finalProducts = readCompareBomItems();
+
+        List<NewItem> itemListProduct = newItemRepository.findAll();
+
+        //1-2) 상태가 release 나 complete인 것만 최종 제품에 담을 예정
+        List<NewItem> finalProducts = new ArrayList<>();
+
+        for(NewItem newItem : itemListProduct){
+            if(
+                    routeOrderingRepository.findByNewItem(newItem).size()>0
+                            && (routeOrderingRepository.findByNewItem(newItem).get(
+                            routeOrderingRepository.findByNewItem(newItem).size()-1
+                    ).getLifecycleStatus().equals("COMPLETE") ||
+                            (routeOrderingRepository.findByNewItem(newItem).get(
+                                    routeOrderingRepository.findByNewItem(newItem).size()-1
+                            ).getLifecycleStatus().equals("RELEASE")
+                            )
+                    )
+            ){
+                finalProducts.add(newItem);
+            }
+        }
+
         List<NewItem> affectedItems = new ArrayList<>();
 
         // 최종 COMPLETE/RELEASE 된 아이들 중 지금 REVISE 중인 것이 아닌 것
