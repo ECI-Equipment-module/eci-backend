@@ -17,7 +17,7 @@
 //public class ChatRoomController {
 //    private final ChatRoomRepository chatRoomRepository;
 //    // 채팅 리스트 화면
-//    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
+//    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app/")
 //    @GetMapping("/room")
 //    public Response rooms(
 //            @PathVariable String id
@@ -28,7 +28,7 @@
 //        );
 //    }
 //    // 모든 채팅방 목록 반환
-//    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
+//    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app/")
 //    @GetMapping("/rooms")
 //    @ResponseBody
 //    public Response room() {
@@ -37,7 +37,7 @@
 //        );
 //    }
 //    // 채팅방 생성
-//    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
+//    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app/")
 //    @PostMapping("/room")
 //    @ResponseStatus(HttpStatus.CREATED)
 //    @ResponseBody
@@ -49,7 +49,7 @@
 //        );
 //    }
 //    // 채팅방 입장 화면
-//    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
+//    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app/")
 //    @GetMapping("/room/enter")
 //    public Response roomDetail(
 //            @PathVariable String roomId) {

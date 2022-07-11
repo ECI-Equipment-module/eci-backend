@@ -746,8 +746,10 @@ public class RouteOrderingService {
 
                     List<ChangeRequest> changeRequests = changeOrder.getChangeRequests();
                     for(ChangeRequest cr : changeRequests){
-                        cr.setDone(true);
+                        cr.crCompletedByCo();
                     }
+
+                    // (2) 이 co의 affected item d르
 
                 }
 

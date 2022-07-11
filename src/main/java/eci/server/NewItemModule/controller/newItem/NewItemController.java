@@ -18,7 +18,7 @@ import javax.validation.Valid;
 @RestController
 @RequiredArgsConstructor
 @Slf4j
-@CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
+@CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app/")
 
 public class NewItemController {
 
@@ -30,7 +30,7 @@ public class NewItemController {
      * @param req
      * @return 200 (success)
      */
-    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
+    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app/")
     @PostMapping("/item/temp")
     @ResponseStatus(HttpStatus.CREATED)
     @AssignMemberId // Aspect : 인증된 사용자 정보로 아이템 작성자 지정 가능
@@ -45,7 +45,7 @@ public class NewItemController {
 
 
     //06-05 임시저장 the end 컨트롤러 (임시저장 된 것을 찐 저장 시)
-    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
+    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app/")
     @PutMapping("/item/temp/end/{id}")
     @ResponseStatus(HttpStatus.CREATED)
     @AssignModifierId //0605 : 수정 시에는 글쓴이 아디 주입 아니고, 수정자 아이디 주입
@@ -65,7 +65,7 @@ public class NewItemController {
      * @param req
      * @return 200 (success)
      */
-    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
+    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app/")
     @PostMapping("/item")
     @ResponseStatus(HttpStatus.CREATED)
     @AssignMemberId // Aspect : 인증된 사용자 정보로 아이템 작성자 지정 가능
@@ -80,7 +80,7 @@ public class NewItemController {
                 newItemService.create(req));
     }
 
-    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
+    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app/")
     @GetMapping("/item")
     @ResponseStatus(HttpStatus.OK)
     public Response readAll(@Valid NewItemReadCondition cond) {
@@ -96,7 +96,7 @@ public class NewItemController {
      * @return 200 (success)
      */
     @AssignMemberId
-    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
+    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app/")
     @GetMapping(value = "/item/{id}")
     @ResponseStatus(HttpStatus.OK)
     public Response read(
@@ -115,7 +115,7 @@ public class NewItemController {
      * @param id
      * @return 200 (success)
      */
-    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
+    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app/")
     @DeleteMapping("/item/{id}")
     @ResponseStatus(HttpStatus.OK)
     public Response delete(
@@ -132,7 +132,7 @@ public class NewItemController {
      * @param req
      * @return
      */
-    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
+    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app/")
     @PutMapping("/item/{id}")
     @ResponseStatus(HttpStatus.OK)
     @AssignModifierId
@@ -152,7 +152,7 @@ public class NewItemController {
 //        );
 //    }
 
-    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
+    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app/")
     @GetMapping("/development/bom/item")
     @ResponseStatus(HttpStatus.OK)
     public Response readDevBomItem(@Valid NewItemReadCondition cond) {

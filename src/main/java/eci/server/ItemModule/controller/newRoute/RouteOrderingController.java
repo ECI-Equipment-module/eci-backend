@@ -13,7 +13,7 @@ import javax.validation.Valid;
 
 @RestController
 @RequiredArgsConstructor
-@CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
+@CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app/")
 public class RouteOrderingController {
     private final RouteOrderingService newRouteService;
 
@@ -74,7 +74,7 @@ public class RouteOrderingController {
      * @param id
      * @return
      */
-    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
+    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app/")
     @GetMapping("/routeByItem/{id}")
     @ResponseStatus(HttpStatus.OK)
     public Response readRouteByItem(@PathVariable Long id) {
