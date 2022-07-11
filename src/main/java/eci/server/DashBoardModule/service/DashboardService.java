@@ -1070,25 +1070,25 @@ public class DashboardService {
                 )
         ).collect(Collectors.toList());
 
-        //2) 라우트 프로덕트들 중 나에게 할당된 카드들 & 단계가 CO REVIEW 인 것
-        List<RouteProduct> myRouteProductList = new ArrayList<>();
-
-        for (RouteProduct routeProduct : routeProductList) {
-            for (RouteProductMember routeProductMember : routeProduct.getMembers()) {
-                if (routeProductMember.getMember().getId().equals(member1.getId()) &&
-
-                        (
-                                routeProduct.getType().getModule().equals("CO")
-                                        &&
-                                        routeProduct.getType().getName().equals("REVIEW")
-                        )
-                ) {
-                    myRouteProductList.add(routeProduct);
-                    break;
-                }
-
-            }
-        }
+//        //2) 라우트 프로덕트들 중 나에게 할당된 카드들 & 단계가 CO REVIEW 인 것
+//        List<RouteProduct> myRouteProductList = new ArrayList<>();
+//
+//        for (RouteProduct routeProduct : routeProductList) {
+//            for (RouteProductMember routeProductMember : routeProduct.getMembers()) {
+//                if (routeProductMember.getMember().getId().equals(member1.getId()) &&
+//
+//                        (
+//                                routeProduct.getType().getModule().equals("CO")
+//                                        &&
+//                                        routeProduct.getType().getName().equals("REVIEW")
+//                        )
+//                ) {
+//                    myRouteProductList.add(routeProduct);
+//                    break;
+//                }
+//
+//            }
+//        }
 
         //3) CR_REJECT - 라우트 프로덕트들 중에서 현재이고,,
         // 라우트프로덕트 멤버가 나이고,
@@ -1172,10 +1172,19 @@ public class DashboardService {
         for (RouteProduct routeProduct : routeProductList) {
             for (RouteProductMember routeProductMember : routeProduct.getMembers()) {
                 if (routeProductMember.getMember().getId().equals(member1.getId()) &&
+                        ( //(1) cr review
                         (
                                 routeProduct.getType().getModule().equals("CR")
                                         &&
                                         routeProduct.getType().getName().equals("REVIEW")
+                        )
+                                ||
+                        (
+                                        routeProduct.getType().getModule().equals("CR")
+                                                &&
+                                                routeProduct.getType().getName().equals("APPROVE")
+                        )
+
                         )
 
                 ) {
@@ -1208,9 +1217,18 @@ public class DashboardService {
             for (RouteProductMember routeProductMember : routeProduct.getMembers()) {
                 if (routeProductMember.getMember().getId().equals(member1.getId()) &&
                         (
+                        (
                                 routeProduct.getType().getModule().equals("CO")
                                         &&
                                         routeProduct.getType().getName().equals("APPROVE")
+                        )
+
+                        ||
+                                (
+                                        routeProduct.getType().getModule().equals("CO")
+                                                &&
+                                                routeProduct.getType().getName().equals("CONFIRM")
+                                )
                         )
 
                 ) {
