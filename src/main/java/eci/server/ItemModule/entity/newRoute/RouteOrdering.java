@@ -44,7 +44,6 @@ public class RouteOrdering extends EntityDate {
   //@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQUENCE1")
   //@SequenceGenerator(name="SEQUENCE1", sequenceName="SEQUENCE1", allocationSize=1)
 
-
     private Long id;
 
     /**

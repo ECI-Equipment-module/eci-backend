@@ -29,5 +29,14 @@ public class NewItemImageDto {
         );
     }
 
+    public static NewItemImageDto toDto() {
+        return new NewItemImageDto(
+                -1L,
+                "default",
+                "default",
+                "src/main/prodmedia/image/default/default.PNG"
+        );
+    }
+
 
 }

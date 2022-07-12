@@ -32,8 +32,9 @@ public class NewItemPagingDto {
 
                 newItem.getId(),
 
-                NewItemImageDto.toDto(
+                newItem.getThumbnail()!=null?NewItemImageDto.toDto(
                         newItem.getThumbnail()
+                ):NewItemImageDto.toDto(
                 ),
 
                 newItem.getItemNumber(),
@@ -54,3 +55,5 @@ public class NewItemPagingDto {
 
     }
 }
+
+
