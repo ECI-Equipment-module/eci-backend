@@ -301,7 +301,7 @@ public class RouteOrdering extends EntityDate {
                         findById(routeOrdering.getNewItem().getReviseTargetId()).orElseThrow(ItemNotFoundException::new);
 
                 if (targetRevisedItem.isRevise_progress()) {
-                    routeOrdering.getNewItem().setRevise_progress(false);
+                    targetRevisedItem.setRevise_progress(false);
                     //0712 아기의 target route 가 revise progress 가 진행 중이라면 라우트 complete 될 때 false 로 갱신
                 }
 
