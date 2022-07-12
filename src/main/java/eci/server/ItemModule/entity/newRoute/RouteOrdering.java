@@ -315,12 +315,16 @@ public class RouteOrdering extends EntityDate {
                                     )//가장 최근에 맺어진 co-new item 관계 중 가장 최신 아이의 co를 검사하기
                                     .getChangeOrder();
 
+                    System.out.println(checkCo.getId() + "가 co의 아이디 값을 가리킨다. ");
+
                     // (2) check co 의 affected item 리스트
                     System.out.println("(2) check co 의 affected item 리스트");
                     List<CoNewItem> coNewItemsOfChkCo = checkCo.getCoNewItems();
                     List<NewItem> affectedItemOfChkCo = coNewItemsOfChkCo.stream().map(
                             i->i.getNewItem()
                     ).collect(Collectors.toList());
+
+                    System.out.println(affectedItemOfChkCo.size()+"는 affecte item 의 갯수 길이 ");
 
                     // (3) checkCo의 routeOrdering 찾아오기
                     System.out.println("(3) checkCo의 routeOrdering 찾아오기");
@@ -331,6 +335,9 @@ public class RouteOrdering extends EntityDate {
 
                     // (4) affected item 이 모두 revise 완료된다면 update route
                     System.out.println("(4) affected item 이 모두 revise 완료된다면 update route");
+                    // revise complete
+                    System.out.println(newItemService.checkReviseCompleted(affectedItemOfChkCo));
+                    System.out.println("위가 revise 완료됐는지 여부를 알려주지이이");
                     if(newItemService.checkReviseCompleted(affectedItemOfChkCo)){
                         routeOrderingOfChkCo.CoUpdate(routeProductRepository);
                     }
