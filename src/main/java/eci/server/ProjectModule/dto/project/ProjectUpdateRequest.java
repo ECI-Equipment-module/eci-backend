@@ -56,7 +56,7 @@ public class ProjectUpdateRequest {
 
     private Long supplierId;
 
-    private Long carType; //양산 아니면 없어도 됨
+    private Long carTypeId; //양산 아니면 없어도 됨
 
     /**
      * 추가된 파일을 첨부
