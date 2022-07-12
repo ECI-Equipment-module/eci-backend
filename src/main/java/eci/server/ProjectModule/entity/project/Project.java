@@ -422,10 +422,7 @@ public class Project extends EntityDate {
                         null:
                         projectLevelRepository.findById(req.getProjectLevelId())
                                 .orElseThrow(ProjectLevelNotFoundException::new);
-        System.out.println("고개ㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㄱ");
-        System.out.println(req.getClientOrganizationId());
-        ClientOrganization cr = clientOrganizationRepository.findById(req.getClientOrganizationId())//req.getProjectLevelId())
-                .orElseThrow(ClientOrganizationNotFoundException::new);
+
 
         this.clientOrganization =
                 req.getClientOrganizationId() == null?
@@ -713,7 +710,10 @@ public class Project extends EntityDate {
                                 .orElseThrow(ProjectLevelNotEmptyException::new):
                         projectLevelRepository.findById(req.getProjectLevelId())
                                 .orElseThrow(ProjectLevelNotFoundException::new);
-
+        System.out.println("고개ㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㄱ");
+        System.out.println(req.getClientOrganizationId());
+        ClientOrganization cr = clientOrganizationRepository.findById(req.getClientOrganizationId())//req.getProjectLevelId())
+                .orElseThrow(ClientOrganizationNotFoundException::new);
         this.clientOrganization =
                 req.getClientOrganizationId() == null?
                 null:
