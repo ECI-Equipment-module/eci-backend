@@ -513,64 +513,64 @@ public class RouteOrderingService {
             //만약 present 가 끝까지 닿았으면 현재 complete 된 상황!
             routeOrdering.updateToComplete();
 
-            presentRouteProductCandidate.get(routeOrdering.getPresent()-1).setComment(req.getComment());
+            //presentRouteProductCandidate.get(routeOrdering.getPresent()-1).setComment(req.getComment());
 
             // 라우트 오더링의 revised cnt 가 0보다 컸다면,
             // revise 당한 아이템의 새로 만들어진 아가의 라우트 오더링이므로
             // 무조건 아이템 존재할 수 밖에 없음
-            if(routeOrdering.getRevisedCnt()>0){
-                //지금 승인된 라우트가 revise 로 인해 새로 생긴 아이템이라면
-                routeOrdering.setRevisedCnt(0);
-                //0710 revise 로 생긴 route ordering 이었다면 다시 0으로 복구;
-
-                if(routeOrdering.getNewItem()==null){
-                    //revise 인데도 안 묶여있으면 뭔가 잘못됐어,
-                    throw new ItemNotFoundException();//에러 던지기
-                }
-
-                NewItem targetRevisedItem = newItemRepository.
-                        findById(routeOrdering.getNewItem().getReviseTargetId()).orElseThrow(ItemNotFoundException::new);
-
-                if (targetRevisedItem.isRevise_progress()) {
-                    routeOrdering.getNewItem().setRevise_progress(false);
-                    //0712 아기의 target route 가 revise progress 가 진행 중이라면 라우트 complete 될 때 false 로 갱신
-                }
-
-                if(coNewItemRepository.findByNewItemOrderByCreatedAtAsc(routeOrdering.getNewItem()).size()>0) {
-                    // (1) 지금 revise 완료 된 아이템의 CO 를 검사하기 위해 check co 찾기
-                    ChangeOrder checkCo =
-                            coNewItemRepository.findByNewItemOrderByCreatedAtAsc(routeOrdering.getNewItem()).get(
-                                            coNewItemRepository.findByNewItemOrderByCreatedAtAsc(routeOrdering.getNewItem()).size()-1
-                                    )//가장 최근에 맺어진 co-new item 관계 중 가장 최신 아이의 co를 검사하기
-                                    .getChangeOrder();
-
-                    // (2) check co 의 affected item 리스트
-                    List<CoNewItem> coNewItemsOfChkCo = checkCo.getCoNewItems();
-                    List<NewItem> affectedItemOfChkCo = coNewItemsOfChkCo.stream().map(
-                            i->i.getNewItem()
-                    ).collect(Collectors.toList());
-
-                    // (3) checkCo의 routeOrdering 찾아오기
-                    RouteOrdering routeOrderingOfChkCo =
-                            routeOrderingRepository.findByChangeOrder(checkCo).get(
-                                    routeOrderingRepository.findByChangeOrder(checkCo).size()-1
-                            );
-
-                    // (4) affected item 이 모두 revise 완료된다면 update route
-                    if(newItemService.checkReviseCompleted(affectedItemOfChkCo)){
-                        routeOrderingOfChkCo.CoUpdate(routeProductRepository);
-                    }
-
-                }
-
-                //throw new UpdateImpossibleException();
-                // 0710 : 이 아이템과 엮인 아이들 (CHILDREN , PARENT )들의 REVISION +=1 진행 !
-                // 대상 아이템들은 이미 각각 아이템 리뷰 / 프로젝트 링크할 때 REVISION+1 당함
-                newItemService.revisionUpdateAllChildrenAndParentItem(routeOrdering.getNewItem());
-
-
-
-            }
+//            if(routeOrdering.getRevisedCnt()>0){
+//                //지금 승인된 라우트가 revise 로 인해 새로 생긴 아이템이라면
+//                routeOrdering.setRevisedCnt(0);
+//                //0710 revise 로 생긴 route ordering 이었다면 다시 0으로 복구;
+//
+//                if(routeOrdering.getNewItem()==null){
+//                    //revise 인데도 안 묶여있으면 뭔가 잘못됐어,
+//                    throw new ItemNotFoundException();//에러 던지기
+//                }
+//
+//                NewItem targetRevisedItem = newItemRepository.
+//                        findById(routeOrdering.getNewItem().getReviseTargetId()).orElseThrow(ItemNotFoundException::new);
+//
+//                if (targetRevisedItem.isRevise_progress()) {
+//                    routeOrdering.getNewItem().setRevise_progress(false);
+//                    //0712 아기의 target route 가 revise progress 가 진행 중이라면 라우트 complete 될 때 false 로 갱신
+//                }
+//
+//                if(coNewItemRepository.findByNewItemOrderByCreatedAtAsc(routeOrdering.getNewItem()).size()>0) {
+//                    // (1) 지금 revise 완료 된 아이템의 CO 를 검사하기 위해 check co 찾기
+//                    ChangeOrder checkCo =
+//                            coNewItemRepository.findByNewItemOrderByCreatedAtAsc(routeOrdering.getNewItem()).get(
+//                                            coNewItemRepository.findByNewItemOrderByCreatedAtAsc(routeOrdering.getNewItem()).size()-1
+//                                    )//가장 최근에 맺어진 co-new item 관계 중 가장 최신 아이의 co를 검사하기
+//                                    .getChangeOrder();
+//
+//                    // (2) check co 의 affected item 리스트
+//                    List<CoNewItem> coNewItemsOfChkCo = checkCo.getCoNewItems();
+//                    List<NewItem> affectedItemOfChkCo = coNewItemsOfChkCo.stream().map(
+//                            i->i.getNewItem()
+//                    ).collect(Collectors.toList());
+//
+//                    // (3) checkCo의 routeOrdering 찾아오기
+//                    RouteOrdering routeOrderingOfChkCo =
+//                            routeOrderingRepository.findByChangeOrder(checkCo).get(
+//                                    routeOrderingRepository.findByChangeOrder(checkCo).size()-1
+//                            );
+//
+//                    // (4) affected item 이 모두 revise 완료된다면 update route
+//                    if(newItemService.checkReviseCompleted(affectedItemOfChkCo)){
+//                        routeOrderingOfChkCo.CoUpdate(routeProductRepository);
+//                    }
+//
+//                }
+//
+//                //throw new UpdateImpossibleException();
+//                // 0710 : 이 아이템과 엮인 아이들 (CHILDREN , PARENT )들의 REVISION +=1 진행 !
+//                // 대상 아이템들은 이미 각각 아이템 리뷰 / 프로젝트 링크할 때 REVISION+1 당함
+//                newItemService.revisionUpdateAllChildrenAndParentItem(routeOrdering.getNewItem());
+//
+//
+//
+//            }
 
         } else {
             RouteProduct targetRoutProduct = presentRouteProductCandidate.get(routeOrdering.getPresent());
@@ -842,7 +842,10 @@ public class RouteOrderingService {
                     routeOrdering
                             .update(
                                     req,
-                                    routeProductRepository
+                                    routeProductRepository,
+                                    newItemRepository,
+                                    coNewItemRepository,
+                                    routeOrderingRepository
                             );
         }
 
