@@ -300,7 +300,7 @@ public class RouteOrdering extends EntityDate {
                         findById(routeOrdering.getNewItem().getReviseTargetId()).orElseThrow(ItemNotFoundException::new);
 
                 if (targetRevisedItem.isRevise_progress()) {
-                    routeOrdering.getNewItem().setRevise_progress(false);
+                    targetRevisedItem.setRevise_progress(false);
                     //0712 아기의 target route 가 revise progress 가 진행 중이라면 라우트 complete 될 때 false 로 갱신
                 }
 
@@ -400,7 +400,7 @@ public class RouteOrdering extends EntityDate {
 
         if(this.present<routeProductList.size()-1) {//05-24 <= => < 로 수정
             //지금 들어온 코멘트는 현재 애 다음에
-            routeProductList.get(this.present).setComment("자동 업데이트 완료오 오오오오");
+            routeProductList.get(this.present).setComment(" 모든 revise 완료되었습니다. ");
 
             // 지금 업데이트되는 라우트 프로덕트의 타입은 무조건 co / create , 아니라면 에러
             if(!(routeProductList.get(this.present).getType().getModule().equals("CO")

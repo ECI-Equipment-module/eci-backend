@@ -914,7 +914,7 @@ public class NewItemService {
 
         for(NewItem newItem : affectedItems){
             System.out.println(newItem.getId());
-            if(newItem.isRevise_progress()){ //revise progress 가 아니라면 (revise 되었다면)
+            if(!newItem.isRevise_progress()){ //revise progress 가 아니라면 (revise 되었다면)
 
                 revisedItemSize+=1;
             }
