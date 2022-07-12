@@ -4,8 +4,6 @@ import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import eci.server.ItemModule.dto.color.ColorReadCondition;
-
 import eci.server.NewItemModule.dto.newItem.NewItemPagingDto;
 import eci.server.NewItemModule.dto.newItem.NewItemReadCondition;
 import eci.server.NewItemModule.entity.NewItem;

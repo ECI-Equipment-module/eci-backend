@@ -51,6 +51,7 @@ public class RouteOrdering extends EntityDate {
   //@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQUENCE1")
   //@SequenceGenerator(name="SEQUENCE1", sequenceName="SEQUENCE1", allocationSize=1)
 
+
     private Long id;
 
     /**
@@ -252,7 +253,7 @@ public class RouteOrdering extends EntityDate {
 
             // 지금 업데이트되는 라우트 프로덕트의 타입이 create 라면
             if(routeProductList.get(this.present).getType().getName().equals("CREATE")
-            || routeProductList.get(this.present).getType().getName().equals("REQUEST")){
+                    || routeProductList.get(this.present).getType().getName().equals("REQUEST")){
                 // 모듈이 아이템
                 if(routeProductList.get(this.present).getType().getModule().equals("ITEM")){
                     this.getNewItem().setTempsave(false); //06-18 라우트 만든 순간 임시저장 다시 거짓으로
@@ -272,7 +273,7 @@ public class RouteOrdering extends EntityDate {
                     this.getChangeRequest().setTempsave(false); //라우트 만든 순간 임시저장 다시 거짓으로
                 }
                 else if(routeProductList.get(this.present).getType().getModule().equals("CO")
-                && routeProductList.get(this.present).getType().getName().equals("REQUEST")){
+                        && routeProductList.get(this.present).getType().getName().equals("REQUEST")){
                     //얘는 create인 상태에선 ㄴㄴ 오로지 request 상태만 tempsave 여기서 false 돼야함
                     this.getChangeOrder().setTempsave(false); //라우트 만든 순간 임시저장 다시 거짓으로
                 }
@@ -512,7 +513,7 @@ public class RouteOrdering extends EntityDate {
             case "15":
                 this.getChangeRequest().setTempsave(true);
                 this.getChangeRequest().setReadonly(false);
-            // 18 (CO REQUEST)
+                // 18 (CO REQUEST)
             case "18":
                 this.getChangeOrder().setTempsave(true);
                 this.getChangeOrder().setReadonly(false);
