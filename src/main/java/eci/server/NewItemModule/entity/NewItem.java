@@ -9,6 +9,7 @@ import eci.server.ItemModule.exception.member.sign.MemberNotFoundException;
 import eci.server.ItemModule.repository.color.ColorRepository;
 import eci.server.ItemModule.repository.item.ItemTypesRepository;
 import eci.server.ItemModule.repository.member.MemberRepository;
+import eci.server.NewItemModule.dto.newItem.create.NewItemCreateResponse;
 import eci.server.NewItemModule.dto.newItem.update.NewItemUpdateRequest;
 import eci.server.NewItemModule.entity.supplier.Maker;
 import eci.server.ItemModule.entity.member.Member;
@@ -50,9 +51,11 @@ import static java.util.stream.Collectors.toList;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class NewItem extends EntityDate {
     @Id
+
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     //@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQUENCE3")
     //@SequenceGenerator(name="SEQUENCE3", sequenceName="SEQUENCE3", allocationSize=1)
+
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -1227,7 +1230,30 @@ public class NewItem extends EntityDate {
         this.revise_progress = false;
     }
 
-    public void register_target_revise_item(Long targetId){this.reviseTargetId = targetId;}
+//    public NewItemCreateResponse register_target_revise_item(Long targetId){
+//        this.reviseTargetId = targetId;
+//
+//    return new NewItemCreateResponse(
+//            this.id
+//    );
+//    }
 
+    public NewItemCreateResponse register_target_revise_item(Long targetId){
+        this.reviseTargetId = targetId;
 
+        return new NewItemCreateResponse(
+                this.id
+        );
+    }
+
+    public NewItemCreateResponse updateRevision(int revision){
+        this.revision = Math.toIntExact(revision);
+        return new NewItemCreateResponse(
+                this.id
+        );
+
+    }
+    public void setReviseTargetId(Long reviseTargetId) {
+        this.reviseTargetId = reviseTargetId;
+    }
 }

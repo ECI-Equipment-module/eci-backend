@@ -42,9 +42,9 @@ public class NewItemController {
                     NewItemCreateRequest req
     ) {
 
-
-        NewItemCreateResponse response = newItemService.create(req);
+        NewItemCreateResponse response = newItemService.reviseCreate(req, targetId);
         newItemService.registerTargetReviseItem(targetId, response.getId());
+        System.out.println(targetId + response.getId() + "heeeeeee eeeeeeeeererererer");
 
         return Response.success(
                 response
@@ -68,7 +68,7 @@ public class NewItemController {
     ) {
 
         NewItemCreateResponse response = newItemService.tempCreate(req);
-        newItemService.registerTargetReviseItem(targetId, response.getId());
+        NewItemCreateResponse response2 = newItemService.registerTargetReviseItem(targetId, response.getId());
 
         return Response.success(
                 response
