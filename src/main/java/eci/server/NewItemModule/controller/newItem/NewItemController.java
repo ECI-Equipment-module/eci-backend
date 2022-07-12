@@ -42,7 +42,6 @@ public class NewItemController {
                     NewItemCreateRequest req
     ) {
 
-
         NewItemCreateResponse response = newItemService.create(req);
         newItemService.registerTargetReviseItem(targetId, response.getId());
 

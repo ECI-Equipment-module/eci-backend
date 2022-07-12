@@ -86,6 +86,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET, "/item-candidates").authenticated()
                 .antMatchers(HttpMethod.POST, "/item").authenticated()
                 .antMatchers(HttpMethod.POST, "/item/temp").authenticated()
+                .antMatchers(HttpMethod.POST, "/item/{id}").authenticated()
+                .antMatchers(HttpMethod.POST, "/item/temp/{id}").authenticated()
                 .antMatchers(HttpMethod.PUT, "/item/{id}").access("@newItemGuard.check(#id)")
                 .antMatchers(HttpMethod.DELETE, "/item/{id}").access("@newItemGuard.check(#id)")
                 .antMatchers(HttpMethod.PUT, "/item/temp/end/{id}").access("@newItemGuard.check(#id)")
@@ -123,7 +125,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 
                 .antMatchers(HttpMethod.PUT, "/project/temp/end/{id}").access("@projectGuard.check(#id)")
+                .antMatchers(HttpMethod.PUT, "/project/{revisedId}/{newMadeItemId}").access("@projectGuard.check(#id)")
+                .antMatchers(HttpMethod.PUT, "/project/temp/end/{revisedId}/{newMadeItemId}").access("@projectGuard.check(#id)")
+
+
                 .antMatchers(HttpMethod.PUT, "/design/temp/end/{id}").access("@designGuard.check(#id)")
+
+
                 .antMatchers(HttpMethod.GET, "/**").permitAll()//위에 명시된 get 말고는 다 허용, 맨 밑으로 위치 변경
 
                 .antMatchers(HttpMethod.POST, "/cr").authenticated()
