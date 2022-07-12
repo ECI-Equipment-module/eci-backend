@@ -12,19 +12,8 @@ import javax.persistence.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class CrReason {
     @Id
-
-<<<<<<< HEAD
-
-=======
->>>>>>> be-feature/0712-deploy
-        @GeneratedValue(strategy = GenerationType.IDENTITY)
     //@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQUENCE2")
     //@SequenceGenerator(name="SEQUENCE2", sequenceName="SEQUENCE2", allocationSize=1)
-
-<<<<<<< HEAD
-=======
-
->>>>>>> be-feature/0712-deploy
 
     private Long id;
 

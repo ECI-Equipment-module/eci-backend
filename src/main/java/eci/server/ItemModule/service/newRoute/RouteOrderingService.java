@@ -509,7 +509,7 @@ public class RouteOrderingService {
             throw new UpdateImpossibleException();
         }
 
-        if (presentRouteProductCandidate.size() == routeOrdering.getPresent()) {
+        if (presentRouteProductCandidate.size()+1 == routeOrdering.getPresent()) {
             //만약 present 가 끝까지 닿았으면 현재 complete 된 상황!
             routeOrdering.updateToComplete();
 
@@ -832,6 +832,9 @@ public class RouteOrderingService {
 
                 }
             }
+
+            System.out.println("presenrrrrrrrrrrrrrrrrt : " +
+                    routeOrdering.getPresent()+"/"+presentRouteProductCandidate.size());
 
             RouteOrderingUpdateRequest newRouteUpdateRequest =
                     routeOrdering
