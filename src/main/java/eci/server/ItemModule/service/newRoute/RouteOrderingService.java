@@ -359,7 +359,7 @@ public class RouteOrderingService {
     public RouteOrderingCreateResponse createCrRoute(RouteOrderingCreateRequest req) {
         RouteOrdering newRoute = routeOrderingRepository.save(RouteOrderingCreateRequest.toCrEntity(
                         req,
-                routePreset,
+                        routePreset,
                         changeRequestRepository,
                         routeTypeRepository
                 )
@@ -500,7 +500,7 @@ public class RouteOrderingService {
                 .orElseThrow(RouteNotFoundException::new);
 
 
-         List<RouteProduct> presentRouteProductCandidate = routeProductRepository
+        List<RouteProduct> presentRouteProductCandidate = routeProductRepository
                 .findAllByRouteOrdering(routeOrdering);
 
         //현재 진행중인 라우트프로덕트
@@ -509,9 +509,11 @@ public class RouteOrderingService {
             throw new UpdateImpossibleException();
         }
 
-        if (presentRouteProductCandidate.size() == routeOrdering.getPresent()) {
+        if (presentRouteProductCandidate.size()== routeOrdering.getPresent()) {
             //만약 present 가 끝까지 닿았으면 현재 complete 된 상황!
             routeOrdering.updateToComplete();
+
+            presentRouteProductCandidate.get(routeOrdering.getPresent()-1).setComment(req.getComment());
 
             // 라우트 오더링의 revised cnt 가 0보다 컸다면,
             // revise 당한 아이템의 새로 만들어진 아가의 라우트 오더링이므로
@@ -538,8 +540,8 @@ public class RouteOrderingService {
                     // (1) 지금 revise 완료 된 아이템의 CO 를 검사하기 위해 check co 찾기
                     ChangeOrder checkCo =
                             coNewItemRepository.findByNewItemOrderByCreatedAtAsc(routeOrdering.getNewItem()).get(
-                                    coNewItemRepository.findByNewItemOrderByCreatedAtAsc(routeOrdering.getNewItem()).size()-1
-                            )//가장 최근에 맺어진 co-new item 관계 중 가장 최신 아이의 co를 검사하기
+                                            coNewItemRepository.findByNewItemOrderByCreatedAtAsc(routeOrdering.getNewItem()).size()-1
+                                    )//가장 최근에 맺어진 co-new item 관계 중 가장 최신 아이의 co를 검사하기
                                     .getChangeOrder();
 
                     // (2) check co 의 affected item 리스트
@@ -561,7 +563,7 @@ public class RouteOrderingService {
 
                 }
 
-            //throw new UpdateImpossibleException();
+                //throw new UpdateImpossibleException();
                 // 0710 : 이 아이템과 엮인 아이들 (CHILDREN , PARENT )들의 REVISION +=1 진행 !
                 // 대상 아이템들은 이미 각각 아이템 리뷰 / 프로젝트 링크할 때 REVISION+1 당함
                 newItemService.revisionUpdateAllChildrenAndParentItem(routeOrdering.getNewItem());
@@ -817,7 +819,7 @@ public class RouteOrderingService {
 
                     if (!
                             (chkItem.getItemTypes().getItemType().name().equals("파트제품") ||
-                            chkItem.getItemTypes().getItemType().name().equals("프로덕트제품"))
+                                    chkItem.getItemTypes().getItemType().name().equals("프로덕트제품"))
                     ) {// 파트 제품과 프로덕트 제품 아닌 경우에는 item review를 진행할 때 revision update !
                         // 제품은 create 할 때
 
@@ -832,6 +834,9 @@ public class RouteOrderingService {
 
                 }
             }
+
+            System.out.println("presenrrrrrrrrrrrrrrrrt : " +
+                    routeOrdering.getPresent()+"/"+presentRouteProductCandidate.size());
 
             RouteOrderingUpdateRequest newRouteUpdateRequest =
                     routeOrdering
