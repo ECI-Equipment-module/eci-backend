@@ -246,7 +246,7 @@ public class RouteOrderingService {
         }
         else{ //revise_progress 로 라우트 만드는 것이라면
             //만드는 아이템에 revise target id가 등록돼있으면 걔는 revise new item
-
+            System.out.println("새로 만들어지는 아이는 revise route 만들어서 revised cnt = 1 이되도록 하기 ");
             RouteOrdering newRoute = routeOrderingRepository.save(RouteOrderingCreateRequest
                     .toRevisedRouteOrderingEntity( //
                             req,
