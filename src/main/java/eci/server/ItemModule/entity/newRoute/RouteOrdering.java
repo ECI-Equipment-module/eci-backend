@@ -309,8 +309,8 @@ public class RouteOrdering extends EntityDate {
                     // (1) 지금 revise 완료 된 아이템의 CO 를 검사하기 위해 check co 찾기
                     System.out.println("(1) 지금 revise 완료 된 아이템의 CO 를 검사하기 위해 check co 찾기");
                     ChangeOrder checkCo =
-                            coNewItemRepository.findByNewItemOrderByCreatedAtAsc(routeOrdering.getNewItem()).get(
-                                            coNewItemRepository.findByNewItemOrderByCreatedAtAsc(routeOrdering.getNewItem()).size()-1
+                            coNewItemRepository.findByNewItemOrderByCreatedAtAsc(targetRevisedItem).get(
+                                            coNewItemRepository.findByNewItemOrderByCreatedAtAsc(targetRevisedItem).size()-1
                                     )//가장 최근에 맺어진 co-new item 관계 중 가장 최신 아이의 co를 검사하기
                                     .getChangeOrder();
 
