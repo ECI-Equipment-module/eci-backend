@@ -710,15 +710,11 @@ public class Project extends EntityDate {
                                 .orElseThrow(ProjectLevelNotEmptyException::new):
                         projectLevelRepository.findById(req.getProjectLevelId())
                                 .orElseThrow(ProjectLevelNotFoundException::new);
-        System.out.println("고개ㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㄱ");
-        System.out.println(req.getClientOrganizationId());
-        ClientOrganization cr = clientOrganizationRepository.findById(1L)//req.getProjectLevelId())
-                .orElseThrow(ClientOrganizationNotFoundException::new);
-        System.out.println("cr "+cr.getName()+"!!!!!!!!!!!!!!!!!!!!!!!!!");
+
         this.clientOrganization =
                 req.getClientOrganizationId() == null?
                 null:
-                        clientOrganizationRepository.findById(req.getProjectLevelId())//req.getProjectLevelId())
+                        clientOrganizationRepository.findById(req.getClientOrganizationId())//req.getProjectLevelId())
                                 .orElseThrow(ClientOrganizationNotFoundException::new);
 
         this.produceOrganization =
