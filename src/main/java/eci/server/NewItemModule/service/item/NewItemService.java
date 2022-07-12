@@ -144,6 +144,52 @@ public class NewItemService {
 
 
 
+    @Transactional
+    public NewItemCreateResponse tempReviseCreate(NewItemTemporaryCreateRequest req, Long targetId) {
+
+        NewItem item = newItemRepository.save(
+                NewItemTemporaryCreateRequest.toEntity(
+                        req,
+                        classification1Repository,
+                        classification2Repository,
+                        classification3Repository,
+                        itemTypesRepository,
+                        carTypeRepository,
+                        coatingWayRepository,
+                        coatingTypeRepository,
+                        clientOrganizationRepository,
+                        supplierRepository,
+                        memberRepository,
+                        colorRepository,
+                        makerRepository,
+                        attachmentTagRepository
+                )
+        );
+
+        item.setReviseTargetId(targetId);
+
+        if( item.getItemTypes().getItemType().name().equals("파트제품") ||
+                item.getItemTypes().getItemType().name().equals("프로덕트제품")){
+            System.out.println("equals 제품 이면 , 아이템 만들 때 controller에서 바로 item에 targetitme 등록 & 개정 ");
+
+            NewItem targetItem = newItemRepository.findById(targetId).orElseThrow(ItemNotFoundException::new);
+            NewItemCreateResponse res2 =  item.updateRevision(targetItem.getRevision()+1);
+            item.setRevision(targetItem.getRevision()+1);
+
+        }
+
+        if(req.getThumbnail()!=null && req.getThumbnail().getSize()>0) {
+            uploadImages(item.getThumbnail(), req.getThumbnail());
+        }
+
+        if(req.getTag().size()>0) {
+            uploadAttachments(item.getAttachments(), req.getAttachments());
+        }
+
+        return new NewItemCreateResponse(item.getId());
+    }
+
+
 
     /**
      * 아이템 create
@@ -190,6 +236,68 @@ public class NewItemService {
 
         return new NewItemCreateResponse(item.getId());
     }
+
+    //0712
+
+    /**
+     * 아이템 create
+     *
+     * @param req
+     * @return 생성된 아이템 번호
+     */
+
+    @Transactional
+    public NewItemCreateResponse reviseCreate(NewItemCreateRequest req, Long targetId) {
+
+        NewItem item = newItemRepository.save(
+                NewItemCreateRequest.toEntity(
+                        req,
+                        classification1Repository,
+                        classification2Repository,
+                        classification3Repository,
+                        itemTypesRepository,
+                        carTypeRepository,
+                        coatingWayRepository,
+                        coatingTypeRepository,
+                        clientOrganizationRepository,
+                        supplierRepository,
+                        memberRepository,
+                        colorRepository,
+                        makerRepository,
+                        attachmentTagRepository
+                )
+
+        );
+
+        item.setReviseTargetId(targetId);
+
+        if( item.getItemTypes().getItemType().name().equals("파트제품") ||
+                item.getItemTypes().getItemType().name().equals("프로덕트제품")){
+            System.out.println("equals 제품 이면 , 아이템 만들 때 controller에서 바로 item에 targetitme 등록 & 개정 ");
+
+            NewItem targetItem = newItemRepository.findById(targetId).orElseThrow(ItemNotFoundException::new);
+            NewItemCreateResponse res2 =  item.updateRevision(targetItem.getRevision()+1);
+            item.setRevision(targetItem.getRevision()+1);
+
+        }
+
+
+        if(req.getThumbnail()!=null && req.getThumbnail().getSize()>0) {
+            uploadImages(item.getThumbnail(), req.getThumbnail());
+            if (!(req.getTag().size() == 0)) {//TODO : 나중에 함수로 빼기 (Attachment 유무 판단)
+                //attachment가 존재할 땜나
+                uploadAttachments(item.getAttachments(), req.getAttachments());
+            }
+        } else {
+            //TODO 0628 기본 이미지 전달 => NONO 걍 NULL로 저장하고 DTO에서 줄 때만 기본 이미지 주소주면 끝
+        }
+
+        item.updateReadOnlyWhenSaved(); //저장하면 readonly = true
+        saveTrueAttachment(item); //06-17 찐 저장될 때
+
+        return new NewItemCreateResponse(item.getId());
+    }
+
 
     /**
      * 썸네일 존재 시에 File Upload로 이미지 업로드
@@ -839,21 +947,29 @@ public class NewItemService {
      * @param targetId
      * @param newItemId
      */
-    public void registerTargetReviseItem(Long targetId, Long newItemId){
+    public NewItemCreateResponse registerTargetReviseItem(Long targetId, Long newItemId){
 
+        System.out.println("register target revise item rrrrrrrrrrrrrrr rrrrrr");
         NewItem newItemForRevise = newItemRepository.findById(newItemId).orElseThrow(ItemNotFoundException::new);
-        newItemForRevise.register_target_revise_item(targetId);
+        NewItemCreateResponse res1 = newItemForRevise.register_target_revise_item(targetId);
+        // newItemForRevise.setReviseTargetId(targetId);
+        System.out.println("등ㄹ고됨??????????????????????????????????????????????");
+        System.out.println(newItemForRevise.getReviseTargetId());
+        System.out.println(newItemForRevise.getId());
 
         // 그리고 아기(new item) 제품 타입이라면 아이템 등록할 때부터 revision update 진행
         // 아닌 애들은 어디서 updateRevision 하냐면 아이템 리뷰할 때 ! (아이템 리뷰 승인나야 revise o o )
         if(newItemForRevise.getItemTypes().getItemType().name().equals("파트제품") ||
                 newItemForRevise.getItemTypes().getItemType().name().equals("프로덕트제품")){
+            System.out.println("equals 제품 이면 , 아이템 만들 때 controller에서 바로 item에 targetitme 등록 & 개정 ");
 
             NewItem targetItem = newItemRepository.findById(targetId).orElseThrow(ItemNotFoundException::new);
-            newItemForRevise.updateRevision(targetItem.getRevision());
+            NewItemCreateResponse res2 = newItemForRevise.updateRevision(targetItem.getRevision()+1);
+            //newItemForRevise.setRevision(targetItem.getRevision()+1);
 
         }
 
+        return new NewItemCreateResponse(targetId);
     }
 
 }
