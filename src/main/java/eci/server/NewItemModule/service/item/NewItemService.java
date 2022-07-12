@@ -56,9 +56,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -801,7 +799,7 @@ public class NewItemService {
             }
         }
 
-        List<NewItem> affectedItems = new ArrayList<>();
+        Set<NewItem> affectedItems = new HashSet<>();
 
         // 최종 COMPLETE/RELEASE 된 아이들 중 지금 REVISE 중인 것이 아닌 것
         for(NewItem newItem : finalProducts){
@@ -820,8 +818,9 @@ public class NewItemService {
                 }
             }
         }
+    List affectedItemList = new ArrayList(affectedItems);
 
-        return affectedItems;
+        return affectedItemList;
     }
 
     /**
@@ -906,16 +905,18 @@ public class NewItemService {
 
     /**
      * revise 완료 여부 , true 면 revise 완료 , false 면 revise 진행 중
-     * @param newItems //affected item List
+     * @param affectedItems //affected item List
      */
-    public boolean checkReviseCompleted(List<NewItem> newItems){
+    public boolean checkReviseCompleted(List<NewItem> affectedItems){
 
-        int affectedItemSize = newItems.size();
+        int affectedItemSize = affectedItems.size();
         int revisedItemSize = 0;
 
-        for(NewItem newItem : newItems){
-            if(!newItem.isRevise_progress()){ //revise progress 가 아니라면 (revise 되었다면)
-                newItem.setRevision(newItem.getRevision()+1);
+        for(NewItem newItem : affectedItems){
+            System.out.println(newItem.getId());
+            if(newItem.isRevise_progress()){ //revise progress 가 아니라면 (revise 되었다면)
+
+                revisedItemSize+=1;
             }
 
         }

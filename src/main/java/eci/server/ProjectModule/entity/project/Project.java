@@ -423,6 +423,7 @@ public class Project extends EntityDate {
                         projectLevelRepository.findById(req.getProjectLevelId())
                                 .orElseThrow(ProjectLevelNotFoundException::new);
 
+
         this.clientOrganization =
                 req.getClientOrganizationId() == null?
                         null:
@@ -436,9 +437,9 @@ public class Project extends EntityDate {
                                 .orElseThrow(ProduceOrganizationNotFoundException::new);
 
         this.carType =
-                req.getCarType() == null?
+                req.getCarTypeId() == null?
                         null:
-                        carTypeRepository.findById(req.getCarType())
+                        carTypeRepository.findById(req.getCarTypeId())
                                 .orElseThrow(CarTypeNotFoundException::new);
 
 
@@ -713,7 +714,7 @@ public class Project extends EntityDate {
         this.clientOrganization =
                 req.getClientOrganizationId() == null?
                 null:
-                        clientOrganizationRepository.findById(req.getProjectLevelId())//req.getProjectLevelId())
+                        clientOrganizationRepository.findById(req.getClientOrganizationId())//req.getProjectLevelId())
                                 .orElseThrow(ClientOrganizationNotFoundException::new);
 
         this.produceOrganization =
@@ -723,10 +724,10 @@ public class Project extends EntityDate {
                                 .orElseThrow(ProduceOrganizationNotFoundException::new);
 
         this.carType =
-                req.getCarType() == null?
+                req.getCarTypeId() == null?
                         carTypeRepository.findById(-1L)
                                 .orElseThrow(CarTypeNotEmptyException::new):
-                        carTypeRepository.findById(req.getCarType())
+                        carTypeRepository.findById(req.getCarTypeId())
                                 .orElseThrow(CarTypeNotFoundException::new);
 
 

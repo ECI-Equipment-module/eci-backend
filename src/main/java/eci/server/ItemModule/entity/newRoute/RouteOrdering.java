@@ -287,6 +287,7 @@ public class RouteOrdering extends EntityDate {
 
             if(routeProductList.get(this.present).getRouteOrdering().getRevisedCnt()>0){
                 //지금 승인된 라우트가 revise 로 인해 새로 생긴 아이템이라면
+                System.out.println("여기 들어와찌ㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣ");
                 routeOrdering.setRevisedCnt(0);
                 //0710 revise 로 생긴 route ordering 이었다면 다시 0으로 복구;
 
@@ -303,14 +304,16 @@ public class RouteOrdering extends EntityDate {
                     //0712 아기의 target route 가 revise progress 가 진행 중이라면 라우트 complete 될 때 false 로 갱신
                 }
 
-                if(coNewItemRepository.findByNewItemOrderByCreatedAtAsc(routeOrdering.getNewItem()).size()>0) {
+                if(coNewItemRepository.findByNewItemOrderByCreatedAtAsc(targetRevisedItem).size()>0) {
                     // (1) 지금 revise 완료 된 아이템의 CO 를 검사하기 위해 check co 찾기
                     System.out.println("(1) 지금 revise 완료 된 아이템의 CO 를 검사하기 위해 check co 찾기");
                     ChangeOrder checkCo =
-                            coNewItemRepository.findByNewItemOrderByCreatedAtAsc(routeOrdering.getNewItem()).get(
-                                            coNewItemRepository.findByNewItemOrderByCreatedAtAsc(routeOrdering.getNewItem()).size()-1
+                            coNewItemRepository.findByNewItemOrderByCreatedAtAsc(targetRevisedItem).get(
+                                            coNewItemRepository.findByNewItemOrderByCreatedAtAsc(targetRevisedItem).size()-1
                                     )//가장 최근에 맺어진 co-new item 관계 중 가장 최신 아이의 co를 검사하기
                                     .getChangeOrder();
+
+                    System.out.println(checkCo.getId() + "가 co의 아이디 값을 가리킨다. ");
 
                     // (2) check co 의 affected item 리스트
                     System.out.println("(2) check co 의 affected item 리스트");
@@ -318,6 +321,8 @@ public class RouteOrdering extends EntityDate {
                     List<NewItem> affectedItemOfChkCo = coNewItemsOfChkCo.stream().map(
                             i->i.getNewItem()
                     ).collect(Collectors.toList());
+
+                    System.out.println(affectedItemOfChkCo.size()+"는 affecte item 의 갯수 길이 ");
 
                     // (3) checkCo의 routeOrdering 찾아오기
                     System.out.println("(3) checkCo의 routeOrdering 찾아오기");
@@ -328,6 +333,9 @@ public class RouteOrdering extends EntityDate {
 
                     // (4) affected item 이 모두 revise 완료된다면 update route
                     System.out.println("(4) affected item 이 모두 revise 완료된다면 update route");
+                    // revise complete
+                    System.out.println(newItemService.checkReviseCompleted(affectedItemOfChkCo));
+                    System.out.println("위가 revise 완료됐는지 여부를 알려주지이이");
                     if(newItemService.checkReviseCompleted(affectedItemOfChkCo)){
                         routeOrderingOfChkCo.CoUpdate(routeProductRepository);
                     }
@@ -395,7 +403,7 @@ public class RouteOrdering extends EntityDate {
             routeProductList.get(this.present).setComment("자동 업데이트 완료오 오오오오");
 
             // 지금 업데이트되는 라우트 프로덕트의 타입은 무조건 co / create , 아니라면 에러
-            if(!(routeProductList.get(this.present).getType().getName().equals("CO")
+            if(!(routeProductList.get(this.present).getType().getModule().equals("CO")
                     && routeProductList.get(this.present).getType().getName().equals("CREATE"))){
                 System.out.println("SOMETHING IS WRRRRRRRRRRRROOOOOOOOONG");
                 throw new RuntimeException();

@@ -41,7 +41,7 @@ public class ProjectGuard  {
         Long memberId = authHelper.extractMemberId();
         //요청자의 아이디 확인
 
-        return project.getMember().getId().equals(memberId);
+        return project.getMember().getId().equals(memberId) || project.getModifier().getId().equals(memberId);
     }
 
     private boolean hasAdminRole() {

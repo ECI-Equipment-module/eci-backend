@@ -29,6 +29,7 @@ import eci.server.ItemModule.repository.newRoute.RouteProductRepository;
 import eci.server.NewItemModule.entity.NewItem;
 import eci.server.NewItemModule.repository.item.NewItemRepository;
 import eci.server.ProjectModule.entity.project.Project;
+import eci.server.ProjectModule.exception.ProjectNotFoundException;
 import eci.server.ProjectModule.repository.project.ProjectRepository;
 import eci.server.config.guard.AuthHelper;
 import lombok.RequiredArgsConstructor;
@@ -163,12 +164,12 @@ public class DashboardService {
                     //아래가 에러 발생
                     if(routeProductRepository.findAllByRouteOrdering(ordering).size()>
                             presentIdx){
-                    RouteProduct routeProduct = routeProductRepository.findAllByRouteOrdering(ordering).get(presentIdx);
-                    if (!routeProduct.isPreRejected()) { //06-18 거부된게 아닐때만 임시저장에, 거부된 것이라면 임시저장에 뜨면 안됨
-                        //06-04 : 임시저장 이고 읽기 전용이 아니라면 임시저장에 뜨도록
-                        tempSavedProjectList.add(project);
-                        //임시저장 진행 중인 것
-                    }
+                        RouteProduct routeProduct = routeProductRepository.findAllByRouteOrdering(ordering).get(presentIdx);
+                        if (!routeProduct.isPreRejected()) { //06-18 거부된게 아닐때만 임시저장에, 거부된 것이라면 임시저장에 뜨면 안됨
+                            //06-04 : 임시저장 이고 읽기 전용이 아니라면 임시저장에 뜨도록
+                            tempSavedProjectList.add(project);
+                            //임시저장 진행 중인 것
+                        }
                     }
                 }
 
@@ -272,6 +273,11 @@ public class DashboardService {
                                 (projectRepository.findByNewItem(targetNewItem).size()-1);
 
                         reviseId = oldProject.getId();
+
+                        if(reviseId!=-1L){
+                            Project proj = projectRepository.findById(reviseId).orElseThrow(ProjectNotFoundException::new);
+                            proj.setTempsave(true);proj.setReadonly(true);
+                        }
 
 
                     }
@@ -441,16 +447,16 @@ public class DashboardService {
                         reviseId = oldDesign.getId();
                     }
 
-                        unlinkedItemTodoResponses.add(
-                                new TodoResponse(
-                                        targetItem.getId(),
-                                        targetItem.getName(),
-                                        targetItem.getItemTypes().getItemType().toString(),
-                                        targetItem.getItemNumber(),
-                                        reviseId
-                                        )
-                        );
-                    }
+                    unlinkedItemTodoResponses.add(
+                            new TodoResponse(
+                                    targetItem.getId(),
+                                    targetItem.getName(),
+                                    targetItem.getItemTypes().getItemType().toString(),
+                                    targetItem.getItemNumber(),
+                                    reviseId
+                            )
+                    );
+                }
 
                 else{ // 해당 아이템이 revise 로 인해 생긴 new item 이며 , targetItem 이 아직 revise _ progress 진행이라면
                     unlinkedItemTodoResponses.add(
@@ -590,8 +596,8 @@ public class DashboardService {
         for (NewItem newItem : NewItemList) {
 
             if (newItem.isTempsave() && !newItem.isRevise_progress()){
-                                //07-10 REVISE 된 것이 아닐 때에 임시저장에 뜨게하기
-                                // (REVISE 되는 거는 REVISE 에 떠야함)
+                //07-10 REVISE 된 것이 아닐 때에 임시저장에 뜨게하기
+                // (REVISE 되는 거는 REVISE 에 떠야함)
 
                 if(routeOrderingRepository.findByNewItem(newItem).size()>0){
                     RouteOrdering ordering = routeOrderingRepository.findByNewItem(newItem).get(
@@ -716,9 +722,9 @@ public class DashboardService {
             for (RouteOrdering ro : routeOrdering){
 
                 reviseCheckItems.addAll(
-                ro.getChangeOrder().getCoNewItems().stream().map(
-                        CoNewItem::getNewItem
-                ).collect(Collectors.toList())
+                        ro.getChangeOrder().getCoNewItems().stream().map(
+                                CoNewItem::getNewItem
+                        ).collect(Collectors.toList())
                 );
 
             }
@@ -953,7 +959,7 @@ public class DashboardService {
         }
 
         // 5) 거부된 애들
-       //  라우트 프로덕트들 중에서 현재이고,
+        //  라우트 프로덕트들 중에서 현재이고,
 
         // 봄 CREATE 이고,
         // 라우트프로덕트 멤버가 나이고,
@@ -1257,17 +1263,17 @@ public class DashboardService {
             for (RouteProductMember routeProductMember : routeProduct.getMembers()) {
                 if (routeProductMember.getMember().getId().equals(member1.getId()) &&
                         ( //(1) cr review
-                        (
-                                routeProduct.getType().getModule().equals("CR")
-                                        &&
-                                        routeProduct.getType().getName().equals("REVIEW")
-                        )
-                                ||
-                        (
+                                (
                                         routeProduct.getType().getModule().equals("CR")
                                                 &&
-                                                routeProduct.getType().getName().equals("APPROVE")
-                        )
+                                                routeProduct.getType().getName().equals("REVIEW")
+                                )
+                                        ||
+                                        (
+                                                routeProduct.getType().getModule().equals("CR")
+                                                        &&
+                                                        routeProduct.getType().getName().equals("APPROVE")
+                                        )
 
                         )
 
@@ -1302,18 +1308,18 @@ public class DashboardService {
             for (RouteProductMember routeProductMember : routeProduct.getMembers()) {
                 if (routeProductMember.getMember().getId().equals(member1.getId()) &&
                         (
-                        (
-                                routeProduct.getType().getModule().equals("CO")
-                                        &&
-                                        routeProduct.getType().getName().equals("APPROVE")
-                        )
-
-                        ||
                                 (
                                         routeProduct.getType().getModule().equals("CO")
                                                 &&
-                                                routeProduct.getType().getName().equals("CONFIRM")
+                                                routeProduct.getType().getName().equals("APPROVE")
                                 )
+
+                                        ||
+                                        (
+                                                routeProduct.getType().getModule().equals("CO")
+                                                        &&
+                                                        routeProduct.getType().getName().equals("CONFIRM")
+                                        )
                         )
 
                 ) {

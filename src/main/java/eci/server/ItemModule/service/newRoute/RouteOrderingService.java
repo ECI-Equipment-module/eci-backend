@@ -657,15 +657,18 @@ public class RouteOrderingService {
                                             designRepository.findByNewItem(routeOrdering.getNewItem()).size() - 1
                                     );
 
-                    // 디자인 리뷰 승인 나면 아이템 정보 관계 맺어주기
-                    bomService.makeDevBom(linkedDesign.getId());
+                    if (routeOrdering.getNewItem().getItemTypes().getItemType().name().equals("파트제품") ||
+                            routeOrdering.getNewItem().getItemTypes().getItemType().name().equals("프로덕트제품")) {
+                        // 디자인 리뷰 승인 나면 아이템 정보 관계 맺어주기
+                        bomService.makeDevBom(linkedDesign.getId());
 
-                    // dev bom 의 temp new item parent children 관계도 맺어주기
-                    bomService.makeTempDevBom(
+                        // dev bom 의 temp new item parent children 관계도 맺어주기
+                        bomService.makeTempDevBom(
 
-                            linkedDesign.getId(),
-                            true
-                    );
+                                linkedDesign.getId(),
+                                true
+                        );
+                    }
                 }
 
 
@@ -827,7 +830,7 @@ public class RouteOrderingService {
                                 ItemNotFoundException::new
                         );
 
-                        chkItem.updateRevision(targetItem.getRevision());
+                        chkItem.updateRevision(targetItem.getRevision()+1);
                         //targetItem.getRevision() 보다 하나 더 큰 값으로 갱신
                     }
 
