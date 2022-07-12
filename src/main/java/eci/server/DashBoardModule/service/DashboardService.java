@@ -263,12 +263,17 @@ public class DashboardService {
                             findById(targetItem.getReviseTargetId()).orElseThrow(ItemNotFoundException::new);
 
                     Long reviseId=-1L;
+                    System.out.println("old  "+ targetItem.getId());
 
                     if(projectRepository.findByNewItem(targetNewItem).size()>0) {
+                        System.out.println("have an old projects ");
+
                         Project oldProject = projectRepository.findByNewItem(targetNewItem).get
                                 (projectRepository.findByNewItem(targetNewItem).size()-1);
 
                         reviseId = oldProject.getId();
+
+
                     }
 
                     unlinkedItemTodoResponses.add(
