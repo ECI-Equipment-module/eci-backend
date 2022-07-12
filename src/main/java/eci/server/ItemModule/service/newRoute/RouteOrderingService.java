@@ -845,7 +845,8 @@ public class RouteOrderingService {
                                     routeProductRepository,
                                     newItemRepository,
                                     coNewItemRepository,
-                                    routeOrderingRepository
+                                    routeOrderingRepository,
+                                    newItemService
                             );
         }
 
