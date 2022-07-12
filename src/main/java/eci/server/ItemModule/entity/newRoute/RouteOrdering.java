@@ -401,7 +401,7 @@ public class RouteOrdering extends EntityDate {
 
         if(this.present<routeProductList.size()-1) {//05-24 <= => < 로 수정
             //지금 들어온 코멘트는 현재 애 다음에
-            routeProductList.get(this.present).setComment("자동 업데이트 완료오 오오오오");
+            routeProductList.get(this.present).setComment(" 모든 revise 완료되었습니다. ");
 
             // 지금 업데이트되는 라우트 프로덕트의 타입은 무조건 co / create , 아니라면 에러
             if(!(routeProductList.get(this.present).getType().getModule().equals("CO")
