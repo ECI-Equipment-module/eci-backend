@@ -282,7 +282,7 @@ public class RouteOrdering extends EntityDate {
         }else{
             routeProductList.get(this.present).setComment(req.getComment());
             //만약 present가 size() 가 됐다면 다 왔다는 거다.
-            System.out.println("complete");
+            System.out.println("completeeeeeeeeee item route complete!!!! ");
             this.lifecycleStatus = "COMPLETE";
 
             RouteOrdering routeOrdering = routeProductList.get(this.present).getRouteOrdering();
@@ -307,6 +307,7 @@ public class RouteOrdering extends EntityDate {
 
                 if(coNewItemRepository.findByNewItemOrderByCreatedAtAsc(routeOrdering.getNewItem()).size()>0) {
                     // (1) 지금 revise 완료 된 아이템의 CO 를 검사하기 위해 check co 찾기
+                    System.out.println("(1) 지금 revise 완료 된 아이템의 CO 를 검사하기 위해 check co 찾기");
                     ChangeOrder checkCo =
                             coNewItemRepository.findByNewItemOrderByCreatedAtAsc(routeOrdering.getNewItem()).get(
                                             coNewItemRepository.findByNewItemOrderByCreatedAtAsc(routeOrdering.getNewItem()).size()-1
@@ -314,18 +315,21 @@ public class RouteOrdering extends EntityDate {
                                     .getChangeOrder();
 
                     // (2) check co 의 affected item 리스트
+                    System.out.println("(2) check co 의 affected item 리스트");
                     List<CoNewItem> coNewItemsOfChkCo = checkCo.getCoNewItems();
                     List<NewItem> affectedItemOfChkCo = coNewItemsOfChkCo.stream().map(
                             i->i.getNewItem()
                     ).collect(Collectors.toList());
 
                     // (3) checkCo의 routeOrdering 찾아오기
+                    System.out.println("(3) checkCo의 routeOrdering 찾아오기");
                     RouteOrdering routeOrderingOfChkCo =
                             routeOrderingRepository.findByChangeOrder(checkCo).get(
                                     routeOrderingRepository.findByChangeOrder(checkCo).size()-1
                             );
 
                     // (4) affected item 이 모두 revise 완료된다면 update route
+                    System.out.println("(4) affected item 이 모두 revise 완료된다면 update route");
                     if(newItemService.checkReviseCompleted(affectedItemOfChkCo)){
                         routeOrderingOfChkCo.CoUpdate(routeProductRepository);
                     }
@@ -401,7 +405,7 @@ public class RouteOrdering extends EntityDate {
 
         }else{
             //만약 present가 size() 가 됐다면 다 왔다는 거다.
-            System.out.println("complete");
+            System.out.println("cooooooooooooooo complete");
             this.lifecycleStatus = "COMPLETE";
         }
 
