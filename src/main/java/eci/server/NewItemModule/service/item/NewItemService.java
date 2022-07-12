@@ -698,8 +698,18 @@ public class NewItemService {
         // 최종 COMPLETE/RELEASE 된 아이들 중 지금 REVISE 중인 것이 아닌 것
         for(NewItem newItem : finalProducts){
 
-            if(!newItem.isRevise_progress()) {
-                affectedItems.add(newItem);
+            if(!newItem.isRevise_progress() ) {
+                if(newItem.getReviseTargetId()!=null){
+                    NewItem targetNewItem = newItemRepository.findById(newItem.getReviseTargetId())
+                            .orElseThrow(ItemNotFoundException::new);
+
+                    if(!targetNewItem.isRevise_progress()){
+                        affectedItems.add(newItem);
+                    }
+                }
+                else {
+                    affectedItems.add(newItem);
+                }
             }
         }
 
