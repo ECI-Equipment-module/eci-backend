@@ -1,5 +1,8 @@
 package eci.server.ItemModule.dto.newRoute.routeOrdering;
 
+import eci.server.CRCOModule.exception.CoNotFoundException;
+import eci.server.CRCOModule.repository.co.ChangeOrderRepository;
+import eci.server.CRCOModule.repository.cr.ChangeRequestRepository;
 import eci.server.ItemModule.entity.item.ItemType;
 import eci.server.ItemModule.entity.newRoute.RouteOrdering;
 import eci.server.ItemModule.entity.newRoute.RoutePreset;
@@ -60,7 +63,7 @@ public class RouteOrderingCreateRequest {
                 ).label();
 
         List routeProduct = List.of((routePreset.itemRouteName[routeType]));
-
+// TODO 0712
         for(Object type : routeProduct){
             typeList.add(type.toString());
 
@@ -74,4 +77,86 @@ public class RouteOrderingCreateRequest {
         );
     }
 
+
+    public static RouteOrdering toRevisedRouteOrderingEntity(
+            RouteOrderingCreateRequest req,
+            NewItemRepository newItemRepository,
+            RoutePreset routePreset,
+            RouteTypeRepository routeTypeRepository
+            //ItemType itemType
+    ){
+        NewItem targetItem = newItemRepository.findById(req.itemId).orElseThrow(ItemNotFoundException::new);
+
+        List<String> typeList = new ArrayList<>();
+
+        //아이템 타입에따라서 라우트 타입이 선택된다.
+
+        // TODO 라벨 아니고 ITEM.ROUTE_TYPE.ID 로 선택해준다
+        Integer routeType =
+                ItemType.valueOf(
+                        targetItem.getItemTypes().getItemType().name()
+                ).label();
+
+        List routeProduct = List.of((routePreset.itemRouteName[routeType]));
+
+        for(Object type : routeProduct){
+            typeList.add(type.toString());
+
+        }
+
+// 0712
+        return new RouteOrdering(
+                1, //revised_cnt
+                typeList.toString(),
+                newItemRepository.findById(req.itemId)
+                        .orElseThrow(ItemNotFoundException::new)
+        );
+    }
+
+    public static RouteOrdering toCrEntity(
+            RouteOrderingCreateRequest req,
+            RoutePreset routePreset,
+            ChangeRequestRepository changeRequestRepository,
+            RouteTypeRepository routeTypeRepository
+    ){
+
+        List<String> typeList = new ArrayList<>();
+
+        List routeProduct = List.of((routePreset.CRRouteName[0]));
+
+        for(Object type : routeProduct){
+            typeList.add(type.toString());
+
+        }
+
+        return new RouteOrdering(
+                typeList.toString(),
+                changeRequestRepository.findById(req.itemId)
+                        .orElseThrow(MemberNotFoundException::new)
+        );
+    }
+
+
+    public static RouteOrdering toCoEntity(
+            RouteOrderingCreateRequest req,
+            RoutePreset routePreset,
+            ChangeOrderRepository changeOrderRepository,
+            RouteTypeRepository routeTypeRepository
+    ){
+
+        List<String> typeList = new ArrayList<>();
+
+        List routeProduct = List.of((routePreset.CORouteName[0]));
+
+        for(Object type : routeProduct){
+            typeList.add(type.toString());
+
+        }
+
+        return new RouteOrdering(
+                typeList.toString(),
+                changeOrderRepository.findById(req.itemId)
+                        .orElseThrow(CoNotFoundException::new)
+        );
+    }
 }

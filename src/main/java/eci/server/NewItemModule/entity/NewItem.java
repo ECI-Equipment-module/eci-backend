@@ -1,5 +1,6 @@
 package eci.server.NewItemModule.entity;
 
+import eci.server.CRCOModule.entity.CoNewItem;
 import eci.server.ItemModule.entity.entitycommon.EntityDate;
 import eci.server.ItemModule.entity.item.*;
 import eci.server.ItemModule.exception.item.ColorNotFoundException;
@@ -8,6 +9,7 @@ import eci.server.ItemModule.exception.member.sign.MemberNotFoundException;
 import eci.server.ItemModule.repository.color.ColorRepository;
 import eci.server.ItemModule.repository.item.ItemTypesRepository;
 import eci.server.ItemModule.repository.member.MemberRepository;
+import eci.server.NewItemModule.dto.newItem.create.NewItemCreateResponse;
 import eci.server.NewItemModule.dto.newItem.update.NewItemUpdateRequest;
 import eci.server.NewItemModule.entity.supplier.Maker;
 import eci.server.ItemModule.entity.member.Member;
@@ -39,6 +41,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
@@ -48,9 +51,9 @@ import static java.util.stream.Collectors.toList;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class NewItem extends EntityDate {
     @Id
-    //    @GeneratedValue(strategy = GenerationType.IDENTITY)
-   @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQUENCE3")
-   @SequenceGenerator(name="SEQUENCE3", sequenceName="SEQUENCE3", allocationSize=1)
+    //@GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQUENCE3")
+    @SequenceGenerator(name="SEQUENCE3", sequenceName="SEQUENCE3", allocationSize=1)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -218,6 +221,10 @@ public class NewItem extends EntityDate {
     @Column
     private int revision;
 
+
+    @Column//nullable 하다 - 얘가 존재하면 revise copying new item 이라는 식별
+    private Long reviseTargetId;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(
             name = "member_id",
@@ -259,6 +266,12 @@ public class NewItem extends EntityDate {
     //@JoinColumn(name = "children_id")
     private Set< NewItemParentChildren> children;
 
+    @OneToMany(
+            mappedBy = "newItem",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true,
+            fetch = FetchType.LAZY)
+    private List<CoNewItem> coNewItems;
     /**
      * attachment 있을 때, thumbnail 있을 때 생성자
      * @param classification
@@ -784,6 +797,12 @@ public class NewItem extends EntityDate {
         this.readonly = true;
     }
 
+    // 라우트가 complete 되면 자손, 부모 revision 이  하나씩 더해져서 업데이트 된다.
+    public void updateRevision(){this.revision =  this.revision+1;}
+
+    // 아래는 revise 된 애는 target item 의 revision 보다 1 큰 값으로 업데이트 (아이템 리뷰 승인 / 혹은 프로젝트 링크 시)
+    public void updateRevision(Integer targetRevision){this.revision =  targetRevision+1;}
+
     @Getter
     @AllArgsConstructor
     public static class NewItemFileUpdatedResult {
@@ -811,10 +830,7 @@ public class NewItem extends EntityDate {
             CarTypeRepository carTypeRepository,
             AttachmentTagRepository attachmentTagRepository
     ) {
-
-
-        AtomicInteger k = new AtomicInteger();
-
+        
         //TODO update할 때 사용자가 기존 값 없애고 보낼 수도 있자나 => fix needed
         //isBlank 랑 isNull로 판단해서 기존 값 / req 값 채워넣기
         this.name = req.getName()==null || req.getName().isBlank() ?
@@ -880,17 +896,18 @@ public class NewItem extends EntityDate {
                         (req.getCarTypeId()).orElseThrow(CoatingNotFoundException::new);
 
 
-        this.modulus = req.getModulus().isBlank() ? "" : req.getModulus();
+        this.modulus = req.getModulus()==null||req.getModulus().isBlank()?" ":req.getModulus();
 
-        this.screw = req.getScrew().isBlank() ? "" : req.getScrew();
+        this.screw = req.getScrew()==null||req.getScrew().isBlank()?" ":req.getScrew();
 
-        this.cuttingType = req.getCuttingType().isBlank() ? "" : req.getCuttingType();
+        this.cuttingType = req.getCuttingType()==null||req.getCuttingType().isBlank()?" ":req.getCuttingType();
 
-        this.lcd = req.getLcd().isBlank() ? "": req.getLcd();
+        this.lcd = req.getLcd()==null||req.getLcd().isBlank()?" ":req.getLcd();
 
-        this.displaySize = req.getDisplaySize().isBlank() ? "" : req.getDisplaySize();
+        this.displaySize = req.getDisplaySize()==null||req.getDisplaySize().isBlank()?" ":req.getDisplaySize();
 
-        this.screwHeight = req.getScrewHeight().isBlank() ? "" : req.getScrewHeight();
+        this.screwHeight = req.getScrewHeight()==null||req.getScrewHeight().isBlank()?" ":req.getScrewHeight();
+
 
         this.clientOrganization = req.getClientOrganizationId() == null ?
                 null
@@ -1061,17 +1078,17 @@ public class NewItem extends EntityDate {
         //carTypeRepository.findById(99999L).orElseThrow(CarTypeNotFoundException::new);
 
 
-        this.integrate = req.getIntegrate().isBlank()?null:req.getIntegrate();
+        this.integrate = req.getIntegrate().isBlank()?" ":req.getIntegrate();
 
-        this.curve = req.getCurve().isBlank()?null:req.getCurve();
+        this.curve = req.getCurve().isBlank()?" ":req.getCurve();
 
-        this.width = req.getWidth().isBlank()?this.width:req.getWidth();
+        this.width = req.getWidth().isBlank()?" ":req.getWidth();
 
-        this.height= req.getHeight().isBlank()?this.height:req.getHeight();
+        this.height= req.getHeight().isBlank()?" ":req.getHeight();
 
-        this.thickness = req.getThickness().isBlank()?this.thickness:req.getThickness();
+        this.thickness = req.getThickness().isBlank()?" ":req.getThickness();
 
-        this.weight = req.getWeight().isBlank()?this.weight:req.getWeight();
+        this.weight = req.getWeight().isBlank()?" ":req.getWeight();
 
         this.importance = req.getImportance().isBlank()?this.importance:req.getImportance();
 
@@ -1079,9 +1096,9 @@ public class NewItem extends EntityDate {
         this.color = req.getColorId()==null?this.color:colorRepository.findById(req.getColorId())
                 .orElseThrow(ColorNotFoundException::new);
 
-        this.loadQuantity = req.getLoadQuantity().isBlank()?this.loadQuantity:req.getLoadQuantity();
+        this.loadQuantity = req.getLoadQuantity()==null||req.getLoadQuantity().isBlank()?" ":req.getLoadQuantity();
 
-        this.forming = req.getForming().isBlank()?this.forming:req.getForming();
+        this.forming = req.getForming()==null||req.getForming().isBlank()?" ":req.getForming();
 
         this.coatingWay = req.getCoatingWayId()==null?this.coatingWay:
                 coatingWayRepository.findById
@@ -1092,17 +1109,17 @@ public class NewItem extends EntityDate {
                         (req.getCoatingTypeId()).orElseThrow(CoatingNotFoundException::new);
 
 
-        this.modulus = req.getModulus().isBlank()?this.modulus:req.getModulus();
+        this.modulus = req.getModulus()==null||req.getModulus().isBlank()?" ":req.getModulus();
 
-        this.screw = req.getScrew().isBlank()?this.screw:req.getScrew();
+        this.screw = req.getScrew()==null||req.getScrew().isBlank()?" ":req.getScrew();
 
-        this.cuttingType = req.getCuttingType().isBlank()?this.cuttingType:req.getCuttingType();
+        this.cuttingType = req.getCuttingType()==null||req.getCuttingType().isBlank()?" ":req.getCuttingType();
 
-        this.lcd = req.getLcd().isBlank()?this.lcd:req.getLcd();
+        this.lcd = req.getLcd()==null||req.getLcd().isBlank()?" ":req.getLcd();
 
-        this.displaySize = req.getDisplaySize().isBlank()?this.displaySize:req.getDisplaySize();
+        this.displaySize = req.getDisplaySize()==null||req.getDisplaySize().isBlank()?" ":req.getDisplaySize();
 
-        this.screwHeight = req.getScrewHeight().isBlank()?this.screwHeight:req.getScrewHeight();
+        this.screwHeight = req.getScrewHeight()==null||req.getScrewHeight().isBlank()?" ":req.getScrewHeight();
 
         this.clientOrganization = req.getClientOrganizationId()==null?this.clientOrganization:
                 clientOrganizationRepository.findById(req.getClientOrganizationId())
@@ -1124,7 +1141,7 @@ public class NewItem extends EntityDate {
 //                                )
 //                        )
 //                        .collect(toList());
-        this.partNumber = req.getPartnumbers().isBlank()?"":req.getPartnumbers();
+        this.partNumber = req.getPartnumbers().isBlank()?" ":req.getPartnumbers();
         this.tempsave = true;
         this.readonly = true; //0605- 이 부분하나가 변경, 이 것은 얘를 false 에서 true로 변경 !
 
@@ -1184,7 +1201,19 @@ public class NewItem extends EntityDate {
         }
         this.setModifiedAt(LocalDateTime.now());
 
+        if(this.revise_progress) { //만약 지금 revise 진행 중이라면
+            if (this.getItemTypes().getItemType().name().equals("파트제품") ||
+                    this.getItemTypes().getItemType().name().equals("프로덕트제품")) {
+                //0710 - 얘네 둘은 item review 가 없어서 revise 된 거 찐 저장하면 바로 개정 +=1 되도록 하기!
+                // 다른 애들은 approve route 할 때
+                // (1) 아이템이 revise progress 이며
+                // (2) 지금 승인하는게 ITEM REVIEW 면 revision+=1
+                this.revision = this.revision + 1;
+            }
+        }
+
         return fileUpdatedResult;
+
     }
 
     public void setParent(Set<NewItemParentChildren> parent) {
@@ -1195,4 +1224,34 @@ public class NewItem extends EntityDate {
         this.children = children;
     }
 
+    public void newItem_revise_progress_done_when_co_confirmed() {
+        this.revise_progress = false;
+    }
+
+//    public NewItemCreateResponse register_target_revise_item(Long targetId){
+//        this.reviseTargetId = targetId;
+//
+//    return new NewItemCreateResponse(
+//            this.id
+//    );
+//    }
+
+    public NewItemCreateResponse register_target_revise_item(Long targetId){
+        this.reviseTargetId = targetId;
+
+        return new NewItemCreateResponse(
+                this.id
+        );
+    }
+
+    public NewItemCreateResponse updateRevision(int revision){
+        this.revision = Math.toIntExact(revision);
+        return new NewItemCreateResponse(
+                this.id
+        );
+
+    }
+    public void setReviseTargetId(Long reviseTargetId) {
+        this.reviseTargetId = reviseTargetId;
+    }
 }

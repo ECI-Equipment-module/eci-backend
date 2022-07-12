@@ -1,14 +1,22 @@
 package eci.server.ItemModule.entity.newRoute;
 
 import eci.server.BomModule.entity.Bom;
+import eci.server.CRCOModule.entity.CoNewItem;
+import eci.server.CRCOModule.entity.co.ChangeOrder;
+import eci.server.CRCOModule.entity.cr.ChangeRequest;
+import eci.server.CRCOModule.repository.co.CoNewItemRepository;
 import eci.server.DesignModule.entity.design.Design;
 import eci.server.ItemModule.dto.newRoute.routeOrdering.RouteOrderingUpdateRequest;
 import eci.server.ItemModule.entitycommon.EntityDate;
+import eci.server.ItemModule.exception.item.ItemNotFoundException;
 import eci.server.ItemModule.exception.route.RejectImpossibleException;
 import eci.server.ItemModule.exception.route.UpdateImpossibleException;
 import eci.server.ItemModule.repository.newRoute.RouteOrderingRepository;
 import eci.server.ItemModule.repository.newRoute.RouteProductRepository;
+import eci.server.NewItemModule.dto.newItem.NewItemReadCondition;
 import eci.server.NewItemModule.entity.NewItem;
+import eci.server.NewItemModule.repository.item.NewItemRepository;
+import eci.server.NewItemModule.service.item.NewItemService;
 import eci.server.ProjectModule.entity.project.Project;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -22,6 +30,7 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
@@ -38,9 +47,9 @@ public class RouteOrdering extends EntityDate {
 
     @Id
 
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQUENCE1")
-  @SequenceGenerator(name="SEQUENCE1", sequenceName="SEQUENCE1", allocationSize=1)
+    // @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQUENCE1")
+    @SequenceGenerator(name="SEQUENCE1", sequenceName="SEQUENCE1", allocationSize=1)
 
     private Long id;
 
@@ -96,13 +105,18 @@ public class RouteOrdering extends EntityDate {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Bom bom;
 
-//    /**
-//     * null 가능, 플젝에서 라우트 생성 시 지정
-//     */
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "project_id")
-//    @OnDelete(action = OnDeleteAction.CASCADE)
-//    private Project project;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "cr_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private ChangeRequest changeRequest;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "co_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private ChangeOrder changeOrder;
+
+
 
     //아이템 라우트용 생성자
     public RouteOrdering(
@@ -116,6 +130,35 @@ public class RouteOrdering extends EntityDate {
         this.present = 1;
         this.newItem = newItem;
     }
+
+    //cr
+    // 생성자
+    public RouteOrdering(
+            String type,
+            ChangeRequest changeRequest
+
+    ){
+        this.type = type;
+        this.lifecycleStatus = "WORKING";
+        this.revisedCnt = 0;
+        this.present = 1;
+        this.changeRequest = changeRequest;
+    }
+
+    //co
+    //아이템 라우트용 생성자
+    public RouteOrdering(
+            String type,
+            ChangeOrder co
+
+    ){
+        this.type = type;
+        this.lifecycleStatus = "WORKING";
+        this.revisedCnt = 0;
+        this.present = 1;
+        this.changeOrder = co;
+    }
+
     //프로젝트 라우트용 생성자
     public RouteOrdering(
             String type,
@@ -128,15 +171,41 @@ public class RouteOrdering extends EntityDate {
         this.present = 1;
     }
 
+    //revise 된 아이템 라우트용 생성자
+    public RouteOrdering(
+            Integer revised_cnt,
+            String type,
+            NewItem newItem
+
+    ){
+        this.type = type;
+        this.lifecycleStatus = "WORKING";
+        this.revisedCnt = 1; //revise 표시는 revisedCnt > 0
+        this.present = 1;
+        this.newItem = newItem;
+    }
+
+
     public void setPresent(Integer present) {
         //초기 값은 1(진행 중인 아이)
         this.present = present;
+    }
+
+    public void setRevisedCnt(Integer revisedCnt) {
+        this.revisedCnt = revisedCnt;
     }
 
     public void setProject(Project project) {
         this.project = project;
     }
 
+    public void setChangeRequest(ChangeRequest changeRequest) {
+        this.changeRequest = changeRequest;
+    }
+
+    public void setChangeOrder(ChangeOrder changeOrder) {
+        this.changeOrder = changeOrder;
+    }
 
     public void setDesign(Design design) {
         this.design = design;
@@ -146,9 +215,19 @@ public class RouteOrdering extends EntityDate {
         this.bom = bom;
     }
 
+    /**
+     * 일반 라우트
+     * @param req
+     * @param routeProductRepository
+     * @return
+     */
     public RouteOrderingUpdateRequest update(
             RouteOrderingUpdateRequest req,
-            RouteProductRepository routeProductRepository
+            RouteProductRepository routeProductRepository,
+            NewItemRepository newItemRepository,
+            CoNewItemRepository coNewItemRepository,
+            RouteOrderingRepository routeOrderingRepository,
+            NewItemService newItemService
 
     ) {
         List<RouteProduct> routeProductList =
@@ -167,14 +246,13 @@ public class RouteOrdering extends EntityDate {
         //내 앞에 완료됐던 애는 pass로 바꿔주기
         routeProductList.get(this.present-1).setPassed(true);
 
-
         if(this.present<routeProductList.size()-1) {//05-24 <= => < 로 수정
             //지금 들어온 코멘트는 현재 애 다음에
             routeProductList.get(this.present).setComment(req.getComment());
 
             // 지금 업데이트되는 라우트 프로덕트의 타입이 create 라면
             if(routeProductList.get(this.present).getType().getName().equals("CREATE")
-            || routeProductList.get(this.present).getType().getName().equals("REQUEST")){
+                    || routeProductList.get(this.present).getType().getName().equals("REQUEST")){
                 // 모듈이 아이템
                 if(routeProductList.get(this.present).getType().getModule().equals("ITEM")){
                     this.getNewItem().setTempsave(false); //06-18 라우트 만든 순간 임시저장 다시 거짓으로
@@ -190,12 +268,91 @@ public class RouteOrdering extends EntityDate {
                 else if(routeProductList.get(this.present).getType().getModule().equals("BOM")){
                     this.getBom().setTempsave(false); //라우트 만든 순간 임시저장 다시 거짓으로
                 }
+                else if(routeProductList.get(this.present).getType().getModule().equals("CR")){
+                    this.getChangeRequest().setTempsave(false); //라우트 만든 순간 임시저장 다시 거짓으로
+                }
+                else if(routeProductList.get(this.present).getType().getModule().equals("CO")
+                        && routeProductList.get(this.present).getType().getName().equals("REQUEST")){
+                    //얘는 create인 상태에선 ㄴㄴ 오로지 request 상태만 tempsave 여기서 false 돼야함
+                    this.getChangeOrder().setTempsave(false); //라우트 만든 순간 임시저장 다시 거짓으로
+                }
             }
 
         }else{
+            routeProductList.get(this.present).setComment(req.getComment());
             //만약 present가 size() 가 됐다면 다 왔다는 거다.
-            System.out.println("complete");
+            System.out.println("completeeeeeeeeee item route complete!!!! ");
             this.lifecycleStatus = "COMPLETE";
+
+            RouteOrdering routeOrdering = routeProductList.get(this.present).getRouteOrdering();
+
+            if(routeProductList.get(this.present).getRouteOrdering().getRevisedCnt()>0){
+                //지금 승인된 라우트가 revise 로 인해 새로 생긴 아이템이라면
+                System.out.println("여기 들어와찌ㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣ");
+                routeOrdering.setRevisedCnt(0);
+                //0710 revise 로 생긴 route ordering 이었다면 다시 0으로 복구;
+
+                if(routeOrdering.getNewItem()==null){
+                    //revise 인데도 안 묶여있으면 뭔가 잘못됐어,
+                    throw new ItemNotFoundException();//에러 던지기
+                }
+
+                NewItem targetRevisedItem = newItemRepository.
+                        findById(routeOrdering.getNewItem().getReviseTargetId()).orElseThrow(ItemNotFoundException::new);
+
+                if (targetRevisedItem.isRevise_progress()) {
+                    routeOrdering.getNewItem().setRevise_progress(false);
+                    //0712 아기의 target route 가 revise progress 가 진행 중이라면 라우트 complete 될 때 false 로 갱신
+                }
+
+                if(coNewItemRepository.findByNewItemOrderByCreatedAtAsc(targetRevisedItem).size()>0) {
+                    // (1) 지금 revise 완료 된 아이템의 CO 를 검사하기 위해 check co 찾기
+                    System.out.println("(1) 지금 revise 완료 된 아이템의 CO 를 검사하기 위해 check co 찾기");
+                    ChangeOrder checkCo =
+                            coNewItemRepository.findByNewItemOrderByCreatedAtAsc(targetRevisedItem).get(
+                                            coNewItemRepository.findByNewItemOrderByCreatedAtAsc(targetRevisedItem).size()-1
+                                    )//가장 최근에 맺어진 co-new item 관계 중 가장 최신 아이의 co를 검사하기
+                                    .getChangeOrder();
+
+                    System.out.println(checkCo.getId() + "가 co의 아이디 값을 가리킨다. ");
+
+                    // (2) check co 의 affected item 리스트
+                    System.out.println("(2) check co 의 affected item 리스트");
+                    List<CoNewItem> coNewItemsOfChkCo = checkCo.getCoNewItems();
+                    List<NewItem> affectedItemOfChkCo = coNewItemsOfChkCo.stream().map(
+                            i->i.getNewItem()
+                    ).collect(Collectors.toList());
+
+                    System.out.println(affectedItemOfChkCo.size()+"는 affecte item 의 갯수 길이 ");
+
+                    // (3) checkCo의 routeOrdering 찾아오기
+                    System.out.println("(3) checkCo의 routeOrdering 찾아오기");
+                    RouteOrdering routeOrderingOfChkCo =
+                            routeOrderingRepository.findByChangeOrder(checkCo).get(
+                                    routeOrderingRepository.findByChangeOrder(checkCo).size()-1
+                            );
+
+                    // (4) affected item 이 모두 revise 완료된다면 update route
+                    System.out.println("(4) affected item 이 모두 revise 완료된다면 update route");
+                    // revise complete
+                    System.out.println(newItemService.checkReviseCompleted(affectedItemOfChkCo));
+                    System.out.println("위가 revise 완료됐는지 여부를 알려주지이이");
+                    if(newItemService.checkReviseCompleted(affectedItemOfChkCo)){
+                        routeOrderingOfChkCo.CoUpdate(routeProductRepository);
+                    }
+
+                }
+
+                //throw new UpdateImpossibleException();
+                // 0710 : 이 아이템과 엮인 아이들 (CHILDREN , PARENT )들의 REVISION +=1 진행 !
+                // 대상 아이템들은 이미 각각 아이템 리뷰 / 프로젝트 링크할 때 REVISION+1 당함
+                newItemService.revisionUpdateAllChildrenAndParentItem(routeOrdering.getNewItem());
+
+
+
+            }
+
+
         }
 
         /**
@@ -217,6 +374,64 @@ public class RouteOrdering extends EntityDate {
 
 
         return req;
+    }
+
+    /**
+     * CO 를 위한 UPDATE 라우트
+     */
+    public void CoUpdate(
+            RouteProductRepository routeProductRepository
+
+    ) {
+        List<RouteProduct> routeProductList =
+                routeProductRepository.findAllByRouteOrdering(this);
+
+        //이미 승인 완료됐을 시에는 더이상 승인이 불가능해 에러 던지기
+        if(this.present==routeProductList.size()){
+            throw new UpdateImpossibleException();
+        }
+
+        /**
+         * update에서 받은 코멘트를 현재 진행중인 routeProduct에 set
+         */
+        //지금 애는 패스
+        //내 앞에 완료됐던 애는 pass로 바꿔주기
+        routeProductList.get(this.present-1).setPassed(true);
+
+
+        if(this.present<routeProductList.size()-1) {//05-24 <= => < 로 수정
+            //지금 들어온 코멘트는 현재 애 다음에
+            routeProductList.get(this.present).setComment(" 모든 revise 완료되었습니다. ");
+
+            // 지금 업데이트되는 라우트 프로덕트의 타입은 무조건 co / create , 아니라면 에러
+            if(!(routeProductList.get(this.present).getType().getModule().equals("CO")
+                    && routeProductList.get(this.present).getType().getName().equals("CREATE"))){
+                System.out.println("SOMETHING IS WRRRRRRRRRRRROOOOOOOOONG");
+                throw new RuntimeException();
+            }
+
+        }else{
+            //만약 present가 size() 가 됐다면 다 왔다는 거다.
+            System.out.println("cooooooooooooooo complete");
+            this.lifecycleStatus = "COMPLETE";
+        }
+
+        /**
+         * 라우트프로덕트 맨 마지막 인덱스 값 찾기 위한 변수
+         */
+        Integer lastIndexofRouteProduct =
+                routeProductList.size()-1;
+
+        /**
+         * 승인, 거부 시 갱신
+         * 서비스 단에서 routeProduct 승인 혹은 거절 후
+         * 라우트 업데이트 호출해서 present 갱신해줄거야
+         */
+        //present 를 다음 진행될 애로 갱신해주기
+        if(this.present<routeProductList.size()) {
+            this.present = this.present + 1;
+        }
+
     }
 
 
@@ -301,6 +516,14 @@ public class RouteOrdering extends EntityDate {
                 this.getBom().setTempsave(true);
                 this.getBom().setReadonly(false);
                 break;
+            // 15 (cr)
+            case "15":
+                this.getChangeRequest().setTempsave(true);
+                this.getChangeRequest().setReadonly(false);
+                // 18 (CO REQUEST)
+            case "18":
+                this.getChangeOrder().setTempsave(true);
+                this.getChangeOrder().setReadonly(false);
         }
 
         /**

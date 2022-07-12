@@ -56,9 +56,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -90,12 +88,12 @@ public class NewItemService {
     private final DesignRepository designRepository;
     private final BomRepository bomRepository;
     private final DesignGuard designGuard;
-    private final BomGuard bomGuard;
     private final PreliminaryBomRepository preliminaryBomRepository;
     private final NewItemParentChildrenRepository newItemParentChildrenRepository;
 
     private final NewItemAttachmentRepository newItemAttachmentRepository;
     private final TempNewItemParentChildrenRepository tempNewItemParentChildrenRepository;
+
 
     @Value("${default.image.address}")
     private String defaultImageAddress;
@@ -144,6 +142,52 @@ public class NewItemService {
 
 
 
+    @Transactional
+    public NewItemCreateResponse tempReviseCreate(NewItemTemporaryCreateRequest req, Long targetId) {
+
+        NewItem item = newItemRepository.save(
+                NewItemTemporaryCreateRequest.toEntity(
+                        req,
+                        classification1Repository,
+                        classification2Repository,
+                        classification3Repository,
+                        itemTypesRepository,
+                        carTypeRepository,
+                        coatingWayRepository,
+                        coatingTypeRepository,
+                        clientOrganizationRepository,
+                        supplierRepository,
+                        memberRepository,
+                        colorRepository,
+                        makerRepository,
+                        attachmentTagRepository
+                )
+        );
+
+        item.setReviseTargetId(targetId);
+
+        if( item.getItemTypes().getItemType().name().equals("파트제품") ||
+                item.getItemTypes().getItemType().name().equals("프로덕트제품")){
+            System.out.println("equals 제품 이면 , 아이템 만들 때 controller에서 바로 item에 targetitme 등록 & 개정 ");
+
+            NewItem targetItem = newItemRepository.findById(targetId).orElseThrow(ItemNotFoundException::new);
+            NewItemCreateResponse res2 =  item.updateRevision(targetItem.getRevision()+1);
+            item.setRevision(targetItem.getRevision()+1);
+
+        }
+
+        if(req.getThumbnail()!=null && req.getThumbnail().getSize()>0) {
+            uploadImages(item.getThumbnail(), req.getThumbnail());
+        }
+
+        if(req.getTag().size()>0) {
+            uploadAttachments(item.getAttachments(), req.getAttachments());
+        }
+
+        return new NewItemCreateResponse(item.getId());
+    }
+
+
 
     /**
      * 아이템 create
@@ -190,6 +234,68 @@ public class NewItemService {
 
         return new NewItemCreateResponse(item.getId());
     }
+
+    //0712
+
+    /**
+     * 아이템 create
+     *
+     * @param req
+     * @return 생성된 아이템 번호
+     */
+
+    @Transactional
+    public NewItemCreateResponse reviseCreate(NewItemCreateRequest req, Long targetId) {
+
+        NewItem item = newItemRepository.save(
+                NewItemCreateRequest.toEntity(
+                        req,
+                        classification1Repository,
+                        classification2Repository,
+                        classification3Repository,
+                        itemTypesRepository,
+                        carTypeRepository,
+                        coatingWayRepository,
+                        coatingTypeRepository,
+                        clientOrganizationRepository,
+                        supplierRepository,
+                        memberRepository,
+                        colorRepository,
+                        makerRepository,
+                        attachmentTagRepository
+                )
+
+        );
+
+        item.setReviseTargetId(targetId);
+
+        if( item.getItemTypes().getItemType().name().equals("파트제품") ||
+                item.getItemTypes().getItemType().name().equals("프로덕트제품")){
+            System.out.println("equals 제품 이면 , 아이템 만들 때 controller에서 바로 item에 targetitme 등록 & 개정 ");
+
+            NewItem targetItem = newItemRepository.findById(targetId).orElseThrow(ItemNotFoundException::new);
+            NewItemCreateResponse res2 =  item.updateRevision(targetItem.getRevision()+1);
+            item.setRevision(targetItem.getRevision()+1);
+
+        }
+
+
+        if(req.getThumbnail()!=null && req.getThumbnail().getSize()>0) {
+            uploadImages(item.getThumbnail(), req.getThumbnail());
+            if (!(req.getTag().size() == 0)) {//TODO : 나중에 함수로 빼기 (Attachment 유무 판단)
+                //attachment가 존재할 땜나
+                uploadAttachments(item.getAttachments(), req.getAttachments());
+            }
+        } else {
+            //TODO 0628 기본 이미지 전달 => NONO 걍 NULL로 저장하고 DTO에서 줄 때만 기본 이미지 주소주면 끝
+        }
+
+        item.updateReadOnlyWhenSaved(); //저장하면 readonly = true
+        saveTrueAttachment(item); //06-17 찐 저장될 때
+
+        return new NewItemCreateResponse(item.getId());
+    }
+
 
     /**
      * 썸네일 존재 시에 File Upload로 이미지 업로드
@@ -286,7 +392,8 @@ public class NewItemService {
                     routeProductRepository,
                     designGuard,
                     attachmentTagRepository,
-                    defaultImageAddress
+                    defaultImageAddress,
+                    newItemRepository
             );
 
         }
@@ -294,7 +401,8 @@ public class NewItemService {
                 targetItem,
                 routeProductRepository,
                 attachmentTagRepository,
-                defaultImageAddress
+                defaultImageAddress,
+                newItemRepository
         );
     }
 
@@ -455,6 +563,21 @@ public class NewItemService {
             //readonly가 true라면 수정 불가상태
             throw new ItemUpdateImpossibleException();
         }
+
+        // (2) co의 affected item 의 revise_progress = false
+
+//    List<NewItem> affectedItems =
+//            changeOrder.getCoNewItems().stream().map(
+//                    m->m.getNewItem()
+//            ).collect(Collectors.toList());
+//
+//                    for(NewItem affectedItem : affectedItems){
+//        affectedItem.newItem_revise_progress_done_when_co_confirmed();
+//    }
+//
+//                    newItemService.ReviseItem(affectedItems, changeOrder.getModifier());
+
+
 
         NewItem.NewItemFileUpdatedResult result = item.tempEnd(
                 req,
@@ -640,6 +763,65 @@ public class NewItemService {
         return finalProducts;
     }
 
+    /**
+     * affected item
+     * 상태 complete, release, 아이템 - revise_progress=false 인 아이들만
+     *
+     */
+
+
+    /**
+     * affected items
+     * 제품 중 상태가 complete 나 release 인 애들만 데려오기 - compare bom 용
+     * @return
+     */
+    public List<NewItem> readAffectedItems() {
+
+
+        List<NewItem> itemListProduct = newItemRepository.findAll();
+
+        //1-2) 상태가 release 나 complete인 것만 최종 제품에 담을 예정
+        List<NewItem> finalProducts = new ArrayList<>();
+
+        for(NewItem newItem : itemListProduct){
+            if(
+                    routeOrderingRepository.findByNewItem(newItem).size()>0
+                            && (routeOrderingRepository.findByNewItem(newItem).get(
+                            routeOrderingRepository.findByNewItem(newItem).size()-1
+                    ).getLifecycleStatus().equals("COMPLETE") ||
+                            (routeOrderingRepository.findByNewItem(newItem).get(
+                                    routeOrderingRepository.findByNewItem(newItem).size()-1
+                            ).getLifecycleStatus().equals("RELEASE")
+                            )
+                    )
+            ){
+                finalProducts.add(newItem);
+            }
+        }
+
+        Set<NewItem> affectedItems = new HashSet<>();
+
+        // 최종 COMPLETE/RELEASE 된 아이들 중 지금 REVISE 중인 것이 아닌 것
+        for(NewItem newItem : finalProducts){
+
+            if(!newItem.isRevise_progress() ) {
+                if(newItem.getReviseTargetId()!=null){
+                    NewItem targetNewItem = newItemRepository.findById(newItem.getReviseTargetId())
+                            .orElseThrow(ItemNotFoundException::new);
+
+                    if(!targetNewItem.isRevise_progress()){
+                        affectedItems.add(newItem);
+                    }
+                }
+                else {
+                    affectedItems.add(newItem);
+                }
+            }
+        }
+    List affectedItemList = new ArrayList(affectedItems);
+
+        return affectedItemList;
+    }
 
     /**
      * createDevelopmentCard 에서 쓰일 것
@@ -707,6 +889,88 @@ public class NewItemService {
         }
     }
 
+    /**
+     * route 가 co 실행되면 이 처리 수행
+     * @param newItems // affected item List
+     */
+    public void ReviseItem(List<NewItem> newItems){
+        for(NewItem newItem : newItems){
+            newItem.setRevise_progress(true);
+            // revise 진행 중 알리기
+            //newItem.setModifier(changeOrderRequestPerson);
+            // 아이템 수정할 수 있게 modifier 로 요청자 설정
+            //newItem.setReadonly(false); newItem.setTempsave(true); // 아이템 수정 가능 모드로 변경
+        }
+    }
 
+    /**
+     * revise 완료 여부 , true 면 revise 완료 , false 면 revise 진행 중
+     * @param affectedItems //affected item List
+     */
+    public boolean checkReviseCompleted(List<NewItem> affectedItems){
+
+        int affectedItemSize = affectedItems.size();
+        int revisedItemSize = 0;
+
+        for(NewItem newItem : affectedItems){
+            System.out.println(newItem.getId());
+            if(newItem.isRevise_progress()){ //revise progress 가 아니라면 (revise 되었다면)
+
+                revisedItemSize+=1;
+            }
+
+        }
+
+        return (affectedItemSize==revisedItemSize); //두개 길이가 같으면 완료, 아니라면 진행 중
+    }
+
+    /**
+     * 라우트 update 된다면 자손과 부모의 revision 을 update 한다 !
+     */
+    public void revisionUpdateAllChildrenAndParentItem(NewItem newItem){
+
+        List<NewItemParentChildren> newItemParentChildren =
+                newItemParentChildrenRepository.findAllWithParentByParentId(newItem.getId());
+
+        newItemParentChildren.stream().forEach(
+                newItemParentChildren1 -> newItemParentChildren1.getChildren().updateRevision()
+        );
+
+        newItem.getParent().stream().forEach(
+                newItemParentChildren2 -> newItemParentChildren2.getParent().updateRevision()
+
+        );
+
+    }
+
+    /**
+     * target Id는 url 로 넘어오는 아이
+     * @param targetId
+     * @param newItemId
+     */
+    public NewItemCreateResponse registerTargetReviseItem(Long targetId, Long newItemId){
+
+        System.out.println("register target revise item rrrrrrrrrrrrrrr rrrrrr");
+        NewItem newItemForRevise = newItemRepository.findById(newItemId).orElseThrow(ItemNotFoundException::new);
+        NewItemCreateResponse res1 = newItemForRevise.register_target_revise_item(targetId);
+        // newItemForRevise.setReviseTargetId(targetId);
+        System.out.println("등ㄹ고됨??????????????????????????????????????????????");
+        System.out.println(newItemForRevise.getReviseTargetId());
+        System.out.println(newItemForRevise.getId());
+
+        // 그리고 아기(new item) 제품 타입이라면 아이템 등록할 때부터 revision update 진행
+        // 아닌 애들은 어디서 updateRevision 하냐면 아이템 리뷰할 때 ! (아이템 리뷰 승인나야 revise o o )
+        if(newItemForRevise.getItemTypes().getItemType().name().equals("파트제품") ||
+                newItemForRevise.getItemTypes().getItemType().name().equals("프로덕트제품")){
+            System.out.println("equals 제품 이면 , 아이템 만들 때 controller에서 바로 item에 targetitme 등록 & 개정 ");
+
+            NewItem targetItem = newItemRepository.findById(targetId).orElseThrow(ItemNotFoundException::new);
+            NewItemCreateResponse res2 = newItemForRevise.updateRevision(targetItem.getRevision()+1);
+            //newItemForRevise.setRevision(targetItem.getRevision()+1);
+
+        }
+
+        return new NewItemCreateResponse(targetId);
+    }
 
 }

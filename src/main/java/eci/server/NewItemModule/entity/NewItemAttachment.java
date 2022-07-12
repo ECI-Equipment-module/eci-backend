@@ -1,6 +1,5 @@
 package eci.server.NewItemModule.entity;
 
-//import eci.server.ItemModule.entity.item.Item;
 import eci.server.ItemModule.entitycommon.EntityDate;
 import eci.server.ItemModule.exception.image.UnsupportedImageFormatException;
 import lombok.AccessLevel;
@@ -23,7 +22,7 @@ import java.util.UUID;
 public class NewItemAttachment extends EntityDate {
 
     @Id
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    //@GeneratedValue(strategy = GenerationType.IDENTITY)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQUENCE2")
     @SequenceGenerator(name="SEQUENCE2", sequenceName="SEQUENCE2", allocationSize=1)
 

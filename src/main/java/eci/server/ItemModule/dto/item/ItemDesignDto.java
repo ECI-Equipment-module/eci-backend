@@ -19,7 +19,7 @@ public class ItemDesignDto {
 
 
 
-    public static ItemDesignDto toDto(NewItem Item) {
+    public static ItemDesignDto toDto(NewItem Item, String defaultImageAddress) {
 
         return new ItemDesignDto(
 
@@ -27,7 +27,7 @@ public class ItemDesignDto {
                 Item.getName(),
                 Item.getItemTypes().getItemType().toString(),
                 Item.getItemNumber(),
-                Item.getThumbnail()==null?"no item address" : Item.getThumbnail().getImageaddress(),
+                Item.getThumbnail()==null?defaultImageAddress: Item.getThumbnail().getImageaddress(),
                 Item.getRevision()
 
         );

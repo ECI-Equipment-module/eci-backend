@@ -45,7 +45,7 @@ import static java.util.stream.Collectors.toList;
 public class Project extends EntityDate {
     @Id
 
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    //@GeneratedValue(strategy = GenerationType.IDENTITY)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQUENCE2")
     @SequenceGenerator(name="SEQUENCE2", sequenceName="SEQUENCE2", allocationSize=1)
 
@@ -194,7 +194,7 @@ public class Project extends EntityDate {
         this.projectNumber = projectNumber;
 
         this.member = member;
-        //생성 시에는 수정자 저장하지 않을 것이다.
+        this.modifier = member;
 
         this.tempsave = tempsave;
         this.readonly = readonly;
@@ -423,6 +423,7 @@ public class Project extends EntityDate {
                         projectLevelRepository.findById(req.getProjectLevelId())
                                 .orElseThrow(ProjectLevelNotFoundException::new);
 
+
         this.clientOrganization =
                 req.getClientOrganizationId() == null?
                         null:
@@ -436,9 +437,9 @@ public class Project extends EntityDate {
                                 .orElseThrow(ProduceOrganizationNotFoundException::new);
 
         this.carType =
-                req.getCarType() == null?
+                req.getCarTypeId() == null?
                         null:
-                        carTypeRepository.findById(req.getCarType())
+                        carTypeRepository.findById(req.getCarTypeId())
                                 .orElseThrow(CarTypeNotFoundException::new);
 
 
@@ -713,7 +714,7 @@ public class Project extends EntityDate {
         this.clientOrganization =
                 req.getClientOrganizationId() == null?
                 null:
-                        clientOrganizationRepository.findById(req.getProjectLevelId())//req.getProjectLevelId())
+                        clientOrganizationRepository.findById(req.getClientOrganizationId())//req.getProjectLevelId())
                                 .orElseThrow(ClientOrganizationNotFoundException::new);
 
         this.produceOrganization =
@@ -723,10 +724,10 @@ public class Project extends EntityDate {
                                 .orElseThrow(ProduceOrganizationNotFoundException::new);
 
         this.carType =
-                req.getCarType() == null?
+                req.getCarTypeId() == null?
                         carTypeRepository.findById(-1L)
                                 .orElseThrow(CarTypeNotEmptyException::new):
-                        carTypeRepository.findById(req.getCarType())
+                        carTypeRepository.findById(req.getCarTypeId())
                                 .orElseThrow(CarTypeNotFoundException::new);
 
 
@@ -759,5 +760,10 @@ public class Project extends EntityDate {
                 null : req.getClientItemNumber();
 
         return fileUpdatedResults;
+    }
+
+    public void changeItemIdOfProjectByNewMadeItem(NewItem newMadeItem){
+
+        this.newItem = newMadeItem;
     }
 }

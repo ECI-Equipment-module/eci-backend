@@ -86,6 +86,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET, "/item-candidates").authenticated()
                 .antMatchers(HttpMethod.POST, "/item").authenticated()
                 .antMatchers(HttpMethod.POST, "/item/temp").authenticated()
+                .antMatchers(HttpMethod.POST, "/item/{id}").authenticated()
+                .antMatchers(HttpMethod.POST, "/item/temp/{id}").authenticated()
                 .antMatchers(HttpMethod.PUT, "/item/{id}").access("@newItemGuard.check(#id)")
                 .antMatchers(HttpMethod.DELETE, "/item/{id}").access("@newItemGuard.check(#id)")
                 .antMatchers(HttpMethod.PUT, "/item/temp/end/{id}").access("@newItemGuard.check(#id)")
@@ -123,9 +125,30 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 
                 .antMatchers(HttpMethod.PUT, "/project/temp/end/{id}").access("@projectGuard.check(#id)")
+                .antMatchers(HttpMethod.PUT, "/project/{revisedId}/{newMadeItemId}").access("@projectGuard.check(#revisedId)")
+                .antMatchers(HttpMethod.PUT, "/project/temp/end/{revisedId}/{newMadeItemId}").access("@projectGuard.check(#revisedId)")
+
+
                 .antMatchers(HttpMethod.PUT, "/design/temp/end/{id}").access("@designGuard.check(#id)")
+
+
                 .antMatchers(HttpMethod.GET, "/**").permitAll()//위에 명시된 get 말고는 다 허용, 맨 밑으로 위치 변경
 
+                .antMatchers(HttpMethod.POST, "/cr").authenticated()
+                .antMatchers(HttpMethod.POST, "/cr/temp").authenticated()
+                .antMatchers(HttpMethod.GET, "cr/page").authenticated()
+                .antMatchers(HttpMethod.DELETE, "/cr").authenticated()
+                .antMatchers(HttpMethod.POST, "/route/cr").authenticated()
+                .antMatchers(HttpMethod.PUT, "/cr/{id}").authenticated()
+                .antMatchers(HttpMethod.PUT, "/cr/temp/end/{id}").authenticated()
+
+                .antMatchers(HttpMethod.POST, "/co").authenticated()
+                .antMatchers(HttpMethod.POST, "/co/temp").authenticated()
+                .antMatchers(HttpMethod.PUT, "/co/{id}").authenticated()
+                .antMatchers(HttpMethod.PUT, "/co/temp/end/{id}").authenticated()
+                .antMatchers(HttpMethod.GET, "co/page").authenticated()
+                .antMatchers(HttpMethod.DELETE, "/co").authenticated()
+                .antMatchers(HttpMethod.POST, "/route/co").authenticated()
 
                 .anyRequest().hasAnyRole("ADMIN")//멤버의 역할이 관리자인 경우에는 모든 것을 허용
 

@@ -15,6 +15,7 @@ import eci.server.ItemModule.repository.newRoute.RouteTypeRepository;
 import eci.server.NewItemModule.repository.item.NewItemRepository;
 import eci.server.config.guard.BomGuard;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,6 +32,9 @@ public class BomCardService {
     private final CompareBomRepository compareBomRepository;
     private final DevelopmentBomCardRepository DevelopmentBomCardRepository;
     private final NewItemRepository newItemRepository;
+
+    @Value("${default.image.address}")
+    private String defaultImageAddress;
 
     public BomGuard getBomGuard() {
         return bomGuard;
@@ -161,7 +165,8 @@ public class BomCardService {
                 bomGuard,
                 preliminaryBomRepository,
                 DevelopmentBomRepository,
-                compareBomRepository
+                compareBomRepository,
+                defaultImageAddress
         );
 
     }

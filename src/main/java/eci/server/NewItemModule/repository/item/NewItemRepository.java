@@ -31,4 +31,6 @@ public interface NewItemRepository extends JpaRepository<NewItem, Long>, CustomN
 
     NewItem findByItemNumber(String itemNumber);
 
+    NewItem findByReviseTargetId(Long reviseTargetId);
+
 }

@@ -12,4 +12,5 @@ public class TodoResponse {
     String name;
     String type;
     String number;
+    Long reviseId;
 }

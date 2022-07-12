@@ -76,7 +76,7 @@ public class DesignDto {
         return new DesignDto(
 
                 design.getId(),
-                ItemDesignDto.toDto(design.getNewItem()),
+                ItemDesignDto.toDto(design.getNewItem(), defaultImageAddress),
                 MemberDto.toDto(design.getMember(), defaultImageAddress),
 
                 design.getDesignAttachments().

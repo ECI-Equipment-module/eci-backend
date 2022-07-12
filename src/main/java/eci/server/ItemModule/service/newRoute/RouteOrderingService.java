@@ -7,6 +7,14 @@ import eci.server.BomModule.entity.PreliminaryBom;
 import eci.server.BomModule.exception.BomNotFoundException;
 import eci.server.BomModule.repository.*;
 import eci.server.BomModule.service.BomService;
+import eci.server.CRCOModule.entity.CoNewItem;
+import eci.server.CRCOModule.entity.co.ChangeOrder;
+import eci.server.CRCOModule.entity.cr.ChangeRequest;
+import eci.server.CRCOModule.exception.CoNotFoundException;
+import eci.server.CRCOModule.exception.CrNotFoundException;
+import eci.server.CRCOModule.repository.co.ChangeOrderRepository;
+import eci.server.CRCOModule.repository.co.CoNewItemRepository;
+import eci.server.CRCOModule.repository.cr.ChangeRequestRepository;
 import eci.server.DesignModule.entity.design.Design;
 import eci.server.DesignModule.exception.DesignNotLinkedException;
 import eci.server.DesignModule.repository.DesignRepository;
@@ -30,9 +38,8 @@ import eci.server.ItemModule.repository.newRoute.RouteTypeRepository;
 import eci.server.NewItemModule.entity.JsonSave;
 import eci.server.NewItemModule.entity.NewItem;
 import eci.server.NewItemModule.exception.ItemTypeRequiredException;
-import eci.server.NewItemModule.repository.TempNewItemParentChildrenRepository;
 import eci.server.NewItemModule.repository.item.NewItemRepository;
-import eci.server.NewItemModule.service.TempNewItemParentChildService;
+import eci.server.NewItemModule.service.item.NewItemService;
 import eci.server.ProjectModule.entity.project.Project;
 import eci.server.ProjectModule.exception.ProjectNotLinkedException;
 import eci.server.ProjectModule.repository.project.ProjectRepository;
@@ -64,7 +71,10 @@ public class RouteOrderingService {
     private final DevelopmentBomRepository developmentBomRepository;
     private final CompareBomRepository compareBomRepository;
     private final JsonSaveRepository jsonSaveRepository;
-    private final TempNewItemParentChildService tempNewItemParentChildService;
+    private final ChangeRequestRepository changeRequestRepository;
+    private final ChangeOrderRepository changeOrderRepository;
+    private final NewItemService newItemService;
+    private final CoNewItemRepository coNewItemRepository;
 
     @Value("${default.image.address}")
     private String defaultImageAddress;
@@ -127,16 +137,236 @@ public class RouteOrderingService {
 
     @Transactional
     public RouteOrderingCreateResponse createItemRoute(RouteOrderingCreateRequest req) {
-        RouteOrdering newRoute = routeOrderingRepository.save(RouteOrderingCreateRequest.toEntity(
+
+        NewItem routeMadeItem = newItemRepository.findById(req.getItemId()).orElseThrow(ItemNotFoundException::new);
+
+
+        if(routeMadeItem.getReviseTargetId()==null) { //걍 평범 아이템인 경우
+
+            RouteOrdering newRoute = routeOrderingRepository.save(RouteOrderingCreateRequest.toEntity(
+                            req,
+                            newItemRepository,
+                            routePreset,
+                            routeTypeRepository
+                    )
+            );
+
+            List<RouteProduct> routeProductList =
+                    RouteProductCreateRequest.toEntityList(
+                            req,
+                            newRoute,
+                            routePreset,
+                            memberRepository,
+                            routeTypeRepository
+
+                    );
+
+            for (RouteProduct routeProduct : routeProductList) {
+
+                RouteProduct routeProduct1 =
+                        routeProductRepository.save(routeProduct);
+                System.out.println(routeProduct1.getRoute_name());
+                System.out.println(routeProduct1.getMembers().get(0).getMember());
+                System.out.println(routeProduct1.getMembers().get(0).getRouteProduct());
+            }
+
+            String itemTypeName = (newItemRepository.findById(newRoute.getNewItem().getId()).
+                    orElseThrow(ItemNotFoundException::new)
+            ).getItemTypes().getItemType().name();
+
+            if (
+                    !(
+                            itemTypeName.equals("원재료")
+                                    ||
+                                    itemTypeName.equals("단순외주구매품")
+                    )
+
+            ) {
+                //봄 생성
+                Bom bom = bomRepository.save(
+                        new Bom(
+                                newRoute.getNewItem(),
+                                memberRepository.findById(req.getMemberId()).orElseThrow(MemberNotFoundException::new)
+                        )
+                );
+                //프릴리미너리 봄 생성
+                PreliminaryBom preliminaryBom = preliminaryBomRepository.save(
+                        new PreliminaryBom(
+                                bom
+                        )
+                );
+
+                NewItem newItem = preliminaryBom.getBom().getNewItem();
+
+                // 06-11 태초에 기본 프릴리머리가 있었다
+
+                String initPreliminary = "{" +
+
+                        "\"cardNumber\":\"" + newItem.getItemNumber() + "\"," +
+                        "\"cardName\": \"" + newItem.getName() + "\"," +
+                        "\"classification\": \"" + newItem.getClassification().getClassification1().getName().toString()
+                        + "/" + newItem.getClassification().getClassification2().getName().toString() +
+                        (newItem.getClassification().getClassification3().getId().equals(99999L) ?
+                                "" :
+                                "/" + newItem.getClassification().getClassification3().getName()
+                        )
+                        + "\"," +
+                        "\"cardType\": \"" + newItem.getItemTypes().getItemType().name() + "\"," +
+                        "\"sharing\": \"" + (newItem.isSharing() ? "공용" : "전용") + "\"," +
+                        "\"preliminaryBomId\": " + preliminaryBom.getId() + "," +
+                        "\"children\": []" +
+                        "}";
+
+                JsonSave initialJsonSave = jsonSaveRepository.save(
+                        new JsonSave(
+                                initPreliminary,
+                                preliminaryBom
+                        )
+                );
+
+                DevelopmentBom developmentBom = developmentBomRepository.save(
+                        new DevelopmentBom(
+                                bom
+                        )
+                );
+
+                CompareBom compareBom = compareBomRepository.save(
+                        new CompareBom(
+                                bom
+                        )
+                );
+
+                newRoute.setBom(bom);
+            }
+            newRoute.getNewItem().updateTempsaveWhenMadeRoute();
+            //라우트 만들면 임시저장 해제
+
+            //0607 BOM + PRELIMINARY BOM 생성되게 하기
+            return new RouteOrderingCreateResponse(newRoute.getId());
+        }
+        else{ //revise_progress 로 라우트 만드는 것이라면
+            //만드는 아이템에 revise target id가 등록돼있으면 걔는 revise new item
+
+            RouteOrdering newRoute = routeOrderingRepository.save(RouteOrderingCreateRequest
+                    .toRevisedRouteOrderingEntity( //
+                            req,
+                            newItemRepository,
+                            routePreset,
+                            routeTypeRepository
+                    )
+            );
+
+            List<RouteProduct> routeProductList =
+                    RouteProductCreateRequest.toEntityList(
+                            req,
+                            newRoute,
+                            routePreset,
+                            memberRepository,
+                            routeTypeRepository
+
+                    );
+
+            for (RouteProduct routeProduct : routeProductList) {
+
+                RouteProduct routeProduct1 =
+                        routeProductRepository.save(routeProduct);
+                System.out.println(routeProduct1.getRoute_name());
+                System.out.println(routeProduct1.getMembers().get(0).getMember());
+                System.out.println(routeProduct1.getMembers().get(0).getRouteProduct());
+            }
+
+            String itemTypeName = (newItemRepository.findById(newRoute.getNewItem().getId()).
+                    orElseThrow(ItemNotFoundException::new)
+            ).getItemTypes().getItemType().name();
+
+            if (
+                    !(
+                            itemTypeName.equals("원재료")
+                                    ||
+                                    itemTypeName.equals("단순외주구매품")
+                    )
+
+            ) {
+                //봄 생성
+                Bom bom = bomRepository.save(
+                        new Bom(
+                                newRoute.getNewItem(),
+                                memberRepository.findById(req.getMemberId()).orElseThrow(MemberNotFoundException::new)
+                        )
+                );
+                //프릴리미너리 봄 생성
+                PreliminaryBom preliminaryBom = preliminaryBomRepository.save(
+                        new PreliminaryBom(
+                                bom
+                        )
+                );
+
+                NewItem newItem = preliminaryBom.getBom().getNewItem();
+
+                // 06-11 태초에 기본 프릴리머리가 있었다
+
+                String initPreliminary = "{" +
+
+                        "\"cardNumber\":\"" + newItem.getItemNumber() + "\"," +
+                        "\"cardName\": \"" + newItem.getName() + "\"," +
+                        "\"classification\": \"" + newItem.getClassification().getClassification1().getName().toString()
+                        + "/" + newItem.getClassification().getClassification2().getName().toString() +
+                        (newItem.getClassification().getClassification3().getId().equals(99999L) ?
+                                "" :
+                                "/" + newItem.getClassification().getClassification3().getName()
+                        )
+                        + "\"," +
+                        "\"cardType\": \"" + newItem.getItemTypes().getItemType().name() + "\"," +
+                        "\"sharing\": \"" + (newItem.isSharing() ? "공용" : "전용") + "\"," +
+                        "\"preliminaryBomId\": " + preliminaryBom.getId() + "," +
+                        "\"plusPossible\": " + true + "," +
+                        "\"children\": []" +
+                        "}";
+
+                JsonSave initialJsonSave = jsonSaveRepository.save(
+                        new JsonSave(
+                                initPreliminary,
+                                preliminaryBom
+                        )
+                );
+
+                DevelopmentBom developmentBom = developmentBomRepository.save(
+                        new DevelopmentBom(
+                                bom
+                        )
+                );
+
+                CompareBom compareBom = compareBomRepository.save(
+                        new CompareBom(
+                                bom
+                        )
+                );
+
+                newRoute.setBom(bom);
+            }
+            newRoute.getNewItem().updateTempsaveWhenMadeRoute();
+            //라우트 만들면 임시저장 해제
+
+            //0607 BOM + PRELIMINARY BOM 생성되게 하기
+            return new RouteOrderingCreateResponse(newRoute.getId());
+
+        }
+
+
+    }
+
+    @Transactional
+    public RouteOrderingCreateResponse createCrRoute(RouteOrderingCreateRequest req) {
+        RouteOrdering newRoute = routeOrderingRepository.save(RouteOrderingCreateRequest.toCrEntity(
                         req,
-                        newItemRepository,
                         routePreset,
+                        changeRequestRepository,
                         routeTypeRepository
                 )
         );
 
         List<RouteProduct> routeProductList =
-                RouteProductCreateRequest.toEntityList(
+                RouteProductCreateRequest.toCREntityList(
                         req,
                         newRoute,
                         routePreset,
@@ -154,82 +384,49 @@ public class RouteOrderingService {
             System.out.println(routeProduct1.getMembers().get(0).getRouteProduct());
         }
 
-        String itemTypeName = (newItemRepository.findById(newRoute.getNewItem().getId()).
-                orElseThrow(ItemNotFoundException::new)
-        ).getItemTypes().getItemType().name();
-
-        if(
-                !(
-                        itemTypeName.equals("원재료")
-                                    ||
-                                itemTypeName.equals("단순외주구매품")
-                )
-
-        ) {
-            //봄 생성
-            Bom bom = bomRepository.save(
-                    new Bom(
-                            newRoute.getNewItem(),
-                            memberRepository.findById(req.getMemberId()).orElseThrow(MemberNotFoundException::new)
-                    )
-            );
-            //프릴리미너리 봄 생성
-            PreliminaryBom preliminaryBom = preliminaryBomRepository.save(
-                    new PreliminaryBom(
-                            bom
-                    )
-            );
-
-            NewItem newItem = preliminaryBom.getBom().getNewItem();
-
-            // 06-11 태초에 기본 프릴리머리가 있었다
-
-            String initPreliminary = "{" +
-
-                    "\"cardNumber\":\"" + newItem.getItemNumber() + "\"," +
-                    "\"cardName\": \"" + newItem.getName() + "\"," +
-                    "\"classification\": \"" + newItem.getClassification().getClassification1().getName().toString()
-                    + "/" + newItem.getClassification().getClassification2().getName().toString() +
-                    (newItem.getClassification().getClassification3().getId().equals(99999L) ?
-                            "" :
-                            "/" + newItem.getClassification().getClassification3().getName()
-                    )
-                    + "\"," +
-                    "\"cardType\": \"" + newItem.getItemTypes().getItemType().name() + "\"," +
-                    "\"sharing\": \"" + (newItem.isSharing() ? "공용" : "전용") + "\"," +
-                    "\"preliminaryBomId\": " + preliminaryBom.getId() + "," +
-                    "\"children\": []" +
-                    "}";
-
-            JsonSave initialJsonSave = jsonSaveRepository.save(
-                    new JsonSave(
-                            initPreliminary,
-                            preliminaryBom
-                    )
-            );
-
-            DevelopmentBom developmentBom = developmentBomRepository.save(
-                    new DevelopmentBom(
-                            bom
-                    )
-            );
-
-            CompareBom compareBom = compareBomRepository.save(
-                    new CompareBom(
-                            bom
-                    )
-            );
-
-            newRoute.setBom(bom);
-        }
-        newRoute.getNewItem().updateTempsaveWhenMadeRoute();
+        newRoute.getChangeRequest().updateTempsaveWhenMadeRoute();
         //라우트 만들면 임시저장 해제
-
-        //0607 BOM + PRELIMINARY BOM 생성되게 하기
-
 
         return new RouteOrderingCreateResponse(newRoute.getId());
     }
+
+
+    @Transactional
+    public RouteOrderingCreateResponse createCoRoute(RouteOrderingCreateRequest req) {
+
+        RouteOrdering newRoute = routeOrderingRepository.save(RouteOrderingCreateRequest.toCoEntity(
+                        req,
+                        routePreset,
+                        changeOrderRepository,
+                        routeTypeRepository
+                )
+        );
+
+        List<RouteProduct> routeProductList =
+                RouteProductCreateRequest.toCOEntityList(
+                        req,
+                        newRoute,
+                        routePreset,
+                        memberRepository,
+                        routeTypeRepository
+
+                );
+
+        for (RouteProduct routeProduct : routeProductList) {
+
+            RouteProduct routeProduct1 =
+                    routeProductRepository.save(routeProduct);
+            System.out.println(routeProduct1.getRoute_name());
+            System.out.println(routeProduct1.getMembers().get(0).getMember());
+            System.out.println(routeProduct1.getMembers().get(0).getRouteProduct());
+        }
+
+        newRoute.getChangeOrder().updateTempsaveWhenMadeRoute();
+        //라우트 만들면 임시저장 해제
+
+        return new RouteOrderingCreateResponse(newRoute.getId());
+    }
+
 
     @Transactional
     public List<RouteProductDto> rejectUpdate(
@@ -312,10 +509,68 @@ public class RouteOrderingService {
             throw new UpdateImpossibleException();
         }
 
-        if (presentRouteProductCandidate.size() == routeOrdering.getPresent()) {
+        if (presentRouteProductCandidate.size()== routeOrdering.getPresent()) {
             //만약 present 가 끝까지 닿았으면 현재 complete 된 상황!
             routeOrdering.updateToComplete();
-            //throw new UpdateImpossibleException();
+
+            //presentRouteProductCandidate.get(routeOrdering.getPresent()-1).setComment(req.getComment());
+
+            // 라우트 오더링의 revised cnt 가 0보다 컸다면,
+            // revise 당한 아이템의 새로 만들어진 아가의 라우트 오더링이므로
+            // 무조건 아이템 존재할 수 밖에 없음
+//            if(routeOrdering.getRevisedCnt()>0){
+//                //지금 승인된 라우트가 revise 로 인해 새로 생긴 아이템이라면
+//                routeOrdering.setRevisedCnt(0);
+//                //0710 revise 로 생긴 route ordering 이었다면 다시 0으로 복구;
+//
+//                if(routeOrdering.getNewItem()==null){
+//                    //revise 인데도 안 묶여있으면 뭔가 잘못됐어,
+//                    throw new ItemNotFoundException();//에러 던지기
+//                }
+//
+//                NewItem targetRevisedItem = newItemRepository.
+//                        findById(routeOrdering.getNewItem().getReviseTargetId()).orElseThrow(ItemNotFoundException::new);
+//
+//                if (targetRevisedItem.isRevise_progress()) {
+//                    routeOrdering.getNewItem().setRevise_progress(false);
+//                    //0712 아기의 target route 가 revise progress 가 진행 중이라면 라우트 complete 될 때 false 로 갱신
+//                }
+//
+//                if(coNewItemRepository.findByNewItemOrderByCreatedAtAsc(routeOrdering.getNewItem()).size()>0) {
+//                    // (1) 지금 revise 완료 된 아이템의 CO 를 검사하기 위해 check co 찾기
+//                    ChangeOrder checkCo =
+//                            coNewItemRepository.findByNewItemOrderByCreatedAtAsc(routeOrdering.getNewItem()).get(
+//                                            coNewItemRepository.findByNewItemOrderByCreatedAtAsc(routeOrdering.getNewItem()).size()-1
+//                                    )//가장 최근에 맺어진 co-new item 관계 중 가장 최신 아이의 co를 검사하기
+//                                    .getChangeOrder();
+//
+//                    // (2) check co 의 affected item 리스트
+//                    List<CoNewItem> coNewItemsOfChkCo = checkCo.getCoNewItems();
+//                    List<NewItem> affectedItemOfChkCo = coNewItemsOfChkCo.stream().map(
+//                            i->i.getNewItem()
+//                    ).collect(Collectors.toList());
+//
+//                    // (3) checkCo의 routeOrdering 찾아오기
+//                    RouteOrdering routeOrderingOfChkCo =
+//                            routeOrderingRepository.findByChangeOrder(checkCo).get(
+//                                    routeOrderingRepository.findByChangeOrder(checkCo).size()-1
+//                            );
+//
+//                    // (4) affected item 이 모두 revise 완료된다면 update route
+//                    if(newItemService.checkReviseCompleted(affectedItemOfChkCo)){
+//                        routeOrderingOfChkCo.CoUpdate(routeProductRepository);
+//                    }
+//
+//                }
+//
+//                //throw new UpdateImpossibleException();
+//                // 0710 : 이 아이템과 엮인 아이들 (CHILDREN , PARENT )들의 REVISION +=1 진행 !
+//                // 대상 아이템들은 이미 각각 아이템 리뷰 / 프로젝트 링크할 때 REVISION+1 당함
+//                newItemService.revisionUpdateAllChildrenAndParentItem(routeOrdering.getNewItem());
+//
+//
+//
+//            }
 
         } else {
             RouteProduct targetRoutProduct = presentRouteProductCandidate.get(routeOrdering.getPresent());
@@ -373,6 +628,19 @@ public class RouteOrderingService {
                     linkedDesign.finalSaveDesign();
                 }
 
+//                if (projectRepository.findByNewItem(routeOrdering.getNewItem()).size() == 0) {
+//                    throw new ProjectNotLinkedException();
+//                } else {
+//                    Project linkedProject =
+//                            projectRepository.findByNewItem(routeOrdering.getNewItem())
+//                                    .get(
+//                                            projectRepository.findByNewItem(routeOrdering.getNewItem()).size() - 1
+//                                    );
+//                    //그 프로젝트를 라우트 프로덕트에 set 해주기
+//                    targetRoutProduct.setProject(linkedProject);
+//                    //05-12 추가사항 : 이 라우트를 제작해줄 때야 비로소 프로젝트는 temp save = false 가 되는 것
+//                    linkedProject.finalSaveProject();
+//                }
 
             }
 
@@ -389,15 +657,18 @@ public class RouteOrderingService {
                                             designRepository.findByNewItem(routeOrdering.getNewItem()).size() - 1
                                     );
 
-                    // 디자인 리뷰 승인 나면 아이템 정보 관계 맺어주기
-                    bomService.makeDevBom(linkedDesign.getId());
+                    if (routeOrdering.getNewItem().getItemTypes().getItemType().name().equals("파트제품") ||
+                            routeOrdering.getNewItem().getItemTypes().getItemType().name().equals("프로덕트제품")) {
+                        // 디자인 리뷰 승인 나면 아이템 정보 관계 맺어주기
+                        bomService.makeDevBom(linkedDesign.getId());
 
-                    // dev bom 의 temp new item parent children 관계도 맺어주기
-                    bomService.makeTempDevBom(
+                        // dev bom 의 temp new item parent children 관계도 맺어주기
+                        bomService.makeTempDevBom(
 
-                            linkedDesign.getId(),
-                            true
-                    );
+                                linkedDesign.getId(),
+                                true
+                        );
+                    }
                 }
 
 
@@ -455,11 +726,130 @@ public class RouteOrderingService {
             }
 
 
+            else if (targetRoutProduct.getType().getModule().equals("CR")
+                    && targetRoutProduct.getType().getName().equals("CREATE")) {
+
+                //아이템에 링크된 봄 아이디 건네주기
+                if ((routeOrdering.getChangeRequest()==null)) {
+                    throw new CrNotFoundException();
+                } else {
+                    if (targetRoutProduct.isPreRejected()) {
+                        targetRoutProduct.setPreRejected(false); //06-01 손댐
+                    }
+                    targetRoutProduct.setChangeRequest(routeOrdering.getChangeRequest());
+
+                    //이 라우트를 제작해줄 때야 비로소 temp save = false 가 되는 것
+                    routeOrdering.getChangeRequest().updateTempsaveWhenMadeRoute();
+
+                }
+
+
+            }
+
+            else if (targetRoutProduct.getType().getModule().equals("CO")
+                    && targetRoutProduct.getType().getName().equals("REQUEST")) {
+
+                //아이템에 링크된 봄 아이디 건네주기
+                if ((routeOrdering.getChangeOrder()==null)) {
+                    throw new CoNotFoundException();
+                } else {
+                    if (targetRoutProduct.isPreRejected()) {
+                        targetRoutProduct.setPreRejected(false); //06-01 손댐
+                    }
+                    targetRoutProduct.setChangeOrder(routeOrdering.getChangeOrder());
+
+                    //이 라우트를 제작해줄 때야 비로소 temp save = false 가 되는 것
+                    routeOrdering.getChangeOrder().updateTempsaveWhenMadeRoute();
+
+                }
+
+
+            }
+
+            else if (targetRoutProduct.getType().getModule().equals("CO")
+                    && targetRoutProduct.getType().getName().equals("APPROVE")) {
+
+                //아이템에 링크된 봄 아이디 건네주기
+                if ((routeOrdering.getChangeOrder()==null)) {
+                    throw new CoNotFoundException();
+                } else {
+                    ChangeOrder changeOrder=routeOrdering.getChangeOrder();
+
+                    List<NewItem> affectedItems =
+                            changeOrder.getCoNewItems().stream().map(
+                                    m->m.getNewItem()
+                            ).collect(Collectors.toList());
+
+                    newItemService.ReviseItem(affectedItems);
+
+                }
+
+
+            }
+
+            else if (targetRoutProduct.getType().getModule().equals("CO")
+                    && targetRoutProduct.getType().getName().equals("CONFIRM")) {
+
+                // CO 안에 있는 CR 들의 crCompletedByCo() 호출해서 DONE = TRUE 로 바꾸기
+
+                if ((routeOrdering.getChangeOrder()==null)) {
+                    throw new CoNotFoundException();
+                } else {
+
+                    // (1)  이 co의 cr 들의 done=true
+                    ChangeOrder changeOrder=routeOrdering.getChangeOrder();
+
+                    List<ChangeRequest> changeRequests = changeOrder.getChangeRequests();
+                    for(ChangeRequest cr : changeRequests){
+                        cr.crCompletedByCo();
+                    }
+
+                }
+
+
+            }
+
+            else if (targetRoutProduct.getType().getModule().equals("ITEM")
+                    && targetRoutProduct.getType().getName().equals("REVIEW")) {
+
+                // 파트제품, 프로덕트 제품 제외한 다른 애들은 approve route 할 때
+                // (1) 아이템이 revise progress 이며
+                // (2) 지금 승인하는게 ITEM REVIEW 면 revision+=1
+                NewItem chkItem = targetRoutProduct.getRouteOrdering().getNewItem();
+                if (chkItem.getReviseTargetId()!=null) {
+                    //저게 null 이 아니라면 targetId의 아이템 revision보다 +1값으로
+                    // 기존 : chkItem.isRevise_progress())
+
+                    if (!
+                            (chkItem.getItemTypes().getItemType().name().equals("파트제품") ||
+                                    chkItem.getItemTypes().getItemType().name().equals("프로덕트제품"))
+                    ) {// 파트 제품과 프로덕트 제품 아닌 경우에는 item review를 진행할 때 revision update !
+                        // 제품은 create 할 때
+
+                        NewItem targetItem = newItemRepository.findById(chkItem.getReviseTargetId()).orElseThrow(
+                                ItemNotFoundException::new
+                        );
+
+                        chkItem.updateRevision(targetItem.getRevision()+1);
+                        //targetItem.getRevision() 보다 하나 더 큰 값으로 갱신
+                    }
+
+
+                }
+            }
+
+            System.out.println("presenrrrrrrrrrrrrrrrrt : " +
+                    routeOrdering.getPresent()+"/"+presentRouteProductCandidate.size());
+
             RouteOrderingUpdateRequest newRouteUpdateRequest =
                     routeOrdering
                             .update(
                                     req,
-                                    routeProductRepository
+                                    routeProductRepository,
+                                    newItemRepository,
+                                    coNewItemRepository,
+                                    routeOrderingRepository,
+                                    newItemService
                             );
         }
 
@@ -532,6 +922,16 @@ public class RouteOrderingService {
                     break;
                 case "12":            // 봄 리뷰
                     rejectPossibleTypeId = 14L;
+                    break;
+
+                case "16":            // CR신청 APPROVE
+                case "17":            // CR REVIEW
+                    rejectPossibleTypeId = 15L;
+                    break;
+                //CR REQUEST
+                case "19": //CO 신청 승인 APPROVE
+                    rejectPossibleTypeId = 18L; //CO 신청
+
                     break;
                 default:        // 모두 해당이 안되는 경우
                     //에러 던지기

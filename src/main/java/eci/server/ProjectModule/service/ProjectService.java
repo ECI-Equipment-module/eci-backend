@@ -6,6 +6,7 @@ import eci.server.DashBoardModule.dto.myProject.ProjectDashboardDto;
 import eci.server.DesignModule.dto.DesignCreateUpdateResponse;
 import eci.server.ItemModule.dto.item.ItemProjectDashboardDto;
 import eci.server.ItemModule.entity.newRoute.RouteOrdering;
+import eci.server.ItemModule.exception.item.ItemNotFoundException;
 import eci.server.ItemModule.exception.member.MemberNotFoundException;
 
 import eci.server.ItemModule.exception.route.RouteNotFoundException;
@@ -14,6 +15,7 @@ import eci.server.ItemModule.repository.newRoute.RouteOrderingRepository;
 import eci.server.ItemModule.repository.newRoute.RouteProductRepository;
 import eci.server.ItemModule.service.file.FileService;
 
+import eci.server.NewItemModule.entity.NewItem;
 import eci.server.NewItemModule.repository.attachment.AttachmentTagRepository;
 import eci.server.NewItemModule.repository.item.NewItemRepository;
 import eci.server.ProjectModule.dto.carType.CarTypeDto;
@@ -651,5 +653,17 @@ public class ProjectService {
                 );
 
     }
+
+    public void changeProjectItemToNewMadeItem(Long targetProjId, Long newMadeItemid){
+
+        Project targetProj = projectRepository.findById(targetProjId).orElseThrow(ProjectNotFoundException::new);
+        NewItem newMadeItem = newItemRepository.findById(newMadeItemid).orElseThrow(ItemNotFoundException::new);
+
+        // 이 타겟 프로젝트의 아이템을 지금 새로 만들어진 아이템으로 변경해주면 된다.
+        targetProj.changeItemIdOfProjectByNewMadeItem(newMadeItem);
+
+    }
+
+
 
 }
