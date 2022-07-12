@@ -1,13 +1,11 @@
 package eci.server.ItemModule.dto.manufacture;
 
-import eci.server.ItemModule.dto.member.MemberDto;
 import eci.server.NewItemModule.entity.maker.NewItemMaker;
 import eci.server.NewItemModule.entity.supplier.Maker;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
