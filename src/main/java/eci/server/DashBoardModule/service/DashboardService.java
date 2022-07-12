@@ -29,6 +29,7 @@ import eci.server.ItemModule.repository.newRoute.RouteProductRepository;
 import eci.server.NewItemModule.entity.NewItem;
 import eci.server.NewItemModule.repository.item.NewItemRepository;
 import eci.server.ProjectModule.entity.project.Project;
+import eci.server.ProjectModule.exception.ProjectNotFoundException;
 import eci.server.ProjectModule.repository.project.ProjectRepository;
 import eci.server.config.guard.AuthHelper;
 import lombok.RequiredArgsConstructor;
@@ -272,6 +273,11 @@ public class DashboardService {
                                 (projectRepository.findByNewItem(targetNewItem).size()-1);
 
                         reviseId = oldProject.getId();
+
+                        if(reviseId!=-1L){
+                            Project proj = projectRepository.findById(reviseId).orElseThrow(ProjectNotFoundException::new);
+                            proj.setTempsave(true);proj.setReadonly(true);
+                        }
 
 
                     }
