@@ -905,16 +905,18 @@ public class NewItemService {
 
     /**
      * revise 완료 여부 , true 면 revise 완료 , false 면 revise 진행 중
-     * @param newItems //affected item List
+     * @param affectedItems //affected item List
      */
-    public boolean checkReviseCompleted(List<NewItem> newItems){
+    public boolean checkReviseCompleted(List<NewItem> affectedItems){
 
-        int affectedItemSize = newItems.size();
+        int affectedItemSize = affectedItems.size();
         int revisedItemSize = 0;
 
-        for(NewItem newItem : newItems){
-            if(!newItem.isRevise_progress()){ //revise progress 가 아니라면 (revise 되었다면)
-                newItem.setRevision(newItem.getRevision()+1);
+        for(NewItem newItem : affectedItems){
+            System.out.println(newItem.getId());
+            if(newItem.isRevise_progress()){ //revise progress 가 아니라면 (revise 되었다면)
+
+                revisedItemSize+=1;
             }
 
         }
