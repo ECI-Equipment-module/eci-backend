@@ -404,7 +404,7 @@ public class RouteOrdering extends EntityDate {
             routeProductList.get(this.present).setComment("자동 업데이트 완료오 오오오오");
 
             // 지금 업데이트되는 라우트 프로덕트의 타입은 무조건 co / create , 아니라면 에러
-            if(!(routeProductList.get(this.present).getType().getName().equals("CO")
+            if(!(routeProductList.get(this.present).getType().getModule().equals("CO")
                     && routeProductList.get(this.present).getType().getName().equals("CREATE"))){
                 System.out.println("SOMETHING IS WRRRRRRRRRRRROOOOOOOOONG");
                 throw new RuntimeException();
