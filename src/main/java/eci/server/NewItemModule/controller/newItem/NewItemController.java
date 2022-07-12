@@ -2,6 +2,7 @@ package eci.server.NewItemModule.controller.newItem;
 
 import eci.server.NewItemModule.dto.newItem.NewItemReadCondition;
 import eci.server.NewItemModule.dto.newItem.create.NewItemCreateRequest;
+import eci.server.NewItemModule.dto.newItem.create.NewItemCreateResponse;
 import eci.server.NewItemModule.dto.newItem.create.NewItemTemporaryCreateRequest;
 import eci.server.NewItemModule.dto.newItem.update.NewItemUpdateRequest;
 import eci.server.NewItemModule.service.item.NewItemService;
@@ -23,6 +24,56 @@ import javax.validation.Valid;
 public class NewItemController {
 
     private final NewItemService newItemService;
+
+    /**
+     * 아이템 생성 (찐 저장)
+     *
+     * @param req
+     * @return 200 (success)
+     */
+    @CrossOrigin(origins = "https://localhost:3000")
+    @PostMapping("/item/{targetId}")
+    @ResponseStatus(HttpStatus.CREATED)
+    @AssignMemberId // Aspect : 인증된 사용자 정보로 아이템 작성자 지정 가능
+    public Response reviseCreate(
+            @PathVariable Long targetId,
+            @Valid @ModelAttribute
+                    //Content-Type = multipart/form-data
+                    NewItemCreateRequest req
+    ) {
+
+
+        NewItemCreateResponse response = newItemService.create(req);
+        newItemService.registerTargetReviseItem(targetId, response.getId());
+
+        return Response.success(
+                response
+        );
+    }
+
+    /**
+     * 아이템 임시저장 생성
+     *
+     * @param req
+     * @return 200 (success)
+     */
+    @CrossOrigin(origins = "https://localhost:3000")
+    @PostMapping("/item/temp/{targetId}")
+    @ResponseStatus(HttpStatus.CREATED)
+    @AssignMemberId // Aspect : 인증된 사용자 정보로 아이템 작성자 지정 가능
+    public Response reviseTempCreate(
+            @PathVariable Long targetId,
+            @Valid @ModelAttribute
+                    NewItemTemporaryCreateRequest req
+    ) {
+
+        NewItemCreateResponse response = newItemService.tempCreate(req);
+        newItemService.registerTargetReviseItem(targetId, response.getId());
+
+        return Response.success(
+                response
+                );
+    }
 
     /**
      * 아이템 임시저장 생성

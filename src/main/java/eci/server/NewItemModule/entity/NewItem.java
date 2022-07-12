@@ -50,9 +50,9 @@ import static java.util.stream.Collectors.toList;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class NewItem extends EntityDate {
     @Id
-        @GeneratedValue(strategy = GenerationType.IDENTITY)
-   //@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQUENCE3")
-   //@SequenceGenerator(name="SEQUENCE3", sequenceName="SEQUENCE3", allocationSize=1)
+    //@GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQUENCE3")
+    @SequenceGenerator(name="SEQUENCE3", sequenceName="SEQUENCE3", allocationSize=1)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -219,6 +219,10 @@ public class NewItem extends EntityDate {
 
     @Column
     private int revision;
+
+
+    @Column//nullable 하다 - 얘가 존재하면 revise copying new item 이라는 식별
+    private Long reviseTargetId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(
@@ -793,7 +797,10 @@ public class NewItem extends EntityDate {
     }
 
     // 라우트가 complete 되면 자손, 부모 revision 이  하나씩 더해져서 업데이트 된다.
-    public void updateRevision(){this.revision = this.revision+1;}
+    public void updateRevision(){this.revision =  this.revision+1;}
+
+    // 아래는 revise 된 애는 target item 의 revision 보다 1 큰 값으로 업데이트 (아이템 리뷰 승인 / 혹은 프로젝트 링크 시)
+    public void updateRevision(Integer targetRevision){this.revision =  targetRevision+1;}
 
     @Getter
     @AllArgsConstructor
@@ -1220,6 +1227,7 @@ public class NewItem extends EntityDate {
         this.revise_progress = false;
     }
 
+    public void register_target_revise_item(Long targetId){this.reviseTargetId = targetId;}
 
 
 }

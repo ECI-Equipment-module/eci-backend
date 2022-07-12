@@ -286,7 +286,8 @@ public class NewItemService {
                     routeProductRepository,
                     designGuard,
                     attachmentTagRepository,
-                    defaultImageAddress
+                    defaultImageAddress,
+                    newItemRepository
             );
 
         }
@@ -294,7 +295,8 @@ public class NewItemService {
                 targetItem,
                 routeProductRepository,
                 attachmentTagRepository,
-                defaultImageAddress
+                defaultImageAddress,
+                newItemRepository
         );
     }
 
@@ -773,15 +775,14 @@ public class NewItemService {
     /**
      * route 가 co 실행되면 이 처리 수행
      * @param newItems // affected item List
-     * @param changeOrderRequestPerson //아이템의 수정자로 revise 요청자가 들어감(guard 관련)
      */
-    public void ReviseItem(List<NewItem> newItems, Member changeOrderRequestPerson){
+    public void ReviseItem(List<NewItem> newItems){
         for(NewItem newItem : newItems){
             newItem.setRevise_progress(true);
             // revise 진행 중 알리기
-            newItem.setModifier(changeOrderRequestPerson);
+            //newItem.setModifier(changeOrderRequestPerson);
             // 아이템 수정할 수 있게 modifier 로 요청자 설정
-            newItem.setReadonly(false); newItem.setTempsave(true); // 아이템 수정 가능 모드로 변경
+            //newItem.setReadonly(false); newItem.setTempsave(true); // 아이템 수정 가능 모드로 변경
         }
     }
 
@@ -820,6 +821,28 @@ public class NewItemService {
                 newItemParentChildren2 -> newItemParentChildren2.getParent().updateRevision()
 
         );
+
+    }
+
+    /**
+     * target Id는 url 로 넘어오는 아이
+     * @param targetId
+     * @param newItemId
+     */
+    public void registerTargetReviseItem(Long targetId, Long newItemId){
+
+        NewItem newItemForRevise = newItemRepository.findById(newItemId).orElseThrow(ItemNotFoundException::new);
+        newItemForRevise.register_target_revise_item(targetId);
+
+        // 그리고 아기(new item) 제품 타입이라면 아이템 등록할 때부터 revision update 진행
+        // 아닌 애들은 어디서 updateRevision 하냐면 아이템 리뷰할 때 ! (아이템 리뷰 승인나야 revise o o )
+        if(newItemForRevise.getItemTypes().getItemType().name().equals("파트제품") ||
+                newItemForRevise.getItemTypes().getItemType().name().equals("프로덕트제품")){
+
+            NewItem targetItem = newItemRepository.findById(targetId).orElseThrow(ItemNotFoundException::new);
+            newItemForRevise.updateRevision(targetItem.getRevision());
+
+        }
 
     }
 

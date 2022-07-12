@@ -15,6 +15,9 @@ public interface RouteOrderingRepository extends JpaRepository<RouteOrdering, Lo
     List<RouteOrdering> findByChangeRequest(ChangeRequest changeRequest);
 
     List<RouteOrdering> findByChangeOrder(ChangeOrder changeOrder);
+
+    RouteOrdering findByRevisedCnt(Integer integer);
+
     //
 //    /**
 //     * 부모의 아이디로 오름차순 정렬, NULL 우선, 다음으로 자신의 아이디 오름차순 정렬 & 조회

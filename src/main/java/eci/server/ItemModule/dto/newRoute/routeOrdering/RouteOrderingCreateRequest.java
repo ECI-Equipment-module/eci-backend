@@ -63,7 +63,7 @@ public class RouteOrderingCreateRequest {
                 ).label();
 
         List routeProduct = List.of((routePreset.itemRouteName[routeType]));
-
+// TODO 0712
         for(Object type : routeProduct){
             typeList.add(type.toString());
 
@@ -104,12 +104,12 @@ public class RouteOrderingCreateRequest {
 
         }
 
-
+// 0712
         return new RouteOrdering(
                 1, //revised_cnt
                 typeList.toString(),
                 newItemRepository.findById(req.itemId)
-                        .orElseThrow(MemberNotFoundException::new)
+                        .orElseThrow(ItemNotFoundException::new)
         );
     }
 

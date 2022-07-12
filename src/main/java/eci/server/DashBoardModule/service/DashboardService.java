@@ -19,6 +19,7 @@ import eci.server.ItemModule.entity.member.Member;
 import eci.server.ItemModule.entity.newRoute.RouteOrdering;
 import eci.server.ItemModule.entity.newRoute.RouteProduct;
 import eci.server.ItemModule.entity.newRoute.RouteProductMember;
+import eci.server.ItemModule.exception.item.ItemNotFoundException;
 import eci.server.ItemModule.exception.member.auth.AccessExpiredException;
 import eci.server.ItemModule.exception.route.RouteProductNotFoundException;
 import eci.server.ItemModule.exception.member.auth.AuthenticationEntryPointException;
@@ -202,7 +203,8 @@ public class DashboardService {
                                 p.getId(),
                                 p.getName(),
                                 p.getProjectType().getName(),
-                                p.getProjectNumber()
+                                p.getProjectNumber(),
+                                -1L
                         );
                 TEMP_SAVE.add(projectTodoResponse);
             }
@@ -248,14 +250,51 @@ public class DashboardService {
 
                 NewItem targetItem = routeProduct.getRouteOrdering().getNewItem();
 
-                unlinkedItemTodoResponses.add(
-                        new TodoResponse(
-                                targetItem.getId(),
-                                targetItem.getName(),
-                                targetItem.getItemTypes().getItemType().toString(),
-                                targetItem.getItemNumber().toString()
-                        )
-                );
+                //0712
+                // 0712 - revise target id 가 null 이라면 걍 새 아이템
+                if(targetItem.getReviseTargetId()!=null
+                        &&
+                        newItemRepository.
+                                findById(targetItem.getReviseTargetId()).orElseThrow(ItemNotFoundException::new)
+                                .isRevise_progress()
+                ){
+
+                    NewItem targetNewItem = newItemRepository.
+                            findById(targetItem.getReviseTargetId()).orElseThrow(ItemNotFoundException::new);
+
+                    Long reviseId=-1L;
+
+                    if(projectRepository.findByNewItem(targetNewItem).size()>0) {
+                        Project oldProject = projectRepository.findByNewItem(targetNewItem).get
+                                (projectRepository.findByNewItem(targetNewItem).size()-1);
+
+                        reviseId = oldProject.getId();
+                    }
+
+                    unlinkedItemTodoResponses.add(
+                            new TodoResponse(
+                                    targetItem.getId(),
+                                    targetItem.getName(),
+                                    targetItem.getItemTypes().getItemType().toString(),
+                                    targetItem.getItemNumber(),
+                                    reviseId
+                            )
+                    );
+                }
+
+                else{ // 해당 아이템이 revise 로 인해 생긴 new item 이며 , targetItem 이 아직 revise _ progress 진행이라면
+                    unlinkedItemTodoResponses.add(
+                            new TodoResponse(
+                                    targetItem.getId(),
+                                    targetItem.getName(),
+                                    targetItem.getItemTypes().getItemType().toString(),
+                                    targetItem.getItemNumber(),
+                                    -1L
+                            )
+                    );
+                }
+                //0712
+
             }
         }
 
@@ -333,7 +372,8 @@ public class DashboardService {
                                 d.getId(),
                                 d.getNewItem().getName(),
                                 d.getNewItem().getItemTypes().getItemType().toString(),
-                                d.getNewItem().getItemNumber()
+                                d.getNewItem().getItemNumber(),
+                                -1L
                         );
                 TEMP_SAVE.add(projectTodoResponse);
             }
@@ -376,14 +416,49 @@ public class DashboardService {
 
                 NewItem targetItem = routeProduct.getRouteOrdering().getNewItem();
 
-                unlinkedItemTodoResponses.add(
-                        new TodoResponse(
-                                targetItem.getId(),
-                                targetItem.getName(),
-                                targetItem.getItemTypes().getItemType().toString(),
-                                targetItem.getItemNumber().toString()
-                        )
-                );
+                // 0712 - revise target id 가 null 이라면 걍 새 아이템
+                if(targetItem.getReviseTargetId()!=null
+                        &&
+                        newItemRepository.
+                                findById(targetItem.getReviseTargetId()).orElseThrow(ItemNotFoundException::new)
+                                .isRevise_progress()
+                ){
+
+                    NewItem targetNewItem = newItemRepository.
+                            findById(targetItem.getReviseTargetId()).orElseThrow(ItemNotFoundException::new);
+
+                    Long reviseId=-1L;
+
+                    if(designRepository.findByNewItem(targetNewItem).size()>0) {
+                        Design oldDesign = designRepository.findByNewItem(targetNewItem).get
+                                (designRepository.findByNewItem(targetNewItem).size()-1);
+
+                        reviseId = oldDesign.getId();
+                    }
+
+                        unlinkedItemTodoResponses.add(
+                                new TodoResponse(
+                                        targetItem.getId(),
+                                        targetItem.getName(),
+                                        targetItem.getItemTypes().getItemType().toString(),
+                                        targetItem.getItemNumber(),
+                                        reviseId
+                                        )
+                        );
+                    }
+
+                else{ // 해당 아이템이 revise 로 인해 생긴 new item 이며 , targetItem 이 아직 revise _ progress 진행이라면
+                    unlinkedItemTodoResponses.add(
+                            new TodoResponse(
+                                    targetItem.getId(),
+                                    targetItem.getName(),
+                                    targetItem.getItemTypes().getItemType().toString(),
+                                    targetItem.getItemNumber(),
+                                    -1L
+                            )
+                    );
+                }
+
             }
         }
 
@@ -414,7 +489,8 @@ public class DashboardService {
                                 targetDesign.getId(),
                                 targetDesign.getNewItem().getName(),
                                 targetDesign.getNewItem().getItemTypes().getItemType().toString(),
-                                targetDesign.getNewItem().getItemNumber().toString()
+                                targetDesign.getNewItem().getItemNumber(),
+                                -1L
                         )
                 );
             }
@@ -459,7 +535,8 @@ public class DashboardService {
                             targetDesign.getId(),
                             targetDesign.getNewItem().getName(),
                             targetDesign.getNewItem().getItemTypes().getItemType().toString(),
-                            targetDesign.getNewItem().getItemNumber()
+                            targetDesign.getNewItem().getItemNumber(),
+                            -1L
                     )
             );
         }
@@ -539,7 +616,8 @@ public class DashboardService {
                                 d.getId(),
                                 d.getName(),
                                 d.getItemTypes().getItemType().toString(),
-                                d.getItemNumber()
+                                d.getItemNumber(),
+                                -1L
                         );
                 TEMP_SAVE.add(projectTodoResponse);
             }
@@ -584,13 +662,6 @@ public class DashboardService {
                     if (routeProduct.isPreRejected() &&
 
                             (
-                                    //TODO 이렇게 문자열로 구분하는게 아닌, ROUTE TYPE으로
-//                            routeProduct.getRoute_name().equals("Item(사내가공품/외주구매품-시방)등록 Request(설계자)")
-//                            || routeProduct.getRoute_name().equals("Item Request")
-//                            || routeProduct.getRoute_name().equals("Item(외주구매품 단순)신청 Request(설계자)")
-//                            || routeProduct.getRoute_name().equals("Item(제품)등록 Request(설계자)")
-//                            || routeProduct.getRoute_name().equals("Item(원재료) Request(설계자)")
-
                                     routeProduct.getType().getModule().equals("ITEM")
                                             &&
                                             routeProduct.getType().getName().equals("REQUEST")
@@ -606,7 +677,8 @@ public class DashboardService {
                                         target.getId(),
                                         target.getName(),
                                         target.getItemTypes().getItemType().toString(),
-                                        target.getItemNumber().toString()
+                                        target.getItemNumber(),
+                                        -1L
                                 )
                         );
                     }
@@ -615,7 +687,7 @@ public class DashboardService {
         }
         List<TodoResponse> REJECTED = new ArrayList<>(rejectedNewItemTodoResponses);
 
-        //3) REVISE - TODO : REVISE 추가되고 작업
+        //3) REVISE
         // 아이템들 중 revise_progress = true 인 것들 모두!
         // CO 로 찾은 라우트 오더링 중 COMPLETE 안됐고 && 작성자가 나인 것 member1
         List<TodoResponse> reviseNewItemTodoResponses = new ArrayList<>();
@@ -648,19 +720,16 @@ public class DashboardService {
             // 3-4 : revise_progress 가 true 이면서 revisedCnt가 0초과인 routeOrdering이 없다면 라우트 만들어야해
             for(NewItem reviseTarget : reviseCheckItems){
 
-                RouteOrdering routeOrderingWhetherRevised = routeOrderingRepository.findByNewItem(reviseTarget).get(
-                        routeOrderingRepository.findByNewItem(reviseTarget).size()-1
-                );
-                // routeOrdering revised cnt = 0 인 것은 개정 완료된 것, 그럼 이때 새로 만들어야 함
-                // 따라서 아이템이 revise 중이며 아직 revise route ordering 이 안 만들어진 애들을 보여줌
+                NewItem reviseNewItem = newItemRepository.findByReviseTargetId(reviseTarget.getId());
 
-                if(reviseTarget.isRevise_progress() && routeOrderingWhetherRevised.getRevisedCnt()==0){
+                if(reviseTarget.isRevise_progress() && reviseNewItem==null){
                     reviseNewItemTodoResponses.add(
                             new TodoResponse(
                                     reviseTarget.getId(),
                                     reviseTarget.getName(),
                                     reviseTarget.getItemTypes().getItemType().toString(),
-                                    reviseTarget.getItemNumber().toString()
+                                    reviseTarget.getItemNumber(),
+                                    -1L
                             )
                     );
                 }
@@ -712,7 +781,8 @@ public class DashboardService {
                             newItem.getId(),
                             newItem.getName(),
                             newItem.getItemTypes().getItemType().toString(),
-                            newItem.getItemNumber()
+                            newItem.getItemNumber(),
+                            -1L
                     )
             );
         }
@@ -811,7 +881,8 @@ public class DashboardService {
                                 bom.getId(),
                                 targetItem.getName(),
                                 targetItem.getItemTypes().getItemType().toString(),
-                                targetItem.getItemNumber().toString()
+                                targetItem.getItemNumber(),
+                                -1L
                         )
                 );
             }
@@ -869,7 +940,8 @@ public class DashboardService {
                                 d.getBom().getId(),
                                 d.getBom().getNewItem().getName(),
                                 d.getBom().getNewItem().getItemTypes().getItemType().toString(),
-                                d.getBom().getNewItem().getItemNumber()
+                                d.getBom().getNewItem().getItemNumber(),
+                                -1L
                         );
                 TEMP_SAVE.add(projectTodoResponse);
             }
@@ -894,7 +966,8 @@ public class DashboardService {
                                     targetBom.getId(),
                                     targetBom.getNewItem().getName(),
                                     targetBom.getNewItem().getItemTypes().getItemType().toString(),
-                                    targetBom.getNewItem().getItemNumber()
+                                    targetBom.getNewItem().getItemNumber(),
+                                    -1L
                             )
                     );
                 }
@@ -920,7 +993,8 @@ public class DashboardService {
                             targetBom.getId(),
                             targetBom.getNewItem().getName(),
                             targetBom.getNewItem().getItemTypes().getItemType().toString(),
-                            targetBom.getNewItem().getItemNumber()
+                            targetBom.getNewItem().getItemNumber(),
+                            -1L
                     )
             );
         }
@@ -1006,7 +1080,8 @@ public class DashboardService {
                                 d.getId(),
                                 d.getName(),
                                 "CR",
-                                d.getCrNumber()
+                                d.getCrNumber(),
+                                -1L
                         );
                 CR_TEMP_SAVE.add(crTempSaveTodoResponse);
             }
@@ -1057,7 +1132,8 @@ public class DashboardService {
                                 d.getId(),
                                 d.getName(),
                                 "CO",
-                                d.getCoNumber()
+                                d.getCoNumber(),
+                                -1L
                         );
                 CO_TEMP_SAVE.add(coTempSaveTodoResponse);
             }
@@ -1118,7 +1194,8 @@ public class DashboardService {
                                         target.getId(),
                                         target.getName(),
                                         "CR",
-                                        target.getCrNumber()
+                                        target.getCrNumber(),
+                                        -1L
                                 )
                         );
                     }
@@ -1155,7 +1232,8 @@ public class DashboardService {
                                         target.getId(),
                                         target.getName(),
                                         "CO",
-                                        target.getCoNumber()
+                                        target.getCoNumber(),
+                                        -1L
                                 )
                         );
                     }
@@ -1204,7 +1282,8 @@ public class DashboardService {
                             cr.getId(),
                             cr.getName(),
                             "CR",
-                            cr.getCrNumber()
+                            cr.getCrNumber(),
+                            -1L
                     )
             );
         }
@@ -1248,7 +1327,8 @@ public class DashboardService {
                             co.getId(),
                             co.getName(),
                             "CO",
-                            co.getCoNumber()
+                            co.getCoNumber(),
+                            -1L
                     )
             );
         }

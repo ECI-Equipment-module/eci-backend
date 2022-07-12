@@ -1,11 +1,9 @@
 package eci.server.ProjectModule.controller.project;
 
+import eci.server.DesignModule.dto.DesignCreateUpdateResponse;
 import eci.server.ItemModule.dto.response.Response;
 import eci.server.NewItemModule.dto.newItem.update.NewItemUpdateRequest;
-import eci.server.ProjectModule.dto.project.ProjectCreateRequest;
-import eci.server.ProjectModule.dto.project.ProjectReadCondition;
-import eci.server.ProjectModule.dto.project.ProjectTemporaryCreateRequest;
-import eci.server.ProjectModule.dto.project.ProjectUpdateRequest;
+import eci.server.ProjectModule.dto.project.*;
 import eci.server.ProjectModule.service.ProjectService;
 import eci.server.aop.AssignMemberId;
 import eci.server.aop.AssignModifierId;
@@ -105,6 +103,56 @@ public class ProjectController {
                 projectService.tempEnd(id, req)
         );
     }
+
+    ////0712
+
+    /**
+     * revise 로 새로 만들어진 아이템으로 프로젝트 재연결
+     * @param newMadeItemId
+     * @param revisedId
+     * @param req
+     * @return
+     */
+    @CrossOrigin(origins = "https://localhost:3000")
+    @PutMapping("/project/{revisedId}/{newMadeItemId}")
+    @ResponseStatus(HttpStatus.OK)
+    @AssignModifierId //수정자 추가
+    public Response reviseUpdate(
+            @PathVariable Long newMadeItemId,//바꿔치기 할 아이템 아이디
+            @PathVariable Long revisedId, //기존 프로젝트 아이디
+            @Valid @ModelAttribute ProjectUpdateRequest req) {
+
+        ProjectTempCreateUpdateResponse response = projectService.update(revisedId, req);
+        //기존 프로젝트 업데이트
+        projectService.changeProjectItemToNewMadeItem(response.getId(), newMadeItemId);
+        // 기존 프로젝트 아이템 값만 revisedId 라는 새 아이템으로 바꿔치기 해주기
+        return Response.success(
+                response
+        );
+    }
+
+    @CrossOrigin(origins = "https://localhost:3000")
+    @PutMapping("/project/temp/end/{revisedId}/{newMadeItemId}")
+    @ResponseStatus(HttpStatus.CREATED)
+    @AssignModifierId
+    public Response reviseTempEnd(
+            @PathVariable Long newMadeItemId, //바꿔치기 할 아이템 아이디
+            @PathVariable Long revisedId, //기존 프로젝트 아이디
+            @Valid @ModelAttribute
+                    ProjectUpdateRequest req
+    ) {
+
+        DesignCreateUpdateResponse response = projectService.tempEnd(revisedId, req);
+        // 기존 프로젝트 업데이트
+        projectService.changeProjectItemToNewMadeItem(response.getId(), newMadeItemId);
+        // 기존 프로젝트 아이템 값만 revisedId 라는 새 아이템으로 바꿔치기 해주기
+
+        return Response.success(
+                response
+        );
+    }
+
+    ///0712
 
     @CrossOrigin(origins = "https://localhost:3000")
     @DeleteMapping("project/{id}")

@@ -40,9 +40,9 @@ public class RouteOrdering extends EntityDate {
 
     @Id
 
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-  //@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQUENCE1")
-  //@SequenceGenerator(name="SEQUENCE1", sequenceName="SEQUENCE1", allocationSize=1)
+   // @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQUENCE1")
+  @SequenceGenerator(name="SEQUENCE1", sequenceName="SEQUENCE1", allocationSize=1)
 
     private Long id;
 
@@ -324,7 +324,7 @@ public class RouteOrdering extends EntityDate {
 
             // 지금 업데이트되는 라우트 프로덕트의 타입은 무조건 co / create , 아니라면 에러
             if(!(routeProductList.get(this.present).getType().getName().equals("CO")
-                    && routeProductList.get(this.present).getType().getName().equals("REQUEST"))){
+                    && routeProductList.get(this.present).getType().getName().equals("CREATE"))){
                 System.out.println("SOMETHING IS WRRRRRRRRRRRROOOOOOOOONG");
                 throw new RuntimeException();
             }
@@ -332,9 +332,6 @@ public class RouteOrdering extends EntityDate {
         }else{
             //만약 present가 size() 가 됐다면 다 왔다는 거다.
             System.out.println("complete");
-            System.out.println(this.present +" 여기서 하나 빼자이이이이잉");
-            this.present=this.present-1;
-            System.out.println(this.present +" 여기서 하나 빼자이이이이잉");
             this.lifecycleStatus = "COMPLETE";
         }
 

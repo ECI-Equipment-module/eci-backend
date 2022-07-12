@@ -10,6 +10,7 @@ import eci.server.ItemModule.dto.member.MemberDto;
 import eci.server.ItemModule.dto.newRoute.routeOrdering.RouteOrderingDto;
 import eci.server.ItemModule.entity.newRoute.RouteOrdering;
 import eci.server.ItemModule.entity.newRoute.RouteProduct;
+import eci.server.ItemModule.exception.item.ItemNotFoundException;
 import eci.server.ItemModule.repository.newRoute.RouteOrderingRepository;
 import eci.server.ItemModule.repository.newRoute.RouteProductRepository;
 import eci.server.NewItemModule.dto.ItemTypesDto;
@@ -21,6 +22,7 @@ import eci.server.NewItemModule.dto.responsibility.DesignResponsibleDto;
 import eci.server.NewItemModule.dto.supplier.SupplierDto;
 import eci.server.NewItemModule.entity.NewItem;
 import eci.server.NewItemModule.repository.attachment.AttachmentTagRepository;
+import eci.server.NewItemModule.repository.item.NewItemRepository;
 import eci.server.NewItemModule.repository.maker.MakerRepository;
 import eci.server.NewItemModule.repository.maker.NewItemMakerRepository;
 import eci.server.ProjectModule.dto.carType.CarTypeDto;
@@ -113,7 +115,8 @@ public class NewItemDetailDto {
             RouteProductRepository routeProductRepository,
             DesignGuard designGuard,
             AttachmentTagRepository attachmentTagRepository,
-            String defaultImageAddress
+            String defaultImageAddress,
+            NewItemRepository newItemRepository
     ) {
 
         List<DesignResponsibleDto> tmpResponsibleDtoList = new ArrayList<>();
@@ -122,6 +125,8 @@ public class NewItemDetailDto {
         ClassificationDto nullClassification = new ClassificationDto();
         ItemTypesDto nullItemTypesDto = new ItemTypesDto();
         CarTypeDto nullCarTypeDto = new CarTypeDto();
+
+
 
         if(Item.getMakers()!=null) {
             return new NewItemDetailDto(
@@ -191,7 +196,7 @@ public class NewItemDetailDto {
 
 
                     //newItemMakerRepository.findByMaker(Item.getMakers().get(0).getMaker()).get(0).getPartnumber(),
-                    Item.isRevise_progress(),
+                    reviseProgress(newItemRepository, Item),
 
                     Item.getAttachments().
                             stream().
@@ -300,7 +305,7 @@ public class NewItemDetailDto {
                 "",
 
 
-                Item.isRevise_progress(),
+                reviseProgress(newItemRepository, Item),
 
                 Item.getAttachments().
                         stream().
@@ -366,7 +371,8 @@ public class NewItemDetailDto {
             //NewItemMakerRepository newItemMakerRepository,
             RouteProductRepository routeProductRepository,
             AttachmentTagRepository attachmentTagRepository,
-            String defaultImageAddress
+            String defaultImageAddress,
+            NewItemRepository newItemRepository
     ){
         NewItemImageDto nullImage = new NewItemImageDto(defaultImageAddress);
         ClassificationDto nullClassification = new ClassificationDto();
@@ -439,7 +445,7 @@ public class NewItemDetailDto {
 
                     Item.getPartNumber(),
                     //newItemMakerRepository.findByMaker(Item.getMakers().get(0).getMaker()).get(0).getPartnumber(),
-                    Item.isRevise_progress(),
+                    reviseProgress(newItemRepository, Item),
 
                     Item.getAttachments().
                             stream().
@@ -586,6 +592,18 @@ public class NewItemDetailDto {
             }
         }
         return preRejected;
+    }
+
+    private static boolean reviseProgress(NewItemRepository newItemRepository, NewItem targetItem){
+        boolean reviseProgress = false;
+        if(targetItem.getReviseTargetId()!=null&&newItemRepository.findById(
+                        targetItem.getReviseTargetId())
+                .orElseThrow(ItemNotFoundException::new)
+                .isRevise_progress()
+        ){
+            reviseProgress = true;
+        }
+        return  reviseProgress;
     }
 
 }

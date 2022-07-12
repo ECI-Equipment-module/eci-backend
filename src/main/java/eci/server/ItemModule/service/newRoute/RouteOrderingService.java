@@ -140,7 +140,8 @@ public class RouteOrderingService {
 
         NewItem routeMadeItem = newItemRepository.findById(req.getItemId()).orElseThrow(ItemNotFoundException::new);
 
-        if(!routeMadeItem.isRevise_progress()) {
+
+        if(routeMadeItem.getReviseTargetId()==null) { //걍 평범 아이템인 경우
 
             RouteOrdering newRoute = routeOrderingRepository.save(RouteOrderingCreateRequest.toEntity(
                             req,
@@ -244,8 +245,10 @@ public class RouteOrderingService {
             return new RouteOrderingCreateResponse(newRoute.getId());
         }
         else{ //revise_progress 로 라우트 만드는 것이라면
+            //만드는 아이템에 revise target id가 등록돼있으면 걔는 revise new item
 
-            RouteOrdering newRoute = routeOrderingRepository.save(RouteOrderingCreateRequest.toRevisedRouteOrderingEntity(
+            RouteOrdering newRoute = routeOrderingRepository.save(RouteOrderingCreateRequest
+                    .toRevisedRouteOrderingEntity( //
                             req,
                             newItemRepository,
                             routePreset,
@@ -390,6 +393,7 @@ public class RouteOrderingService {
 
     @Transactional
     public RouteOrderingCreateResponse createCoRoute(RouteOrderingCreateRequest req) {
+
         RouteOrdering newRoute = routeOrderingRepository.save(RouteOrderingCreateRequest.toCoEntity(
                         req,
                         routePreset,
@@ -510,8 +514,10 @@ public class RouteOrderingService {
             routeOrdering.updateToComplete();
 
             // 라우트 오더링의 revised cnt 가 0보다 컸다면,
-            // revise 당한 아이템의 라우트 오더링이므로 무조건 아이템 존재할 수 밖에 없음
+            // revise 당한 아이템의 새로 만들어진 아가의 라우트 오더링이므로
+            // 무조건 아이템 존재할 수 밖에 없음
             if(routeOrdering.getRevisedCnt()>0){
+                //지금 승인된 라우트가 revise 로 인해 새로 생긴 아이템이라면
                 routeOrdering.setRevisedCnt(0);
                 //0710 revise 로 생긴 route ordering 이었다면 다시 0으로 복구;
 
@@ -520,9 +526,12 @@ public class RouteOrderingService {
                     throw new ItemNotFoundException();//에러 던지기
                 }
 
-                if (routeOrdering.getNewItem().isRevise_progress()) {
+                NewItem targetRevisedItem = newItemRepository.
+                        findById(routeOrdering.getNewItem().getReviseTargetId()).orElseThrow(ItemNotFoundException::new);
+
+                if (targetRevisedItem.isRevise_progress()) {
                     routeOrdering.getNewItem().setRevise_progress(false);
-                    //0710 revise progress 가 진행 중이라면 라우트 complete 될 때 false 로 갱신
+                    //0712 아기의 target route 가 revise progress 가 진행 중이라면 라우트 complete 될 때 false 로 갱신
                 }
 
                 if(coNewItemRepository.findByNewItemOrderByCreatedAtAsc(routeOrdering.getNewItem()).size()>0) {
@@ -724,7 +733,7 @@ public class RouteOrderingService {
                     }
                     targetRoutProduct.setChangeRequest(routeOrdering.getChangeRequest());
 
-                    //이 라우트를 제작해줄 때야 비로소 emp save = false 가 되는 것
+                    //이 라우트를 제작해줄 때야 비로소 temp save = false 가 되는 것
                     routeOrdering.getChangeRequest().updateTempsaveWhenMadeRoute();
 
                 }
@@ -744,7 +753,7 @@ public class RouteOrderingService {
                     }
                     targetRoutProduct.setChangeOrder(routeOrdering.getChangeOrder());
 
-                    //이 라우트를 제작해줄 때야 비로소 emp save = false 가 되는 것
+                    //이 라우트를 제작해줄 때야 비로소 temp save = false 가 되는 것
                     routeOrdering.getChangeOrder().updateTempsaveWhenMadeRoute();
 
                 }
@@ -766,8 +775,7 @@ public class RouteOrderingService {
                                     m->m.getNewItem()
                             ).collect(Collectors.toList());
 
-                    newItemService.ReviseItem(affectedItems, changeOrder.getModifier());
-
+                    newItemService.ReviseItem(affectedItems);
 
                 }
 
@@ -803,11 +811,22 @@ public class RouteOrderingService {
                 // (1) 아이템이 revise progress 이며
                 // (2) 지금 승인하는게 ITEM REVIEW 면 revision+=1
                 NewItem chkItem = targetRoutProduct.getRouteOrdering().getNewItem();
-                if (chkItem.isRevise_progress()) {
-                    if (!(chkItem.getItemTypes().getItemType().name().equals("파트제품") ||
+                if (chkItem.getReviseTargetId()!=null) {
+                    //저게 null 이 아니라면 targetId의 아이템 revision보다 +1값으로
+                    // 기존 : chkItem.isRevise_progress())
+
+                    if (!
+                            (chkItem.getItemTypes().getItemType().name().equals("파트제품") ||
                             chkItem.getItemTypes().getItemType().name().equals("프로덕트제품"))
-                    ) {
-                        chkItem.updateRevision(); //revision+=1
+                    ) {// 파트 제품과 프로덕트 제품 아닌 경우에는 item review를 진행할 때 revision update !
+                        // 제품은 create 할 때
+
+                        NewItem targetItem = newItemRepository.findById(chkItem.getReviseTargetId()).orElseThrow(
+                                ItemNotFoundException::new
+                        );
+
+                        chkItem.updateRevision(targetItem.getRevision());
+                        //targetItem.getRevision() 보다 하나 더 큰 값으로 갱신
                     }
 
 
