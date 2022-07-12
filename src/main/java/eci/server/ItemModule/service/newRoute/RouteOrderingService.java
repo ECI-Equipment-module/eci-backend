@@ -509,9 +509,11 @@ public class RouteOrderingService {
             throw new UpdateImpossibleException();
         }
 
-        if (presentRouteProductCandidate.size()== routeOrdering.getPresent()-1) {
+        if (presentRouteProductCandidate.size()== routeOrdering.getPresent()) {
             //만약 present 가 끝까지 닿았으면 현재 complete 된 상황!
             routeOrdering.updateToComplete();
+
+            presentRouteProductCandidate.get(routeOrdering.getPresent()-1).setComment(req.getComment());
 
             // 라우트 오더링의 revised cnt 가 0보다 컸다면,
             // revise 당한 아이템의 새로 만들어진 아가의 라우트 오더링이므로
