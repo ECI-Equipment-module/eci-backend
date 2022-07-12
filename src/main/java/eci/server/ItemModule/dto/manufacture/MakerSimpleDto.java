@@ -21,10 +21,7 @@ public class MakerSimpleDto {
     private String name;
 
     public static MakerSimpleDto toDto() {
-        return new MakerSimpleDto(
-                -1L,
-                "-1",
-                "NONE");
+        return new MakerSimpleDto();
     }
 
 
