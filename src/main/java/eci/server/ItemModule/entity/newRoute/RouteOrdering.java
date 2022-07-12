@@ -288,6 +288,7 @@ public class RouteOrdering extends EntityDate {
 
             if(routeProductList.get(this.present).getRouteOrdering().getRevisedCnt()>0){
                 //지금 승인된 라우트가 revise 로 인해 새로 생긴 아이템이라면
+                System.out.println("여기 들어와찌ㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣ");
                 routeOrdering.setRevisedCnt(0);
                 //0710 revise 로 생긴 route ordering 이었다면 다시 0으로 복구;
 
@@ -304,7 +305,7 @@ public class RouteOrdering extends EntityDate {
                     //0712 아기의 target route 가 revise progress 가 진행 중이라면 라우트 complete 될 때 false 로 갱신
                 }
 
-                if(coNewItemRepository.findByNewItemOrderByCreatedAtAsc(routeOrdering.getNewItem()).size()>0) {
+                if(coNewItemRepository.findByNewItemOrderByCreatedAtAsc(targetRevisedItem).size()>0) {
                     // (1) 지금 revise 완료 된 아이템의 CO 를 검사하기 위해 check co 찾기
                     System.out.println("(1) 지금 revise 완료 된 아이템의 CO 를 검사하기 위해 check co 찾기");
                     ChangeOrder checkCo =
