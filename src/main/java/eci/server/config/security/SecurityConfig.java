@@ -125,8 +125,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 
                 .antMatchers(HttpMethod.PUT, "/project/temp/end/{id}").access("@projectGuard.check(#id)")
-                .antMatchers(HttpMethod.PUT, "/project/{revisedId}/{newMadeItemId}").access("@projectGuard.check(#id)")
-                .antMatchers(HttpMethod.PUT, "/project/temp/end/{revisedId}/{newMadeItemId}").access("@projectGuard.check(#id)")
+                .antMatchers(HttpMethod.PUT, "/project/{revisedId}/{newMadeItemId}").access("@projectGuard.check(#revisedId)")
+                .antMatchers(HttpMethod.PUT, "/project/temp/end/{revisedId}/{newMadeItemId}").access("@projectGuard.check(#revisedId)")
 
 
                 .antMatchers(HttpMethod.PUT, "/design/temp/end/{id}").access("@designGuard.check(#id)")
