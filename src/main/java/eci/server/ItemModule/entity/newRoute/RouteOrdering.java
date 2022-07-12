@@ -13,7 +13,6 @@ import eci.server.ItemModule.exception.route.RejectImpossibleException;
 import eci.server.ItemModule.exception.route.UpdateImpossibleException;
 import eci.server.ItemModule.repository.newRoute.RouteOrderingRepository;
 import eci.server.ItemModule.repository.newRoute.RouteProductRepository;
-import eci.server.NewItemModule.dto.newItem.NewItemReadCondition;
 import eci.server.NewItemModule.entity.NewItem;
 import eci.server.NewItemModule.repository.item.NewItemRepository;
 import eci.server.NewItemModule.service.item.NewItemService;
@@ -47,9 +46,9 @@ public class RouteOrdering extends EntityDate {
 
     @Id
 
-     @GeneratedValue(strategy = GenerationType.IDENTITY)
-  //@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQUENCE1")
-  //@SequenceGenerator(name="SEQUENCE1", sequenceName="SEQUENCE1", allocationSize=1)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    //@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQUENCE1")
+    //@SequenceGenerator(name="SEQUENCE1", sequenceName="SEQUENCE1", allocationSize=1)
 
     private Long id;
 
@@ -246,14 +245,13 @@ public class RouteOrdering extends EntityDate {
         //내 앞에 완료됐던 애는 pass로 바꿔주기
         routeProductList.get(this.present-1).setPassed(true);
 
-
         if(this.present<routeProductList.size()-1) {//05-24 <= => < 로 수정
             //지금 들어온 코멘트는 현재 애 다음에
             routeProductList.get(this.present).setComment(req.getComment());
 
             // 지금 업데이트되는 라우트 프로덕트의 타입이 create 라면
             if(routeProductList.get(this.present).getType().getName().equals("CREATE")
-            || routeProductList.get(this.present).getType().getName().equals("REQUEST")){
+                    || routeProductList.get(this.present).getType().getName().equals("REQUEST")){
                 // 모듈이 아이템
                 if(routeProductList.get(this.present).getType().getModule().equals("ITEM")){
                     this.getNewItem().setTempsave(false); //06-18 라우트 만든 순간 임시저장 다시 거짓으로
@@ -273,7 +271,7 @@ public class RouteOrdering extends EntityDate {
                     this.getChangeRequest().setTempsave(false); //라우트 만든 순간 임시저장 다시 거짓으로
                 }
                 else if(routeProductList.get(this.present).getType().getModule().equals("CO")
-                && routeProductList.get(this.present).getType().getName().equals("REQUEST")){
+                        && routeProductList.get(this.present).getType().getName().equals("REQUEST")){
                     //얘는 create인 상태에선 ㄴㄴ 오로지 request 상태만 tempsave 여기서 false 돼야함
                     this.getChangeOrder().setTempsave(false); //라우트 만든 순간 임시저장 다시 거짓으로
                 }
@@ -282,7 +280,7 @@ public class RouteOrdering extends EntityDate {
         }else{
             routeProductList.get(this.present).setComment(req.getComment());
             //만약 present가 size() 가 됐다면 다 왔다는 거다.
-            System.out.println("complete");
+            System.out.println("completeeeeeeeeee item route complete!!!! ");
             this.lifecycleStatus = "COMPLETE";
 
             RouteOrdering routeOrdering = routeProductList.get(this.present).getRouteOrdering();
@@ -307,6 +305,7 @@ public class RouteOrdering extends EntityDate {
 
                 if(coNewItemRepository.findByNewItemOrderByCreatedAtAsc(routeOrdering.getNewItem()).size()>0) {
                     // (1) 지금 revise 완료 된 아이템의 CO 를 검사하기 위해 check co 찾기
+                    System.out.println("(1) 지금 revise 완료 된 아이템의 CO 를 검사하기 위해 check co 찾기");
                     ChangeOrder checkCo =
                             coNewItemRepository.findByNewItemOrderByCreatedAtAsc(routeOrdering.getNewItem()).get(
                                             coNewItemRepository.findByNewItemOrderByCreatedAtAsc(routeOrdering.getNewItem()).size()-1
@@ -314,18 +313,21 @@ public class RouteOrdering extends EntityDate {
                                     .getChangeOrder();
 
                     // (2) check co 의 affected item 리스트
+                    System.out.println("(2) check co 의 affected item 리스트");
                     List<CoNewItem> coNewItemsOfChkCo = checkCo.getCoNewItems();
                     List<NewItem> affectedItemOfChkCo = coNewItemsOfChkCo.stream().map(
                             i->i.getNewItem()
                     ).collect(Collectors.toList());
 
                     // (3) checkCo의 routeOrdering 찾아오기
+                    System.out.println("(3) checkCo의 routeOrdering 찾아오기");
                     RouteOrdering routeOrderingOfChkCo =
                             routeOrderingRepository.findByChangeOrder(checkCo).get(
                                     routeOrderingRepository.findByChangeOrder(checkCo).size()-1
                             );
 
                     // (4) affected item 이 모두 revise 완료된다면 update route
+                    System.out.println("(4) affected item 이 모두 revise 완료된다면 update route");
                     if(newItemService.checkReviseCompleted(affectedItemOfChkCo)){
                         routeOrderingOfChkCo.CoUpdate(routeProductRepository);
                     }
@@ -401,7 +403,7 @@ public class RouteOrdering extends EntityDate {
 
         }else{
             //만약 present가 size() 가 됐다면 다 왔다는 거다.
-            System.out.println("complete");
+            System.out.println("cooooooooooooooo complete");
             this.lifecycleStatus = "COMPLETE";
         }
 
@@ -509,7 +511,7 @@ public class RouteOrdering extends EntityDate {
             case "15":
                 this.getChangeRequest().setTempsave(true);
                 this.getChangeRequest().setReadonly(false);
-            // 18 (CO REQUEST)
+                // 18 (CO REQUEST)
             case "18":
                 this.getChangeOrder().setTempsave(true);
                 this.getChangeOrder().setReadonly(false);
