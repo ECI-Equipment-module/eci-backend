@@ -269,6 +269,7 @@ public class RouteOrdering extends EntityDate {
             }
 
         }else{
+            routeProductList.get(this.present).setComment(req.getComment());
             //만약 present가 size() 가 됐다면 다 왔다는 거다.
             System.out.println("complete");
             this.lifecycleStatus = "COMPLETE";

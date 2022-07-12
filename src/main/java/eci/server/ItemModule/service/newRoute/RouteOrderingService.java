@@ -918,10 +918,10 @@ public class RouteOrderingService {
                     break;
 
                 case "16":            // CR신청 APPROVE
-
                 case "17":            // CR REVIEW
-                    rejectPossibleTypeId = 15L; //CR REQUEST
-
+                    rejectPossibleTypeId = 15L;
+                    break;
+                //CR REQUEST
                 case "19": //CO 신청 승인 APPROVE
                     rejectPossibleTypeId = 18L; //CO 신청
 
