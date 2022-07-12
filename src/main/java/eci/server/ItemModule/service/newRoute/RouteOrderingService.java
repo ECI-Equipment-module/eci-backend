@@ -359,7 +359,7 @@ public class RouteOrderingService {
     public RouteOrderingCreateResponse createCrRoute(RouteOrderingCreateRequest req) {
         RouteOrdering newRoute = routeOrderingRepository.save(RouteOrderingCreateRequest.toCrEntity(
                         req,
-                routePreset,
+                        routePreset,
                         changeRequestRepository,
                         routeTypeRepository
                 )
@@ -500,7 +500,7 @@ public class RouteOrderingService {
                 .orElseThrow(RouteNotFoundException::new);
 
 
-         List<RouteProduct> presentRouteProductCandidate = routeProductRepository
+        List<RouteProduct> presentRouteProductCandidate = routeProductRepository
                 .findAllByRouteOrdering(routeOrdering);
 
         //현재 진행중인 라우트프로덕트
@@ -540,8 +540,8 @@ public class RouteOrderingService {
                     // (1) 지금 revise 완료 된 아이템의 CO 를 검사하기 위해 check co 찾기
                     ChangeOrder checkCo =
                             coNewItemRepository.findByNewItemOrderByCreatedAtAsc(routeOrdering.getNewItem()).get(
-                                    coNewItemRepository.findByNewItemOrderByCreatedAtAsc(routeOrdering.getNewItem()).size()-1
-                            )//가장 최근에 맺어진 co-new item 관계 중 가장 최신 아이의 co를 검사하기
+                                            coNewItemRepository.findByNewItemOrderByCreatedAtAsc(routeOrdering.getNewItem()).size()-1
+                                    )//가장 최근에 맺어진 co-new item 관계 중 가장 최신 아이의 co를 검사하기
                                     .getChangeOrder();
 
                     // (2) check co 의 affected item 리스트
@@ -563,7 +563,7 @@ public class RouteOrderingService {
 
                 }
 
-            //throw new UpdateImpossibleException();
+                //throw new UpdateImpossibleException();
                 // 0710 : 이 아이템과 엮인 아이들 (CHILDREN , PARENT )들의 REVISION +=1 진행 !
                 // 대상 아이템들은 이미 각각 아이템 리뷰 / 프로젝트 링크할 때 REVISION+1 당함
                 newItemService.revisionUpdateAllChildrenAndParentItem(routeOrdering.getNewItem());
@@ -819,7 +819,7 @@ public class RouteOrderingService {
 
                     if (!
                             (chkItem.getItemTypes().getItemType().name().equals("파트제품") ||
-                            chkItem.getItemTypes().getItemType().name().equals("프로덕트제품"))
+                                    chkItem.getItemTypes().getItemType().name().equals("프로덕트제품"))
                     ) {// 파트 제품과 프로덕트 제품 아닌 경우에는 item review를 진행할 때 revision update !
                         // 제품은 create 할 때
 
@@ -918,10 +918,10 @@ public class RouteOrderingService {
                     break;
 
                 case "16":            // CR신청 APPROVE
-
                 case "17":            // CR REVIEW
-                    rejectPossibleTypeId = 15L; //CR REQUEST
-
+                    rejectPossibleTypeId = 15L;
+                    break;
+                //CR REQUEST
                 case "19": //CO 신청 승인 APPROVE
                     rejectPossibleTypeId = 18L; //CO 신청
 
