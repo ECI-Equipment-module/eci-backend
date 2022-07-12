@@ -14,11 +14,11 @@ import javax.validation.Valid;
 @RestController
 @RequiredArgsConstructor
 @Slf4j
-@CrossOrigin(origins = "https://localhost:3000")
+@CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
 public class DevelopmentBomController {
 
     private final DevelopmentBomService bomService;
-    @CrossOrigin(origins = "https://localhost:3000")
+    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
     @GetMapping("/development/{id}")
     @ResponseStatus(HttpStatus.OK)
     public Response getDevelopment(@PathVariable Long id) {
@@ -27,7 +27,7 @@ public class DevelopmentBomController {
         );
     }
 
-    @CrossOrigin(origins = "https://localhost:3000")
+    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
     @PostMapping("/development/temp")
     @ResponseStatus(HttpStatus.CREATED)
     @AssignMemberId
@@ -44,7 +44,7 @@ public class DevelopmentBomController {
      * @param req
      * @return
      */
-    @CrossOrigin(origins = "https://localhost:3000")
+    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
     @PostMapping("/development")
     @ResponseStatus(HttpStatus.CREATED)
     @AssignMemberId

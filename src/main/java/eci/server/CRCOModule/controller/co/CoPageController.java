@@ -36,7 +36,7 @@ public class CoPageController{
     @Value("${default.image.address}")
     private String defaultImageAddress;
 
-    @CrossOrigin(origins = "https://localhost:3000")
+    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
     @GetMapping("/co/page")
     public Page<CrPagingDto> readCrPages(@PageableDefault(size=5)
                                          @SortDefault.SortDefaults({
