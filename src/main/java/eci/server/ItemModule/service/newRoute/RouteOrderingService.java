@@ -830,7 +830,7 @@ public class RouteOrderingService {
                                 ItemNotFoundException::new
                         );
 
-                        chkItem.updateRevision(targetItem.getRevision());
+                        chkItem.updateRevision(targetItem.getRevision()+1);
                         //targetItem.getRevision() 보다 하나 더 큰 값으로 갱신
                     }
 
