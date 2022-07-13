@@ -249,9 +249,10 @@ public class DashboardService {
         HashSet<TodoResponse> unlinkedItemTodoResponses = new HashSet<>();
 
         for (RouteProduct routeProduct : myRouteProductList) {
+            NewItem targetItem = routeProduct.getRouteOrdering().getNewItem();
             if (routeProduct.getRouteOrdering().getProject()==null) {
 
-                NewItem targetItem = routeProduct.getRouteOrdering().getNewItem();
+
 
                 //0712
                 // 0712 - revise target id 가 null 이라면 걍 새 아이템
@@ -312,6 +313,17 @@ public class DashboardService {
                 }
                 //0712
 
+            }
+            else{
+                unlinkedItemTodoResponses.add(
+                        new TodoResponse(
+                                targetItem.getId(),
+                                targetItem.getName(),
+                                targetItem.getItemTypes().getItemType().toString(),
+                                targetItem.getItemNumber(),
+                                -1L
+                        )
+                );
             }
         }
 
