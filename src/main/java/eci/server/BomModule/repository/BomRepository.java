@@ -12,7 +12,7 @@ import java.util.List;
 
 public interface BomRepository extends JpaRepository<Bom, Long>, CustomDesignRepository {
 
-    List<Bom> findByNewItem(NewItem item);
+    List<Bom> findByNewItemOrderByIdAsc(NewItem item);
 
     List<Bom> findByMember(Member member);
 

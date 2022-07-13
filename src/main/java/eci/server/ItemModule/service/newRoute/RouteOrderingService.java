@@ -692,13 +692,13 @@ public class RouteOrderingService {
                     && targetRoutProduct.getType().getName().equals("CREATE")) {
 
                 //아이템에 링크된 봄 아이디 건네주기
-                if (bomRepository.findByNewItem(routeOrdering.getNewItem()).size() == 0) {
+                if (bomRepository.findByNewItemOrderByIdAsc(routeOrdering.getNewItem()).size() == 0) {
                     throw new BomNotFoundException();
                 } else {
                     Bom bom =
-                            bomRepository.findByNewItem(routeOrdering.getNewItem())
+                            bomRepository.findByNewItemOrderByIdAsc(routeOrdering.getNewItem())
                                     .get(
-                                            bomRepository.findByNewItem(routeOrdering.getNewItem()).size() - 1
+                                            bomRepository.findByNewItemOrderByIdAsc(routeOrdering.getNewItem()).size() - 1
                                     );
 
                     //만약 지금 rejected 가 true였다면 , 이제 새로 다시 넣어주는 것이니깐 rejected풀어주기
@@ -722,13 +722,13 @@ public class RouteOrderingService {
                     && targetRoutProduct.getType().getName().equals("REVIEW")) {
 
                 //아이템에 링크된 봄 아이디 건네주기
-                if (bomRepository.findByNewItem(routeOrdering.getNewItem()).size() == 0) {
+                if (bomRepository.findByNewItemOrderByIdAsc(routeOrdering.getNewItem()).size() == 0) {
                     throw new BomNotFoundException();
                 } else {
                     Bom bom =
-                            bomRepository.findByNewItem(routeOrdering.getNewItem())
+                            bomRepository.findByNewItemOrderByIdAsc(routeOrdering.getNewItem())
                                     .get(
-                                            bomRepository.findByNewItem(routeOrdering.getNewItem()).size() - 1
+                                            bomRepository.findByNewItemOrderByIdAsc(routeOrdering.getNewItem()).size() - 1
                                     );
 
                     // 디자인 리뷰 승인 나면 아이템 정보 관계 맺어주기

@@ -342,7 +342,7 @@ public class DashboardService {
 
     /**
      * DESIGN TODO
-     *
+     *fi
      * @return
      */
     public ToDoDoubleList readDesignTodo() {
@@ -894,13 +894,13 @@ public class DashboardService {
 
                     !developmentBomRepository
                             .findByBom(
-                                    bomRepository.findByNewItem(routeProduct.getRouteOrdering().getNewItem()).get(
-                                            bomRepository.findByNewItem(routeProduct.getRouteOrdering().getNewItem()).size() - 1
+                                    bomRepository.findByNewItemOrderByIdAsc(routeProduct.getRouteOrdering().getNewItem()).get(
+                                            bomRepository.findByNewItemOrderByIdAsc(routeProduct.getRouteOrdering().getNewItem()).size() - 1
                                     )
                             ).getEdited()) {
 
-                Bom bom = bomRepository.findByNewItem(routeProduct.getRouteOrdering().getNewItem()).get(
-                        bomRepository.findByNewItem(routeProduct.getRouteOrdering().getNewItem()).size() - 1
+                Bom bom = bomRepository.findByNewItemOrderByIdAsc(routeProduct.getRouteOrdering().getNewItem()).get(
+                        bomRepository.findByNewItemOrderByIdAsc(routeProduct.getRouteOrdering().getNewItem()).size() - 1
                 );
 
                 NewItem targetItem = routeProduct.getRouteOrdering().getNewItem();
