@@ -222,8 +222,8 @@ public class NewItemDetailDto {
 
                     ItemPreRejected(routeOrdering,routeProductRepository),
 
-                    bomRepository.findByNewItem(Item).size()>0?
-                            bomRepository.findByNewItem(Item).get(0).getId()
+                    bomRepository.findByNewItemOrderByIdAsc(Item).size()>0?
+                            bomRepository.findByNewItemOrderByIdAsc(Item).get(0).getId()
                             :-1L,
 
                     designRepository.findByNewItemOrderByIdAsc(Item).size()>0?
@@ -333,14 +333,14 @@ public class NewItemDetailDto {
 
 //                BomDesignItemDto.toBomDto(
 //                        Item,
-//                        bomRepository.findByNewItem(Item).get(
+//                        bomRepository.findByNewItemOrderByIdAsc(Item).get(
 //                                designRepository.findByNewItemOrderByIdAsc(Item).size()-1
 //                        ),
 //                        bomGuard
 //                ),
 
-                bomRepository.findByNewItem(Item).size()>0?
-                        bomRepository.findByNewItem(Item).get(0).getId()
+                bomRepository.findByNewItemOrderByIdAsc(Item).size()>0?
+                        bomRepository.findByNewItemOrderByIdAsc(Item).get(0).getId()
                         :-1L,
 
                 designRepository.findByNewItemOrderByIdAsc(Item).size()>0?

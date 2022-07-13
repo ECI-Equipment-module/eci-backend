@@ -83,9 +83,9 @@ public class DevelopmentBomService {
 
 
 
-            if (bomRepository.findByNewItem(targetNewItem).size() > 0) {
-                Bom oldBom = bomRepository.findByNewItem(targetNewItem).get
-                        (bomRepository.findByNewItem(targetNewItem).size() - 1);
+            if (bomRepository.findByNewItemOrderByIdAsc(targetNewItem).size() > 0) {
+                Bom oldBom = bomRepository.findByNewItemOrderByIdAsc(targetNewItem).get
+                        (bomRepository.findByNewItemOrderByIdAsc(targetNewItem).size() - 1);
 
                 reviseId = oldBom.getId();
             }

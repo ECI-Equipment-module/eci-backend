@@ -59,8 +59,8 @@ public class TempNewItemParentChildService {
                 Long newId = Long.parseLong((parentNewItem.getId().toString()+
                         children.getId().toString()));
 
-                Bom bom = bomRepository.findByNewItem(parentNewItem).get(
-                        bomRepository.findByNewItem(parentNewItem).size()-1
+                Bom bom = bomRepository.findByNewItemOrderByIdAsc(parentNewItem).get(
+                        bomRepository.findByNewItemOrderByIdAsc(parentNewItem).size()-1
                 );
 
                 DevelopmentBom developmentBom = developmentBomRepository.findByBom(bom);

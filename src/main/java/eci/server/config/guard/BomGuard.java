@@ -262,10 +262,10 @@ public class BomGuard {
     }
 
     public Long editBomId(Long itemId){
-        return bomRepository.findByNewItem(
+        return bomRepository.findByNewItemOrderByIdAsc(
                 newItemRepository.findById(itemId).orElseThrow(ItemNotFoundException::new)
         ).get(
-                bomRepository.findByNewItem(
+                bomRepository.findByNewItemOrderByIdAsc(
                         newItemRepository.findById(itemId).orElseThrow(ItemNotFoundException::new)
                 ).size()-1
         ).getId();
