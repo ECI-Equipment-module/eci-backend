@@ -81,10 +81,11 @@ public class NewItemDetailDto {
 
     private List<NewItemAttachmentDto> attachments;
     //아래는 읽기 전용 속성
-    private char revision;
+    private char itemRevision;
     private String status;
 
     private Long routeId;
+
 
 
     //05-22 추가
