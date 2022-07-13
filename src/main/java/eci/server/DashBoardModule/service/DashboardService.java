@@ -237,7 +237,7 @@ public class DashboardService {
                     //routeProduct.getRoute_name().equals("프로젝트와 Item(제품) Link(설계자)")
                 ) {
 
-
+                    System.out.println("project create route product id ::::" + routeProduct.getId());
                     myRouteProductList.add(routeProduct);
                     break;
                 }
