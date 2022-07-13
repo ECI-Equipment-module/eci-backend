@@ -197,7 +197,8 @@ public class NewItemDetailDto {
 
 
                     //newItemMakerRepository.findByMaker(Item.getMakers().get(0).getMaker()).get(0).getPartnumber(),
-                    reviseProgress(newItemRepository, Item),
+                    //reviseProgress(newItemRepository, Item),
+                    Item.isRevise_progress(),
 
                     Item.getAttachments().
                             stream().
@@ -305,8 +306,8 @@ public class NewItemDetailDto {
                 MakerSimpleDto.toDto(Item.getMakers()),
                 "",
 
-
-                reviseProgress(newItemRepository, Item),
+                Item.isRevise_progress(),
+                //reviseProgress(newItemRepository, Item),
 
                 Item.getAttachments().
                         stream().
@@ -446,8 +447,8 @@ public class NewItemDetailDto {
 
                     Item.getPartNumber(),
                     //newItemMakerRepository.findByMaker(Item.getMakers().get(0).getMaker()).get(0).getPartnumber(),
-                    reviseProgress(newItemRepository, Item),
-
+                    //reviseProgress(newItemRepository, Item),
+                    Item.isRevise_progress(),
                     Item.getAttachments().
                             stream().
                             map( i->
@@ -541,6 +542,7 @@ public class NewItemDetailDto {
                         MakerSimpleDto.toDto(Item.getMakers()),
 
                 "no partnum",
+                //Item.isRevise_progress(),
                 Item.isRevise_progress(),
 
                 Item.getAttachments().
@@ -595,16 +597,16 @@ public class NewItemDetailDto {
         return preRejected;
     }
 
-    private static boolean reviseProgress(NewItemRepository newItemRepository, NewItem targetItem){
-        boolean reviseProgress = false;
-        if(targetItem.getReviseTargetId()!=null&&newItemRepository.findById(
-                        targetItem.getReviseTargetId())
-                .orElseThrow(ItemNotFoundException::new)
-                .isRevise_progress()
-        ){
-            reviseProgress = true;
-        }
-        return  reviseProgress;
-    }
+//    private static boolean reviseProgress(NewItemRepository newItemRepository, NewItem targetItem){
+//        boolean reviseProgress = false;
+//        if(targetItem.getReviseTargetId()!=null&&newItemRepository.findById(
+//                        targetItem.getReviseTargetId())
+//                .orElseThrow(ItemNotFoundException::new)
+//                .isRevise_progress()
+//        ){
+//            reviseProgress = true;
+//        }
+//        return  reviseProgress;
+//    }
 
 }
