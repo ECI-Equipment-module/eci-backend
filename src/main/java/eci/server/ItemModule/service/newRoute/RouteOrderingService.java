@@ -596,9 +596,9 @@ public class RouteOrderingService {
                     && targetRoutProduct.getType().getName().equals("CREATE")) {
 
                 //아이템에 링크된 맨 마지막 (최신) 프로젝트 데려오기
-                if (projectRepository.findByNewItem(routeOrdering.getNewItem()).size() == 0) {
-                    throw new ProjectNotLinkedException();
-                } else {
+//                if (projectRepository.findByNewItem(routeOrdering.getNewItem()).size() == 0) {
+//                    throw new ProjectNotLinkedException();
+//                } else {
                     Project linkedProject =
                             projectRepository.findByNewItem(routeOrdering.getNewItem())
                                     .get(
@@ -609,7 +609,7 @@ public class RouteOrderingService {
                     targetRoutProduct.getRouteOrdering().setProject(linkedProject);
                     //05-12 추가사항 : 이 라우트를 제작해줄 때야 비로소 프로젝트는 temp save = false 가 되는 것
                     linkedProject.finalSaveProject();
-                }
+                //}
             }
 
             /////////////////////////////////////////////////////////////////////////////////
