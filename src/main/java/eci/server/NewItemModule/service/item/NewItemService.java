@@ -893,7 +893,9 @@ public class NewItemService {
      * @param newItems // affected item List
      */
     public void ReviseItem(List<NewItem> newItems){
+        System.out.println("item 은 revise_progress=true 돼야 합니다. ");
         for(NewItem newItem : newItems){
+            System.out.println(newItem.getId() + "아이템은 revise 돼야 하므로 ~~~ ");
             newItem.setRevise_progress(true);
             // revise 진행 중 알리기
             //newItem.setModifier(changeOrderRequestPerson);
