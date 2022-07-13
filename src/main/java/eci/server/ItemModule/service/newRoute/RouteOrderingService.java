@@ -444,7 +444,8 @@ public class RouteOrderingService {
                 rejectComment,
                 rejectedSequence,
                 routeOrderingRepository,
-                routeProductRepository
+                routeProductRepository,
+                developmentBomRepository
 
         );
 
@@ -702,6 +703,7 @@ public class RouteOrderingService {
                             developmentBomRepository.findByBom(bom);
 
                     developmentBom.updateTempSaveFalse();
+                    developmentBom.updateReadonlyTrue();
                 }
             }
 
