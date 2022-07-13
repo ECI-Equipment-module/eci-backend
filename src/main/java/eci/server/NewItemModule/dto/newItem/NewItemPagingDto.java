@@ -24,6 +24,7 @@ public class NewItemPagingDto {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime createdAt;
 
+    private char itemRevision;
 
     public static NewItemPagingDto toDto(
             NewItem newItem) {
@@ -49,7 +50,9 @@ public class NewItemPagingDto {
 
                 newItem.isSharing(),
 
-                newItem.getCreatedAt()
+                newItem.getCreatedAt(),
+
+                (char)newItem.getRevision()
         );
 
     }
