@@ -18,7 +18,7 @@ public class ItemProjectDto {
     private String name;
     private String type;
     private String itemNumber;
-    private char revision;
+    private char itemRevision;
 
     private ItemClassificationDto classification;
     private String status;

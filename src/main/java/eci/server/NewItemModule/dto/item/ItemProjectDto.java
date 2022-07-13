@@ -13,7 +13,7 @@ public class ItemProjectDto {
     private String name;
     private String type;
     private String itemNumber;
-    private int revision;
+    private char itemRevision;
 
 
     public static ItemProjectDto toDto(NewItem Item) {
@@ -24,7 +24,7 @@ public class ItemProjectDto {
                 Item.getName(),
                 Item.getItemTypes().getItemType().toString(),
                 Item.getItemNumber(),
-                Item.getRevision()
+                (char)Item.getRevision()
 
         );
     }

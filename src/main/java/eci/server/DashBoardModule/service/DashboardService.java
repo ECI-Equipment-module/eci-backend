@@ -255,7 +255,8 @@ public class DashboardService {
 
                 //0712
                 // 0712 - revise target id 가 null 이라면 걍 새 아이템
-                if(targetItem.getReviseTargetId()!=null
+                if(
+                        targetItem.getReviseTargetId()!=null
                         &&
                         newItemRepository.
                                 findById(targetItem.getReviseTargetId()).orElseThrow(ItemNotFoundException::new)
