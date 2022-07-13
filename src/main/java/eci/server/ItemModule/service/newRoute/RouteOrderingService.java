@@ -214,6 +214,7 @@ public class RouteOrderingService {
                         "\"cardType\": \"" + newItem.getItemTypes().getItemType().name() + "\"," +
                         "\"sharing\": \"" + (newItem.isSharing() ? "공용" : "전용") + "\"," +
                         "\"preliminaryBomId\": " + preliminaryBom.getId() + "," +
+                        "\"plusPossible\": " + true + "," +
                         "\"children\": []" +
                         "}";
 
