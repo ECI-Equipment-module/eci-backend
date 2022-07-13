@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface DesignRepository extends JpaRepository<Design, Long> ,CustomDesignRepository{
 
-    List<Design> findByNewItem(NewItem item);
+    List<Design> findByNewItemOrderByIdAsc(NewItem item);
 
     List<Design> findByMember(Member member);
 

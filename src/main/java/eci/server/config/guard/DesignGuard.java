@@ -250,7 +250,7 @@ public class DesignGuard  {
     }
 
     public boolean isEdit(Long itemId){
-        return designRepository.findByNewItem(
+        return designRepository.findByNewItemOrderByIdAsc(
                 newItemRepository.findById(itemId).orElseThrow(ItemNotFoundException::new)
         ).size()>0;
         //사이즈가 0보다 크면 edit
@@ -260,13 +260,13 @@ public class DesignGuard  {
     public Long editDesignId(Long itemId){
         Long targetId = -1L;
 
-        if(designRepository.findByNewItem(
+        if(designRepository.findByNewItemOrderByIdAsc(
                 newItemRepository.findById(itemId).orElseThrow(ItemNotFoundException::new)
         ).size()>0) {
-            targetId = designRepository.findByNewItem(
+            targetId = designRepository.findByNewItemOrderByIdAsc(
                     newItemRepository.findById(itemId).orElseThrow(ItemNotFoundException::new)
             ).get(
-                    designRepository.findByNewItem(
+                    designRepository.findByNewItemOrderByIdAsc(
                             newItemRepository.findById(itemId).orElseThrow(ItemNotFoundException::new)
                     ).size() - 1
             ).getId();
