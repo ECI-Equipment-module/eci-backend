@@ -970,10 +970,9 @@ public class DashboardService {
             if (
                     routeProduct.isPreRejected()
             ) {
-                System.out.println("이 라우트 프로덕트는 거절당한 상태이며 아이디는 "+
-                        routeProduct.getId() + "이고, 이것의 이름" + routeProduct.getRoute_name()
-                + "모듈, 이름" + routeProduct.getType().getModule() + routeProduct.getType().getName());
-                Bom targetBom = routeProduct.getBom();
+
+                Bom targetBom = routeProduct.getRouteOrdering().getBom();
+
                 if(targetBom!=null) {
                     rejectedBomTodoResponses.add(
                             new TodoResponse(
