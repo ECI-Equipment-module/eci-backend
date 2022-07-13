@@ -247,6 +247,18 @@ public class ProjectService {
 
     }
 
+    public Long routeIdReturn(Long newCreateItemId){
+
+        NewItem newItemOfProject = newItemRepository.findById(newCreateItemId).orElseThrow(ItemNotFoundException::new);
+
+        List<RouteOrdering> routeOrdering = routeOrderingRepository.findByNewItem(newItemOfProject);
+
+        //프로젝트에 딸린 라우트
+        Long routeId = routeOrderingRepository.findByNewItem(newItemOfProject).get(routeOrdering.size()-1).getId();
+
+        return routeId;
+    }
+
 
     // read one project
     public ProjectDto read(Long id){

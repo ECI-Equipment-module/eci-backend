@@ -762,7 +762,7 @@ public class Project extends EntityDate {
     }
 
     public void changeItemIdOfProjectByNewMadeItem(NewItem newMadeItem) {
-
+    System.out.println("아이템 바꿔치기 진행해버리기이이ㅣ이이이잉 ");
         this.newItem = newMadeItem;
     }
 
