@@ -498,7 +498,7 @@ public class RouteOrdering extends EntityDate {
 
         //06-17 : 거부된 라우트 프로덕트의 라우트 타입 검사
 
-
+        System.out.println();
         // 1,9, 11, 13 에 따라서 tempSave 랑 readOnly 의 true,false 값 변경
         switch(routeProductList.get(rejectedIndex).getType().getId().toString()) {
 
