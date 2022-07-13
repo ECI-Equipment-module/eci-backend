@@ -100,7 +100,8 @@ public class BomDesignItemDto {
 
 
             }
-            else if (!bomGuard.isBomReviewer(newItem.getId()) && bomGuard.reviewState(newItem.getId()).equals("bomReview")) {
+            else if (!bomGuard.isBomReviewer(newItem.getId()) && bomGuard.reviewState(newItem.getId())
+                    .equals("bomReview")) {
                 System.out.println("bom reviewer 이냐아ㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏ");
                 System.out.println(bomGuard.isBomReviewer(newItem.getId()));
                 //1) 봄 생성 담당자
@@ -192,31 +193,33 @@ public class BomDesignItemDto {
 
             } else if (bomGuard.reviewState(newItem.getId()).equals("bomCreate")) {
 
-                //2) 봄 리뷰 담당자
-                DesignResponsibleDtoList.add(
-                        new DesignResponsibleDto(
-                                preliminaryBomId,
-                                "preliminary",
-                                "readonly"
-                        )
-                );
-                DesignResponsibleDtoList.add(
-                        new DesignResponsibleDto(
-                                developmentBomId,
-                                "development",
-                                "deactivate"
-                        )
-                );
-                DesignResponsibleDtoList.add(
-                        //생성부터야 활성화
-                        new DesignResponsibleDto(
-                                compareBomId,
-                                "compare",
-                                "deactivate"
-                        )
-                );
+                if(!bomGuard.isBomCreator(newItem.getId())) {
 
+                    //2) 봄 리뷰 담당자
+                    DesignResponsibleDtoList.add(
+                            new DesignResponsibleDto(
+                                    preliminaryBomId,
+                                    "preliminary",
+                                    "readonly"
+                            )
+                    );
+                    DesignResponsibleDtoList.add(
+                            new DesignResponsibleDto(
+                                    developmentBomId,
+                                    "development",
+                                    "deactivate"
+                            )
+                    );
+                    DesignResponsibleDtoList.add(
+                            //생성부터야 활성화
+                            new DesignResponsibleDto(
+                                    compareBomId,
+                                    "compare",
+                                    "deactivate"
+                            )
+                    );
 
+                }
             } else if (bomGuard.reviewState(newItem.getId()).equals("bomReview")) {
 
                 //2) 봄 리뷰 담당자
