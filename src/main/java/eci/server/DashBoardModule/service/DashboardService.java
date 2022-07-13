@@ -964,15 +964,18 @@ public class DashboardService {
         // 봄 CREATE 이고,
         // 라우트프로덕트 멤버가 나이고,
         // PRE - REJECTED=TRUE 인 것
-        HashSet<TodoResponse> rejectedDesignTodoResponses = new HashSet<>();
+        HashSet<TodoResponse> rejectedBomTodoResponses = new HashSet<>();
 
         for (RouteProduct routeProduct : myRouteBomCreateProductList) {
-            if (routeProduct.isPreRejected()
+            if (
+                    routeProduct.isPreRejected()
             ) {
-
+                System.out.println("이 라우트 프로덕트는 거절당한 상태이며 아이디는 "+
+                        routeProduct.getId() + "이고, 이것의 이름" + routeProduct.getRoute_name()
+                + "모듈, 이름" + routeProduct.getType().getModule() + routeProduct.getType().getName());
                 Bom targetBom = routeProduct.getBom();
                 if(targetBom!=null) {
-                    rejectedDesignTodoResponses.add(
+                    rejectedBomTodoResponses.add(
                             new TodoResponse(
                                     targetBom.getId(),
                                     targetBom.getNewItem().getName(),
@@ -984,7 +987,7 @@ public class DashboardService {
                 }
             }
         }
-        List<TodoResponse> REJECTED = new ArrayList<>(rejectedDesignTodoResponses);
+        List<TodoResponse> REJECTED = new ArrayList<>(rejectedBomTodoResponses);
 
         // 6 ) BOM REVIEW 인 단계, 현재 진행 중이고, 내꺼고 단계가 봄 - 리뷰
 
