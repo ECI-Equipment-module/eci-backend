@@ -64,7 +64,7 @@ public class DesignDto {
     ) {
         List<RouteOrderingDto> routeDtoList = Optional.ofNullable(
                 RouteOrderingDto.toDtoList(
-                        routeOrderingRepository.findByNewItem(design.getNewItem()),
+                        routeOrderingRepository.findByNewItemOrderByIdAsc(design.getNewItem()),
                         routeProductRepository,
                         routeOrderingRepository,
                         bomRepository,
@@ -90,8 +90,8 @@ public class DesignDto {
                 //routeDtoList
 
                 //가장 최신의 라우트 오더링 중 최신의 라우트 오더링 아이디
-                routeOrderingRepository.findByNewItem(design.getNewItem()).
-                        get(routeOrderingRepository.findByNewItem(design.getNewItem()).size() - 1)
+                routeOrderingRepository.findByNewItemOrderByIdAsc(design.getNewItem()).
+                        get(routeOrderingRepository.findByNewItemOrderByIdAsc(design.getNewItem()).size() - 1)
                         .getId(),
 
                 design.getCreatedAt(),

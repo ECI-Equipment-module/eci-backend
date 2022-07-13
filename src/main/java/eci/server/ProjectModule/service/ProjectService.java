@@ -121,9 +121,9 @@ public class ProjectService {
         if(!(req.getTag().size()==0)) {
             uploadAttachments(project.getProjectAttachments(), req.getAttachments());
         }
-        List<RouteOrdering> routeOrdering = routeOrderingRepository.findByNewItem(project.getNewItem());
+        List<RouteOrdering> routeOrdering = routeOrderingRepository.findByNewItemOrderByIdAsc(project.getNewItem());
         //프로젝트에 딸린 라우트
-        Long routeId = routeOrderingRepository.findByNewItem(project.getNewItem()).get(routeOrdering.size()-1).getId();
+        Long routeId = routeOrderingRepository.findByNewItemOrderByIdAsc(project.getNewItem()).get(routeOrdering.size()-1).getId();
 
         //06-17 추가 , route 에 project 등록
         RouteOrdering setRoute =
@@ -232,9 +232,9 @@ public class ProjectService {
         );
 
         //06-17 추가 , route 에 project 등록 ////////////////////////////////////
-        List<RouteOrdering> routeOrdering = routeOrderingRepository.findByNewItem(project.getNewItem());
+        List<RouteOrdering> routeOrdering = routeOrderingRepository.findByNewItemOrderByIdAsc(project.getNewItem());
         //프로젝트에 딸린 라우트
-        Long routeId = routeOrderingRepository.findByNewItem(project.getNewItem()).get(routeOrdering.size()-1).getId();
+        Long routeId = routeOrderingRepository.findByNewItemOrderByIdAsc(project.getNewItem()).get(routeOrdering.size()-1).getId();
 
         RouteOrdering setRoute =
                 routeOrderingRepository.findById(routeId).orElseThrow(RouteNotFoundException::new);
@@ -251,10 +251,10 @@ public class ProjectService {
 
         NewItem newItemOfProject = newItemRepository.findById(newCreateItemId).orElseThrow(ItemNotFoundException::new);
 
-        List<RouteOrdering> routeOrdering = routeOrderingRepository.findByNewItem(newItemOfProject);
+        List<RouteOrdering> routeOrdering = routeOrderingRepository.findByNewItemOrderByIdAsc(newItemOfProject);
 
         //프로젝트에 딸린 라우트
-        Long routeId = routeOrderingRepository.findByNewItem(newItemOfProject).get(routeOrdering.size()-1).getId();
+        Long routeId = routeOrderingRepository.findByNewItemOrderByIdAsc(newItemOfProject).get(routeOrdering.size()-1).getId();
 
         return routeId;
     }
@@ -263,7 +263,7 @@ public class ProjectService {
     // read one project
     public ProjectDto read(Long id){
         Project targetProject = projectRepository.findById(id).orElseThrow(ProjectNotFoundException::new);
-        RouteOrdering routeOrdering = routeOrderingRepository.findByNewItem(targetProject.getNewItem()).get(0);
+        RouteOrdering routeOrdering = routeOrderingRepository.findByNewItemOrderByIdAsc(targetProject.getNewItem()).get(0);
         return ProjectDto.toDto(
                 targetProject,
                 routeOrdering,
@@ -350,32 +350,32 @@ public class ProjectService {
                         //현재 phase의 이름
                         //0604 에러 : complete는 인덱스 길이가 10일 때 present 도 10 (인덱스에러 발생)
                         //=> 그래서 complete라면 route_name 에 route_item_complete 반환
-                        routeOrderingRepository.findByNewItem(
+                        routeOrderingRepository.findByNewItemOrderByIdAsc(
                                 project.getNewItem()
                         ).get(
                                 (
-                                        routeOrderingRepository.findByNewItem(
+                                        routeOrderingRepository.findByNewItemOrderByIdAsc(
                                                 project.getNewItem()
                                         ).size()-1
                                 )
                         ).getLifecycleStatus().equals("COMPLETE")?
                                 "ITEM_COMPLETE" :
                                 routeProductRepository.findAllByRouteOrdering(
-                                                routeOrderingRepository.findByNewItem(
+                                                routeOrderingRepository.findByNewItemOrderByIdAsc(
                                                         project.getNewItem()
                                                 ).get(
                                                         (
-                                                                (routeOrderingRepository.findByNewItem(
+                                                                (routeOrderingRepository.findByNewItemOrderByIdAsc(
                                                                         project.getNewItem()
                                                                 ).size())-1 //아이템의 라우트 오더링 중에서 최신 아이
                                                         )
                                                 )
                                         ).get(
                                                 (
-                                                        routeOrderingRepository.findByNewItem(
+                                                        routeOrderingRepository.findByNewItemOrderByIdAsc(
                                                                 project.getNewItem()
                                                         ).get(
-                                                                routeOrderingRepository.findByNewItem(
+                                                                routeOrderingRepository.findByNewItemOrderByIdAsc(
                                                                         project.getNewItem()
                                                                 ).size()-1
                                                         )
@@ -383,11 +383,11 @@ public class ProjectService {
                                         )
                                         .getRoute_name(),
 
-                        routeOrderingRepository.findByNewItem(
+                        routeOrderingRepository.findByNewItemOrderByIdAsc(
                                 project.getNewItem()
                         ).get(
                                 (
-                                        routeOrderingRepository.findByNewItem(
+                                        routeOrderingRepository.findByNewItemOrderByIdAsc(
                                                 project.getNewItem()
                                         ).size()-1
                                 )
@@ -424,10 +424,10 @@ public class ProjectService {
 
                         "complete",
 
-                        routeOrderingRepository.findByNewItem(
+                        routeOrderingRepository.findByNewItemOrderByIdAsc(
                                 project.getNewItem()
                         ).get(
-                                routeOrderingRepository.findByNewItem(
+                                routeOrderingRepository.findByNewItemOrderByIdAsc(
                                         project.getNewItem()
                                 ).size()-1
                         ).getLifecycleStatus(),//라우트 오더링 중에서 현재 진행중인 라우트프로덕트
@@ -573,37 +573,37 @@ public class ProjectService {
 
                         //현재 phase의 이름
 
-                        routeOrderingRepository.findByNewItem(
+                        routeOrderingRepository.findByNewItemOrderByIdAsc(
                                         project.getNewItem()
                                 ).get(
-                                        routeOrderingRepository.findByNewItem(
+                                        routeOrderingRepository.findByNewItemOrderByIdAsc(
                                                 project.getNewItem()
                                         ).size()-1
                                 )//아이템의 라우트 오더링 중에서 최신 아이
                                 .getPresent()
                                 ==                         routeProductRepository.findAllByRouteOrdering(
-                                routeOrderingRepository.findByNewItem(
+                                routeOrderingRepository.findByNewItemOrderByIdAsc(
                                         project.getNewItem()
                                 ).get(
-                                        routeOrderingRepository.findByNewItem(
+                                        routeOrderingRepository.findByNewItemOrderByIdAsc(
                                                 project.getNewItem()
                                         ).size()-1
                                 )//아이템의 라우트 오더링 중에서 최신 라우트오더링
                         ).size()
                                 ?"PROCESS COMPLETE":
                                 routeProductRepository.findAllByRouteOrdering(
-                                                routeOrderingRepository.findByNewItem(
+                                                routeOrderingRepository.findByNewItemOrderByIdAsc(
                                                         project.getNewItem()
                                                 ).get(
-                                                        routeOrderingRepository.findByNewItem(
+                                                        routeOrderingRepository.findByNewItemOrderByIdAsc(
                                                                 project.getNewItem()
                                                         ).size()-1
                                                 )//아이템의 라우트 오더링 중에서 최신 라우트오더링
                                         ).get(
-                                                routeOrderingRepository.findByNewItem(
+                                                routeOrderingRepository.findByNewItemOrderByIdAsc(
                                                                 project.getNewItem()
                                                         ).get(
-                                                                routeOrderingRepository.findByNewItem(
+                                                                routeOrderingRepository.findByNewItemOrderByIdAsc(
                                                                         project.getNewItem()
                                                                 ).size()-1
                                                         )//아이템의 라우트 오더링 중에서 최신 아이
@@ -611,10 +611,10 @@ public class ProjectService {
                                         )
                                         .getRoute_name(),
 
-                        routeOrderingRepository.findByNewItem(
+                        routeOrderingRepository.findByNewItemOrderByIdAsc(
                                 project.getNewItem()
                         ).get(
-                                routeOrderingRepository.findByNewItem(
+                                routeOrderingRepository.findByNewItemOrderByIdAsc(
                                         project.getNewItem()
                                 ).size()-1
                         ).getLifecycleStatus(),//라우트 오더링 중에서 현재 진행중인 라우트프로덕트
@@ -674,6 +674,7 @@ public class ProjectService {
 
         // 이 타겟 프로젝트의 아이템을 지금 새로 만들어진 아이템으로 변경해주면 된다.
         targetProj.changeItemIdOfProjectByNewMadeItem(newMadeItem);
+        targetProj.setNewItem(newMadeItem);
 
     }
 

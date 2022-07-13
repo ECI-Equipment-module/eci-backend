@@ -77,32 +77,32 @@ public class DashboardService {
         for (Project project : myProjectList) {
             if (!project.getTempsave()) {
                 if (
-                        routeOrderingRepository.findByNewItem(project.getNewItem()).get(
-                                routeOrderingRepository.findByNewItem(project.getNewItem()).size() - 1
+                        routeOrderingRepository.findByNewItemOrderByIdAsc(project.getNewItem()).get(
+                                routeOrderingRepository.findByNewItemOrderByIdAsc(project.getNewItem()).size() - 1
                         ).getLifecycleStatus().equals("WORKING")
                 ) {
                     working += 1;
                 } else if (
-                        routeOrderingRepository.findByNewItem(project.getNewItem()).get(
-                                routeOrderingRepository.findByNewItem(project.getNewItem()).size() - 1
+                        routeOrderingRepository.findByNewItemOrderByIdAsc(project.getNewItem()).get(
+                                routeOrderingRepository.findByNewItemOrderByIdAsc(project.getNewItem()).size() - 1
                         ).getLifecycleStatus().equals("COMPLETE")
                 ) {
                     complete += 1;
                 } else if (
-                        routeOrderingRepository.findByNewItem(project.getNewItem()).get(
-                                routeOrderingRepository.findByNewItem(project.getNewItem()).size() - 1
+                        routeOrderingRepository.findByNewItemOrderByIdAsc(project.getNewItem()).get(
+                                routeOrderingRepository.findByNewItemOrderByIdAsc(project.getNewItem()).size() - 1
                         ).getLifecycleStatus().equals("RELEASE")
                 ) {
                     release += 1;
                 } else if (
-                        routeOrderingRepository.findByNewItem(project.getNewItem()).get(
-                                routeOrderingRepository.findByNewItem(project.getNewItem()).size() - 1
+                        routeOrderingRepository.findByNewItemOrderByIdAsc(project.getNewItem()).get(
+                                routeOrderingRepository.findByNewItemOrderByIdAsc(project.getNewItem()).size() - 1
                         ).getLifecycleStatus().equals("PENDING")
                 ) {
                     pending += 1;
                 } else if (
-                        routeOrderingRepository.findByNewItem(project.getNewItem()).get(
-                                routeOrderingRepository.findByNewItem(project.getNewItem()).size() - 1
+                        routeOrderingRepository.findByNewItemOrderByIdAsc(project.getNewItem()).get(
+                                routeOrderingRepository.findByNewItemOrderByIdAsc(project.getNewItem()).size() - 1
                         ).getLifecycleStatus().equals("DROP")
                 ) {
                     drop += 1;
@@ -151,17 +151,17 @@ public class DashboardService {
         for (Project project : myProjectList) {
             if (project.getTempsave()
                     &&
-                    Objects.equals(project.getId(), projectRepository.findByNewItem(project.getNewItem()).get(
-                            projectRepository.findByNewItem(project.getNewItem()).size() - 1
+                    Objects.equals(project.getId(), projectRepository.findByNewItemOrderByIdAsc(project.getNewItem()).get(
+                            projectRepository.findByNewItemOrderByIdAsc(project.getNewItem()).size() - 1
                     ).getId())
             ) {
 
                 if(
-                        routeOrderingRepository.findByNewItem(project.getNewItem()).size()>0
+                        routeOrderingRepository.findByNewItemOrderByIdAsc(project.getNewItem()).size()>0
                 ){
 
-                    RouteOrdering ordering = routeOrderingRepository.findByNewItem(project.getNewItem()).get(
-                            routeOrderingRepository.findByNewItem(project.getNewItem()).size() - 1);
+                    RouteOrdering ordering = routeOrderingRepository.findByNewItemOrderByIdAsc(project.getNewItem()).get(
+                            routeOrderingRepository.findByNewItemOrderByIdAsc(project.getNewItem()).size() - 1);
                     int presentIdx = ordering.getPresent();
                     //아래가 에러 발생
                     if(routeProductRepository.findAllByRouteOrdering(ordering).size()>
@@ -237,7 +237,7 @@ public class DashboardService {
                     //routeProduct.getRoute_name().equals("프로젝트와 Item(제품) Link(설계자)")
                 ) {
 
-
+                    System.out.println("project create route product id ::::" + routeProduct.getId());
                     myRouteProductList.add(routeProduct);
                     break;
                 }
@@ -249,9 +249,10 @@ public class DashboardService {
         HashSet<TodoResponse> unlinkedItemTodoResponses = new HashSet<>();
 
         for (RouteProduct routeProduct : myRouteProductList) {
+            NewItem targetItem = routeProduct.getRouteOrdering().getNewItem();
             if (routeProduct.getRouteOrdering().getProject()==null) {
 
-                NewItem targetItem = routeProduct.getRouteOrdering().getNewItem();
+
 
                 //0712
                 // 0712 - revise target id 가 null 이라면 걍 새 아이템
@@ -269,11 +270,11 @@ public class DashboardService {
                     Long reviseId=-1L;
                     System.out.println("old  "+ targetItem.getId());
 
-                    if(projectRepository.findByNewItem(targetNewItem).size()>0) {
+                    if(projectRepository.findByNewItemOrderByIdAsc(targetNewItem).size()>0) {
                         System.out.println("have an old projects ");
 
-                        Project oldProject = projectRepository.findByNewItem(targetNewItem).get
-                                (projectRepository.findByNewItem(targetNewItem).size()-1);
+                        Project oldProject = projectRepository.findByNewItemOrderByIdAsc(targetNewItem).get
+                                (projectRepository.findByNewItemOrderByIdAsc(targetNewItem).size()-1);
 
                         reviseId = oldProject.getId();
 
@@ -313,6 +314,17 @@ public class DashboardService {
                 //0712
 
             }
+            else{
+                unlinkedItemTodoResponses.add(
+                        new TodoResponse(
+                                targetItem.getId(),
+                                targetItem.getName(),
+                                targetItem.getItemTypes().getItemType().toString(),
+                                targetItem.getItemNumber(),
+                                -1L
+                        )
+                );
+            }
         }
 
         List<TodoResponse> NEW_PROJECT = new ArrayList<>(unlinkedItemTodoResponses);
@@ -330,7 +342,7 @@ public class DashboardService {
 
     /**
      * DESIGN TODO
-     *
+     *fi
      * @return
      */
     public ToDoDoubleList readDesignTodo() {
@@ -352,15 +364,15 @@ public class DashboardService {
         for (Design design : myDesignList) {
             if (design.getTempsave()
                     &&
-                    Objects.equals(design.getId(), designRepository.findByNewItem(design.getNewItem()).get(
-                            designRepository.findByNewItem(design.getNewItem()).size() - 1
+                    Objects.equals(design.getId(), designRepository.findByNewItemOrderByIdAsc(design.getNewItem()).get(
+                            designRepository.findByNewItemOrderByIdAsc(design.getNewItem()).size() - 1
                     ).getId())){
                 //05-30 - 이 아이가 최신 아이일 때만! (최신 아니고 옛날 거면 필요 없음)
 
 
-                if(routeOrderingRepository.findByNewItem(design.getNewItem()).size()>0){
-                    RouteOrdering ordering = routeOrderingRepository.findByNewItem(design.getNewItem()).get(
-                            routeOrderingRepository.findByNewItem(design.getNewItem()).size() - 1);
+                if(routeOrderingRepository.findByNewItemOrderByIdAsc(design.getNewItem()).size()>0){
+                    RouteOrdering ordering = routeOrderingRepository.findByNewItemOrderByIdAsc(design.getNewItem()).get(
+                            routeOrderingRepository.findByNewItemOrderByIdAsc(design.getNewItem()).size() - 1);
                     int presentIdx = ordering.getPresent();
 
                     if(routeProductRepository.findAllByRouteOrdering(ordering).size()>
@@ -446,9 +458,9 @@ public class DashboardService {
 
                     Long reviseId=-1L;
 
-                    if(designRepository.findByNewItem(targetNewItem).size()>0) {
-                        Design oldDesign = designRepository.findByNewItem(targetNewItem).get
-                                (designRepository.findByNewItem(targetNewItem).size()-1);
+                    if(designRepository.findByNewItemOrderByIdAsc(targetNewItem).size()>0) {
+                        Design oldDesign = designRepository.findByNewItemOrderByIdAsc(targetNewItem).get
+                                (designRepository.findByNewItemOrderByIdAsc(targetNewItem).size()-1);
 
                         reviseId = oldDesign.getId();
                     }
@@ -605,9 +617,9 @@ public class DashboardService {
                 //07-10 REVISE 된 것이 아닐 때에 임시저장에 뜨게하기
                 // (REVISE 되는 거는 REVISE 에 떠야함)
 
-                if(routeOrderingRepository.findByNewItem(newItem).size()>0){
-                    RouteOrdering ordering = routeOrderingRepository.findByNewItem(newItem).get(
-                            routeOrderingRepository.findByNewItem(newItem).size() - 1);
+                if(routeOrderingRepository.findByNewItemOrderByIdAsc(newItem).size()>0){
+                    RouteOrdering ordering = routeOrderingRepository.findByNewItemOrderByIdAsc(newItem).get(
+                            routeOrderingRepository.findByNewItemOrderByIdAsc(newItem).size() - 1);
                     int presentIdx = ordering.getPresent();
                     RouteProduct routeProduct = routeProductRepository.findAllByRouteOrdering(ordering).get(presentIdx);
                     if (!routeProduct.isPreRejected() ) {
@@ -882,13 +894,13 @@ public class DashboardService {
 
                     !developmentBomRepository
                             .findByBom(
-                                    bomRepository.findByNewItem(routeProduct.getRouteOrdering().getNewItem()).get(
-                                            bomRepository.findByNewItem(routeProduct.getRouteOrdering().getNewItem()).size() - 1
+                                    bomRepository.findByNewItemOrderByIdAsc(routeProduct.getRouteOrdering().getNewItem()).get(
+                                            bomRepository.findByNewItemOrderByIdAsc(routeProduct.getRouteOrdering().getNewItem()).size() - 1
                                     )
                             ).getEdited()) {
 
-                Bom bom = bomRepository.findByNewItem(routeProduct.getRouteOrdering().getNewItem()).get(
-                        bomRepository.findByNewItem(routeProduct.getRouteOrdering().getNewItem()).size() - 1
+                Bom bom = bomRepository.findByNewItemOrderByIdAsc(routeProduct.getRouteOrdering().getNewItem()).get(
+                        bomRepository.findByNewItemOrderByIdAsc(routeProduct.getRouteOrdering().getNewItem()).size() - 1
                 );
 
                 NewItem targetItem = routeProduct.getRouteOrdering().getNewItem();
@@ -925,9 +937,9 @@ public class DashboardService {
         for (DevelopmentBom bom : developmentBoms) {
             if (bom.getTempsave() && bom.getEdited()){ //06-28 edited 가 true 이며 임시저장이 true 인 것만 찾아오도록 수정
 
-                if(routeOrderingRepository.findByNewItem(bom.getBom().getNewItem()).size()>0){
-                    RouteOrdering ordering = routeOrderingRepository.findByNewItem(bom.getBom().getNewItem()).get(
-                            routeOrderingRepository.findByNewItem(bom.getBom().getNewItem()).size() - 1);
+                if(routeOrderingRepository.findByNewItemOrderByIdAsc(bom.getBom().getNewItem()).size()>0){
+                    RouteOrdering ordering = routeOrderingRepository.findByNewItemOrderByIdAsc(bom.getBom().getNewItem()).get(
+                            routeOrderingRepository.findByNewItemOrderByIdAsc(bom.getBom().getNewItem()).size() - 1);
 
                     int presentIdx = ordering.getPresent();
 

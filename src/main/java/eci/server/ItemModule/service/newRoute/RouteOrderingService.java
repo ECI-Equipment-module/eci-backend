@@ -18,10 +18,12 @@ import eci.server.CRCOModule.repository.cr.ChangeRequestRepository;
 import eci.server.DesignModule.entity.design.Design;
 import eci.server.DesignModule.exception.DesignNotLinkedException;
 import eci.server.DesignModule.repository.DesignRepository;
+import eci.server.ItemModule.dto.member.MemberDto;
 import eci.server.ItemModule.dto.newRoute.routeOrdering.*;
 import eci.server.ItemModule.dto.newRoute.routeProduct.RouteProductCreateRequest;
 import eci.server.ItemModule.dto.newRoute.routeProduct.RouteProductDto;
 import eci.server.ItemModule.entity.item.ItemType;
+import eci.server.ItemModule.entity.member.Member;
 import eci.server.ItemModule.entity.newRoute.RouteOrdering;
 import eci.server.ItemModule.entity.newRoute.RoutePreset;
 import eci.server.ItemModule.entity.newRoute.RouteProduct;
@@ -35,6 +37,7 @@ import eci.server.ItemModule.repository.member.MemberRepository;
 import eci.server.ItemModule.repository.newRoute.RouteOrderingRepository;
 import eci.server.ItemModule.repository.newRoute.RouteProductRepository;
 import eci.server.ItemModule.repository.newRoute.RouteTypeRepository;
+import eci.server.NewItemModule.dto.MembersDto;
 import eci.server.NewItemModule.entity.JsonSave;
 import eci.server.NewItemModule.entity.NewItem;
 import eci.server.NewItemModule.exception.ItemTypeRequiredException;
@@ -48,9 +51,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -97,6 +98,30 @@ public class RouteOrderingService {
 
     }
 
+    public List<List<MemberDto>> memberRead(Long routeId) {
+
+        Set<String> names =
+        read(routeId).getRouteProductList().stream().map(
+                i->i.getName()
+        ).collect(Collectors.toSet());
+
+        List<String> nameList = new ArrayList<>(names);
+        List<List<MemberDto>> mem = new ArrayList<>();
+
+        int idx = 0;
+        while(idx< nameList.size()-1) {
+            for (RouteProductDto rp : read(routeId).getRouteProductList()) {
+                if (nameList.get(idx).equals(rp.getName())) {
+                    mem.add(
+                            rp.getMember()
+                    );
+                    idx+=1;
+                }
+            }
+        }
+    return mem;
+    }
+
     public List readRouteByItem(Long id) {
 
         List<String> typeList = new ArrayList<>();
@@ -120,7 +145,7 @@ public class RouteOrderingService {
 
     public List<RouteOrderingDto> readAll(RouteOrderingReadCondition cond) {
 
-        List<RouteOrdering> newRoutes = routeOrderingRepository.findByNewItem(
+        List<RouteOrdering> newRoutes = routeOrderingRepository.findByNewItemOrderByIdAsc(
                 newItemRepository.findById(cond.getItemId())
                         .orElseThrow(RouteNotFoundException::new)
         );
@@ -596,13 +621,13 @@ public class RouteOrderingService {
                     && targetRoutProduct.getType().getName().equals("CREATE")) {
 
                 //아이템에 링크된 맨 마지막 (최신) 프로젝트 데려오기
-//                if (projectRepository.findByNewItem(routeOrdering.getNewItem()).size() == 0) {
+//                if (projectRepository.findByNewItemOrderByIdAsc(routeOrdering.getNewItem()).size() == 0) {
 //                    throw new ProjectNotLinkedException();
 //                } else {
                     Project linkedProject =
-                            projectRepository.findByNewItem(routeOrdering.getNewItem())
+                            projectRepository.findByNewItemOrderByIdAsc(routeOrdering.getNewItem())
                                     .get(
-                                            projectRepository.findByNewItem(routeOrdering.getNewItem()).size() - 1
+                                            projectRepository.findByNewItemOrderByIdAsc(routeOrdering.getNewItem()).size() - 1
                                     );
                     //그 프로젝트를 라우트 프로덕트에 set 해주기
                     targetRoutProduct.setProject(linkedProject);
@@ -620,13 +645,13 @@ public class RouteOrderingService {
                     && targetRoutProduct.getType().getName().equals("CREATE")) {
 
                 //아이템에 링크된 맨 마지막 (최신) 디자인 데려오기
-                if (designRepository.findByNewItem(routeOrdering.getNewItem()).size() == 0) {
+                if (designRepository.findByNewItemOrderByIdAsc(routeOrdering.getNewItem()).size() == 0) {
                     throw new DesignNotLinkedException();
                 } else {
                     Design linkedDesign =
-                            designRepository.findByNewItem(routeOrdering.getNewItem())
+                            designRepository.findByNewItemOrderByIdAsc(routeOrdering.getNewItem())
                                     .get(
-                                            designRepository.findByNewItem(routeOrdering.getNewItem()).size() - 1
+                                            designRepository.findByNewItemOrderByIdAsc(routeOrdering.getNewItem()).size() - 1
                                     );
                     //만약 지금 rejected 가 true였다면 , 이제 새로 다시 넣어주는 것이니깐 rejected풀어주기
                     if (targetRoutProduct.isPreRejected()) {
@@ -640,13 +665,13 @@ public class RouteOrderingService {
                     linkedDesign.finalSaveDesign();
                 }
 
-//                if (projectRepository.findByNewItem(routeOrdering.getNewItem()).size() == 0) {
+//                if (projectRepository.findByNewItemOrderByIdAsc(routeOrdering.getNewItem()).size() == 0) {
 //                    throw new ProjectNotLinkedException();
 //                } else {
 //                    Project linkedProject =
-//                            projectRepository.findByNewItem(routeOrdering.getNewItem())
+//                            projectRepository.findByNewItemOrderByIdAsc(routeOrdering.getNewItem())
 //                                    .get(
-//                                            projectRepository.findByNewItem(routeOrdering.getNewItem()).size() - 1
+//                                            projectRepository.findByNewItemOrderByIdAsc(routeOrdering.getNewItem()).size() - 1
 //                                    );
 //                    //그 프로젝트를 라우트 프로덕트에 set 해주기
 //                    targetRoutProduct.setProject(linkedProject);
@@ -660,13 +685,13 @@ public class RouteOrderingService {
                     && targetRoutProduct.getType().getName().equals("REVIEW")) {
 
                 //아이템에 링크된 맨 마지막 (최신) 디자인 데려오기
-                if (designRepository.findByNewItem(routeOrdering.getNewItem()).size() == 0) {
+                if (designRepository.findByNewItemOrderByIdAsc(routeOrdering.getNewItem()).size() == 0) {
                     throw new DesignNotLinkedException();
                 } else {
                     Design linkedDesign =
-                            designRepository.findByNewItem(routeOrdering.getNewItem())
+                            designRepository.findByNewItemOrderByIdAsc(routeOrdering.getNewItem())
                                     .get(
-                                            designRepository.findByNewItem(routeOrdering.getNewItem()).size() - 1
+                                            designRepository.findByNewItemOrderByIdAsc(routeOrdering.getNewItem()).size() - 1
                                     );
 
                     if (routeOrdering.getNewItem().getItemTypes().getItemType().name().equals("파트제품") ||
@@ -692,13 +717,13 @@ public class RouteOrderingService {
                     && targetRoutProduct.getType().getName().equals("CREATE")) {
 
                 //아이템에 링크된 봄 아이디 건네주기
-                if (bomRepository.findByNewItem(routeOrdering.getNewItem()).size() == 0) {
+                if (bomRepository.findByNewItemOrderByIdAsc(routeOrdering.getNewItem()).size() == 0) {
                     throw new BomNotFoundException();
                 } else {
                     Bom bom =
-                            bomRepository.findByNewItem(routeOrdering.getNewItem())
+                            bomRepository.findByNewItemOrderByIdAsc(routeOrdering.getNewItem())
                                     .get(
-                                            bomRepository.findByNewItem(routeOrdering.getNewItem()).size() - 1
+                                            bomRepository.findByNewItemOrderByIdAsc(routeOrdering.getNewItem()).size() - 1
                                     );
 
                     //만약 지금 rejected 가 true였다면 , 이제 새로 다시 넣어주는 것이니깐 rejected풀어주기
@@ -722,13 +747,13 @@ public class RouteOrderingService {
                     && targetRoutProduct.getType().getName().equals("REVIEW")) {
 
                 //아이템에 링크된 봄 아이디 건네주기
-                if (bomRepository.findByNewItem(routeOrdering.getNewItem()).size() == 0) {
+                if (bomRepository.findByNewItemOrderByIdAsc(routeOrdering.getNewItem()).size() == 0) {
                     throw new BomNotFoundException();
                 } else {
                     Bom bom =
-                            bomRepository.findByNewItem(routeOrdering.getNewItem())
+                            bomRepository.findByNewItemOrderByIdAsc(routeOrdering.getNewItem())
                                     .get(
-                                            bomRepository.findByNewItem(routeOrdering.getNewItem()).size() - 1
+                                            bomRepository.findByNewItemOrderByIdAsc(routeOrdering.getNewItem()).size() - 1
                                     );
 
                     // 디자인 리뷰 승인 나면 아이템 정보 관계 맺어주기
@@ -882,9 +907,9 @@ public class RouteOrderingService {
                         // (2) 제품은
 
 //
-//                        if(projectRepository.findByNewItem(targetOldReviseItem).size()>0) {
-//                            Project oldProject = projectRepository.findByNewItem(targetOldReviseItem)
-//                                    .get(projectRepository.findByNewItem(targetOldReviseItem).size()-1);
+//                        if(projectRepository.findByNewItemOrderByIdAsc(targetOldReviseItem).size()>0) {
+//                            Project oldProject = projectRepository.findByNewItemOrderByIdAsc(targetOldReviseItem)
+//                                    .get(projectRepository.findByNewItemOrderByIdAsc(targetOldReviseItem).size()-1);
 //
 //                            oldProject.setReadonly(false);
 //                            oldProject.setTempsave(true);

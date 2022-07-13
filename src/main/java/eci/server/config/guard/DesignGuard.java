@@ -64,15 +64,15 @@ public class DesignGuard  {
     }
 
     public boolean isDesginCreator(Long itemId) { //디자인 생성 라우트 담당자인지
-        routeOrderingRepository.findByNewItem(
+        routeOrderingRepository.findByNewItemOrderByIdAsc(
                 newItemRepository.findById(itemId).orElseThrow(ItemNotFoundException::new)
         );
 
         RouteOrdering routeOrdering =
-                routeOrderingRepository.findByNewItem(
+                routeOrderingRepository.findByNewItemOrderByIdAsc(
                         newItemRepository.findById(itemId).orElseThrow(ItemNotFoundException::new)
                 ).get(
-                        routeOrderingRepository.findByNewItem(
+                        routeOrderingRepository.findByNewItemOrderByIdAsc(
                                 newItemRepository.findById(itemId).orElseThrow(ItemNotFoundException::new)
                         ).size()-1
                 );
@@ -105,15 +105,15 @@ public class DesignGuard  {
 
 
     public boolean isDesignReviewer(Long itemId) { //디자인 리뷰 라우트 담당자인지
-        routeOrderingRepository.findByNewItem(
+        routeOrderingRepository.findByNewItemOrderByIdAsc(
                 newItemRepository.findById(itemId).orElseThrow(ItemNotFoundException::new)
         );
 
         RouteOrdering routeOrdering =
-                routeOrderingRepository.findByNewItem(
+                routeOrderingRepository.findByNewItemOrderByIdAsc(
                         newItemRepository.findById(itemId).orElseThrow(ItemNotFoundException::new)
                 ).get(
-                        routeOrderingRepository.findByNewItem(
+                        routeOrderingRepository.findByNewItemOrderByIdAsc(
                                 newItemRepository.findById(itemId).orElseThrow(ItemNotFoundException::new)
                         ).size()-1
                 );
@@ -149,15 +149,15 @@ public class DesignGuard  {
 
         String result = null;
 
-        routeOrderingRepository.findByNewItem(
+        routeOrderingRepository.findByNewItemOrderByIdAsc(
                 newItemRepository.findById(itemId).orElseThrow(ItemNotFoundException::new)
         );
 
         RouteOrdering routeOrdering =
-                routeOrderingRepository.findByNewItem(
+                routeOrderingRepository.findByNewItemOrderByIdAsc(
                         newItemRepository.findById(itemId).orElseThrow(ItemNotFoundException::new)
                 ).get(
-                        routeOrderingRepository.findByNewItem(
+                        routeOrderingRepository.findByNewItemOrderByIdAsc(
                                 newItemRepository.findById(itemId).orElseThrow(ItemNotFoundException::new)
                         ).size()-1
                 );
@@ -250,7 +250,7 @@ public class DesignGuard  {
     }
 
     public boolean isEdit(Long itemId){
-        return designRepository.findByNewItem(
+        return designRepository.findByNewItemOrderByIdAsc(
                 newItemRepository.findById(itemId).orElseThrow(ItemNotFoundException::new)
         ).size()>0;
         //사이즈가 0보다 크면 edit
@@ -260,13 +260,13 @@ public class DesignGuard  {
     public Long editDesignId(Long itemId){
         Long targetId = -1L;
 
-        if(designRepository.findByNewItem(
+        if(designRepository.findByNewItemOrderByIdAsc(
                 newItemRepository.findById(itemId).orElseThrow(ItemNotFoundException::new)
         ).size()>0) {
-            targetId = designRepository.findByNewItem(
+            targetId = designRepository.findByNewItemOrderByIdAsc(
                     newItemRepository.findById(itemId).orElseThrow(ItemNotFoundException::new)
             ).get(
-                    designRepository.findByNewItem(
+                    designRepository.findByNewItemOrderByIdAsc(
                             newItemRepository.findById(itemId).orElseThrow(ItemNotFoundException::new)
                     ).size() - 1
             ).getId();

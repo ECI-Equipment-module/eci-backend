@@ -105,7 +105,7 @@ public class ProjectDto {
     ) {
         List<RouteOrderingDto> routeDtoList = Optional.ofNullable(
                 RouteOrderingDto.toDtoList(
-                        routeOrderingRepository.findByNewItem(project.getNewItem()),
+                        routeOrderingRepository.findByNewItemOrderByIdAsc(project.getNewItem()),
                         routeProductRepository,
                         routeOrderingRepository,
                         bomRepository,
@@ -155,8 +155,8 @@ public class ProjectDto {
                 //routeDtoList
 
                 //가장 최신의 라우트 오더링 중 최신의 라우트 오더링 아이디
-                routeOrderingRepository.findByNewItem(project.getNewItem()).
-                        get(routeOrderingRepository.findByNewItem(project.getNewItem()).size() - 1)
+                routeOrderingRepository.findByNewItemOrderByIdAsc(project.getNewItem()).
+                        get(routeOrderingRepository.findByNewItemOrderByIdAsc(project.getNewItem()).size() - 1)
                         .getId(),
 
                 //05-22추가

@@ -112,7 +112,7 @@ public class BomService {
         NewItem parentNewItem = newItemRepository.findByItemNumber(designContentDto.getCardNumber());
 
         if(parentNewItem !=null) {
-            Bom bom = bomRepository.findByNewItem(parentNewItem).get(0);
+            Bom bom = bomRepository.findByNewItemOrderByIdAsc(parentNewItem).get(0);
             DevelopmentBom developmentBom = developmentBomRepository.findByBom(bom);
             tempNewItemParentChildService.recursiveChildrenMaking(
 

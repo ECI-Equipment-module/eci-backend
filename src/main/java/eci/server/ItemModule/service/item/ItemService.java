@@ -190,7 +190,7 @@
 //        // 라우트 없으면 읽기도 사실상 불가능
 //        List<RouteOrderingDto> routeDtoList = Optional.ofNullable(
 //                RouteOrderingDto.toDtoList(
-//                        routeOrderingRepository.findByNewItem(targetItem),
+//                        routeOrderingRepository.findByNewItemOrderByIdAsc(targetItem),
 //                        routeProductRepository,
 //                        routeOrderingRepository
 //                )
@@ -356,7 +356,7 @@
 //        for (Item i : allItemList) {
 //            //아이템의 모든 라우트
 //            List<RouteOrdering> itemsAllRoute =
-//                    routeOrderingRepository.findByNewItem(i);
+//                    routeOrderingRepository.findByNewItemOrderByIdAsc(i);
 //            //만약 아이템의 모든 라우트 리스트가 하나이상 존재하면 맨 마지막 라우트만이 유효하므로 그 마지막 아이를 데려온다
 //            if (itemsAllRoute.size() > 0) {
 //                liveRouteList.add(
@@ -488,10 +488,10 @@
 //                                                routeProduct.getRouteOrdering().getItem()
 //                                        );
 //
-//                RouteOrdering routeOrdering = routeOrderingRepository.findByNewItem(
+//                RouteOrdering routeOrdering = routeOrderingRepository.findByNewItemOrderByIdAsc(
 //                        routeProduct.getRouteOrdering().getNewItem()
 //                ).get(
-//                        routeOrderingRepository.findByNewItem(
+//                        routeOrderingRepository.findByNewItemOrderByIdAsc(
 //                                routeProduct.getRouteOrdering().getNewItem()
 //                        ).size()-1
 //                );
@@ -563,10 +563,10 @@
 //                                routeProduct.getRouteOrdering().getNewItem()
 //                        );
 //
-//                RouteOrdering routeOrdering = routeOrderingRepository.findByNewItem(
+//                RouteOrdering routeOrdering = routeOrderingRepository.findByNewItemOrderByIdAsc(
 //                        routeProduct.getRouteOrdering().getNewItem()
 //                ).get(
-//                        routeOrderingRepository.findByNewItem(
+//                        routeOrderingRepository.findByNewItemOrderByIdAsc(
 //                                routeProduct.getRouteOrdering().getNewItem()
 //                        ).size()-1
 //                );
@@ -638,10 +638,10 @@
 //                                routeProduct.getRouteOrdering().getItem()
 //                        );
 //
-//                RouteOrdering routeOrdering = routeOrderingRepository.findByNewItem(
+//                RouteOrdering routeOrdering = routeOrderingRepository.findByNewItemOrderByIdAsc(
 //                        routeProduct.getRouteOrdering().getNewItem()
 //                ).get(
-//                        routeOrderingRepository.findByNewItem(
+//                        routeOrderingRepository.findByNewItemOrderByIdAsc(
 //                                routeProduct.getRouteOrdering().getNewItem()
 //                        ).size()-1
 //                );

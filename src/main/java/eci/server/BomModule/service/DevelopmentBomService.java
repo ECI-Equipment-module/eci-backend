@@ -51,11 +51,11 @@ public class DevelopmentBomService {
                 orElseThrow(DevelopmentBomNotFoundException::new);
 
         NewItem newItem = developmentBom.getBom().getNewItem();
-        List<RouteOrdering> routeOrdering = routeOrderingRepository.findByNewItem(newItem);
+        List<RouteOrdering> routeOrdering = routeOrderingRepository.findByNewItemOrderByIdAsc(newItem);
 
         List<TempNewItemChildDto> children = newItemService.readDevChildAll(newItem.getId());
 
-        RouteOrdering targetRouteOrdering = routeOrderingRepository.findByNewItem(newItem).get(routeOrdering.size() - 1);
+        RouteOrdering targetRouteOrdering = routeOrderingRepository.findByNewItemOrderByIdAsc(newItem).get(routeOrdering.size() - 1);
         Long routeId = targetRouteOrdering.getId();
 
         TempNewItemChildDto devBom = TempNewItemChildDto
@@ -83,9 +83,9 @@ public class DevelopmentBomService {
 
 
 
-            if (bomRepository.findByNewItem(targetNewItem).size() > 0) {
-                Bom oldBom = bomRepository.findByNewItem(targetNewItem).get
-                        (bomRepository.findByNewItem(targetNewItem).size() - 1);
+            if (bomRepository.findByNewItemOrderByIdAsc(targetNewItem).size() > 0) {
+                Bom oldBom = bomRepository.findByNewItemOrderByIdAsc(targetNewItem).get
+                        (bomRepository.findByNewItemOrderByIdAsc(targetNewItem).size() - 1);
 
                 reviseId = oldBom.getId();
             }
@@ -222,8 +222,8 @@ public class DevelopmentBomService {
             }
         }
 
-        Long routeId = routeOrderingRepository.findByNewItem(developmentBom.getBom().getNewItem())
-                .get(routeOrderingRepository.findByNewItem(developmentBom.getBom().getNewItem()).size()-1).getId();
+        Long routeId = routeOrderingRepository.findByNewItemOrderByIdAsc(developmentBom.getBom().getNewItem())
+                .get(routeOrderingRepository.findByNewItemOrderByIdAsc(developmentBom.getBom().getNewItem()).size()-1).getId();
 
         //dev bom id return
         return new ProjectCreateUpdateResponse(

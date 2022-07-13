@@ -66,15 +66,15 @@ public class BomGuard {
 
 
     public boolean isBomCreator(Long itemId) { //디자인 생성 라우트 담당자인지
-        routeOrderingRepository.findByNewItem(
+        routeOrderingRepository.findByNewItemOrderByIdAsc(
                 newItemRepository.findById(itemId).orElseThrow(ItemNotFoundException::new)
         );
 
         RouteOrdering routeOrdering =
-                routeOrderingRepository.findByNewItem(
+                routeOrderingRepository.findByNewItemOrderByIdAsc(
                         newItemRepository.findById(itemId).orElseThrow(ItemNotFoundException::new)
                 ).get(
-                        routeOrderingRepository.findByNewItem(
+                        routeOrderingRepository.findByNewItemOrderByIdAsc(
                                 newItemRepository.findById(itemId).orElseThrow(ItemNotFoundException::new)
                         ).size()-1
                 );
@@ -107,15 +107,15 @@ public class BomGuard {
 
 
     public boolean isBomReviewer(Long itemId) { //디자인 리뷰 라우트 담당자인지
-        routeOrderingRepository.findByNewItem(
+        routeOrderingRepository.findByNewItemOrderByIdAsc(
                 newItemRepository.findById(itemId).orElseThrow(ItemNotFoundException::new)
         );
 
         RouteOrdering routeOrdering =
-                routeOrderingRepository.findByNewItem(
+                routeOrderingRepository.findByNewItemOrderByIdAsc(
                         newItemRepository.findById(itemId).orElseThrow(ItemNotFoundException::new)
                 ).get(
-                        routeOrderingRepository.findByNewItem(
+                        routeOrderingRepository.findByNewItemOrderByIdAsc(
                                 newItemRepository.findById(itemId).orElseThrow(ItemNotFoundException::new)
                         ).size()-1
                 );
@@ -151,15 +151,15 @@ public class BomGuard {
 
         String result = null;
 
-        routeOrderingRepository.findByNewItem(
+        routeOrderingRepository.findByNewItemOrderByIdAsc(
                 newItemRepository.findById(itemId).orElseThrow(ItemNotFoundException::new)
         );
 
         RouteOrdering routeOrdering =
-                routeOrderingRepository.findByNewItem(
+                routeOrderingRepository.findByNewItemOrderByIdAsc(
                         newItemRepository.findById(itemId).orElseThrow(ItemNotFoundException::new)
                 ).get(
-                        routeOrderingRepository.findByNewItem(
+                        routeOrderingRepository.findByNewItemOrderByIdAsc(
                                 newItemRepository.findById(itemId).orElseThrow(ItemNotFoundException::new)
                         ).size()-1
                 );
@@ -262,10 +262,10 @@ public class BomGuard {
     }
 
     public Long editBomId(Long itemId){
-        return bomRepository.findByNewItem(
+        return bomRepository.findByNewItemOrderByIdAsc(
                 newItemRepository.findById(itemId).orElseThrow(ItemNotFoundException::new)
         ).get(
-                bomRepository.findByNewItem(
+                bomRepository.findByNewItemOrderByIdAsc(
                         newItemRepository.findById(itemId).orElseThrow(ItemNotFoundException::new)
                 ).size()-1
         ).getId();
