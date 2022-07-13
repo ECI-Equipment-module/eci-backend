@@ -72,6 +72,7 @@ public class DevelopmentBom {
      * dev bom 거절 시 수행
      */
     public void updateReadonlyFalse(){
+
         this.readonly = false;
     }
 
