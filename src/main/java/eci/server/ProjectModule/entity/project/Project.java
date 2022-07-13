@@ -410,11 +410,11 @@ public class Project extends EntityDate {
                         this.sopOverPeriod :
                         LocalDate.parse(req.getSopOverPeriod(), DateTimeFormatter.ISO_DATE);
 
-        this.newItem =
-                req.getItemId() == null ?
-                        this.newItem :
-                        newItemRepository.findById(req.getItemId())
-                                .orElseThrow(ItemNotFoundException::new);
+//        this.newItem =
+//                req.getItemId() == null ?
+//                        this.newItem :
+//                        newItemRepository.findById(req.getItemId())
+//                                .orElseThrow(ItemNotFoundException::new);
 
         this.projectLevel =
                 req.getProjectLevelId() == null ?
@@ -686,13 +686,13 @@ public class Project extends EntityDate {
         this.sopOverPeriod = req.getSopOverPeriod() == null || req.getSopOverPeriod().isBlank() ?
                 null : LocalDate.parse(req.getSopOverPeriod(), DateTimeFormatter.ISO_DATE);
 
-
-        this.newItem =
-                req.getItemId() == null ?
-                        newItemRepository.findById(-1L)
-                                .orElseThrow(ItemTypeNotEmptyException::new) :
-                        newItemRepository.findById(req.getItemId())
-                                .orElseThrow(ItemNotFoundException::new);
+//
+//        this.newItem =
+//                req.getItemId() == null ?
+//                        newItemRepository.findById(-1L)
+//                                .orElseThrow(ItemTypeNotEmptyException::new) :
+//                        newItemRepository.findById(req.getItemId())
+//                                .orElseThrow(ItemNotFoundException::new);
 
 
         this.projectType =
@@ -762,10 +762,13 @@ public class Project extends EntityDate {
     }
 
     public void changeItemIdOfProjectByNewMadeItem(NewItem newMadeItem) {
-        System.out.println("newmADEITEM " + newMadeItem.getName());
+
         this.newItem = newMadeItem;
     }
 
+    public void setNewItem(NewItem newItem) {
+        this.newItem = newItem;
+    }
 
     public NewItemCreateResponse projectUpdateToReadonlyFalseTempSaveTrue() {
         this.readonly = false;

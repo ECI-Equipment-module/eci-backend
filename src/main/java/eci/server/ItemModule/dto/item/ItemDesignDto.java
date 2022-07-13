@@ -15,7 +15,7 @@ public class ItemDesignDto {
     private String type;
     private String itemNumber;
     private String imageAddress;
-    private int revision;
+    private int itemRevision;
 
 
 

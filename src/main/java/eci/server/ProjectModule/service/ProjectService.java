@@ -247,6 +247,18 @@ public class ProjectService {
 
     }
 
+    public Long routeIdReturn(Long newCreateItemId){
+
+        NewItem newItemOfProject = newItemRepository.findById(newCreateItemId).orElseThrow(ItemNotFoundException::new);
+
+        List<RouteOrdering> routeOrdering = routeOrderingRepository.findByNewItem(newItemOfProject);
+
+        //프로젝트에 딸린 라우트
+        Long routeId = routeOrderingRepository.findByNewItem(newItemOfProject).get(routeOrdering.size()-1).getId();
+
+        return routeId;
+    }
+
 
     // read one project
     public ProjectDto read(Long id){
@@ -662,6 +674,7 @@ public class ProjectService {
 
         // 이 타겟 프로젝트의 아이템을 지금 새로 만들어진 아이템으로 변경해주면 된다.
         targetProj.changeItemIdOfProjectByNewMadeItem(newMadeItem);
+        targetProj.setNewItem(newMadeItem);
 
     }
 

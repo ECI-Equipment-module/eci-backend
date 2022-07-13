@@ -123,8 +123,9 @@ public class ProjectController {
 
         ProjectTempCreateUpdateResponse response = projectService.update(revisedId, req);
         //기존 프로젝트 업데이트
-        projectService.changeProjectItemToNewMadeItem(response.getId(), newMadeItemId);
+        projectService.changeProjectItemToNewMadeItem(revisedId, newMadeItemId);
         // 기존 프로젝트 아이템 값만 revisedId 라는 새 아이템으로 바꿔치기 해주기
+        //response.setRouteId(projectService.routeIdReturn(newMadeItemId));
         return Response.success(
                 response
         );
@@ -143,8 +144,10 @@ public class ProjectController {
 
         DesignCreateUpdateResponse response = projectService.tempEnd(revisedId, req);
         // 기존 프로젝트 업데이트
-        projectService.changeProjectItemToNewMadeItem(response.getId(), newMadeItemId);
-        // 기존 프로젝트 아이템 값만 revisedId 라는 새 아이템으로 바꿔치기 해주기
+        projectService.changeProjectItemToNewMadeItem(revisedId, newMadeItemId);
+        // 기존 프로젝트 아이템 값만 new item 라는 새 아이템으로 바꿔치기 해주기
+
+        response.setRouteId(projectService.routeIdReturn(newMadeItemId));
 
         return Response.success(
                 response
