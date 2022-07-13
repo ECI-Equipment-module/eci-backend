@@ -703,6 +703,7 @@ public class RouteOrderingService {
                             developmentBomRepository.findByBom(bom);
 
                     developmentBom.updateTempSaveFalse();
+                    developmentBom.updateReadonlyTrue();
                 }
             }
 
