@@ -33,8 +33,8 @@ public class ItemProjectCreateDto {
                 Item.getItemTypes().getItemType().toString(),
                 Item.getItemNumber(),
                 (char)Item.getRevision(),
-                routeOrderingRepository.findByNewItem(Item).get(
-                        routeOrderingRepository.findByNewItem(Item).size()-1
+                routeOrderingRepository.findByNewItemOrderByIdAsc(Item).get(
+                        routeOrderingRepository.findByNewItemOrderByIdAsc(Item).size()-1
                 ).getLifecycleStatus()
 
         );

@@ -120,7 +120,7 @@ public class RouteOrderingService {
 
     public List<RouteOrderingDto> readAll(RouteOrderingReadCondition cond) {
 
-        List<RouteOrdering> newRoutes = routeOrderingRepository.findByNewItem(
+        List<RouteOrdering> newRoutes = routeOrderingRepository.findByNewItemOrderByIdAsc(
                 newItemRepository.findById(cond.getItemId())
                         .orElseThrow(RouteNotFoundException::new)
         );
