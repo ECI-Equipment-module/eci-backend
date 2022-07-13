@@ -8,6 +8,7 @@ import eci.server.BomModule.exception.DevelopmentBomNotFoundException;
 import eci.server.BomModule.exception.InadequateRelationException;
 import eci.server.BomModule.repository.DevelopmentBomRepository;
 import eci.server.ItemModule.entity.newRoute.RouteOrdering;
+import eci.server.ItemModule.entity.newRoute.RouteProduct;
 import eci.server.ItemModule.exception.item.ItemNotFoundException;
 import eci.server.ItemModule.repository.newRoute.RouteOrderingRepository;
 import eci.server.ItemModule.repository.newRoute.RouteProductRepository;
@@ -24,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @Transactional(readOnly = true)
@@ -63,9 +65,14 @@ public class DevelopmentBomService {
                         routeId
                         );
 
+        // 지금 dev 봄의 봄의 아이템의 라우트 오더링 찾아서,
+
         return new DevelopmentReadDto(
                 devBom,
-                routeId
+                routeId,
+                DevBomPreRejected(targetRouteOrdering, routeProductRepository),
+                developmentBom.getReadonly()
+
         );
 
     }
@@ -219,6 +226,29 @@ public class DevelopmentBomService {
 
         developmentBom.updateReadonlyTrue();
 
+    }
+
+
+
+    private static boolean DevBomPreRejected(RouteOrdering routeOrdering,
+                                         RouteProductRepository routeProductRepository){
+
+        boolean preRejected = false;
+
+        List<RouteProduct> routeProductList =
+                routeProductRepository.findAllByRouteOrdering(routeOrdering);
+        if(!(routeOrdering.getPresent()==routeProductList.size())) {
+            RouteProduct currentRouteProduct =
+                    routeProductList.get(routeOrdering.getPresent());
+
+            if (Objects.equals(currentRouteProduct.getType().getModule(), "BOM") &&
+                    Objects.equals(currentRouteProduct.getType().getName(), "CREATE")) {
+                if (currentRouteProduct.isPreRejected()) {
+                    preRejected = true;
+                }
+            }
+        }
+        return preRejected;
     }
 
 
