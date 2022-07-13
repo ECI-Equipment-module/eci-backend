@@ -86,7 +86,7 @@ public class BomGuard {
         boolean result = false;
 
         for(RouteProduct routeProduct : routeProductList){
-            if(routeProduct.getType().getModule().equals("DESIGN")
+            if(routeProduct.getType().getModule().equals("BOM")
                     && routeProduct.getType().getName().equals("CREATE")){
                 targetMem = routeProduct.getMembers();
             }
