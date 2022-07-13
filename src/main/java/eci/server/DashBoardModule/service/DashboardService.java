@@ -1020,7 +1020,7 @@ public class DashboardService {
 
         ToDoSingle newBom = new ToDoSingle("Add New Bom", NEW_BOM);
         ToDoSingle tempBom = new ToDoSingle("Save as Draft", TEMP_SAVE);
-        ToDoSingle rejectedBom = new ToDoSingle("Rejected Item", REJECTED);
+        ToDoSingle rejectedBom = new ToDoSingle("Rejected Bom", REJECTED);
         //ToDoSingle needRevise = new ToDoSingle("Need Revise", REVISE);
         ToDoSingle reviewBom = new ToDoSingle("Waiting Review", REVIEW);
 
@@ -1351,10 +1351,11 @@ public class DashboardService {
 
         ToDoSingle CRTempSave = new ToDoSingle("Save as Draft CR", CR_TEMP_SAVE);
         ToDoSingle COTempSave = new ToDoSingle("Save as Draft CO", CO_TEMP_SAVE);
-        ToDoSingle rejectedCR = new ToDoSingle("Rejected CR", CR_REJECTED);
-        ToDoSingle rejectedCO = new ToDoSingle("Rejected CO", CO_REJECTED);
         ToDoSingle CRNeedReview = new ToDoSingle("Waiting Review CR", CR_NEED_REVIEW);
         ToDoSingle CONeedReview = new ToDoSingle("Waiting Review CO", CO_NEED_REVIEW);
+        ToDoSingle rejectedCR = new ToDoSingle("Rejected CR", CR_REJECTED);
+        ToDoSingle rejectedCO = new ToDoSingle("Rejected CO", CO_REJECTED);
+
 
         List<ToDoSingle> toDoDoubleList = new ArrayList<ToDoSingle>();
         toDoDoubleList.add(CRTempSave);
