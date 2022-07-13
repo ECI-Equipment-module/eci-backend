@@ -745,7 +745,7 @@ public class DashboardService {
                                     reviseTarget.getName(),
                                     reviseTarget.getItemTypes().getItemType().toString(),
                                     reviseTarget.getItemNumber(),
-                                    1L
+                                    -1L
                             )
                     );
                 }
