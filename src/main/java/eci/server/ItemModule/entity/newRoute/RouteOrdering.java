@@ -299,23 +299,23 @@ public class RouteOrdering extends EntityDate {
                     throw new ItemNotFoundException();//에러 던지기
                 }
 
-                NewItem targetRevisedItem = newItemRepository.
+                NewItem targetOldRevisedItem = newItemRepository.
                         findById(routeOrdering.getNewItem().getReviseTargetId()).orElseThrow(ItemNotFoundException::new);
 
                 NewItem completedNewItem = routeOrdering.getNewItem();
                 completedNewItem.setReviseTargetId(null); //끝나면 null 로 관계 끊어주기
 
-                if (targetRevisedItem.isRevise_progress()) {
-                    targetRevisedItem.setRevise_progress(false);
+                if (targetOldRevisedItem.isRevise_progress()) {
+                    targetOldRevisedItem.setRevise_progress(false);
                     //0712 아기의 target route 가 revise progress 가 진행 중이라면 라우트 complete 될 때 false 로 갱신
                 }
 
-                if(coNewItemRepository.findByNewItemOrderByCreatedAtAsc(targetRevisedItem).size()>0) {
+                if(coNewItemRepository.findByNewItemOrderByCreatedAtAsc(targetOldRevisedItem).size()>0) {
                     // (1) 지금 revise 완료 된 아이템의 CO 를 검사하기 위해 check co 찾기
                     System.out.println("(1) 지금 revise 완료 된 아이템의 CO 를 검사하기 위해 check co 찾기");
                     ChangeOrder checkCo =
-                            coNewItemRepository.findByNewItemOrderByCreatedAtAsc(targetRevisedItem).get(
-                                            coNewItemRepository.findByNewItemOrderByCreatedAtAsc(targetRevisedItem).size()-1
+                            coNewItemRepository.findByNewItemOrderByCreatedAtAsc(targetOldRevisedItem).get(
+                                            coNewItemRepository.findByNewItemOrderByCreatedAtAsc(targetOldRevisedItem).size()-1
                                     )//가장 최근에 맺어진 co-new item 관계 중 가장 최신 아이의 co를 검사하기
                                     .getChangeOrder();
 
