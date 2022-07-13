@@ -302,6 +302,9 @@ public class RouteOrdering extends EntityDate {
                 NewItem targetRevisedItem = newItemRepository.
                         findById(routeOrdering.getNewItem().getReviseTargetId()).orElseThrow(ItemNotFoundException::new);
 
+                NewItem completedNewItem = routeOrdering.getNewItem();
+                completedNewItem.setReviseTargetId(null); //끝나면 null 로 관계 끊어주기
+
                 if (targetRevisedItem.isRevise_progress()) {
                     targetRevisedItem.setRevise_progress(false);
                     //0712 아기의 target route 가 revise progress 가 진행 중이라면 라우트 complete 될 때 false 로 갱신

@@ -162,13 +162,13 @@ public class ProjectService {
 
         Project project =  projectRepository.findById(id).orElseThrow(ProjectNotFoundException::new);
 
-        if (!project.getTempsave()){
-
-            //true면 임시저장 상태, false면 찐 저장 상태
-            //찐 저장 상태라면 UPDATE 불가, 임시저장 일때만 가능
-
-            throw new ProjectUpdateImpossibleException();
-        }
+//        if (!project.getTempsave()){
+//
+//            //true면 임시저장 상태, false면 찐 저장 상태
+//            //찐 저장 상태라면 UPDATE 불가, 임시저장 일때만 가능
+//
+//            throw new ProjectUpdateImpossibleException();
+//        }
 
         Project.FileUpdatedResult result = project.update(
                 req,
@@ -201,13 +201,13 @@ public class ProjectService {
 
         Project project = projectRepository.findById(id).
                 orElseThrow(ProjectNotFoundException::new);
-
-        if (!project.getTempsave() || project.getReadonly()) {
-            //tempsave가 false면 찐 저장 상태
-            //찐 저장 상태라면 UPDATE 불가, 임시저장 일때만 가능
-            //readonly가 true라면 수정 불가상태
-            throw new ProjectUpdateImpossibleException();
-        }
+//
+//        if (!project.getTempsave() || project.getReadonly()) {
+//            //tempsave가 false면 찐 저장 상태
+//            //찐 저장 상태라면 UPDATE 불가, 임시저장 일때만 가능
+//            //readonly가 true라면 수정 불가상태
+//            throw new ProjectUpdateImpossibleException();
+//        }
 
         Project.FileUpdatedResult result = project.tempEnd(
                 req,
