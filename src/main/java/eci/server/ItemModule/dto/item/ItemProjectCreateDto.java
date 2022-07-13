@@ -43,8 +43,8 @@ public class ItemProjectCreateDto {
                         +Item.getClassification().getClassification2().getName()+"/"
                         +Item.getClassification().getClassification3().getName()),
 
-                routeOrderingRepository.findByNewItem(Item).get(
-                        routeOrderingRepository.findByNewItem(Item).size()-1
+                routeOrderingRepository.findByNewItemOrderByIdAsc(Item).get(
+                        routeOrderingRepository.findByNewItemOrderByIdAsc(Item).size()-1
                 ).getLifecycleStatus()
 
         );

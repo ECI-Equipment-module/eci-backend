@@ -59,8 +59,8 @@ public class CoNewItemDto {
                         + coItem.getNewItem().getClassification().getClassification2().getName() + "/"
                         + coItem.getNewItem().getClassification().getClassification3().getName()),
 
-                routeOrderingRepository.findByNewItem(coItem.getNewItem()).get(
-                        routeOrderingRepository.findByNewItem(coItem.getNewItem()).size() - 1
+                routeOrderingRepository.findByNewItemOrderByIdAsc(coItem.getNewItem()).get(
+                        routeOrderingRepository.findByNewItemOrderByIdAsc(coItem.getNewItem()).size() - 1
                 ).getLifecycleStatus(),
 
                 coItem.getChangedContent(),
@@ -93,8 +93,8 @@ public class CoNewItemDto {
                                                 + coItem.getNewItem().getClassification().getClassification2().getName() + "/"
                                                 + coItem.getNewItem().getClassification().getClassification3().getName()),
 
-                                        routeOrderingRepository.findByNewItem(coItem.getNewItem()).get(
-                                                routeOrderingRepository.findByNewItem(coItem.getNewItem()).size() - 1
+                                        routeOrderingRepository.findByNewItemOrderByIdAsc(coItem.getNewItem()).get(
+                                                routeOrderingRepository.findByNewItemOrderByIdAsc(coItem.getNewItem()).size() - 1
                                         ).getLifecycleStatus(),
 
                                         coItem.getChangedContent(),

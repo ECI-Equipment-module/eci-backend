@@ -100,9 +100,9 @@ public class DesignService {
         if (!(req.getTag().size() == 0)) {
             uploadAttachments(design.getDesignAttachments(), req.getAttachments());
         }
-        List<RouteOrdering> routeOrdering = routeOrderingRepository.findByNewItem(design.getNewItem());
+        List<RouteOrdering> routeOrdering = routeOrderingRepository.findByNewItemOrderByIdAsc(design.getNewItem());
         //프로젝트에 딸린 라우트
-        Long routeId = routeOrderingRepository.findByNewItem(design.getNewItem()).get(routeOrdering.size() - 1).getId();
+        Long routeId = routeOrderingRepository.findByNewItemOrderByIdAsc(design.getNewItem()).get(routeOrdering.size() - 1).getId();
 
         //06-17 등록되면 , routeOrdering 에 design 으로 얘를 등록 시켜주기//////
         RouteOrdering setRoute =
@@ -206,10 +206,10 @@ public class DesignService {
 
         //06-17 아래 라우트에 디자인 등록 로직 추가
 
-        List<RouteOrdering> routeOrdering = routeOrderingRepository.findByNewItem(design.getNewItem());
+        List<RouteOrdering> routeOrdering = routeOrderingRepository.findByNewItemOrderByIdAsc(design.getNewItem());
         //디자인에 딸린 라우트////////////////////////////
         Long routeId =
-                routeOrderingRepository.findByNewItem(design.getNewItem()).get(routeOrdering.size() - 1).getId();
+                routeOrderingRepository.findByNewItemOrderByIdAsc(design.getNewItem()).get(routeOrdering.size() - 1).getId();
 
         RouteOrdering setRoute =
                 routeOrderingRepository.findById(routeId).orElseThrow(RouteNotFoundException::new);
@@ -225,7 +225,7 @@ public class DesignService {
     // read one project
     public DesignDto read(Long id) {
         Design targetDesign = designRepository.findById(id).orElseThrow(DesignNotFoundException::new);
-        RouteOrdering routeOrdering = routeOrderingRepository.findByNewItem(targetDesign.getNewItem()).get(0);
+        RouteOrdering routeOrdering = routeOrderingRepository.findByNewItemOrderByIdAsc(targetDesign.getNewItem()).get(0);
         return DesignDto.toDto(
                 routeOrdering,
                 targetDesign,
@@ -284,8 +284,8 @@ public class DesignService {
 
                         //project.getLifecycle(), //프로젝트의 라이프사이클
 
-                        routeOrderingRepository.findByNewItem(design.getNewItem()).get(
-                                routeOrderingRepository.findByNewItem(design.getNewItem()).size()-1
+                        routeOrderingRepository.findByNewItemOrderByIdAsc(design.getNewItem()).get(
+                                routeOrderingRepository.findByNewItemOrderByIdAsc(design.getNewItem()).size()-1
                         ).getLifecycleStatus(),
                         //아이템의 라이프 사이클
 
