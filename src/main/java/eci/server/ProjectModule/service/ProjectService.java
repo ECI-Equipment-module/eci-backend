@@ -15,6 +15,7 @@ import eci.server.ItemModule.repository.newRoute.RouteOrderingRepository;
 import eci.server.ItemModule.repository.newRoute.RouteProductRepository;
 import eci.server.ItemModule.service.file.FileService;
 
+import eci.server.NewItemModule.dto.newItem.create.NewItemCreateResponse;
 import eci.server.NewItemModule.entity.NewItem;
 import eci.server.NewItemModule.repository.attachment.AttachmentTagRepository;
 import eci.server.NewItemModule.repository.item.NewItemRepository;
@@ -664,6 +665,11 @@ public class ProjectService {
 
     }
 
+    public NewItemCreateResponse projectUpdateToReadonlyFalseTempsaveTrue(Project project){
+
+        project.projectUpdateToReadonlyFalseTempSaveTrue();
+        return new NewItemCreateResponse(project.getId());
+        }
 
 
 }
