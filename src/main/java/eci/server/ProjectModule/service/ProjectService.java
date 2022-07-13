@@ -656,7 +656,7 @@ public class ProjectService {
     }
 
     public void changeProjectItemToNewMadeItem(Long targetProjId, Long newMadeItemid){
-
+        System.out.println("기존 pro id : " + targetProjId + " new made 대체될 아이디 " + newMadeItemid);
         Project targetProj = projectRepository.findById(targetProjId).orElseThrow(ProjectNotFoundException::new);
         NewItem newMadeItem = newItemRepository.findById(newMadeItemid).orElseThrow(ItemNotFoundException::new);
 
