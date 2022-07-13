@@ -18,10 +18,12 @@ import eci.server.CRCOModule.repository.cr.ChangeRequestRepository;
 import eci.server.DesignModule.entity.design.Design;
 import eci.server.DesignModule.exception.DesignNotLinkedException;
 import eci.server.DesignModule.repository.DesignRepository;
+import eci.server.ItemModule.dto.member.MemberDto;
 import eci.server.ItemModule.dto.newRoute.routeOrdering.*;
 import eci.server.ItemModule.dto.newRoute.routeProduct.RouteProductCreateRequest;
 import eci.server.ItemModule.dto.newRoute.routeProduct.RouteProductDto;
 import eci.server.ItemModule.entity.item.ItemType;
+import eci.server.ItemModule.entity.member.Member;
 import eci.server.ItemModule.entity.newRoute.RouteOrdering;
 import eci.server.ItemModule.entity.newRoute.RoutePreset;
 import eci.server.ItemModule.entity.newRoute.RouteProduct;
@@ -35,6 +37,7 @@ import eci.server.ItemModule.repository.member.MemberRepository;
 import eci.server.ItemModule.repository.newRoute.RouteOrderingRepository;
 import eci.server.ItemModule.repository.newRoute.RouteProductRepository;
 import eci.server.ItemModule.repository.newRoute.RouteTypeRepository;
+import eci.server.NewItemModule.dto.MembersDto;
 import eci.server.NewItemModule.entity.JsonSave;
 import eci.server.NewItemModule.entity.NewItem;
 import eci.server.NewItemModule.exception.ItemTypeRequiredException;
@@ -48,9 +51,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -95,6 +96,30 @@ public class RouteOrderingService {
                 defaultImageAddress
         );
 
+    }
+
+    public List<List<MemberDto>> memberRead(Long routeId) {
+
+        Set<String> names =
+        read(routeId).getRouteProductList().stream().map(
+                i->i.getName()
+        ).collect(Collectors.toSet());
+
+        List<String> nameList = new ArrayList<>(names);
+        List<List<MemberDto>> mem = new ArrayList<>();
+
+        int idx = 0;
+        while(idx< nameList.size()-1) {
+            for (RouteProductDto rp : read(routeId).getRouteProductList()) {
+                if (nameList.get(idx).equals(rp.getName())) {
+                    mem.add(
+                            rp.getMember()
+                    );
+                    idx+=1;
+                }
+            }
+        }
+    return mem;
     }
 
     public List readRouteByItem(Long id) {

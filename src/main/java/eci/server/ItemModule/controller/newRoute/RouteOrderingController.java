@@ -123,4 +123,13 @@ public class RouteOrderingController {
         );
     }
 
+    @GetMapping("/route/members/{routeId}")
+    @ResponseStatus(HttpStatus.OK)
+    public Response membersFromBeforeRoute(@PathVariable Long routeId) {
+        return Response.success(
+                newRouteService.memberRead(routeId)
+        );
+    }
+
+
 }
