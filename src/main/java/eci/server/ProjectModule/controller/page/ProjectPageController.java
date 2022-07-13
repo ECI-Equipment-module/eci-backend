@@ -3,7 +3,6 @@ package eci.server.ProjectModule.controller.page;
 import eci.server.DashBoardModule.dto.myProject.ProjectDashboardDto;
 import eci.server.ItemModule.repository.newRoute.RouteOrderingRepository;
 import eci.server.ProjectModule.dto.project.ProjectMemberRequest;
-import eci.server.ProjectModule.dto.project.ProjectSimpleDto;
 import eci.server.ProjectModule.repository.project.ProjectRepository;
 import eci.server.ProjectModule.service.ProjectService;
 import eci.server.aop.AssignMemberId;

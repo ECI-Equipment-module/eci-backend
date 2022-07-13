@@ -245,7 +245,8 @@ public class RouteOrderingService {
             //0607 BOM + PRELIMINARY BOM 생성되게 하기
             return new RouteOrderingCreateResponse(newRoute.getId());
         }
-        else{ //revise_progress 로 라우트 만드는 것이라면
+        else{
+            //revise_progress 로 라우트 만드는 것이라면
             //만드는 아이템에 revise target id가 등록돼있으면 걔는 revise new item
             System.out.println("새로 만들어지는 아이는 revise route 만들어서 revised cnt = 1 이되도록 하기 ");
             RouteOrdering newRoute = routeOrderingRepository.save(RouteOrderingCreateRequest
@@ -345,8 +346,14 @@ public class RouteOrderingService {
 
                 newRoute.setBom(bom);
             }
+
+
+
+
             newRoute.getNewItem().updateTempsaveWhenMadeRoute();
             //라우트 만들면 임시저장 해제
+
+
 
             //0607 BOM + PRELIMINARY BOM 생성되게 하기
             return new RouteOrderingCreateResponse(newRoute.getId());
@@ -424,6 +431,7 @@ public class RouteOrderingService {
 
         newRoute.getChangeOrder().updateTempsaveWhenMadeRoute();
         //라우트 만들면 임시저장 해제
+
 
         return new RouteOrderingCreateResponse(newRoute.getId());
     }
@@ -838,6 +846,52 @@ public class RouteOrderingService {
 
                         chkItem.updateRevision(targetItem.getRevision()+1);
                         //targetItem.getRevision() 보다 하나 더 큰 값으로 갱신
+                    }
+
+
+                }
+            }
+
+            // 0713 : 아이템 생성 승인했는데 REVISE 진행 제품이라면
+            // 수정해야 할 PROJECT 가 딸려있음, 이 PROJ 수정 가능하게 MODE 변경
+            else if (targetRoutProduct.getType().getModule().equals("ITEM")
+                    && targetRoutProduct.getType().getName().equals("CREATE")) {
+
+                // 파트제품, 프로덕트 제품 제외한 다른 애들은 approve route 할 때
+                // (1) 아이템이 revise progress 이며
+                // (2) 지금 승인하는게 ITEM REVIEW 면 revision+=1
+                NewItem chkItem = targetRoutProduct.getRouteOrdering().getNewItem();
+                if (chkItem.getReviseTargetId()!=null) {
+                    //저게 null 이 아니라면 targetId의 아이템 revision보다 +1값으로
+                    // 기존 : chkItem.isRevise_progress())
+
+                    if (
+                            (chkItem.getItemTypes().getItemType().name().equals("파트제품") ||
+                                    chkItem.getItemTypes().getItemType().name().equals("프로덕트제품"))
+                    ) {// 파트 제품과 프로덕트 제품 아닌 경우에는 item review를 진행할 때 revision update !
+
+                        // (1) 제품은 create 할 때 REVISION + 1
+                        NewItem targetOldReviseItem = newItemRepository.findById(chkItem.getReviseTargetId()).orElseThrow(
+                                ItemNotFoundException::new
+                        );
+
+                        chkItem.updateRevision(targetOldReviseItem.getRevision()+1);
+                        //targetItem.getRevision() 보다 하나 더 큰 값으로 갱신
+
+
+                        // (2) 제품은
+
+//
+//                        if(projectRepository.findByNewItem(targetOldReviseItem).size()>0) {
+//                            Project oldProject = projectRepository.findByNewItem(targetOldReviseItem)
+//                                    .get(projectRepository.findByNewItem(targetOldReviseItem).size()-1);
+//
+//                            oldProject.setReadonly(false);
+//                            oldProject.setTempsave(true);
+//                        }
+
+                        /////////////
+
                     }
 
 
