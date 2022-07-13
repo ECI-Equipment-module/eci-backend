@@ -72,7 +72,7 @@ public class NewItemController {
 
         return Response.success(
                 response
-                );
+        );
     }
 
     /**
