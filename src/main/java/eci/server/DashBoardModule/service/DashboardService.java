@@ -31,6 +31,7 @@ import eci.server.NewItemModule.repository.item.NewItemRepository;
 import eci.server.ProjectModule.entity.project.Project;
 import eci.server.ProjectModule.exception.ProjectNotFoundException;
 import eci.server.ProjectModule.repository.project.ProjectRepository;
+import eci.server.ProjectModule.service.ProjectService;
 import eci.server.config.guard.AuthHelper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -55,6 +56,7 @@ public class DashboardService {
     private final DevelopmentBomRepository developmentBomRepository;
     private final ChangeOrderRepository changeOrderRepository;
     private final ChangeRequestRepository changeRequestRepository;
+    private final ProjectService projectService;
 
     public TotalProject readProjectTotal() {
         //0) 현재 로그인 된 유저
@@ -275,8 +277,11 @@ public class DashboardService {
                         reviseId = oldProject.getId();
 
                         if(reviseId!=-1L){
+
                             Project proj = projectRepository.findById(reviseId).orElseThrow(ProjectNotFoundException::new);
-                            proj.setTempsave(true);proj.setReadonly(true);
+                            System.out.println("이 프로젝트가 임저 돼야 함ㅁㅁㅁㅁㅁㅁㅁ" + proj.getId());
+                            //proj.setTempsave(true);proj.setReadonly(true); //0713 TODO : 반영안되는 중
+                            projectService.projectUpdateToReadonlyFalseTempsaveTrue(proj);
                         }
 
 
@@ -740,7 +745,7 @@ public class DashboardService {
                                     reviseTarget.getName(),
                                     reviseTarget.getItemTypes().getItemType().toString(),
                                     reviseTarget.getItemNumber(),
-                                    1L
+                                    -1L
                             )
                     );
                 }

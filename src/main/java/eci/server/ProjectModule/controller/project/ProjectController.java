@@ -2,7 +2,6 @@ package eci.server.ProjectModule.controller.project;
 
 import eci.server.DesignModule.dto.DesignCreateUpdateResponse;
 import eci.server.ItemModule.dto.response.Response;
-import eci.server.NewItemModule.dto.newItem.update.NewItemUpdateRequest;
 import eci.server.ProjectModule.dto.project.*;
 import eci.server.ProjectModule.service.ProjectService;
 import eci.server.aop.AssignMemberId;
