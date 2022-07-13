@@ -72,7 +72,7 @@ public class BomDesignItemDto {
 
 
             } else if (bomGuard.reviewState(newItem.getId()).equals("bomCreate")) {
-
+            System.out.println("나는 봄 생성잗아ㅏㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇ");
                 //1) 봄 생성 담당자
                 DesignResponsibleDtoList.add(
                         new DesignResponsibleDto(
@@ -193,8 +193,8 @@ public class BomDesignItemDto {
 
             } else if (bomGuard.reviewState(newItem.getId()).equals("bomCreate")) {
 
-                if(!bomGuard.isBomCreator(newItem.getId())) {
-
+                if(!(bomGuard.isBomCreator(newItem.getId()))) {
+                    System.out.println("이것이 문제다아ㅏ아아아앙아ㅏ, 여기 들어오면 안댕 ");
                     //2) 봄 리뷰 담당자
                     DesignResponsibleDtoList.add(
                             new DesignResponsibleDto(
