@@ -2,9 +2,7 @@ package eci.server.ProjectModule.controller.carType;
 
 import eci.server.ItemModule.dto.response.Response;
 import eci.server.ProjectModule.dto.carType.CarTypeReadCondition;
-import eci.server.ProjectModule.dto.clientOrg.ClientOrganizationReadCondition;
 import eci.server.ProjectModule.service.carType.CarTypeService;
-import eci.server.ProjectModule.service.clientOrg.ClientOrganizationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.CrossOrigin;

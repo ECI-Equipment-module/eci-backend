@@ -275,7 +275,9 @@ public class DashboardService {
                         reviseId = oldProject.getId();
 
                         if(reviseId!=-1L){
+
                             Project proj = projectRepository.findById(reviseId).orElseThrow(ProjectNotFoundException::new);
+                            System.out.println("이 프로젝트가 임저 돼야 함ㅁㅁㅁㅁㅁㅁㅁ" + proj.getId());
                             proj.setTempsave(true);proj.setReadonly(true);
                         }
 

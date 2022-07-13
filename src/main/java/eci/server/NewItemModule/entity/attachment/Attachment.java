@@ -121,7 +121,7 @@ public class Attachment extends EntityDate {
      * @return
      */
     private String generateUniqueName(String extension) {
-        return UUID.randomUUID().toString() + "." + extension;
+        return UUID.randomUUID() + "." + extension;
     }
 
     /**
