@@ -886,58 +886,16 @@ public class DashboardService {
                 );
 
                 NewItem targetItem = routeProduct.getRouteOrdering().getNewItem();
-//                unlinkedItemTodoResponses.add(
-//                        new TodoResponse(
-//                                bom.getId(),
-//                                targetItem.getName(),
-//                                targetItem.getItemTypes().getItemType().toString(),
-//                                targetItem.getItemNumber(),
-//                                -1L
-//                        )
-//                );
+                unlinkedItemTodoResponses.add(
+                        new TodoResponse(
+                                bom.getId(),
+                                targetItem.getName(),
+                                targetItem.getItemTypes().getItemType().toString(),
+                                targetItem.getItemNumber(),
+                                -1L
+                        )
+                );
 
-                if(targetItem.getReviseTargetId()!=null
-                        &&
-                        newItemRepository.
-                                findById(targetItem.getReviseTargetId()).orElseThrow(ItemNotFoundException::new)
-                                .isRevise_progress()
-                ){
-
-                    NewItem targetNewItem = newItemRepository.
-                            findById(targetItem.getReviseTargetId()).orElseThrow(ItemNotFoundException::new);
-
-                    Long reviseId=-1L;
-
-                    if(bomRepository.findByNewItem(targetNewItem).size()>0) {
-                        Bom oldBom = bomRepository.findByNewItem(targetNewItem).get
-                                (bomRepository.findByNewItem(targetNewItem).size()-1);
-
-                        reviseId = oldBom.getId();
-                    }
-
-                    unlinkedItemTodoResponses.add(
-                            new TodoResponse(
-                                    bom.getId(),
-                                    targetItem.getName(),
-                                    targetItem.getItemTypes().getItemType().toString(),
-                                    targetItem.getItemNumber(),
-                                    reviseId
-                            )
-                    );
-                }
-
-                else{ // 해당 아이템이 revise 로 인해 생긴 new item 이며 , targetItem 이 아직 revise _ progress 진행이라면
-                    unlinkedItemTodoResponses.add(
-                            new TodoResponse(
-                                    bom.getId(),
-                                    targetItem.getName(),
-                                    targetItem.getItemTypes().getItemType().toString(),
-                                    targetItem.getItemNumber(),
-                                    -1L
-                            )
-                    );
-                }
-//////////////////////////////////////////////////////
             }
         }
 

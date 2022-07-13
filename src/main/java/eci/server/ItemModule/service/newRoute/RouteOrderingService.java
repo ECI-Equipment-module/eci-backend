@@ -444,7 +444,8 @@ public class RouteOrderingService {
                 rejectComment,
                 rejectedSequence,
                 routeOrderingRepository,
-                routeProductRepository
+                routeProductRepository,
+                developmentBomRepository
 
         );
 

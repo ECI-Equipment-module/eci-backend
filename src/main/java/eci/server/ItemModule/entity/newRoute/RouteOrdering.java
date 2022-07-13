@@ -1,6 +1,8 @@
 package eci.server.ItemModule.entity.newRoute;
 
 import eci.server.BomModule.entity.Bom;
+import eci.server.BomModule.entity.DevelopmentBom;
+import eci.server.BomModule.repository.DevelopmentBomRepository;
 import eci.server.CRCOModule.entity.CoNewItem;
 import eci.server.CRCOModule.entity.co.ChangeOrder;
 import eci.server.CRCOModule.entity.cr.ChangeRequest;
@@ -445,7 +447,8 @@ public class RouteOrdering extends EntityDate {
             String rejectedComment,
             Integer rejectedIndex,
             RouteOrderingRepository routeOrderingRepository,
-            RouteProductRepository routeProductRepository
+            RouteProductRepository routeProductRepository,
+            DevelopmentBomRepository developmentBomRepository
 
     ) {
         /**
@@ -493,6 +496,7 @@ public class RouteOrdering extends EntityDate {
 
         //06-17 : 거부된 라우트 프로덕트의 라우트 타입 검사
 
+
         // 1,9, 11, 13 에 따라서 tempSave 랑 readOnly 의 true,false 값 변경
         switch(routeProductList.get(rejectedIndex).getType().getId().toString()) {
 
@@ -515,6 +519,9 @@ public class RouteOrdering extends EntityDate {
             case "11":
                 this.getBom().setTempsave(true);
                 this.getBom().setReadonly(false);
+                DevelopmentBom devBom = developmentBomRepository.findByBom(this.getBom());
+                devBom.updateReadonlyFalse();
+                devBom.updateTempSaveTrue();
                 break;
             // 15 (cr)
             case "15":
