@@ -2,10 +2,12 @@ package eci.server.BomModule.service;
 
 import eci.server.BomModule.dto.dev.DevelopmentReadDto;
 import eci.server.BomModule.dto.dev.DevelopmentRequestDto;
+import eci.server.BomModule.entity.Bom;
 import eci.server.BomModule.entity.DevelopmentBom;
 import eci.server.BomModule.exception.AddedDevBomNotPossible;
 import eci.server.BomModule.exception.DevelopmentBomNotFoundException;
 import eci.server.BomModule.exception.InadequateRelationException;
+import eci.server.BomModule.repository.BomRepository;
 import eci.server.BomModule.repository.DevelopmentBomRepository;
 import eci.server.ItemModule.entity.newRoute.RouteOrdering;
 import eci.server.ItemModule.entity.newRoute.RouteProduct;
@@ -38,7 +40,7 @@ public class DevelopmentBomService {
     private final TempNewItemParentChildrenRepository tempNewItemParentChildrenRepository;
     private final RouteOrderingRepository routeOrderingRepository;
     private final RouteProductRepository routeProductRepository;
-
+    private final BomRepository bomRepository;
 
 
     public DevelopmentReadDto readDevelopment(
@@ -67,12 +69,33 @@ public class DevelopmentBomService {
 
         // 지금 dev 봄의 봄의 아이템의 라우트 오더링 찾아서,
 
+        Long reviseId = -1L; //디폴트는 -1
+        // old bom 아이디 있으면 건네주기
+        if(newItem.getReviseTargetId()!=null
+                &&
+                newItemRepository.
+                        findById(newItem.getReviseTargetId()).orElseThrow(ItemNotFoundException::new)
+                        .isRevise_progress()
+        ) {
+
+            NewItem targetNewItem = newItemRepository.
+                    findById(newItem.getReviseTargetId()).orElseThrow(ItemNotFoundException::new);
+
+
+
+            if (bomRepository.findByNewItem(targetNewItem).size() > 0) {
+                Bom oldBom = bomRepository.findByNewItem(targetNewItem).get
+                        (bomRepository.findByNewItem(targetNewItem).size() - 1);
+
+                reviseId = oldBom.getId();
+            }
+        }
         return new DevelopmentReadDto(
                 devBom,
                 routeId,
                 DevBomPreRejected(targetRouteOrdering, routeProductRepository),
-                developmentBom.getReadonly()
-
+                developmentBom.getReadonly(),
+                reviseId
         );
 
     }

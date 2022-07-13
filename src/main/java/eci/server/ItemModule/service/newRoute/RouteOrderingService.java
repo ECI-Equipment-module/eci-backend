@@ -444,7 +444,8 @@ public class RouteOrderingService {
                 rejectComment,
                 rejectedSequence,
                 routeOrderingRepository,
-                routeProductRepository
+                routeProductRepository,
+                developmentBomRepository
 
         );
 
@@ -597,6 +598,7 @@ public class RouteOrderingService {
                                     );
                     //그 프로젝트를 라우트 프로덕트에 set 해주기
                     targetRoutProduct.setProject(linkedProject);
+                    targetRoutProduct.getRouteOrdering().setProject(linkedProject);
                     //05-12 추가사항 : 이 라우트를 제작해줄 때야 비로소 프로젝트는 temp save = false 가 되는 것
                     linkedProject.finalSaveProject();
                 }
@@ -624,6 +626,7 @@ public class RouteOrderingService {
                     }
                     //그 프로젝트를 라우트 프로덕트에 set 해주기
                     targetRoutProduct.setDesign(linkedDesign);
+                    targetRoutProduct.getRouteOrdering().setDesign(linkedDesign);
                     // 해당 design 의 임시저장을 false
                     //05-12 추가사항 : 이 라우트를 제작해줄 때야 비로소 프로젝트는 temp save = false 가 되는 것
                     linkedDesign.finalSaveDesign();
@@ -696,12 +699,14 @@ public class RouteOrderingService {
                     }
                     //그 프로젝트를 라우트 프로덕트에 set 해주기
                     targetRoutProduct.setBom(bom);
+                    targetRoutProduct.getRouteOrdering().setBom(bom);
                     // 해당 design 의 임시저장을 false
                     //05-12 추가사항 : 이 라우트를 제작해줄 때야 비로소 프로젝트는 temp save = false 가 되는 것
                     DevelopmentBom developmentBom =
                             developmentBomRepository.findByBom(bom);
 
                     developmentBom.updateTempSaveFalse();
+                    developmentBom.updateReadonlyTrue();
                 }
             }
 

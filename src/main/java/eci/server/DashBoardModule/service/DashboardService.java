@@ -886,58 +886,16 @@ public class DashboardService {
                 );
 
                 NewItem targetItem = routeProduct.getRouteOrdering().getNewItem();
-//                unlinkedItemTodoResponses.add(
-//                        new TodoResponse(
-//                                bom.getId(),
-//                                targetItem.getName(),
-//                                targetItem.getItemTypes().getItemType().toString(),
-//                                targetItem.getItemNumber(),
-//                                -1L
-//                        )
-//                );
+                unlinkedItemTodoResponses.add(
+                        new TodoResponse(
+                                bom.getId(),
+                                targetItem.getName(),
+                                targetItem.getItemTypes().getItemType().toString(),
+                                targetItem.getItemNumber(),
+                                -1L
+                        )
+                );
 
-                if(targetItem.getReviseTargetId()!=null
-                        &&
-                        newItemRepository.
-                                findById(targetItem.getReviseTargetId()).orElseThrow(ItemNotFoundException::new)
-                                .isRevise_progress()
-                ){
-
-                    NewItem targetNewItem = newItemRepository.
-                            findById(targetItem.getReviseTargetId()).orElseThrow(ItemNotFoundException::new);
-
-                    Long reviseId=-1L;
-
-                    if(bomRepository.findByNewItem(targetNewItem).size()>0) {
-                        Bom oldBom = bomRepository.findByNewItem(targetNewItem).get
-                                (bomRepository.findByNewItem(targetNewItem).size()-1);
-
-                        reviseId = oldBom.getId();
-                    }
-
-                    unlinkedItemTodoResponses.add(
-                            new TodoResponse(
-                                    bom.getId(),
-                                    targetItem.getName(),
-                                    targetItem.getItemTypes().getItemType().toString(),
-                                    targetItem.getItemNumber(),
-                                    reviseId
-                            )
-                    );
-                }
-
-                else{ // 해당 아이템이 revise 로 인해 생긴 new item 이며 , targetItem 이 아직 revise _ progress 진행이라면
-                    unlinkedItemTodoResponses.add(
-                            new TodoResponse(
-                                    bom.getId(),
-                                    targetItem.getName(),
-                                    targetItem.getItemTypes().getItemType().toString(),
-                                    targetItem.getItemNumber(),
-                                    -1L
-                            )
-                    );
-                }
-//////////////////////////////////////////////////////
             }
         }
 
@@ -1006,15 +964,17 @@ public class DashboardService {
         // 봄 CREATE 이고,
         // 라우트프로덕트 멤버가 나이고,
         // PRE - REJECTED=TRUE 인 것
-        HashSet<TodoResponse> rejectedDesignTodoResponses = new HashSet<>();
+        HashSet<TodoResponse> rejectedBomTodoResponses = new HashSet<>();
 
         for (RouteProduct routeProduct : myRouteBomCreateProductList) {
-            if (routeProduct.isPreRejected()
+            if (
+                    routeProduct.isPreRejected()
             ) {
 
-                Bom targetBom = routeProduct.getBom();
+                Bom targetBom = routeProduct.getRouteOrdering().getBom();
+
                 if(targetBom!=null) {
-                    rejectedDesignTodoResponses.add(
+                    rejectedBomTodoResponses.add(
                             new TodoResponse(
                                     targetBom.getId(),
                                     targetBom.getNewItem().getName(),
@@ -1026,7 +986,7 @@ public class DashboardService {
                 }
             }
         }
-        List<TodoResponse> REJECTED = new ArrayList<>(rejectedDesignTodoResponses);
+        List<TodoResponse> REJECTED = new ArrayList<>(rejectedBomTodoResponses);
 
         // 6 ) BOM REVIEW 인 단계, 현재 진행 중이고, 내꺼고 단계가 봄 - 리뷰
 
