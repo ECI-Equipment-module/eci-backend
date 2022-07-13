@@ -69,8 +69,8 @@ public class ProjectDto {
     private ProjectTypeDto projectType;
     private ProjectLevelDto projectLevel;
     private ProduceOrganizationDto supplierId;
-    private ClientOrganizationDto clientOrganization;
-    private CarTypeDto carType;
+    private ClientOrganizationDto clientOrganizationId;
+    private CarTypeDto carTypeId;
     private List<ProjectAttachmentDto> projectAttachments;
 
     //private List<RouteOrderingDto> routeDtoList;
