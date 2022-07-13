@@ -510,7 +510,7 @@ public class RouteOrdering extends EntityDate {
                 this.getNewItem().setReadonly(false);
                 break;
             // 9 (플젝)
-            case "9":
+            case "10":
                 this.getProject().setTempsave(true);
                 this.getProject().setReadonly(false);
                 break;
@@ -520,7 +520,7 @@ public class RouteOrdering extends EntityDate {
                 this.getDesign().setReadonly(false);
                 break;
             //11 (봄)
-            case "11":
+            case "14":
                 this.getBom().setTempsave(true);
                 this.getBom().setReadonly(false);
                 DevelopmentBom devBom = developmentBomRepository.findByBom(this.getBom());
