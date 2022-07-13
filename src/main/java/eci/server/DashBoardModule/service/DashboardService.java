@@ -852,7 +852,7 @@ public class DashboardService {
                                     routeProduct.getType().getName().equals("CREATE")
                     ) {
                         myRouteBomCreateProductList.add(routeProduct);
-                        break;
+                        //break;
 
                     } else if (
                         // 단계가 bom review 라면
@@ -861,7 +861,7 @@ public class DashboardService {
                                     routeProduct.getType().getName().equals("REVIEW")
                     ) {
                         myRouteBomReviewProductList.add(routeProduct);
-                        break;
+                        //break;
                     }
 
                 }
