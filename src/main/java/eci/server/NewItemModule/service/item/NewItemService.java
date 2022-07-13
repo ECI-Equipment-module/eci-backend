@@ -469,7 +469,7 @@ public class NewItemService {
         List<NewItem> unlinkedItemList = new ArrayList<>();
 
         for (RouteProduct routeProduct : myRouteProductList){
-            if(projectRepository.findByNewItem(routeProduct.getRouteOrdering().getNewItem()).size()==0){
+            if(projectRepository.findByNewItemOrderByIdAsc(routeProduct.getRouteOrdering().getNewItem()).size()==0){
 
                 RouteOrdering routeOrdering = routeOrderingRepository.findByNewItemOrderByIdAsc(
                         routeProduct.getRouteOrdering().getNewItem()

@@ -226,11 +226,11 @@ public class NewItemDetailDto {
                             bomRepository.findByNewItem(Item).get(0).getId()
                             :-1L,
 
-                    designRepository.findByNewItem(Item).size()>0?
+                    designRepository.findByNewItemOrderByIdAsc(Item).size()>0?
                             BomDesignItemDto.toDesignDto(
                                     Item,
-                                    designRepository.findByNewItem(Item).get(
-                                            designRepository.findByNewItem(Item).size() - 1
+                                    designRepository.findByNewItemOrderByIdAsc(Item).get(
+                                            designRepository.findByNewItemOrderByIdAsc(Item).size() - 1
                                     ),
                                     designGuard
                             ) :
@@ -334,7 +334,7 @@ public class NewItemDetailDto {
 //                BomDesignItemDto.toBomDto(
 //                        Item,
 //                        bomRepository.findByNewItem(Item).get(
-//                                designRepository.findByNewItem(Item).size()-1
+//                                designRepository.findByNewItemOrderByIdAsc(Item).size()-1
 //                        ),
 //                        bomGuard
 //                ),
@@ -343,11 +343,11 @@ public class NewItemDetailDto {
                         bomRepository.findByNewItem(Item).get(0).getId()
                         :-1L,
 
-                designRepository.findByNewItem(Item).size()>0?
+                designRepository.findByNewItemOrderByIdAsc(Item).size()>0?
                         BomDesignItemDto.toDesignDto(
                                 Item,
-                                designRepository.findByNewItem(Item).get(
-                                        designRepository.findByNewItem(Item).size() - 1
+                                designRepository.findByNewItemOrderByIdAsc(Item).get(
+                                        designRepository.findByNewItemOrderByIdAsc(Item).size() - 1
                                 ),
                                 designGuard
                         ) :

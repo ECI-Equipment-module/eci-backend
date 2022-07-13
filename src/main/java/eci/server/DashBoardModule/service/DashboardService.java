@@ -151,8 +151,8 @@ public class DashboardService {
         for (Project project : myProjectList) {
             if (project.getTempsave()
                     &&
-                    Objects.equals(project.getId(), projectRepository.findByNewItem(project.getNewItem()).get(
-                            projectRepository.findByNewItem(project.getNewItem()).size() - 1
+                    Objects.equals(project.getId(), projectRepository.findByNewItemOrderByIdAsc(project.getNewItem()).get(
+                            projectRepository.findByNewItemOrderByIdAsc(project.getNewItem()).size() - 1
                     ).getId())
             ) {
 
@@ -270,11 +270,11 @@ public class DashboardService {
                     Long reviseId=-1L;
                     System.out.println("old  "+ targetItem.getId());
 
-                    if(projectRepository.findByNewItem(targetNewItem).size()>0) {
+                    if(projectRepository.findByNewItemOrderByIdAsc(targetNewItem).size()>0) {
                         System.out.println("have an old projects ");
 
-                        Project oldProject = projectRepository.findByNewItem(targetNewItem).get
-                                (projectRepository.findByNewItem(targetNewItem).size()-1);
+                        Project oldProject = projectRepository.findByNewItemOrderByIdAsc(targetNewItem).get
+                                (projectRepository.findByNewItemOrderByIdAsc(targetNewItem).size()-1);
 
                         reviseId = oldProject.getId();
 
@@ -364,8 +364,8 @@ public class DashboardService {
         for (Design design : myDesignList) {
             if (design.getTempsave()
                     &&
-                    Objects.equals(design.getId(), designRepository.findByNewItem(design.getNewItem()).get(
-                            designRepository.findByNewItem(design.getNewItem()).size() - 1
+                    Objects.equals(design.getId(), designRepository.findByNewItemOrderByIdAsc(design.getNewItem()).get(
+                            designRepository.findByNewItemOrderByIdAsc(design.getNewItem()).size() - 1
                     ).getId())){
                 //05-30 - 이 아이가 최신 아이일 때만! (최신 아니고 옛날 거면 필요 없음)
 
@@ -458,9 +458,9 @@ public class DashboardService {
 
                     Long reviseId=-1L;
 
-                    if(designRepository.findByNewItem(targetNewItem).size()>0) {
-                        Design oldDesign = designRepository.findByNewItem(targetNewItem).get
-                                (designRepository.findByNewItem(targetNewItem).size()-1);
+                    if(designRepository.findByNewItemOrderByIdAsc(targetNewItem).size()>0) {
+                        Design oldDesign = designRepository.findByNewItemOrderByIdAsc(targetNewItem).get
+                                (designRepository.findByNewItemOrderByIdAsc(targetNewItem).size()-1);
 
                         reviseId = oldDesign.getId();
                     }

@@ -596,13 +596,13 @@ public class RouteOrderingService {
                     && targetRoutProduct.getType().getName().equals("CREATE")) {
 
                 //아이템에 링크된 맨 마지막 (최신) 프로젝트 데려오기
-//                if (projectRepository.findByNewItem(routeOrdering.getNewItem()).size() == 0) {
+//                if (projectRepository.findByNewItemOrderByIdAsc(routeOrdering.getNewItem()).size() == 0) {
 //                    throw new ProjectNotLinkedException();
 //                } else {
                     Project linkedProject =
-                            projectRepository.findByNewItem(routeOrdering.getNewItem())
+                            projectRepository.findByNewItemOrderByIdAsc(routeOrdering.getNewItem())
                                     .get(
-                                            projectRepository.findByNewItem(routeOrdering.getNewItem()).size() - 1
+                                            projectRepository.findByNewItemOrderByIdAsc(routeOrdering.getNewItem()).size() - 1
                                     );
                     //그 프로젝트를 라우트 프로덕트에 set 해주기
                     targetRoutProduct.setProject(linkedProject);
@@ -620,13 +620,13 @@ public class RouteOrderingService {
                     && targetRoutProduct.getType().getName().equals("CREATE")) {
 
                 //아이템에 링크된 맨 마지막 (최신) 디자인 데려오기
-                if (designRepository.findByNewItem(routeOrdering.getNewItem()).size() == 0) {
+                if (designRepository.findByNewItemOrderByIdAsc(routeOrdering.getNewItem()).size() == 0) {
                     throw new DesignNotLinkedException();
                 } else {
                     Design linkedDesign =
-                            designRepository.findByNewItem(routeOrdering.getNewItem())
+                            designRepository.findByNewItemOrderByIdAsc(routeOrdering.getNewItem())
                                     .get(
-                                            designRepository.findByNewItem(routeOrdering.getNewItem()).size() - 1
+                                            designRepository.findByNewItemOrderByIdAsc(routeOrdering.getNewItem()).size() - 1
                                     );
                     //만약 지금 rejected 가 true였다면 , 이제 새로 다시 넣어주는 것이니깐 rejected풀어주기
                     if (targetRoutProduct.isPreRejected()) {
@@ -640,13 +640,13 @@ public class RouteOrderingService {
                     linkedDesign.finalSaveDesign();
                 }
 
-//                if (projectRepository.findByNewItem(routeOrdering.getNewItem()).size() == 0) {
+//                if (projectRepository.findByNewItemOrderByIdAsc(routeOrdering.getNewItem()).size() == 0) {
 //                    throw new ProjectNotLinkedException();
 //                } else {
 //                    Project linkedProject =
-//                            projectRepository.findByNewItem(routeOrdering.getNewItem())
+//                            projectRepository.findByNewItemOrderByIdAsc(routeOrdering.getNewItem())
 //                                    .get(
-//                                            projectRepository.findByNewItem(routeOrdering.getNewItem()).size() - 1
+//                                            projectRepository.findByNewItemOrderByIdAsc(routeOrdering.getNewItem()).size() - 1
 //                                    );
 //                    //그 프로젝트를 라우트 프로덕트에 set 해주기
 //                    targetRoutProduct.setProject(linkedProject);
@@ -660,13 +660,13 @@ public class RouteOrderingService {
                     && targetRoutProduct.getType().getName().equals("REVIEW")) {
 
                 //아이템에 링크된 맨 마지막 (최신) 디자인 데려오기
-                if (designRepository.findByNewItem(routeOrdering.getNewItem()).size() == 0) {
+                if (designRepository.findByNewItemOrderByIdAsc(routeOrdering.getNewItem()).size() == 0) {
                     throw new DesignNotLinkedException();
                 } else {
                     Design linkedDesign =
-                            designRepository.findByNewItem(routeOrdering.getNewItem())
+                            designRepository.findByNewItemOrderByIdAsc(routeOrdering.getNewItem())
                                     .get(
-                                            designRepository.findByNewItem(routeOrdering.getNewItem()).size() - 1
+                                            designRepository.findByNewItemOrderByIdAsc(routeOrdering.getNewItem()).size() - 1
                                     );
 
                     if (routeOrdering.getNewItem().getItemTypes().getItemType().name().equals("파트제품") ||
@@ -882,9 +882,9 @@ public class RouteOrderingService {
                         // (2) 제품은
 
 //
-//                        if(projectRepository.findByNewItem(targetOldReviseItem).size()>0) {
-//                            Project oldProject = projectRepository.findByNewItem(targetOldReviseItem)
-//                                    .get(projectRepository.findByNewItem(targetOldReviseItem).size()-1);
+//                        if(projectRepository.findByNewItemOrderByIdAsc(targetOldReviseItem).size()>0) {
+//                            Project oldProject = projectRepository.findByNewItemOrderByIdAsc(targetOldReviseItem)
+//                                    .get(projectRepository.findByNewItemOrderByIdAsc(targetOldReviseItem).size()-1);
 //
 //                            oldProject.setReadonly(false);
 //                            oldProject.setTempsave(true);
