@@ -3,11 +3,13 @@ package eci.server.BomModule.entity;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 
 @Getter
 @Entity
+@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class DevelopmentBom {
 
@@ -66,5 +68,20 @@ public class DevelopmentBom {
         this.tempsave = false;
     }
 
+    /**
+     * dev bom 거절 시 수행
+     */
+    public void updateReadonlyFalse(){
+
+        this.readonly = false;
+    }
+
+
+    /**
+     * dev bom 거절 시 수행
+     */
+    public void updateTempSaveTrue(){
+        this.tempsave = true;
+    }
 
 }

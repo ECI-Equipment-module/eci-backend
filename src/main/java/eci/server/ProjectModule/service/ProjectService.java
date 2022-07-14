@@ -15,6 +15,7 @@ import eci.server.ItemModule.repository.newRoute.RouteOrderingRepository;
 import eci.server.ItemModule.repository.newRoute.RouteProductRepository;
 import eci.server.ItemModule.service.file.FileService;
 
+import eci.server.NewItemModule.dto.newItem.create.NewItemCreateResponse;
 import eci.server.NewItemModule.entity.NewItem;
 import eci.server.NewItemModule.repository.attachment.AttachmentTagRepository;
 import eci.server.NewItemModule.repository.item.NewItemRepository;
@@ -120,9 +121,9 @@ public class ProjectService {
         if(!(req.getTag().size()==0)) {
             uploadAttachments(project.getProjectAttachments(), req.getAttachments());
         }
-        List<RouteOrdering> routeOrdering = routeOrderingRepository.findByNewItem(project.getNewItem());
+        List<RouteOrdering> routeOrdering = routeOrderingRepository.findByNewItemOrderByIdAsc(project.getNewItem());
         //프로젝트에 딸린 라우트
-        Long routeId = routeOrderingRepository.findByNewItem(project.getNewItem()).get(routeOrdering.size()-1).getId();
+        Long routeId = routeOrderingRepository.findByNewItemOrderByIdAsc(project.getNewItem()).get(routeOrdering.size()-1).getId();
 
         //06-17 추가 , route 에 project 등록
         RouteOrdering setRoute =
@@ -161,13 +162,13 @@ public class ProjectService {
 
         Project project =  projectRepository.findById(id).orElseThrow(ProjectNotFoundException::new);
 
-        if (!project.getTempsave()){
-
-            //true면 임시저장 상태, false면 찐 저장 상태
-            //찐 저장 상태라면 UPDATE 불가, 임시저장 일때만 가능
-
-            throw new ProjectUpdateImpossibleException();
-        }
+//        if (!project.getTempsave()){
+//
+//            //true면 임시저장 상태, false면 찐 저장 상태
+//            //찐 저장 상태라면 UPDATE 불가, 임시저장 일때만 가능
+//
+//            throw new ProjectUpdateImpossibleException();
+//        }
 
         Project.FileUpdatedResult result = project.update(
                 req,
@@ -200,16 +201,16 @@ public class ProjectService {
 
         Project project = projectRepository.findById(id).
                 orElseThrow(ProjectNotFoundException::new);
-
-        if (!project.getTempsave() || project.getReadonly()) {
-            //tempsave가 false면 찐 저장 상태
-            //찐 저장 상태라면 UPDATE 불가, 임시저장 일때만 가능
-            //readonly가 true라면 수정 불가상태
-            throw new ProjectUpdateImpossibleException();
-        }
+//
+//        if (!project.getTempsave() || project.getReadonly()) {
+//            //tempsave가 false면 찐 저장 상태
+//            //찐 저장 상태라면 UPDATE 불가, 임시저장 일때만 가능
+//            //readonly가 true라면 수정 불가상태
+//            throw new ProjectUpdateImpossibleException();
+//        }
 
         Project.FileUpdatedResult result = project.tempEnd(
-            req,
+                req,
                 newItemRepository,
                 projectTypeRepository,
                 projectLevelRepository,
@@ -231,9 +232,9 @@ public class ProjectService {
         );
 
         //06-17 추가 , route 에 project 등록 ////////////////////////////////////
-        List<RouteOrdering> routeOrdering = routeOrderingRepository.findByNewItem(project.getNewItem());
+        List<RouteOrdering> routeOrdering = routeOrderingRepository.findByNewItemOrderByIdAsc(project.getNewItem());
         //프로젝트에 딸린 라우트
-        Long routeId = routeOrderingRepository.findByNewItem(project.getNewItem()).get(routeOrdering.size()-1).getId();
+        Long routeId = routeOrderingRepository.findByNewItemOrderByIdAsc(project.getNewItem()).get(routeOrdering.size()-1).getId();
 
         RouteOrdering setRoute =
                 routeOrderingRepository.findById(routeId).orElseThrow(RouteNotFoundException::new);
@@ -246,11 +247,23 @@ public class ProjectService {
 
     }
 
+    public Long routeIdReturn(Long newCreateItemId){
+
+        NewItem newItemOfProject = newItemRepository.findById(newCreateItemId).orElseThrow(ItemNotFoundException::new);
+
+        List<RouteOrdering> routeOrdering = routeOrderingRepository.findByNewItemOrderByIdAsc(newItemOfProject);
+
+        //프로젝트에 딸린 라우트
+        Long routeId = routeOrderingRepository.findByNewItemOrderByIdAsc(newItemOfProject).get(routeOrdering.size()-1).getId();
+
+        return routeId;
+    }
+
 
     // read one project
     public ProjectDto read(Long id){
         Project targetProject = projectRepository.findById(id).orElseThrow(ProjectNotFoundException::new);
-        RouteOrdering routeOrdering = routeOrderingRepository.findByNewItem(targetProject.getNewItem()).get(0);
+        RouteOrdering routeOrdering = routeOrderingRepository.findByNewItemOrderByIdAsc(targetProject.getNewItem()).get(0);
         return ProjectDto.toDto(
                 targetProject,
                 routeOrdering,
@@ -260,17 +273,17 @@ public class ProjectService {
                 preliminaryBomRepository,
                 attachmentTagRepository,
                 defaultImageAddress
-                );
+        );
     }
 
 
 
     //로젝트 리스트에서 찾아노는 경우
     public ProjectListDto readAll
-            (
-                    ProjectReadCondition cond,
-                    ProjectMemberRequest req
-            ){
+    (
+            ProjectReadCondition cond,
+            ProjectMemberRequest req
+    ){
         return ProjectListDto.toDto(
                 projectRepository.findAllByCondition(
                         cond
@@ -295,7 +308,7 @@ public class ProjectService {
         List<Project> workingProjectListList =
                 projectListList.stream().filter(
                         i->i.getLifecycle().equals("WORKING") //COMPLETE인 애들은 따로
-                        ).collect(Collectors.toList());
+                ).collect(Collectors.toList());
 
         List<Project> completeProjectListList =
                 projectListList.stream().filter(
@@ -337,46 +350,46 @@ public class ProjectService {
                         //현재 phase의 이름
                         //0604 에러 : complete는 인덱스 길이가 10일 때 present 도 10 (인덱스에러 발생)
                         //=> 그래서 complete라면 route_name 에 route_item_complete 반환
-                        routeOrderingRepository.findByNewItem(
+                        routeOrderingRepository.findByNewItemOrderByIdAsc(
                                 project.getNewItem()
                         ).get(
                                 (
-                                        routeOrderingRepository.findByNewItem(
+                                        routeOrderingRepository.findByNewItemOrderByIdAsc(
                                                 project.getNewItem()
                                         ).size()-1
                                 )
                         ).getLifecycleStatus().equals("COMPLETE")?
-                        "ITEM_COMPLETE" :
-                        routeProductRepository.findAllByRouteOrdering(
-                                        routeOrderingRepository.findByNewItem(
-                                                project.getNewItem()
+                                "ITEM_COMPLETE" :
+                                routeProductRepository.findAllByRouteOrdering(
+                                                routeOrderingRepository.findByNewItemOrderByIdAsc(
+                                                        project.getNewItem()
+                                                ).get(
+                                                        (
+                                                                (routeOrderingRepository.findByNewItemOrderByIdAsc(
+                                                                        project.getNewItem()
+                                                                ).size())-1 //아이템의 라우트 오더링 중에서 최신 아이
+                                                        )
+                                                )
                                         ).get(
                                                 (
-                                                        (routeOrderingRepository.findByNewItem(
-                                                        project.getNewItem()
-                                                ).size())-1 //아이템의 라우트 오더링 중에서 최신 아이
-                                                )
+                                                        routeOrderingRepository.findByNewItemOrderByIdAsc(
+                                                                project.getNewItem()
+                                                        ).get(
+                                                                routeOrderingRepository.findByNewItemOrderByIdAsc(
+                                                                        project.getNewItem()
+                                                                ).size()-1
+                                                        )
+                                                ).getPresent() //라우트 오더링 중에서 현재 진행중인 라우트프로덕트
                                         )
-                                ).get(
-                                (
-                                        routeOrderingRepository.findByNewItem(
-                                                project.getNewItem()
-                                        ).get(
-                                                routeOrderingRepository.findByNewItem(
-                                                        project.getNewItem()
-                                                ).size()-1
-                                        )
-                                        ).getPresent() //라우트 오더링 중에서 현재 진행중인 라우트프로덕트
-                                )
-                                .getRoute_name(),
+                                        .getRoute_name(),
 
-                        routeOrderingRepository.findByNewItem(
+                        routeOrderingRepository.findByNewItemOrderByIdAsc(
                                 project.getNewItem()
                         ).get(
                                 (
-                                routeOrderingRepository.findByNewItem(
-                                        project.getNewItem()
-                                ).size()-1
+                                        routeOrderingRepository.findByNewItemOrderByIdAsc(
+                                                project.getNewItem()
+                                        ).size()-1
                                 )
                         ).getLifecycleStatus(),//라우트 오더링 중에서 현재 진행중인 라우트프로덕트
 
@@ -411,10 +424,10 @@ public class ProjectService {
 
                         "complete",
 
-                        routeOrderingRepository.findByNewItem(
+                        routeOrderingRepository.findByNewItemOrderByIdAsc(
                                 project.getNewItem()
                         ).get(
-                                routeOrderingRepository.findByNewItem(
+                                routeOrderingRepository.findByNewItemOrderByIdAsc(
                                         project.getNewItem()
                                 ).size()-1
                         ).getLifecycleStatus(),//라우트 오더링 중에서 현재 진행중인 라우트프로덕트
@@ -540,11 +553,11 @@ public class ProjectService {
 
                         project.getProduceOrganization()==null?
                                 "":
-                        ProduceOrganizationDto.toDto(project.getProduceOrganization()).getName(),
+                                ProduceOrganizationDto.toDto(project.getProduceOrganization()).getName(),
 
                         project.getClientOrganization()==null?
                                 "":
-                        ClientOrganizationDto.toDto(project.getClientOrganization()).getName(),
+                                ClientOrganizationDto.toDto(project.getClientOrganization()).getName(),
 
                         project.getCarType()==null?
                                 CarTypeDto.toDto()
@@ -553,58 +566,58 @@ public class ProjectService {
 
                         project.getNewItem()==null?
                                 ItemProjectDashboardDto.toDto():
-                        ItemProjectDashboardDto.toDto(project.getNewItem()),
+                                ItemProjectDashboardDto.toDto(project.getNewItem()),
 
                         project.getTempsave(),
 
 
                         //현재 phase의 이름
 
-                        routeOrderingRepository.findByNewItem(
+                        routeOrderingRepository.findByNewItemOrderByIdAsc(
                                         project.getNewItem()
                                 ).get(
-                                        routeOrderingRepository.findByNewItem(
+                                        routeOrderingRepository.findByNewItemOrderByIdAsc(
                                                 project.getNewItem()
                                         ).size()-1
                                 )//아이템의 라우트 오더링 중에서 최신 아이
                                 .getPresent()
-                ==                         routeProductRepository.findAllByRouteOrdering(
-                                routeOrderingRepository.findByNewItem(
+                                ==                         routeProductRepository.findAllByRouteOrdering(
+                                routeOrderingRepository.findByNewItemOrderByIdAsc(
                                         project.getNewItem()
                                 ).get(
-                                        routeOrderingRepository.findByNewItem(
+                                        routeOrderingRepository.findByNewItemOrderByIdAsc(
                                                 project.getNewItem()
                                         ).size()-1
                                 )//아이템의 라우트 오더링 중에서 최신 라우트오더링
                         ).size()
                                 ?"PROCESS COMPLETE":
-                        routeProductRepository.findAllByRouteOrdering(
-                                        routeOrderingRepository.findByNewItem(
-                                                project.getNewItem()
-                                        ).get(
-                                                routeOrderingRepository.findByNewItem(
-                                                        project.getNewItem()
-                                                ).size()-1
-                                        )//아이템의 라우트 오더링 중에서 최신 라우트오더링
-                                ).get(
-                                        routeOrderingRepository.findByNewItem(
+                                routeProductRepository.findAllByRouteOrdering(
+                                                routeOrderingRepository.findByNewItemOrderByIdAsc(
                                                         project.getNewItem()
                                                 ).get(
-                                                        routeOrderingRepository.findByNewItem(
+                                                        routeOrderingRepository.findByNewItemOrderByIdAsc(
                                                                 project.getNewItem()
                                                         ).size()-1
-                                                )//아이템의 라우트 오더링 중에서 최신 아이
-                                       .getPresent() //라우트 오더링 중에서 현재 진행중인 라우트프로덕트
-                                )
-                                .getRoute_name(),
-
-                        routeOrderingRepository.findByNewItem(
-                                                project.getNewItem()
+                                                )//아이템의 라우트 오더링 중에서 최신 라우트오더링
                                         ).get(
-                                                routeOrderingRepository.findByNewItem(
-                                                        project.getNewItem()
-                                                ).size()-1
-                                        ).getLifecycleStatus(),//라우트 오더링 중에서 현재 진행중인 라우트프로덕트
+                                                routeOrderingRepository.findByNewItemOrderByIdAsc(
+                                                                project.getNewItem()
+                                                        ).get(
+                                                                routeOrderingRepository.findByNewItemOrderByIdAsc(
+                                                                        project.getNewItem()
+                                                                ).size()-1
+                                                        )//아이템의 라우트 오더링 중에서 최신 아이
+                                                        .getPresent() //라우트 오더링 중에서 현재 진행중인 라우트프로덕트
+                                        )
+                                        .getRoute_name(),
+
+                        routeOrderingRepository.findByNewItemOrderByIdAsc(
+                                project.getNewItem()
+                        ).get(
+                                routeOrderingRepository.findByNewItemOrderByIdAsc(
+                                        project.getNewItem()
+                                ).size()-1
+                        ).getLifecycleStatus(),//라우트 오더링 중에서 현재 진행중인 라우트프로덕트
                         //현재 phase의 sequence가
 //
 //                        (double) routeOrderingRepository.findByItem(
@@ -633,7 +646,7 @@ public class ProjectService {
 
     }
 
-     //delete one project
+    //delete one project
 
     @Transactional
     public void delete(Long id) {
@@ -661,9 +674,15 @@ public class ProjectService {
 
         // 이 타겟 프로젝트의 아이템을 지금 새로 만들어진 아이템으로 변경해주면 된다.
         targetProj.changeItemIdOfProjectByNewMadeItem(newMadeItem);
+        targetProj.setNewItem(newMadeItem);
 
     }
 
+    public NewItemCreateResponse projectUpdateToReadonlyFalseTempsaveTrue(Project project){
+
+        project.projectUpdateToReadonlyFalseTempSaveTrue();
+        return new NewItemCreateResponse(project.getId());
+    }
 
 
 }

@@ -81,10 +81,11 @@ public class NewItemDetailDto {
 
     private List<NewItemAttachmentDto> attachments;
     //아래는 읽기 전용 속성
-    private char revision;
+    private char itemRevision;
     private String status;
 
     private Long routeId;
+
 
 
     //05-22 추가
@@ -196,7 +197,8 @@ public class NewItemDetailDto {
 
 
                     //newItemMakerRepository.findByMaker(Item.getMakers().get(0).getMaker()).get(0).getPartnumber(),
-                    reviseProgress(newItemRepository, Item),
+                    //reviseProgress(newItemRepository, Item),
+                    Item.isRevise_progress(),
 
                     Item.getAttachments().
                             stream().
@@ -220,15 +222,15 @@ public class NewItemDetailDto {
 
                     ItemPreRejected(routeOrdering,routeProductRepository),
 
-                    bomRepository.findByNewItem(Item).size()>0?
-                            bomRepository.findByNewItem(Item).get(0).getId()
+                    bomRepository.findByNewItemOrderByIdAsc(Item).size()>0?
+                            bomRepository.findByNewItemOrderByIdAsc(Item).get(0).getId()
                             :-1L,
 
-                    designRepository.findByNewItem(Item).size()>0?
+                    designRepository.findByNewItemOrderByIdAsc(Item).size()>0?
                             BomDesignItemDto.toDesignDto(
                                     Item,
-                                    designRepository.findByNewItem(Item).get(
-                                            designRepository.findByNewItem(Item).size() - 1
+                                    designRepository.findByNewItemOrderByIdAsc(Item).get(
+                                            designRepository.findByNewItemOrderByIdAsc(Item).size() - 1
                                     ),
                                     designGuard
                             ) :
@@ -304,8 +306,8 @@ public class NewItemDetailDto {
                 MakerSimpleDto.toDto(Item.getMakers()),
                 "",
 
-
-                reviseProgress(newItemRepository, Item),
+                Item.isRevise_progress(),
+                //reviseProgress(newItemRepository, Item),
 
                 Item.getAttachments().
                         stream().
@@ -331,21 +333,21 @@ public class NewItemDetailDto {
 
 //                BomDesignItemDto.toBomDto(
 //                        Item,
-//                        bomRepository.findByNewItem(Item).get(
-//                                designRepository.findByNewItem(Item).size()-1
+//                        bomRepository.findByNewItemOrderByIdAsc(Item).get(
+//                                designRepository.findByNewItemOrderByIdAsc(Item).size()-1
 //                        ),
 //                        bomGuard
 //                ),
 
-                bomRepository.findByNewItem(Item).size()>0?
-                        bomRepository.findByNewItem(Item).get(0).getId()
+                bomRepository.findByNewItemOrderByIdAsc(Item).size()>0?
+                        bomRepository.findByNewItemOrderByIdAsc(Item).get(0).getId()
                         :-1L,
 
-                designRepository.findByNewItem(Item).size()>0?
+                designRepository.findByNewItemOrderByIdAsc(Item).size()>0?
                         BomDesignItemDto.toDesignDto(
                                 Item,
-                                designRepository.findByNewItem(Item).get(
-                                        designRepository.findByNewItem(Item).size() - 1
+                                designRepository.findByNewItemOrderByIdAsc(Item).get(
+                                        designRepository.findByNewItemOrderByIdAsc(Item).size() - 1
                                 ),
                                 designGuard
                         ) :
@@ -445,8 +447,8 @@ public class NewItemDetailDto {
 
                     Item.getPartNumber(),
                     //newItemMakerRepository.findByMaker(Item.getMakers().get(0).getMaker()).get(0).getPartnumber(),
-                    reviseProgress(newItemRepository, Item),
-
+                    //reviseProgress(newItemRepository, Item),
+                    Item.isRevise_progress(),
                     Item.getAttachments().
                             stream().
                             map( i->
@@ -540,6 +542,7 @@ public class NewItemDetailDto {
                         MakerSimpleDto.toDto(Item.getMakers()),
 
                 "no partnum",
+                //Item.isRevise_progress(),
                 Item.isRevise_progress(),
 
                 Item.getAttachments().
@@ -594,16 +597,16 @@ public class NewItemDetailDto {
         return preRejected;
     }
 
-    private static boolean reviseProgress(NewItemRepository newItemRepository, NewItem targetItem){
-        boolean reviseProgress = false;
-        if(targetItem.getReviseTargetId()!=null&&newItemRepository.findById(
-                        targetItem.getReviseTargetId())
-                .orElseThrow(ItemNotFoundException::new)
-                .isRevise_progress()
-        ){
-            reviseProgress = true;
-        }
-        return  reviseProgress;
-    }
+//    private static boolean reviseProgress(NewItemRepository newItemRepository, NewItem targetItem){
+//        boolean reviseProgress = false;
+//        if(targetItem.getReviseTargetId()!=null&&newItemRepository.findById(
+//                        targetItem.getReviseTargetId())
+//                .orElseThrow(ItemNotFoundException::new)
+//                .isRevise_progress()
+//        ){
+//            reviseProgress = true;
+//        }
+//        return  reviseProgress;
+//    }
 
 }

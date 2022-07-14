@@ -48,7 +48,6 @@ import eci.server.ProjectModule.repository.carType.CarTypeRepository;
 import eci.server.ProjectModule.repository.clientOrg.ClientOrganizationRepository;
 import eci.server.ProjectModule.repository.project.ProjectRepository;
 import eci.server.config.guard.AuthHelper;
-import eci.server.config.guard.BomGuard;
 import eci.server.config.guard.DesignGuard;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -364,7 +363,7 @@ public class NewItemService {
 
         List<RouteOrderingDto> routeDtoList = Optional.ofNullable(
                 RouteOrderingDto.toDtoList(
-                        routeOrderingRepository.findByNewItem(targetItem),
+                        routeOrderingRepository.findByNewItemOrderByIdAsc(targetItem),
                         routeProductRepository,
                         routeOrderingRepository,
                         bomRepository,
@@ -380,7 +379,7 @@ public class NewItemService {
 
 
         if (routeDtoList.size() > 0) {//아이템에 딸린 routeDto가 존재할 때
-            RouteOrdering routeOrdering = routeOrderingRepository.findByNewItem(targetItem).get(0);
+            RouteOrdering routeOrdering = routeOrderingRepository.findByNewItemOrderByIdAsc(targetItem).get(0);
             return NewItemDetailDto.toDto(
                     targetItem,
                     routeOrdering,
@@ -470,12 +469,12 @@ public class NewItemService {
         List<NewItem> unlinkedItemList = new ArrayList<>();
 
         for (RouteProduct routeProduct : myRouteProductList){
-            if(projectRepository.findByNewItem(routeProduct.getRouteOrdering().getNewItem()).size()==0){
+            if(projectRepository.findByNewItemOrderByIdAsc(routeProduct.getRouteOrdering().getNewItem()).size()==0){
 
-                RouteOrdering routeOrdering = routeOrderingRepository.findByNewItem(
+                RouteOrdering routeOrdering = routeOrderingRepository.findByNewItemOrderByIdAsc(
                         routeProduct.getRouteOrdering().getNewItem()
                 ).get(
-                        routeOrderingRepository.findByNewItem(
+                        routeOrderingRepository.findByNewItemOrderByIdAsc(
                                 routeProduct.getRouteOrdering().getNewItem()
                         ).size()-1
                 );
@@ -672,12 +671,12 @@ public class NewItemService {
 
         for(NewItem newItem : itemListProduct){
             if(
-                    routeOrderingRepository.findByNewItem(newItem).size()>0
-                            && (routeOrderingRepository.findByNewItem(newItem).get(
-                            routeOrderingRepository.findByNewItem(newItem).size()-1
+                    routeOrderingRepository.findByNewItemOrderByIdAsc(newItem).size()>0
+                            && (routeOrderingRepository.findByNewItemOrderByIdAsc(newItem).get(
+                            routeOrderingRepository.findByNewItemOrderByIdAsc(newItem).size()-1
                     ).getLifecycleStatus().equals("COMPLETE") ||
-                            (routeOrderingRepository.findByNewItem(newItem).get(
-                                    routeOrderingRepository.findByNewItem(newItem).size()-1
+                            (routeOrderingRepository.findByNewItemOrderByIdAsc(newItem).get(
+                                    routeOrderingRepository.findByNewItemOrderByIdAsc(newItem).size()-1
                             ).getLifecycleStatus().equals("RELEASE")
                             )
                     )
@@ -746,12 +745,12 @@ public class NewItemService {
 
         for(NewItem newItem : itemListProduct){
             if(
-                    routeOrderingRepository.findByNewItem(newItem).size()>0
-                            && (routeOrderingRepository.findByNewItem(newItem).get(
-                            routeOrderingRepository.findByNewItem(newItem).size()-1
+                    routeOrderingRepository.findByNewItemOrderByIdAsc(newItem).size()>0
+                            && (routeOrderingRepository.findByNewItemOrderByIdAsc(newItem).get(
+                            routeOrderingRepository.findByNewItemOrderByIdAsc(newItem).size()-1
                     ).getLifecycleStatus().equals("COMPLETE") ||
-                            (routeOrderingRepository.findByNewItem(newItem).get(
-                                    routeOrderingRepository.findByNewItem(newItem).size()-1
+                            (routeOrderingRepository.findByNewItemOrderByIdAsc(newItem).get(
+                                    routeOrderingRepository.findByNewItemOrderByIdAsc(newItem).size()-1
                             ).getLifecycleStatus().equals("RELEASE")
                             )
                     )
@@ -785,12 +784,12 @@ public class NewItemService {
 
         for(NewItem newItem : itemListProduct){
             if(
-                    routeOrderingRepository.findByNewItem(newItem).size()>0
-                            && (routeOrderingRepository.findByNewItem(newItem).get(
-                            routeOrderingRepository.findByNewItem(newItem).size()-1
+                    routeOrderingRepository.findByNewItemOrderByIdAsc(newItem).size()>0
+                            && (routeOrderingRepository.findByNewItemOrderByIdAsc(newItem).get(
+                            routeOrderingRepository.findByNewItemOrderByIdAsc(newItem).size()-1
                     ).getLifecycleStatus().equals("COMPLETE") ||
-                            (routeOrderingRepository.findByNewItem(newItem).get(
-                                    routeOrderingRepository.findByNewItem(newItem).size()-1
+                            (routeOrderingRepository.findByNewItemOrderByIdAsc(newItem).get(
+                                    routeOrderingRepository.findByNewItemOrderByIdAsc(newItem).size()-1
                             ).getLifecycleStatus().equals("RELEASE")
                             )
                     )
@@ -894,7 +893,9 @@ public class NewItemService {
      * @param newItems // affected item List
      */
     public void ReviseItem(List<NewItem> newItems){
+        System.out.println("item 은 revise_progress=true 돼야 합니다. ");
         for(NewItem newItem : newItems){
+            System.out.println(newItem.getId() + "아이템은 revise 돼야 하므로 ~~~ ");
             newItem.setRevise_progress(true);
             // revise 진행 중 알리기
             //newItem.setModifier(changeOrderRequestPerson);
@@ -914,7 +915,7 @@ public class NewItemService {
 
         for(NewItem newItem : affectedItems){
             System.out.println(newItem.getId());
-            if(newItem.isRevise_progress()){ //revise progress 가 아니라면 (revise 되었다면)
+            if(!newItem.isRevise_progress()){ //revise progress 가 아니라면 (revise 되었다면)
 
                 revisedItemSize+=1;
             }

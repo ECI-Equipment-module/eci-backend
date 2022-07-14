@@ -16,7 +16,7 @@ public interface ProjectRepository  extends JpaRepository<Project, Long>, Custom
 
     Page<Project> findByMember(Member member, Pageable pageable);
 
-    List<Project> findByNewItem(NewItem item);
+    List<Project> findByNewItemOrderByIdAsc(NewItem item);
 
     List<Project> findByMember(Member member);
 

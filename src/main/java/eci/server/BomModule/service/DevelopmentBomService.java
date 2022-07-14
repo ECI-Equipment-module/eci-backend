@@ -2,12 +2,15 @@ package eci.server.BomModule.service;
 
 import eci.server.BomModule.dto.dev.DevelopmentReadDto;
 import eci.server.BomModule.dto.dev.DevelopmentRequestDto;
+import eci.server.BomModule.entity.Bom;
 import eci.server.BomModule.entity.DevelopmentBom;
 import eci.server.BomModule.exception.AddedDevBomNotPossible;
 import eci.server.BomModule.exception.DevelopmentBomNotFoundException;
 import eci.server.BomModule.exception.InadequateRelationException;
+import eci.server.BomModule.repository.BomRepository;
 import eci.server.BomModule.repository.DevelopmentBomRepository;
 import eci.server.ItemModule.entity.newRoute.RouteOrdering;
+import eci.server.ItemModule.entity.newRoute.RouteProduct;
 import eci.server.ItemModule.exception.item.ItemNotFoundException;
 import eci.server.ItemModule.repository.newRoute.RouteOrderingRepository;
 import eci.server.ItemModule.repository.newRoute.RouteProductRepository;
@@ -24,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @Transactional(readOnly = true)
@@ -36,7 +40,7 @@ public class DevelopmentBomService {
     private final TempNewItemParentChildrenRepository tempNewItemParentChildrenRepository;
     private final RouteOrderingRepository routeOrderingRepository;
     private final RouteProductRepository routeProductRepository;
-
+    private final BomRepository bomRepository;
 
 
     public DevelopmentReadDto readDevelopment(
@@ -47,11 +51,11 @@ public class DevelopmentBomService {
                 orElseThrow(DevelopmentBomNotFoundException::new);
 
         NewItem newItem = developmentBom.getBom().getNewItem();
-        List<RouteOrdering> routeOrdering = routeOrderingRepository.findByNewItem(newItem);
+        List<RouteOrdering> routeOrdering = routeOrderingRepository.findByNewItemOrderByIdAsc(newItem);
 
         List<TempNewItemChildDto> children = newItemService.readDevChildAll(newItem.getId());
 
-        RouteOrdering targetRouteOrdering = routeOrderingRepository.findByNewItem(newItem).get(routeOrdering.size() - 1);
+        RouteOrdering targetRouteOrdering = routeOrderingRepository.findByNewItemOrderByIdAsc(newItem).get(routeOrdering.size() - 1);
         Long routeId = targetRouteOrdering.getId();
 
         TempNewItemChildDto devBom = TempNewItemChildDto
@@ -63,9 +67,35 @@ public class DevelopmentBomService {
                         routeId
                         );
 
+        // 지금 dev 봄의 봄의 아이템의 라우트 오더링 찾아서,
+
+        Long reviseId = -1L; //디폴트는 -1
+        // old bom 아이디 있으면 건네주기
+        if(newItem.getReviseTargetId()!=null
+                &&
+                newItemRepository.
+                        findById(newItem.getReviseTargetId()).orElseThrow(ItemNotFoundException::new)
+                        .isRevise_progress()
+        ) {
+
+            NewItem targetNewItem = newItemRepository.
+                    findById(newItem.getReviseTargetId()).orElseThrow(ItemNotFoundException::new);
+
+
+
+            if (bomRepository.findByNewItemOrderByIdAsc(targetNewItem).size() > 0) {
+                Bom oldBom = bomRepository.findByNewItemOrderByIdAsc(targetNewItem).get
+                        (bomRepository.findByNewItemOrderByIdAsc(targetNewItem).size() - 1);
+
+                reviseId = oldBom.getId();
+            }
+        }
         return new DevelopmentReadDto(
                 devBom,
-                routeId
+                routeId,
+                DevBomPreRejected(targetRouteOrdering, routeProductRepository),
+                developmentBom.getReadonly(),
+                reviseId
         );
 
     }
@@ -192,8 +222,8 @@ public class DevelopmentBomService {
             }
         }
 
-        Long routeId = routeOrderingRepository.findByNewItem(developmentBom.getBom().getNewItem())
-                .get(routeOrderingRepository.findByNewItem(developmentBom.getBom().getNewItem()).size()-1).getId();
+        Long routeId = routeOrderingRepository.findByNewItemOrderByIdAsc(developmentBom.getBom().getNewItem())
+                .get(routeOrderingRepository.findByNewItemOrderByIdAsc(developmentBom.getBom().getNewItem()).size()-1).getId();
 
         //dev bom id return
         return new ProjectCreateUpdateResponse(
@@ -219,6 +249,29 @@ public class DevelopmentBomService {
 
         developmentBom.updateReadonlyTrue();
 
+    }
+
+
+
+    private static boolean DevBomPreRejected(RouteOrdering routeOrdering,
+                                         RouteProductRepository routeProductRepository){
+
+        boolean preRejected = false;
+
+        List<RouteProduct> routeProductList =
+                routeProductRepository.findAllByRouteOrdering(routeOrdering);
+        if(!(routeOrdering.getPresent()==routeProductList.size())) {
+            RouteProduct currentRouteProduct =
+                    routeProductList.get(routeOrdering.getPresent());
+
+            if (Objects.equals(currentRouteProduct.getType().getModule(), "BOM") &&
+                    Objects.equals(currentRouteProduct.getType().getName(), "CREATE")) {
+                if (currentRouteProduct.isPreRejected()) {
+                    preRejected = true;
+                }
+            }
+        }
+        return preRejected;
     }
 
 

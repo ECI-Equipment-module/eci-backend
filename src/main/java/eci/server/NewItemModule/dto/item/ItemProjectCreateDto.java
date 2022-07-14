@@ -18,7 +18,7 @@ public class ItemProjectCreateDto {
     private String name;
     private String type;
     private String itemNumber;
-    private Integer revision;
+    private char itemRevision;
     private String status;
 
 
@@ -32,9 +32,9 @@ public class ItemProjectCreateDto {
                 Item.getName(),
                 Item.getItemTypes().getItemType().toString(),
                 Item.getItemNumber(),
-                Item.getRevision(),
-                routeOrderingRepository.findByNewItem(Item).get(
-                        routeOrderingRepository.findByNewItem(Item).size()-1
+                (char)Item.getRevision(),
+                routeOrderingRepository.findByNewItemOrderByIdAsc(Item).get(
+                        routeOrderingRepository.findByNewItemOrderByIdAsc(Item).size()-1
                 ).getLifecycleStatus()
 
         );

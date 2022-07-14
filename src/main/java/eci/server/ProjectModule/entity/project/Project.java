@@ -7,6 +7,7 @@ import eci.server.ItemModule.exception.item.AttachmentNotFoundException;
 import eci.server.ItemModule.exception.item.ItemNotFoundException;
 import eci.server.ItemModule.exception.member.sign.MemberNotFoundException;
 import eci.server.ItemModule.repository.member.MemberRepository;
+import eci.server.NewItemModule.dto.newItem.create.NewItemCreateResponse;
 import eci.server.NewItemModule.entity.NewItem;
 import eci.server.NewItemModule.entity.NewItemAttachment;
 import eci.server.NewItemModule.repository.attachment.AttachmentTagRepository;
@@ -95,7 +96,7 @@ public class Project extends EntityDate {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(
             name = "member_id",
-    nullable = false)
+            nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Member member;
 
@@ -220,7 +221,7 @@ public class Project extends EntityDate {
         this.projectAttachments = new ArrayList<>();
         addProjectAttachments(projectAttachments);
 
-        this.revision = (char)65;
+        this.revision = (char) 65;
         this.lifecycle = "WORKING";
 
         this.clientItemNumber = clientItemNumber;
@@ -232,6 +233,7 @@ public class Project extends EntityDate {
 
     /**
      * Project에 Attachment 존재하지 않을 시에 생성자입니다.
+     *
      * @param name
      * @param projectNumber
      * @param clientItemNumber
@@ -285,7 +287,7 @@ public class Project extends EntityDate {
 
             CarType carType
 
-    ){
+    ) {
         this.name = name;
 
         this.projectType = projectType;
@@ -317,7 +319,7 @@ public class Project extends EntityDate {
         this.carType = carType;
 
 
-        this.revision = (char)65;
+        this.revision = (char) 65;
         this.lifecycle = "WORKING";
 
         this.clientItemNumber = clientItemNumber;
@@ -328,7 +330,6 @@ public class Project extends EntityDate {
 
     /**
      * 추가할 attachments
-     *
      */
     private void addProjectAttachments(
             List<ProjectAttachment> added) {
@@ -349,96 +350,94 @@ public class Project extends EntityDate {
             CarTypeRepository carTypeRepository,
             MemberRepository memberRepository,
             AttachmentTagRepository attachmentTagRepository
-    )
-
-    {
+    ) {
 
         this.setModifiedAt(LocalDateTime.now());
 
         this.name = req.getName().isBlank() ? this.name : req.getName();
 
         this.projectType =
-                req.getProjectTypeId() ==null?
-                        this.projectType:
+                req.getProjectTypeId() == null ?
+                        this.projectType :
                         projectTypeRepository.findById(req.getProjectTypeId())
-                .orElseThrow(ProjectTypeNotFoundException::new);
+                                .orElseThrow(ProjectTypeNotFoundException::new);
 
         this.protoStartPeriod =
-                req.getProtoStartPeriod() ==null ||
-                        req.getProtoStartPeriod().isBlank()?
-                        this.protoStartPeriod:
+                req.getProtoStartPeriod() == null ||
+                        req.getProtoStartPeriod().isBlank() ?
+                        this.protoStartPeriod :
                         LocalDate.parse(req.getProtoStartPeriod(), DateTimeFormatter.ISO_DATE);
 
         this.protoOverPeriod =
-                req.getProtoStartPeriod() ==null ||
-                req.getProtoOverPeriod().isBlank()?
-                        this.protoOverPeriod:
+                req.getProtoStartPeriod() == null ||
+                        req.getProtoOverPeriod().isBlank() ?
+                        this.protoOverPeriod :
                         LocalDate.parse(req.getProtoOverPeriod(), DateTimeFormatter.ISO_DATE);
 
         this.p1StartPeriod =
                 req.getP1StartPeriod() == null ||
-                req.getP1StartPeriod().isBlank()?
-                        this.p1StartPeriod:
+                        req.getP1StartPeriod().isBlank() ?
+                        this.p1StartPeriod :
                         LocalDate.parse(req.getP1StartPeriod(), DateTimeFormatter.ISO_DATE);
 
         this.p1OverPeriod =
                 req.getP1OverPeriod() == null ||
-                req.getP1OverPeriod().isBlank()?
-                        this.p1OverPeriod:
+                        req.getP1OverPeriod().isBlank() ?
+                        this.p1OverPeriod :
                         LocalDate.parse(req.getP1OverPeriod(), DateTimeFormatter.ISO_DATE);
 
         this.p2StartPeriod =
-                req.getP2StartPeriod() ==null ||
-                req.getP2StartPeriod().isBlank()?
-                        this.p2StartPeriod:
+                req.getP2StartPeriod() == null ||
+                        req.getP2StartPeriod().isBlank() ?
+                        this.p2StartPeriod :
                         LocalDate.parse(req.getP2StartPeriod(), DateTimeFormatter.ISO_DATE);
 
         this.p2OverPeriod =
-                req.getP2OverPeriod() ==null||
-                req.getP2OverPeriod().isBlank()?
-                        this.protoOverPeriod:
+                req.getP2OverPeriod() == null ||
+                        req.getP2OverPeriod().isBlank() ?
+                        this.protoOverPeriod :
                         LocalDate.parse(req.getP2OverPeriod(), DateTimeFormatter.ISO_DATE);
 
         this.sopStartPeriod =
-                req.getSopStartPeriod() ==null||
-                req.getSopStartPeriod().isBlank()?
-                        this.sopStartPeriod:
+                req.getSopStartPeriod() == null ||
+                        req.getSopStartPeriod().isBlank() ?
+                        this.sopStartPeriod :
                         LocalDate.parse(req.getSopStartPeriod(), DateTimeFormatter.ISO_DATE);
 
         this.sopOverPeriod =
-                req.getSopOverPeriod() ==null ||
-                req.getSopOverPeriod().isBlank()?
-                        this.sopOverPeriod:
+                req.getSopOverPeriod() == null ||
+                        req.getSopOverPeriod().isBlank() ?
+                        this.sopOverPeriod :
                         LocalDate.parse(req.getSopOverPeriod(), DateTimeFormatter.ISO_DATE);
 
-        this.newItem =
-                req.getItemId()==null?
-                        this.newItem:
-                        newItemRepository.findById(req.getItemId())
-                                .orElseThrow(ItemNotFoundException::new);
+//        this.newItem =
+//                req.getItemId() == null ?
+//                        this.newItem :
+//                        newItemRepository.findById(req.getItemId())
+//                                .orElseThrow(ItemNotFoundException::new);
 
         this.projectLevel =
-                req.getProjectLevelId() == null?
-                        null:
+                req.getProjectLevelId() == null ?
+                        null :
                         projectLevelRepository.findById(req.getProjectLevelId())
                                 .orElseThrow(ProjectLevelNotFoundException::new);
 
 
         this.clientOrganization =
-                req.getClientOrganizationId() == null?
-                        null:
+                req.getClientOrganizationId() == null ?
+                        null :
                         clientOrganizationRepository.findById(req.getClientOrganizationId())//req.getProjectLevelId())
                                 .orElseThrow(ClientOrganizationNotFoundException::new);
 
         this.produceOrganization =
-                req.getSupplierId() == null?
-                        null:
+                req.getSupplierId() == null ?
+                        null :
                         produceOrganizationRepository.findById(req.getSupplierId())
                                 .orElseThrow(ProduceOrganizationNotFoundException::new);
 
         this.carType =
-                req.getCarTypeId() == null?
-                        null:
+                req.getCarTypeId() == null ?
+                        null :
                         carTypeRepository.findById(req.getCarTypeId())
                                 .orElseThrow(CarTypeNotFoundException::new);
 
@@ -450,16 +449,16 @@ public class Project extends EntityDate {
                         req.getDeletedAttachments(),
                         false
                 );
-        if(req.getAddedTag().size()>0) {
+        if (req.getAddedTag().size() > 0) {
             addUpdatedProjectAttachments(
                     req,
                     resultAttachment.getAddedAttachments(),
-                     attachmentTagRepository
+                    attachmentTagRepository
             );
             //addProjectAttachments(resultAttachment.getAddedAttachments());
         }
 
-        if(req.getDeletedAttachments().size()>0) {
+        if (req.getDeletedAttachments().size() > 0) {
             deleteProjectAttachments(resultAttachment.getDeletedAttachments());
         }
 
@@ -467,7 +466,7 @@ public class Project extends EntityDate {
                 resultAttachment//, updatedAddedProjectAttachmentList
         );
 
-        this.clientItemNumber = req.getClientItemNumber()==null ?
+        this.clientItemNumber = req.getClientItemNumber() == null ?
                 null : req.getClientItemNumber();
 
         this.modifier =
@@ -507,9 +506,9 @@ public class Project extends EntityDate {
                     orElseThrow(AttachmentNotFoundException::new).getName());
             i.setAttachmentaddress(
                     "src/main/prodmedia/image/" +
-                    sdf1.format(now).substring(0,10)
-                    + "/"
-                    + i.getUniqueName()
+                            sdf1.format(now).substring(0, 10)
+                            + "/"
+                            + i.getUniqueName()
             );
 
         });
@@ -532,15 +531,15 @@ public class Project extends EntityDate {
     private void deleteProjectAttachments(List<ProjectAttachment> deleted) {
         // 1) save = false 인 애들 지울 땐 찐 지우기
 
-        for (ProjectAttachment att : deleted){
-            if(!att.isSave()){
+        for (ProjectAttachment att : deleted) {
+            if (!att.isSave()) {
                 this.projectAttachments.remove(att);
                 //orphanRemoval=true에 의해 Post와
                 //연관 관계가 끊어지며 고아 객체가 된 Image는
                 // 데이터베이스에서도 제거
             }
             // 2) save = true 인 애들 지울 땐 아래와 같이 진행
-            else{
+            else {
                 att.setDeleted(true);
                 att.setModifiedAt(LocalDateTime.now());
             }
@@ -559,13 +558,13 @@ public class Project extends EntityDate {
     ) {
         List<ProjectAttachment> addedAttachments
                 = convertProjectAttachmentFilesToProjectAttachments(
-                        addedAttachmentFiles,
+                addedAttachmentFiles,
                 save);
         List<ProjectAttachment> deletedAttachments
                 = convertProjectAttachmentIdsToProjectAttachments(deletedAttachmentIds);
 
         addedAttachments.stream().forEach( //06-17 added 에 들어온 것은 모두 임시저장용
-                i->i.setSave(false)
+                i -> i.setSave(false)
         );
 
         return new ProjectAttachmentUpdatedResult(
@@ -587,6 +586,7 @@ public class Project extends EntityDate {
 
     /**
      * 어찌저찌
+     *
      * @param attachmentFiles
      * @return
      */
@@ -595,9 +595,9 @@ public class Project extends EntityDate {
             boolean save) {
         return attachmentFiles.stream().map(attachmentFile ->
                 new ProjectAttachment(
-                attachmentFile.getOriginalFilename(),
+                        attachmentFile.getOriginalFilename(),
                         save
-        )).collect(toList());
+                )).collect(toList());
     }
 
     /**
@@ -619,12 +619,11 @@ public class Project extends EntityDate {
         private ProjectAttachmentUpdatedResult attachmentUpdatedResult;
     }
 
-    public void finalSaveProject(){
+    public void finalSaveProject() {
         //라우트까지 만들어져야 temp save 가 비로소 true
         this.tempsave = false;
         this.readonly = true;
     }
-
 
 
     public FileUpdatedResult tempEnd(
@@ -652,81 +651,81 @@ public class Project extends EntityDate {
         // 수정 시간 갱신
         this.setModifiedAt(LocalDateTime.now());
 
-        this.name = req.getName()==null || req.getName().isBlank() ?
+        this.name = req.getName() == null || req.getName().isBlank() ?
                 projectLevelRepository.findById(-1L).orElseThrow(
-                        NameNotEmptyException::new)
+                                NameNotEmptyException::new)
                         .getName() :
-        req.getName();
+                req.getName();
         this.projectNumber =
-                req.getProjectLevelId()==null||req.getProjectLevelId()==99999L?
+                req.getProjectLevelId() == null || req.getProjectLevelId() == 99999L ?
                         projectLevelRepository.findById(-1L).orElseThrow(ProjectLevelNotEmptyException::new)
-                                .getName():
-                ProjectCreateRequest.ProjectNumber(req.getProjectLevelId());
+                                .getName() :
+                        ProjectCreateRequest.ProjectNumber(req.getProjectLevelId());
 
-        this.protoStartPeriod = req.getProtoStartPeriod()==null || req.getProtoStartPeriod().isBlank()?
-                null:LocalDate.parse(req.getProtoStartPeriod(), DateTimeFormatter.ISO_DATE);
+        this.protoStartPeriod = req.getProtoStartPeriod() == null || req.getProtoStartPeriod().isBlank() ?
+                null : LocalDate.parse(req.getProtoStartPeriod(), DateTimeFormatter.ISO_DATE);
 
-        this.protoOverPeriod = req.getProtoOverPeriod()==null || req.getProtoOverPeriod().isBlank()?
-                null:LocalDate.parse(req.getProtoOverPeriod(), DateTimeFormatter.ISO_DATE);
+        this.protoOverPeriod = req.getProtoOverPeriod() == null || req.getProtoOverPeriod().isBlank() ?
+                null : LocalDate.parse(req.getProtoOverPeriod(), DateTimeFormatter.ISO_DATE);
 
-        this.p1StartPeriod = req.getP1StartPeriod()==null || req.getP1StartPeriod().isBlank()?
-                null:LocalDate.parse(req.getP1StartPeriod(), DateTimeFormatter.ISO_DATE);
+        this.p1StartPeriod = req.getP1StartPeriod() == null || req.getP1StartPeriod().isBlank() ?
+                null : LocalDate.parse(req.getP1StartPeriod(), DateTimeFormatter.ISO_DATE);
 
-        this.p1OverPeriod = req.getP1OverPeriod()==null || req.getP1OverPeriod().isBlank()?
-                null:LocalDate.parse(req.getP1OverPeriod(), DateTimeFormatter.ISO_DATE);
+        this.p1OverPeriod = req.getP1OverPeriod() == null || req.getP1OverPeriod().isBlank() ?
+                null : LocalDate.parse(req.getP1OverPeriod(), DateTimeFormatter.ISO_DATE);
 
-        this.p2StartPeriod = req.getP2StartPeriod()==null || req.getP2StartPeriod().isBlank()?
-                null:LocalDate.parse(req.getP2StartPeriod(), DateTimeFormatter.ISO_DATE);
+        this.p2StartPeriod = req.getP2StartPeriod() == null || req.getP2StartPeriod().isBlank() ?
+                null : LocalDate.parse(req.getP2StartPeriod(), DateTimeFormatter.ISO_DATE);
 
-        this.p2OverPeriod = req.getP2OverPeriod()==null || req.getP2OverPeriod().isBlank()?
-                null:LocalDate.parse(req.getP2OverPeriod(), DateTimeFormatter.ISO_DATE);
+        this.p2OverPeriod = req.getP2OverPeriod() == null || req.getP2OverPeriod().isBlank() ?
+                null : LocalDate.parse(req.getP2OverPeriod(), DateTimeFormatter.ISO_DATE);
 
-        this.sopStartPeriod = req.getSopStartPeriod()==null || req.getSopStartPeriod().isBlank()?
-                null:LocalDate.parse(req.getSopStartPeriod(), DateTimeFormatter.ISO_DATE);
+        this.sopStartPeriod = req.getSopStartPeriod() == null || req.getSopStartPeriod().isBlank() ?
+                null : LocalDate.parse(req.getSopStartPeriod(), DateTimeFormatter.ISO_DATE);
 
-        this.sopOverPeriod = req.getSopOverPeriod()==null || req.getSopOverPeriod().isBlank()?
-                null:LocalDate.parse(req.getSopOverPeriod(), DateTimeFormatter.ISO_DATE);
+        this.sopOverPeriod = req.getSopOverPeriod() == null || req.getSopOverPeriod().isBlank() ?
+                null : LocalDate.parse(req.getSopOverPeriod(), DateTimeFormatter.ISO_DATE);
 
-
-        this.newItem =
-                req.getItemId()==null?
-                        newItemRepository.findById(-1L)
-                                .orElseThrow(ItemTypeNotEmptyException::new):
-                        newItemRepository.findById(req.getItemId())
-                                .orElseThrow(ItemNotFoundException::new);
+//
+//        this.newItem =
+//                req.getItemId() == null ?
+//                        newItemRepository.findById(-1L)
+//                                .orElseThrow(ItemTypeNotEmptyException::new) :
+//                        newItemRepository.findById(req.getItemId())
+//                                .orElseThrow(ItemNotFoundException::new);
 
 
         this.projectType =
-                req.getProjectTypeId() == null?
+                req.getProjectTypeId() == null ?
                         projectTypeRepository.findById(-1L)
-                                .orElseThrow(ProjectTypeNotEmptyException::new):
+                                .orElseThrow(ProjectTypeNotEmptyException::new) :
                         projectTypeRepository.findById(req.getProjectTypeId())
                                 .orElseThrow(ProjectTypeNotFoundException::new);
 
 
         this.projectLevel =
-                req.getProjectLevelId() == null?
+                req.getProjectLevelId() == null ?
                         projectLevelRepository.findById(-1L)
-                                .orElseThrow(ProjectLevelNotEmptyException::new):
+                                .orElseThrow(ProjectLevelNotEmptyException::new) :
                         projectLevelRepository.findById(req.getProjectLevelId())
                                 .orElseThrow(ProjectLevelNotFoundException::new);
 
         this.clientOrganization =
-                req.getClientOrganizationId() == null?
-                null:
+                req.getClientOrganizationId() == null ?
+                        null :
                         clientOrganizationRepository.findById(req.getClientOrganizationId())//req.getProjectLevelId())
                                 .orElseThrow(ClientOrganizationNotFoundException::new);
 
         this.produceOrganization =
-                req.getSupplierId() == null?
-                        null:
+                req.getSupplierId() == null ?
+                        null :
                         produceOrganizationRepository.findById(req.getSupplierId())
                                 .orElseThrow(ProduceOrganizationNotFoundException::new);
 
         this.carType =
-                req.getCarTypeId() == null?
+                req.getCarTypeId() == null ?
                         carTypeRepository.findById(-1L)
-                                .orElseThrow(CarTypeNotEmptyException::new):
+                                .orElseThrow(CarTypeNotEmptyException::new) :
                         carTypeRepository.findById(req.getCarTypeId())
                                 .orElseThrow(CarTypeNotFoundException::new);
 
@@ -739,7 +738,7 @@ public class Project extends EntityDate {
                         true //temp End 에서 저장되는 파일들은 찐 저장
                 );
         // 문서 존재한다면 add 작업 처리
-        if(req.getAddedTag().size()>0) {
+        if (req.getAddedTag().size() > 0) {
             addUpdatedProjectAttachments(
                     req,
                     resultAttachments.getAddedAttachments(),
@@ -748,7 +747,7 @@ public class Project extends EntityDate {
         }
 
         // 삭제하는 문서 존재한다면 delete
-        if(req.getDeletedAttachments().size()>0) {
+        if (req.getDeletedAttachments().size() > 0) {
             deleteProjectAttachments(resultAttachments.getDeletedAttachments());
         }
 
@@ -756,14 +755,26 @@ public class Project extends EntityDate {
                 resultAttachments
         );
 
-        this.clientItemNumber = req.getClientItemNumber()==null ?
+        this.clientItemNumber = req.getClientItemNumber() == null ?
                 null : req.getClientItemNumber();
 
         return fileUpdatedResults;
     }
 
-    public void changeItemIdOfProjectByNewMadeItem(NewItem newMadeItem){
-
+    public void changeItemIdOfProjectByNewMadeItem(NewItem newMadeItem) {
+    System.out.println("아이템 바꿔치기 진행해버리기이이ㅣ이이이잉 ");
         this.newItem = newMadeItem;
+    }
+
+    public void setNewItem(NewItem newItem) {
+        this.newItem = newItem;
+    }
+
+    public NewItemCreateResponse projectUpdateToReadonlyFalseTempSaveTrue() {
+        this.readonly = false;
+        this.tempsave = true;
+        return new NewItemCreateResponse(
+                this.id
+        );
     }
 }

@@ -77,8 +77,8 @@ public class CrPagingDto {
                 ),
 
 
-                routeOrderingRepository.findByNewItem(Item).get(
-                        routeOrderingRepository.findByNewItem(Item).size() - 1
+                routeOrderingRepository.findByNewItemOrderByIdAsc(Item).get(
+                        routeOrderingRepository.findByNewItemOrderByIdAsc(Item).size() - 1
                 ).getLifecycleStatus(),
 
                 changeRequest.getId(),
@@ -123,8 +123,8 @@ public class CrPagingDto {
                 ),
 
 
-                routeOrderingRepository.findByNewItem(Item).get(
-                        routeOrderingRepository.findByNewItem(Item).size() - 1
+                routeOrderingRepository.findByNewItemOrderByIdAsc(Item).get(
+                        routeOrderingRepository.findByNewItemOrderByIdAsc(Item).size() - 1
                 ).getLifecycleStatus(),
 
                 co.getId(),
@@ -186,8 +186,8 @@ public class CrPagingDto {
                                 ),
 
 
-                                routeOrderingRepository.findByNewItem(Item).get(
-                                        routeOrderingRepository.findByNewItem(Item).size() - 1
+                                routeOrderingRepository.findByNewItemOrderByIdAsc(Item).get(
+                                        routeOrderingRepository.findByNewItemOrderByIdAsc(Item).size() - 1
                                 ).getLifecycleStatus(),
 
                                 co.getId(),

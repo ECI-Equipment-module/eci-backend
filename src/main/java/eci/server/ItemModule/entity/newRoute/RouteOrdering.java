@@ -1,6 +1,8 @@
 package eci.server.ItemModule.entity.newRoute;
 
 import eci.server.BomModule.entity.Bom;
+import eci.server.BomModule.entity.DevelopmentBom;
+import eci.server.BomModule.repository.DevelopmentBomRepository;
 import eci.server.CRCOModule.entity.CoNewItem;
 import eci.server.CRCOModule.entity.co.ChangeOrder;
 import eci.server.CRCOModule.entity.cr.ChangeRequest;
@@ -297,20 +299,23 @@ public class RouteOrdering extends EntityDate {
                     throw new ItemNotFoundException();//에러 던지기
                 }
 
-                NewItem targetRevisedItem = newItemRepository.
+                NewItem targetOldRevisedItem = newItemRepository.
                         findById(routeOrdering.getNewItem().getReviseTargetId()).orElseThrow(ItemNotFoundException::new);
 
-                if (targetRevisedItem.isRevise_progress()) {
-                    routeOrdering.getNewItem().setRevise_progress(false);
+                NewItem completedNewItem = routeOrdering.getNewItem();
+                completedNewItem.setReviseTargetId(null); //끝나면 null 로 관계 끊어주기
+
+                if (targetOldRevisedItem.isRevise_progress()) {
+                    targetOldRevisedItem.setRevise_progress(false);
                     //0712 아기의 target route 가 revise progress 가 진행 중이라면 라우트 complete 될 때 false 로 갱신
                 }
 
-                if(coNewItemRepository.findByNewItemOrderByCreatedAtAsc(targetRevisedItem).size()>0) {
+                if(coNewItemRepository.findByNewItemOrderByCreatedAtAsc(targetOldRevisedItem).size()>0) {
                     // (1) 지금 revise 완료 된 아이템의 CO 를 검사하기 위해 check co 찾기
                     System.out.println("(1) 지금 revise 완료 된 아이템의 CO 를 검사하기 위해 check co 찾기");
                     ChangeOrder checkCo =
-                            coNewItemRepository.findByNewItemOrderByCreatedAtAsc(targetRevisedItem).get(
-                                            coNewItemRepository.findByNewItemOrderByCreatedAtAsc(targetRevisedItem).size()-1
+                            coNewItemRepository.findByNewItemOrderByCreatedAtAsc(targetOldRevisedItem).get(
+                                            coNewItemRepository.findByNewItemOrderByCreatedAtAsc(targetOldRevisedItem).size()-1
                                     )//가장 최근에 맺어진 co-new item 관계 중 가장 최신 아이의 co를 검사하기
                                     .getChangeOrder();
 
@@ -445,7 +450,8 @@ public class RouteOrdering extends EntityDate {
             String rejectedComment,
             Integer rejectedIndex,
             RouteOrderingRepository routeOrderingRepository,
-            RouteProductRepository routeProductRepository
+            RouteProductRepository routeProductRepository,
+            DevelopmentBomRepository developmentBomRepository
 
     ) {
         /**
@@ -493,6 +499,7 @@ public class RouteOrdering extends EntityDate {
 
         //06-17 : 거부된 라우트 프로덕트의 라우트 타입 검사
 
+        System.out.println();
         // 1,9, 11, 13 에 따라서 tempSave 랑 readOnly 의 true,false 값 변경
         switch(routeProductList.get(rejectedIndex).getType().getId().toString()) {
 
@@ -502,7 +509,7 @@ public class RouteOrdering extends EntityDate {
                 this.getNewItem().setReadonly(false);
                 break;
             // 9 (플젝)
-            case "9":
+            case "10":
                 this.getProject().setTempsave(true);
                 this.getProject().setReadonly(false);
                 break;
@@ -512,9 +519,12 @@ public class RouteOrdering extends EntityDate {
                 this.getDesign().setReadonly(false);
                 break;
             //11 (봄)
-            case "11":
+            case "14":
                 this.getBom().setTempsave(true);
                 this.getBom().setReadonly(false);
+                DevelopmentBom devBom = developmentBomRepository.findByBom(this.getBom());
+                devBom.updateReadonlyFalse();
+                devBom.updateTempSaveTrue();
                 break;
             // 15 (cr)
             case "15":

@@ -12,6 +12,9 @@ public class DevelopmentReadDto {
 
     private TempNewItemChildDto developmentBom;
     private Long routeId;
+    private boolean preRejected;
+    private boolean readonly;
+    private Long reviseId;
 
     }
 

@@ -40,7 +40,7 @@ public class NewItemGuard {
         Long memberId = authHelper.extractMemberId();
         //요청자의 아이디 확인
 
-        return Item.getMember().getId().equals(memberId);
+        return Item.getMember().getId().equals(memberId)||Item.getModifier().getId().equals(memberId);
     }
 
     private boolean hasAdminRole() {
