@@ -631,6 +631,17 @@ public class NewItemService {
 
     }
 
+    public List<NewItemParentDto> readParentAll(Long id) {
+
+        return NewItemParentDto.toDtoList(
+                newItemParentChildrenRepository.
+                        findAllWithChildByChildId(id),//ByParentIdOrderByParentIdAscNullsFirst(
+                newItemParentChildrenRepository
+
+        );
+
+    }
+
     public List<TempNewItemChildDto> readDevChildAll(Long id) {
 
         return TempNewItemChildDto.toDtoList(
