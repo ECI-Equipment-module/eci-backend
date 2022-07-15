@@ -198,7 +198,7 @@ public class ProjectService {
         Project project =  projectRepository.findById(id).orElseThrow(ProjectNotFoundException::new);
         project.updateNewItem(NewitemId, newItemRepository);
 
-        return new ProjectTempCreateUpdateResponse(project.getId())
+        return new ProjectTempCreateUpdateResponse(project.getId());
     }
 
     @Transactional
