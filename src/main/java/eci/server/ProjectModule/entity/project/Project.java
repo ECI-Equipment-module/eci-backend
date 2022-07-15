@@ -767,6 +767,7 @@ public class Project extends EntityDate {
     }
 
     public void setNewItem(NewItem newItem) {
+        System.out.println("setting newItem to "+ newItem.getId());
         this.newItem = newItem;
     }
 
