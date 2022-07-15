@@ -842,6 +842,7 @@ public class NewItemService {
 
     /**
      * Release 시 선택가능 후보들
+<<<<<<< HEAD
      * release, complete 된 애들 중 release 가 0 인 애들 (배포 시 1.0으로 되는 애들)
      * @return
      */
