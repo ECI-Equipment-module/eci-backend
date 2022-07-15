@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface CoNewItemRepository extends JpaRepository<CoNewItem, Long> {
 
-    List<CoNewItem> findByChangeOrder(ChangeOrder changeOrder);
+    List<CoNewItem> findByChangeOrderByIdAsc(ChangeOrder changeOrder);
     List<CoNewItem> findByNewItem(NewItem newItem);
 
     List<CoNewItem> findByNewItemOrderByCreatedAtAsc(NewItem newItem);

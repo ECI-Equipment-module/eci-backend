@@ -5,6 +5,7 @@ import eci.server.CRCOModule.dto.cr.CrPagingDto;
 import eci.server.CRCOModule.entity.co.ChangeOrder;
 import eci.server.CRCOModule.repository.co.ChangeOrderRepository;
 import eci.server.CRCOModule.repository.co.CoNewItemRepository;
+import eci.server.CRCOModule.service.co.CoService;
 import eci.server.ItemModule.repository.newRoute.RouteOrderingRepository;
 import eci.server.ReleaseModule.dto.CoListDto;
 import lombok.RequiredArgsConstructor;
@@ -35,6 +36,8 @@ public class CoPageController{
     ChangeOrderRepository changeOrderRepository;
     private final RouteOrderingRepository routeOrderingRepository;
     private final CoNewItemRepository coNewItemRepository;
+    private final CoService coService;
+
     @Value("${default.image.address}")
     private String defaultImageAddress;
 
@@ -81,13 +84,8 @@ public class CoPageController{
                                          })
                                                  Pageable pageRequest) {
 
-        Page<ChangeOrder> ListBefore =
-                changeOrderRepository.findAll(pageRequest);
-
         List<ChangeOrder> cos =
-                ListBefore.stream().filter(
-                        i-> (!i.getTempsave())
-                ).collect(Collectors.toList());
+                coService.readCoAvailableInRelease();
 
         List<CoSearchDto> coPagingDtos =
                 cos.stream().map(

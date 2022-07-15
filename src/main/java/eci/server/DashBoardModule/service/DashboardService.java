@@ -730,7 +730,7 @@ public class DashboardService {
             List<RouteOrdering> routeOrdering = new ArrayList<>();
 
             for (ChangeOrder changeOrder : changeOrders) {
-                List<RouteOrdering> orderings = routeOrderingRepository.findByChangeOrder(changeOrder);
+                List<RouteOrdering> orderings = routeOrderingRepository.findByChangeOrderByIdAsc(changeOrder);
                 routeOrdering.addAll(orderings);
             }
 
@@ -1131,11 +1131,11 @@ public class DashboardService {
 
             if (co.getTempsave()){
                 // (1) 한번 찐 저장했지만 거절 당한 Co REQUEST
-                if(routeOrderingRepository.findByChangeOrder(co).size()>0){
+                if(routeOrderingRepository.findByChangeOrderByIdAsc(co).size()>0){
 
                     // cr의 라우트 오더링 중 가장 최신
-                    RouteOrdering ordering = routeOrderingRepository.findByChangeOrder(co).get(
-                            routeOrderingRepository.findByChangeOrder(co).size() - 1);
+                    RouteOrdering ordering = routeOrderingRepository.findByChangeOrderByIdAsc(co).get(
+                            routeOrderingRepository.findByChangeOrderByIdAsc(co).size() - 1);
 
                     int presentIdx = ordering.getPresent();
                     RouteProduct routeProduct = routeProductRepository.findAllByRouteOrdering(ordering).get(presentIdx);
