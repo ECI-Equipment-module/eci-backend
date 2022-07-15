@@ -73,13 +73,17 @@ public class Release extends EntityDate {
     private ReleaseType releaseType;
 
 
-    @OneToMany(
-            mappedBy = "releaseOrganization",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true,
-            fetch = FetchType.LAZY)
-    //affected item
-    private List<ReleaseOrganization> releaseOrganization;
+    //    @OneToMany(
+//            mappedBy = "releaseOrganization",
+//            cascade = CascadeType.ALL,
+//            orphanRemoval = true,
+//            fetch = FetchType.LAZY)
+//    //affected item
+//    private List<ReleaseOrganization> releaseOrganization;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "releaseOrganization_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private ReleaseOrganization releaseOrganization;
 
     @OneToMany(
             mappedBy = "release",
