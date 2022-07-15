@@ -110,7 +110,7 @@ public class CoReadDto {
     ) {
         List<RouteOrderingDto> routeDtoList = Optional.ofNullable(
                 RouteOrderingDto.toDtoList(
-                        routeOrderingRepository.findByChangeOrderByIdAsc(co),
+                        routeOrderingRepository.findByChangeOrderOrderByIdAsc(co),
                         routeProductRepository,
                         routeOrderingRepository,
                         bomRepository,
@@ -196,8 +196,8 @@ public class CoReadDto {
                 co.getTempsave(),
                 co.getReadonly(),
 
-                routeOrderingRepository.findByChangeOrderByIdAsc(co).
-                        get(routeOrderingRepository.findByChangeOrderByIdAsc(
+                routeOrderingRepository.findByChangeOrderOrderByIdAsc(co).
+                        get(routeOrderingRepository.findByChangeOrderOrderByIdAsc(
                                 co).size() - 1)
                         .getId(),
 

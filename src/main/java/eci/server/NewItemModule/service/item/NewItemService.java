@@ -834,6 +834,28 @@ public class NewItemService {
     }
 
     /**
+     * Release 시 선택가능 후보들
+     * release, complete 된 애들 중 release 가 0 인 애들 (배포 시 1.0으로 되는 애들)
+     * @return
+     */
+    public List<NewItem> releaseItem(){
+        List<NewItem> affItemList = readAffectedItems();
+        System.out.println(affItemList + "다 차즈으으ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅁ");
+        List<NewItem> releaseItemList = new ArrayList<>();
+
+        for(NewItem newItem : affItemList){
+            if (newItem.getRelease()==0){
+                releaseItemList.add(newItem);
+            }
+        }
+//        List<NewItem> releaseItem = affItemList.stream().filter(
+//                i->i.getRelease()==0
+//        ).collect(Collectors.toList());
+
+        return releaseItemList;
+
+    }
+    /**
      * createDevelopmentCard 에서 쓰일 것
 
      */

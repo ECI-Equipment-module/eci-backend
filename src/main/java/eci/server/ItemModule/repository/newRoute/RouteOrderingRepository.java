@@ -17,7 +17,7 @@ public interface RouteOrderingRepository extends JpaRepository<RouteOrdering, Lo
 
     List<RouteOrdering> findByChangeRequest(ChangeRequest changeRequest);
 
-    List<RouteOrdering> findByChangeOrderByIdAsc(ChangeOrder changeOrder);
+    List<RouteOrdering> findByChangeOrderOrderByIdAsc(ChangeOrder changeOrder);
 
     List<RouteOrdering> findByReleaseOrderByIdAsc(Release release);
 

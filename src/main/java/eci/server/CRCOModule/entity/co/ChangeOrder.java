@@ -870,7 +870,7 @@ public class ChangeOrder extends EntityDate {
                 findAttachmentUpdatedResult(
                         req.getAddedAttachments(),
                         req.getDeletedAttachments(),
-                        false
+                        true
                 );
 
         if(req.getAddedTag().size()>0) {

@@ -296,9 +296,9 @@ public class CoService{
                 result.getAttachmentUpdatedResult().getDeletedAttachments()
         );
         Long routeId = -1L;
-        if(routeOrderingRepository.findByChangeOrderByIdAsc(co).size()>0) {
-            List<RouteOrdering> routeOrdering = routeOrderingRepository.findByChangeOrderByIdAsc(co);
-            routeId = routeOrderingRepository.findByChangeOrderByIdAsc(co).get(routeOrdering.size() - 1).getId();
+        if(routeOrderingRepository.findByChangeOrderOrderByIdAsc(co).size()>0) {
+            List<RouteOrdering> routeOrdering = routeOrderingRepository.findByChangeOrderOrderByIdAsc(co);
+            routeId = routeOrderingRepository.findByChangeOrderOrderByIdAsc(co).get(routeOrdering.size() - 1).getId();
 
             RouteOrdering setRoute =
                     routeOrderingRepository.findById(routeId).orElseThrow(RouteNotFoundException::new);
@@ -313,7 +313,7 @@ public class CoService{
     }
 
     private void saveTrueAttachment(ChangeOrder target) {
-        coAttachmentRepository.findByChangeOrderByIdAsc(target).
+        coAttachmentRepository.findByChangeOrderOrderByIdAsc(target).
                 forEach(
                         i->i.setSave(true)
                 );
@@ -326,7 +326,7 @@ public class CoService{
 
         List<RouteOrderingDto> routeDtoList = Optional.ofNullable(
                 RouteOrderingDto.toDtoList(
-                        routeOrderingRepository.findByChangeOrderByIdAsc(co),
+                        routeOrderingRepository.findByChangeOrderOrderByIdAsc(co),
                         routeProductRepository,
                         routeOrderingRepository,
                         bomRepository,
@@ -338,8 +338,8 @@ public class CoService{
 
         if (routeDtoList.size() > 0) {
             RouteOrdering routeOrdering =
-                    routeOrderingRepository.findByChangeOrderByIdAsc(co).get(
-                            routeOrderingRepository.findByChangeOrderByIdAsc(co).size()-1
+                    routeOrderingRepository.findByChangeOrderOrderByIdAsc(co).get(
+                            routeOrderingRepository.findByChangeOrderOrderByIdAsc(co).size()-1
                     );
             return CoReadDto.toDto(
                     co,
@@ -375,13 +375,13 @@ public class CoService{
 
         for(ChangeOrder  co : changeOrders){
             if(
-                    routeOrderingRepository.findByChangeOrderByIdAsc(co).size()>0
-                            && (routeOrderingRepository.findByChangeOrderByIdAsc(co).get(
-                            routeOrderingRepository.findByChangeOrderByIdAsc(co).size()-1
+                    routeOrderingRepository.findByChangeOrderOrderByIdAsc(co).size()>0
+                            && (routeOrderingRepository.findByChangeOrderOrderByIdAsc(co).get(
+                            routeOrderingRepository.findByChangeOrderOrderByIdAsc(co).size()-1
                     ).getLifecycleStatus().equals("COMPLETE")
 //                            ||
-//                            (routeOrderingRepository.findByChangeOrderByIdAsc(co).get(
-//                                    routeOrderingRepository.findByChangeOrderByIdAsc(co).size()-1
+//                            (routeOrderingRepository.findByChangeOrderOrderByIdAsc(co).get(
+//                                    routeOrderingRepository.findByChangeOrderOrderByIdAsc(co).size()-1
 //                            ).getLifecycleStatus().equals("RELEASE")
 //                            )
                     )

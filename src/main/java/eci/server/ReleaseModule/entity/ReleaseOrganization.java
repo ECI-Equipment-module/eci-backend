@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Getter
 @Entity
@@ -19,6 +20,13 @@ public class ReleaseOrganization{
 
     @Column(nullable = false)
     private String name;
+
+    @OneToMany(
+            mappedBy = "releaseOrganization",
+            cascade = CascadeType.REMOVE,
+            fetch = FetchType.LAZY)
+    private List<ReleaseOrgRelease> coCoEffects;
+
 
     public ReleaseOrganization(
             String name

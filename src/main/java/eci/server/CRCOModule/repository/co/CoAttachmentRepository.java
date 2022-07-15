@@ -8,5 +8,5 @@ import java.util.List;
 
 public interface CoAttachmentRepository extends JpaRepository<CoAttachment, Long> {
 
-    List<CoAttachment> findByChangeOrderByIdAsc(ChangeOrder changeOrder);
+    List<CoAttachment> findByChangeOrderOrderByIdAsc(ChangeOrder changeOrder);
 }

@@ -33,6 +33,9 @@ import static java.util.stream.Collectors.toList;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+/**
+ *
+ */
 public class ReleaseDto{
     private Long id;
 
@@ -69,7 +72,7 @@ public class ReleaseDto{
 
     private boolean preRejected;
 
-    private ProduceOrganizationDto releaseOrganizationId;
+    private List<ProduceOrganizationDto> releaseOrganizationId;
 
     @Nullable
     private ItemProjectDto item;
@@ -120,7 +123,7 @@ public class ReleaseDto{
 
                 MemberDto.toDto(release.getMember(),defaultImageAddress),
 
-                release.getReleaseAttachments().
+                release.getAttachments().
                         stream().
                         map(i -> ReleaseAttachmentDto.toDto(
                                 i,
@@ -147,7 +150,9 @@ public class ReleaseDto{
 
                 ReleasePreRejected(routeOrdering ,routeProductRepository),
 
-                ProduceOrganizationDto.toDto(release.getReleaseOrganization()),
+                ProduceOrganizationDto.toDtoList(
+                        release.getReleaseOrganization()
+                ),
 
                 release.getNewItem()==null?
                         ItemProjectDto.toDto()

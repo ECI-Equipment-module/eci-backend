@@ -587,8 +587,8 @@ public class RouteOrderingService {
 //
 //                    // (3) checkCo의 routeOrdering 찾아오기
 //                    RouteOrdering routeOrderingOfChkCo =
-//                            routeOrderingRepository.findByChangeOrderByIdAsc(checkCo).get(
-//                                    routeOrderingRepository.findByChangeOrderByIdAsc(checkCo).size()-1
+//                            routeOrderingRepository.findByChangeOrderOrderByIdAsc(checkCo).get(
+//                                    routeOrderingRepository.findByChangeOrderOrderByIdAsc(checkCo).size()-1
 //                            );
 //
 //                    // (4) affected item 이 모두 revise 완료된다면 update route

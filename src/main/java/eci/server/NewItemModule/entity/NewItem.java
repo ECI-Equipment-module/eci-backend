@@ -221,6 +221,8 @@ public class NewItem extends EntityDate {
     @Column
     private int revision;
 
+    @Column
+    private int release;
 
     @Column//nullable 하다 - 얘가 존재하면 revise copying new item 이라는 식별
     private Long reviseTargetId;
@@ -423,6 +425,8 @@ public class NewItem extends EntityDate {
         this.member = member;
         this.modifier = member;
 
+        this.release = 0;
+
     }
 
 
@@ -581,6 +585,7 @@ public class NewItem extends EntityDate {
 
         this.modifier = member;
 
+        this.release = 0;
     }
 
     /**

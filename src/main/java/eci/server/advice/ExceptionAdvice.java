@@ -24,6 +24,10 @@ import eci.server.ItemModule.exception.route.RouteNotFoundException;
 import eci.server.ItemModule.exception.route.UpdateImpossibleException;
 import eci.server.NewItemModule.exception.*;
 import eci.server.ProjectModule.exception.*;
+import eci.server.ReleaseModule.exception.ReleaseNeedsTargetException;
+import eci.server.ReleaseModule.exception.ReleaseOrganizationNotFoundException;
+import eci.server.ReleaseModule.exception.ReleaseTypeNotEmptyException;
+import eci.server.ReleaseModule.exception.ReleaseTypeNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -543,7 +547,37 @@ public class ExceptionAdvice {
                 "없는 CrEffect  입니다.");
     }
 
+    @ExceptionHandler(ReleaseTypeNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Response ReleaseTypeNotFoundException(ReleaseTypeNotFoundException e) {
+        log.info("e = {}", e.getMessage());
+        return Response.failure(404,
+                "없는 ReleaseType  입니다.");
+    }
 
+    @ExceptionHandler(ReleaseNeedsTargetException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Response ReleaseNeedsTargetException(ReleaseTypeNotFoundException e) {
+        log.info("e = {}", e.getMessage());
+        return Response.failure(404,
+                "배포는 엮인 아이템 혹은 CO를 필요로 합니다.");
+    }
+
+    @ExceptionHandler(ReleaseTypeNotEmptyException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Response ReleaseTypeNotEmptyException(ReleaseTypeNotEmptyException e) {
+        log.info("e = {}", e.getMessage());
+        return Response.failure(404,
+                "ReleaseType 은 필수입니다.");
+    }
+
+    @ExceptionHandler(ReleaseOrganizationNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Response ReleaseOrganizationNotFoundException(ReleaseOrganizationNotFoundException e) {
+        log.info("e = {}", e.getMessage());
+        return Response.failure(404,
+                "존재하지 않는 배포처입니다.");
+    }
 
 
 }
