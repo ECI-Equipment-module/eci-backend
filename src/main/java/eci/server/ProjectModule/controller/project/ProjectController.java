@@ -131,7 +131,7 @@ public class ProjectController {
         // 기존 프로젝트 아이템 값만 revisedId 라는 새 아이템으로 바꿔치기 해주기
         //response.setRouteId(projectService.routeIdReturn(newMadeItemId));
         return Response.success(
-                response
+                response1
         );
     }
 
