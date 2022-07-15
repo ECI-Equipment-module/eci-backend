@@ -250,6 +250,30 @@ public String[][] routeByItemName = {
             {"CO" , "CO" , "CO" , "CO", "CO" }
 
     };
+
+    //// RELEASE
+
+
+    public String[][] RELEASERouteName = {
+
+            {
+                    "배포 신청",
+                    "배포 승인"
+            }
+    };
+
+    public String[][] RELEASERouteType = {
+
+
+            {"REQUEST", "REVIEW","COMPLETE"}
+
+    };
+
+    public String[][] RELEASERouteTypeModule = {
+
+            {"RELEASE", "RELEASE", "RELEASE"}
+
+    };
 }
 
 
