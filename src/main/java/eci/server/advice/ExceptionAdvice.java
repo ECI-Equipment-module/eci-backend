@@ -24,10 +24,7 @@ import eci.server.ItemModule.exception.route.RouteNotFoundException;
 import eci.server.ItemModule.exception.route.UpdateImpossibleException;
 import eci.server.NewItemModule.exception.*;
 import eci.server.ProjectModule.exception.*;
-import eci.server.ReleaseModule.exception.ReleaseNeedsTargetException;
-import eci.server.ReleaseModule.exception.ReleaseOrganizationNotFoundException;
-import eci.server.ReleaseModule.exception.ReleaseTypeNotEmptyException;
-import eci.server.ReleaseModule.exception.ReleaseTypeNotFoundException;
+import eci.server.ReleaseModule.exception.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -577,6 +574,14 @@ public class ExceptionAdvice {
         log.info("e = {}", e.getMessage());
         return Response.failure(404,
                 "존재하지 않는 배포처입니다.");
+    }
+
+    @ExceptionHandler(ReleaseNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Response ReleaseNotFoundException(ReleaseNotFoundException e) {
+        log.info("e = {}", e.getMessage());
+        return Response.failure(404,
+                "존재하지 않는 RELEASE 입니다.");
     }
 
 

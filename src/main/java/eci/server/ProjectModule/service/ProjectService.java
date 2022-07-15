@@ -135,26 +135,6 @@ public class ProjectService {
         return new ProjectCreateUpdateResponse(project.getId(), routeId);
     }
 
-    private void uploadAttachments(List<ProjectAttachment> attachments, List<MultipartFile> filedAttachments) {
-        // 실제 이미지 파일을 가지고 있는 Multipart 파일을
-        // 파일이 가지는 unique name 을 파일명으로 해서 파일저장소 업로드
-        IntStream.range(0, attachments.size())
-                .forEach(
-                        i -> fileService.upload
-                                (
-                                        filedAttachments.get(i),
-                                        attachments.get(i).getUniqueName()
-                                )
-                );
-    }
-
-    private void deleteAttachments(List<ProjectAttachment> attachments) {
-        for(ProjectAttachment attachment:attachments){
-            if(!attachment.isSave()){
-                fileService.delete(attachment.getUniqueName());
-            }
-        }
-    }
 
     @Transactional
 
@@ -267,9 +247,18 @@ public class ProjectService {
 
 
     // read one project
+
     public ProjectDto read(Long id){
         Project targetProject = projectRepository.findById(id).orElseThrow(ProjectNotFoundException::new);
-        RouteOrdering routeOrdering = routeOrderingRepository.findByNewItemOrderByIdAsc(targetProject.getNewItem()).get(0);
+
+
+        RouteOrdering routeOrdering = routeOrderingRepository
+                .findByNewItemOrderByIdAsc(targetProject.getNewItem())
+                .get(routeOrderingRepository
+                        .findByNewItemOrderByIdAsc(targetProject.getNewItem())
+                        .size()-1);
+
+
         return ProjectDto.toDto(
                 targetProject,
                 routeOrdering,
@@ -625,24 +614,6 @@ public class ProjectService {
                                 ).size()-1
                         ).getLifecycleStatus(),//라우트 오더링 중에서 현재 진행중인 라우트프로덕트
                         //현재 phase의 sequence가
-//
-//                        (double) routeOrderingRepository.findByItem(
-//                                                project.getItem()
-//                                        ).get(
-//                                                routeOrderingRepository.findByItem(
-//                                                        project.getItem()
-//                                                ).size()-1
-//                                        ).getPresent() //라우트 오더링 중에서 현재 진행중인 라우트프로덕트
-//                                /
-//                                routeProductRepository.findAllByRouteOrdering(
-//                                routeOrderingRepository.findByItem(
-//                                        project.getItem()
-//                                ).get(
-//                                        routeOrderingRepository.findByItem(
-//                                                project.getItem()
-//                                        ).size()-1 //아이템의 라우트 오더링 중에서 최신 아이
-//                                )
-//                        ).size(),
 
                         project.getCreatedAt()
                 )
@@ -661,17 +632,6 @@ public class ProjectService {
         projectRepository.delete(project);
     }
 
-    private void deleteProjectAttachments(List<ProjectAttachment> projectAttachments) {
-        projectAttachments.forEach(i -> fileService.delete(i.getUniqueName()));
-    }
-
-    private void saveTrueAttachment(Project target) {
-        projectAttachmentRepository.findByProject(target).
-                forEach(
-                        i->i.setSave(true)
-                );
-
-    }
 
     public NewItemCreateResponse changeProjectItemToNewMadeItem(Long targetProjId, Long newMadeItemid){
 
@@ -691,6 +651,41 @@ public class ProjectService {
         project.projectUpdateToReadonlyFalseTempSaveTrue();
         return new NewItemCreateResponse(project.getId());
     }
+
+
+    private void deleteProjectAttachments(List<ProjectAttachment> projectAttachments) {
+        projectAttachments.forEach(i -> fileService.delete(i.getUniqueName()));
+    }
+
+    private void saveTrueAttachment(Project target) {
+        projectAttachmentRepository.findByProject(target).
+                forEach(
+                        i->i.setSave(true)
+                );
+    }
+
+    private void uploadAttachments(List<ProjectAttachment> attachments, List<MultipartFile> filedAttachments) {
+        // 실제 이미지 파일을 가지고 있는 Multipart 파일을
+        // 파일이 가지는 unique name 을 파일명으로 해서 파일저장소 업로드
+        IntStream.range(0, attachments.size())
+                .forEach(
+                        i -> fileService.upload
+                                (
+                                        filedAttachments.get(i),
+                                        attachments.get(i).getUniqueName()
+                                )
+                );
+    }
+
+    private void deleteAttachments(List<ProjectAttachment> attachments) {
+        for(ProjectAttachment attachment:attachments){
+            if(!attachment.isSave()){
+                fileService.delete(attachment.getUniqueName());
+            }
+        }
+    }
+
+
 
 
 }

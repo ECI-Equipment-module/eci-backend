@@ -299,6 +299,10 @@ public class RouteOrdering extends EntityDate {
                     //얘는 create인 상태에선 ㄴㄴ 오로지 request 상태만 tempsave 여기서 false 돼야함
                     this.getChangeOrder().setTempsave(false); //라우트 만든 순간 임시저장 다시 거짓으로
                 }
+                else if(routeProductList.get(this.present).getType().getModule().equals("RELEASE")
+                        && routeProductList.get(this.present).getType().getName().equals("REQUEST")){
+                    this.getRelease().setTempsave(false); //라우트 만든 순간 임시저장 다시 거짓으로
+                }
             }
 
         }else{
@@ -561,6 +565,12 @@ public class RouteOrdering extends EntityDate {
                 this.getChangeOrder().setTempsave(true);
                 this.getChangeOrder().setReadonly(false);
                 break;
+            //RELEASE REQUEST
+            case "22":
+                this.getRelease().setTempsave(true);
+                this.getRelease().setReadonly(false);
+                break;
+
         }
 
         /**

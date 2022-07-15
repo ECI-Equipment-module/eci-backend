@@ -379,7 +379,14 @@ public class NewItemService {
 
 
         if (routeDtoList.size() > 0) {//아이템에 딸린 routeDto가 존재할 때
-            RouteOrdering routeOrdering = routeOrderingRepository.findByNewItemOrderByIdAsc(targetItem).get(0);
+            RouteOrdering routeOrdering = routeOrderingRepository
+                    .findByNewItemOrderByIdAsc(targetItem).get(
+
+                            routeOrderingRepository
+                                    .findByNewItemOrderByIdAsc(targetItem)
+                                    .size()-1
+
+                    );
             return NewItemDetailDto.toDto(
                     targetItem,
                     routeOrdering,
@@ -844,7 +851,7 @@ public class NewItemService {
         List<NewItem> releaseItemList = new ArrayList<>();
 
         for(NewItem newItem : affItemList){
-            if (newItem.getRelease()==0){
+            if (newItem.getReleased()==0){
                 releaseItemList.add(newItem);
             }
         }

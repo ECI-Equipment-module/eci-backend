@@ -28,8 +28,6 @@ import java.util.stream.Collectors;
 @Transactional
 @RestController
 @RequiredArgsConstructor
-
-
 public class CoPageController{
 
     @Autowired
