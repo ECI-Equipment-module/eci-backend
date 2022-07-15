@@ -667,7 +667,7 @@ public class ProjectService {
 
     }
 
-    public void changeProjectItemToNewMadeItem(Long targetProjId, Long newMadeItemid){
+    public NewItemCreateResponse changeProjectItemToNewMadeItem(Long targetProjId, Long newMadeItemid){
 
         Project targetProj = projectRepository.findById(targetProjId).orElseThrow(ProjectNotFoundException::new);
         NewItem newMadeItem = newItemRepository.findById(newMadeItemid).orElseThrow(ItemNotFoundException::new);
@@ -675,6 +675,8 @@ public class ProjectService {
         // 이 타겟 프로젝트의 아이템을 지금 새로 만들어진 아이템으로 변경해주면 된다.
         targetProj.changeItemIdOfProjectByNewMadeItem(newMadeItem);
         targetProj.setNewItem(newMadeItem);
+
+        return new NewItemCreateResponse(targetProjId);
 
     }
 
