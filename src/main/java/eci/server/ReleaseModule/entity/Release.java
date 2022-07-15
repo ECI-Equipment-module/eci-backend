@@ -94,7 +94,7 @@ public class Release extends EntityDate {
 
     @OneToMany(
             mappedBy = "release",
-            cascade = CascadeType.REMOVE,
+            cascade = CascadeType.ALL,
             fetch = FetchType.LAZY)
     private List<ReleaseOrgRelease> releaseOrganization;
 

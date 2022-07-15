@@ -66,12 +66,6 @@ public class ReleaseTempCreateRequest{
             AttachmentTagRepository attachmentTagRepository
     ) {
 
-        if(req.getReleaseType()==null){
-            throw new ReleaseTypeNotEmptyException();
-        }
-        else if (req.getReleaseItemId() == null && req.getReleaseCoId() == null){
-            throw new ReleaseNeedsTargetException();
-        }
 
         if (req.tag.size() == 0) {
             return new Release(

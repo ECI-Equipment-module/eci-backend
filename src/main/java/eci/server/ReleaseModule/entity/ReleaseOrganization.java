@@ -23,7 +23,7 @@ public class ReleaseOrganization{
 
     @OneToMany(
             mappedBy = "releaseOrganization",
-            cascade = CascadeType.REMOVE,
+            cascade = CascadeType.ALL,
             fetch = FetchType.LAZY)
     private List<ReleaseOrgRelease> coCoEffects;
 
