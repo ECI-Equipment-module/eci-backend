@@ -183,4 +183,21 @@ public class NewItemPageController {
         return NewItemChildDto.toAddChildDtoList(concatItemList, newItemService);
     }
 
+    @CrossOrigin(origins = "https://localhost:3000")
+    @GetMapping("release/items/page")
+    public Page<NewItemChildDto> releaseChodoItems(@PageableDefault(size=5)
+                                           @SortDefault.SortDefaults({
+                                                   @SortDefault(
+                                                           sort = "createdAt",
+                                                           direction = Sort.Direction.DESC)
+                                           })
+                                                   Pageable pageRequest) {
+
+        Page<NewItem> releaseAvailableItems = newItemRepository.findByNewItems(
+                newItemService.releaseItem(), pageRequest
+        );
+
+        return  NewItemChildDto.toDtoList(releaseAvailableItems);
+    }
+
 }

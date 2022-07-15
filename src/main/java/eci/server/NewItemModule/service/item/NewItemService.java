@@ -834,6 +834,19 @@ public class NewItemService {
     }
 
     /**
+     * Release 시 선택가능 후보들
+     * release, complete 된 애들 중 revision 이 65 인 것 (배포 시 1.0 되는 애들)
+     * @return
+     */
+    public List<NewItem> releaseItem(){
+        List<NewItem> newItemList = readAffectedItems().stream().filter(
+                i->i.getRevision()==65
+        ).collect(Collectors.toList());
+
+        return releaseItem();
+
+    }
+    /**
      * createDevelopmentCard 에서 쓰일 것
 
      */
