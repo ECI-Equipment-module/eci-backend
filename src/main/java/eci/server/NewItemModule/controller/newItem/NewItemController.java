@@ -213,7 +213,7 @@ public class NewItemController {
     }
 
 
-    @CrossOrigin(origins = "https://localhost:3000")
+    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
     @GetMapping("/item/parent/{id}")
     @ResponseStatus(HttpStatus.OK)
     public Response readDevBomItem(@PathVariable Long id) {

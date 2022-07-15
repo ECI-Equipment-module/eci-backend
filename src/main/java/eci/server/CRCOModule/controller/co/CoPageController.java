@@ -71,7 +71,7 @@ public class CoPageController{
 
     }
 
-    @CrossOrigin(origins = "https://localhost:3000")
+    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
     @GetMapping("/releaseCoId")
     public CoListDto readCoFromRelease(@PageableDefault(size=5)
                                          @SortDefault.SortDefaults({
