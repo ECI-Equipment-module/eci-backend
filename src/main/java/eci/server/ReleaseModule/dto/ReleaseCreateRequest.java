@@ -71,7 +71,7 @@ public class ReleaseCreateRequest {
             throw new ReleaseNeedsTargetException();
         }
 
-        String finalReleaseNum = ProjectNumber(req.getReleaseCoId());
+        String finalReleaseNum = ProjectNumber(req.getReleaseType());
 
         if (req.tag.size() == 0) { //Project에 Attachment 존재하지 않을 시에 생성자
             return new Release(
@@ -184,7 +184,7 @@ public class ReleaseCreateRequest {
         //projectNum 겹치지않도록 설정(순간의 연-월시분초
         String projectNum = new SimpleDateFormat("MMddHHmmss", Locale.ENGLISH).format(now);
         String finalProjNumber = new String();
-
+        System.out.println(ProjectLevelId+"!!!!!!!!!!!!!!!!!!!!!!!");
         if (ProjectLevelId.equals(1L)) {
             finalProjNumber = "M-" + year + "-" + projectNum;
         } else {

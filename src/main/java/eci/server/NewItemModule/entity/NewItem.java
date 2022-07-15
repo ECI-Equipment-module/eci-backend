@@ -222,7 +222,7 @@ public class NewItem extends EntityDate {
     private int revision;
 
     @Column
-    private int released;
+    private Integer released;
 
     @Column//nullable 하다 - 얘가 존재하면 revise copying new item 이라는 식별
     private Long reviseTargetId;

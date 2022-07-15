@@ -19,9 +19,11 @@ import eci.server.ReleaseModule.repository.ReleaseTypeRepository;
 import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+import org.springframework.lang.Nullable;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
+import javax.validation.constraints.Null;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -55,10 +57,12 @@ public class Release extends EntityDate {
     private String releaseNumber;
     //save 할 시에 type + id 값으로 지정
 
+    @Nullable
     @OneToOne
     @JoinColumn(name = "new_item_id")
     private NewItem newItem;
 
+    @Nullable
     @OneToOne
     @JoinColumn(name = "co_id")
     private ChangeOrder changeOrder;
