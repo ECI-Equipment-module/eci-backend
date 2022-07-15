@@ -123,7 +123,7 @@ public class ProjectController {
             @Valid @ModelAttribute ProjectUpdateRequest req) {
         NewItemCreateResponse response1 =
                 projectService.changeProjectItemToNewMadeItem(revisedId, newMadeItemId);
-        projectService.update2(revisedId, newMadeItemId);
+        ProjectTempCreateUpdateResponse res2 = projectService.update2(revisedId, newMadeItemId);
         System.out.println(response1 + "이 수행1111 ");
         ProjectTempCreateUpdateResponse response = projectService.update(revisedId, req);
         //기존 프로젝트 업데이트
@@ -148,14 +148,18 @@ public class ProjectController {
             @Valid @ModelAttribute
                     ProjectUpdateRequest req
     ) {
-
+        NewItemCreateResponse response1 =
+                projectService.changeProjectItemToNewMadeItem(revisedId, newMadeItemId);
+        ProjectTempCreateUpdateResponse res2 = projectService.update2(revisedId, newMadeItemId);
         DesignCreateUpdateResponse response = projectService.tempEnd(revisedId, req);
         // 기존 프로젝트 업데이트
         projectService.changeProjectItemToNewMadeItem(revisedId, newMadeItemId);
         // 기존 프로젝트 아이템 값만 new item 라는 새 아이템으로 바꿔치기 해주기
-
+        NewItemCreateResponse response3 =
+                projectService.changeProjectItemToNewMadeItem(revisedId, newMadeItemId);
+        ProjectTempCreateUpdateResponse res4 = projectService.update2(revisedId, newMadeItemId);
         response.setRouteId(projectService.routeIdReturn(newMadeItemId));
-
+        System.out.println(response1 + "이 수행222 ");
         return Response.success(
                 response
         );

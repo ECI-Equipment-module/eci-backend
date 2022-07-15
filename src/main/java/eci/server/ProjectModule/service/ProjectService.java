@@ -197,7 +197,7 @@ public class ProjectService {
     public ProjectTempCreateUpdateResponse update2(Long id, Long NewitemId) {
         Project project =  projectRepository.findById(id).orElseThrow(ProjectNotFoundException::new);
         project.updateNewItem(NewitemId, newItemRepository);
-
+        System.out.println("이 서비스 츠로젝트 up2date22222222222222222222222222222 ");
         return new ProjectTempCreateUpdateResponse(project.getId());
     }
 
