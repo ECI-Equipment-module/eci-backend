@@ -1,10 +1,12 @@
 package eci.server.CRCOModule.controller.co;
 
+import eci.server.CRCOModule.dto.co.CoSearchDto;
 import eci.server.CRCOModule.dto.cr.CrPagingDto;
 import eci.server.CRCOModule.entity.co.ChangeOrder;
 import eci.server.CRCOModule.repository.co.ChangeOrderRepository;
 import eci.server.CRCOModule.repository.co.CoNewItemRepository;
 import eci.server.ItemModule.repository.newRoute.RouteOrderingRepository;
+import eci.server.ReleaseModule.dto.CoListDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -66,6 +68,38 @@ public class CoPageController{
          * 수정 필요
          */
         return crList;
+
+    }
+
+    @CrossOrigin(origins = "https://localhost:3000")
+    @GetMapping("/releaseCoId")
+    public CoListDto readCoFromRelease(@PageableDefault(size=5)
+                                         @SortDefault.SortDefaults({
+                                                 @SortDefault(
+                                                         sort = "createdAt",
+                                                         direction = Sort.Direction.DESC)
+                                         })
+                                                 Pageable pageRequest) {
+
+        Page<ChangeOrder> ListBefore =
+                changeOrderRepository.findAll(pageRequest);
+
+        List<ChangeOrder> cos =
+                ListBefore.stream().filter(
+                        i-> (!i.getTempsave())
+                ).collect(Collectors.toList());
+
+        List<CoSearchDto> coPagingDtos =
+                cos.stream().map(
+                        CoSearchDto::toDto
+                ).collect(Collectors.toList());
+
+        Page<CoSearchDto> crList = new PageImpl<>(coPagingDtos);
+
+        /**
+         * 수정 필요
+         */
+        return CoListDto.toDto(crList);
 
     }
 

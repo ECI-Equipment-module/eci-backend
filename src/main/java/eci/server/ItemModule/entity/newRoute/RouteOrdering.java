@@ -20,6 +20,7 @@ import eci.server.NewItemModule.entity.NewItem;
 import eci.server.NewItemModule.repository.item.NewItemRepository;
 import eci.server.NewItemModule.service.item.NewItemService;
 import eci.server.ProjectModule.entity.project.Project;
+import eci.server.ReleaseModule.entity.Release;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -119,7 +120,10 @@ public class RouteOrdering extends EntityDate {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private ChangeOrder changeOrder;
 
-
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "release_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private Release release;
 
     //아이템 라우트용 생성자
     public RouteOrdering(
@@ -160,6 +164,19 @@ public class RouteOrdering extends EntityDate {
         this.revisedCnt = 0;
         this.present = 1;
         this.changeOrder = co;
+    }
+
+    //release
+    //release 라우트용 생성자
+    public RouteOrdering(
+            String type,
+            Release release
+    ){
+        this.type = type;
+        this.lifecycleStatus = "WORKING";
+        this.revisedCnt = 0;
+        this.present = 1;
+        this.release = release;
     }
 
     //프로젝트 라우트용 생성자
@@ -216,6 +233,10 @@ public class RouteOrdering extends EntityDate {
 
     public void setBom(Bom bom) {
         this.bom = bom;
+    }
+
+    public void setRelease(Release release) {
+        this.release = release;
     }
 
     /**
@@ -500,7 +521,11 @@ public class RouteOrdering extends EntityDate {
 
         //06-17 : 거부된 라우트 프로덕트의 라우트 타입 검사
 
-        System.out.println();
+        System.out.println("거부된 라우트 타입의 아이디 " +
+                routeProductList.get(rejectedIndex).getType().getId().toString()
+        + " 그리고 라우트 타입의 모듈과 이름"
+        +  routeProductList.get(rejectedIndex).getType().getName()+
+                routeProductList.get(rejectedIndex).getType().getModule());
         // 1,9, 11, 13 에 따라서 tempSave 랑 readOnly 의 true,false 값 변경
         switch(routeProductList.get(rejectedIndex).getType().getId().toString()) {
 

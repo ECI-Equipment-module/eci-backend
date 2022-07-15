@@ -212,4 +212,14 @@ public class NewItemController {
                         readAll(cond));
     }
 
+
+    @CrossOrigin(origins = "https://localhost:3000")
+    @GetMapping("/item/parent/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public Response readDevBomItem(@PathVariable Long id) {
+        return Response.success(
+                newItemService.
+                        readParentAll(id));
+    }
+
 }

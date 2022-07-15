@@ -24,6 +24,8 @@ import eci.server.ProjectModule.dto.carType.CarTypeDto;
 import eci.server.ProjectModule.dto.clientOrg.ClientOrganizationDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.lang.Nullable;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -35,6 +37,7 @@ import static java.util.stream.Collectors.toList;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class CoReadDto {
 
     private Long id;
@@ -91,7 +94,9 @@ public class CoReadDto {
 
     private boolean preRejected;
 
-
+    public static CoReadDto toDto(){
+        return new CoReadDto();
+    }
 
     public static CoReadDto toDto(
             ChangeOrder co,
