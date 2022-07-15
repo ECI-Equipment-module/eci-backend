@@ -2,9 +2,7 @@ package eci.server.ReleaseModule.service;
 
 import eci.server.BomModule.repository.BomRepository;
 import eci.server.BomModule.repository.PreliminaryBomRepository;
-import eci.server.CRCOModule.entity.co.ChangeOrder;
 import eci.server.CRCOModule.repository.co.ChangeOrderRepository;
-import eci.server.DesignModule.dto.DesignCreateUpdateResponse;
 import eci.server.ItemModule.dto.item.ItemCreateResponse;
 import eci.server.ItemModule.dto.newRoute.routeOrdering.RouteOrderingDto;
 import eci.server.ItemModule.entity.newRoute.RouteOrdering;
@@ -16,7 +14,6 @@ import eci.server.ItemModule.service.file.FileService;
 import eci.server.NewItemModule.repository.attachment.AttachmentTagRepository;
 import eci.server.NewItemModule.repository.item.NewItemRepository;
 import eci.server.ProjectModule.dto.project.*;
-import eci.server.ProjectModule.entity.project.Project;
 import eci.server.ProjectModule.exception.ProjectNotFoundException;
 import eci.server.ReleaseModule.dto.ReleaseCreateRequest;
 import eci.server.ReleaseModule.dto.ReleaseDto;
@@ -25,10 +22,7 @@ import eci.server.ReleaseModule.dto.ReleaseUpdateRequest;
 import eci.server.ReleaseModule.entity.Release;
 import eci.server.ReleaseModule.entity.ReleaseAttachment;
 import eci.server.ReleaseModule.exception.ReleaseNotFoundException;
-import eci.server.ReleaseModule.repository.ReleaseAttachmentRepository;
-import eci.server.ReleaseModule.repository.ReleaseOrganizationRepository;
-import eci.server.ReleaseModule.repository.ReleaseRepository;
-import eci.server.ReleaseModule.repository.ReleaseTypeRepository;
+import eci.server.ReleaseModule.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -57,6 +51,7 @@ public class ReleaseService {
     private final ReleaseAttachmentRepository releaseAttachmentRepository;
     private final BomRepository bomRepository;
     private final PreliminaryBomRepository preliminaryBomRepository;
+    private final ReleaseOrganizationReleaseRepository releaseOrganizationReleaseRepository;
 
     @Value("${default.image.address}")
     private String defaultImageAddress;
@@ -127,6 +122,7 @@ public class ReleaseService {
         Release release = releaseRepository.findById(id)
                 .orElseThrow(ProjectNotFoundException::new);
 
+
         Release.FileUpdatedResult result = release.update(
                 req,
                 memberRepository,
@@ -134,7 +130,8 @@ public class ReleaseService {
                 newItemRepository,
                 changeOrderRepository,
                 releaseOrganizationRepository,
-                releaseTypeRepository
+                releaseTypeRepository,
+                releaseOrganizationReleaseRepository
         );
 
 
@@ -164,12 +161,14 @@ public class ReleaseService {
 
         Release.FileUpdatedResult result = release.tempEnd(
                 req,
+                ReleaseCreateRequest.ProjectNumber(release.getId()),
                 memberRepository,
                 attachmentTagRepository,
                 newItemRepository,
                 changeOrderRepository,
                 releaseOrganizationRepository,
-                releaseTypeRepository
+                releaseTypeRepository,
+                releaseOrganizationReleaseRepository
         );
 
         uploadAttachments(

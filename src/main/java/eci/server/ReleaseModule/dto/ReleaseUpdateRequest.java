@@ -1,6 +1,6 @@
 package eci.server.ReleaseModule.dto;
 
-import eci.server.ReleaseModule.dto.type.ReleaseTypeDto;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,10 +14,8 @@ import java.util.List;
 @AllArgsConstructor
 public class ReleaseUpdateRequest {
 
-    private Long id;
-    private String releaseNumber;
 
-    private ReleaseTypeDto releaseType; //{id,name}으로 해야할 듯 합니다. id는 OK
+    private Long releaseType; //{id,name}으로 해야할 듯 합니다. id는 OK
 
     private Long releaseItemId;
 

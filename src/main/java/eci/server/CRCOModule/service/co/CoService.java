@@ -14,6 +14,7 @@ import eci.server.CRCOModule.exception.CoUpdateImpossibleException;
 import eci.server.CRCOModule.exception.CrNotFoundException;
 import eci.server.CRCOModule.exception.CrUpdateImpossibleException;
 import eci.server.CRCOModule.repository.co.CoAttachmentRepository;
+import eci.server.CRCOModule.repository.co.CoCoEffectRepository;
 import eci.server.CRCOModule.repository.cr.CrAttachmentRepository;
 import eci.server.CRCOModule.repository.co.ChangeOrderRepository;
 import eci.server.CRCOModule.repository.cofeature.ChangedFeatureRepository;
@@ -76,6 +77,7 @@ public class CoService{
     private final ChangedFeatureRepository changedFeatureRepository;
     private final CoAttachmentRepository coAttachmentRepository;
     private final CrReasonRepository coReasonRepository;
+    private final CoCoEffectRepository coCoEffectRepository;
 
     @Value("${default.image.address}")
     private String defaultImageAddress;
@@ -225,7 +227,9 @@ public class CoService{
                 attachmentTagRepository,
                 newItemRepository,
                 changeRequestRepository,
-                changedFeatureRepository
+                changedFeatureRepository,
+
+                coCoEffectRepository
         );
 
         uploadAttachments(
@@ -272,6 +276,7 @@ public class CoService{
                 req,
                 coReasonId,
 
+
                 clientOrganizationRepository,
                 carTypeRepository,
                 coReasonRepository,
@@ -283,7 +288,9 @@ public class CoService{
 
                 newItemRepository,
                 changeRequestRepository,
-                changedFeatureRepository
+                changedFeatureRepository,
+
+                coCoEffectRepository
         );
 
 

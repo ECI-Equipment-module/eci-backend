@@ -6,11 +6,14 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Set;
+
 
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ReleaseOrganization{
+
     @Id
     //@GeneratedValue(strategy = GenerationType.IDENTITY)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQUENCE2")
@@ -23,10 +26,10 @@ public class ReleaseOrganization{
 
     @OneToMany(
             mappedBy = "releaseOrganization",
-            cascade = CascadeType.ALL,
+            cascade = CascadeType.MERGE,
+            orphanRemoval = true,
             fetch = FetchType.LAZY)
-    private List<ReleaseOrgRelease> coCoEffects;
-
+    private Set<ReleaseOrgRelease> releaseOrgReleases;
 
     public ReleaseOrganization(
             String name

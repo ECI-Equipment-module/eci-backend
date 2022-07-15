@@ -13,7 +13,9 @@ import eci.server.NewItemModule.exception.AttachmentTagNotFoundException;
 import eci.server.NewItemModule.repository.attachment.AttachmentTagRepository;
 import eci.server.NewItemModule.repository.item.NewItemRepository;
 import eci.server.ReleaseModule.dto.ReleaseUpdateRequest;
+import eci.server.ReleaseModule.exception.ReleaseOrganizationNotFoundException;
 import eci.server.ReleaseModule.exception.ReleaseTypeNotFoundException;
+import eci.server.ReleaseModule.repository.ReleaseOrganizationReleaseRepository;
 import eci.server.ReleaseModule.repository.ReleaseOrganizationRepository;
 import eci.server.ReleaseModule.repository.ReleaseTypeRepository;
 import lombok.*;
@@ -23,13 +25,10 @@ import org.springframework.lang.Nullable;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
-import javax.validation.constraints.Null;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
@@ -94,9 +93,10 @@ public class Release extends EntityDate {
 
     @OneToMany(
             mappedBy = "release",
-            cascade = CascadeType.ALL,
+            cascade = CascadeType.MERGE,
+            orphanRemoval = true,
             fetch = FetchType.LAZY)
-    private List<ReleaseOrgRelease> releaseOrganization;
+    private Set<ReleaseOrgRelease> releaseOrganization;
 
     @OneToMany(
             mappedBy = "release",
@@ -160,11 +160,13 @@ public class Release extends EntityDate {
         this.releaseOrganization = releaseOrganizations.stream().map(
                         //다대다 관계를 만드는 구간
                         ro -> new ReleaseOrgRelease(
+                                Long.parseLong((ro.getId().toString()+
+                                        this.getId().toString())),
                                 ro,
                                 this
                         )
                 )
-                .collect(toList());
+                .collect(Collectors.toSet());
 
         this.attachments = new ArrayList<>();
         addAttachments(releaseAttachments);
@@ -221,11 +223,13 @@ public class Release extends EntityDate {
         this.releaseOrganization = releaseOrganizations.stream().map(
                         //다대다 관계를 만드는 구간
                         ro -> new ReleaseOrgRelease(
+                                Long.parseLong((ro.getId().toString()+
+                                        this.getId().toString())),
                                 ro,
                                 this
                         )
                 )
-                .collect(toList());
+                .collect(Collectors.toSet());
 
     }
 
@@ -389,7 +393,8 @@ public class Release extends EntityDate {
             NewItemRepository newItemRepository,
             ChangeOrderRepository changeOrderRepository,
             ReleaseOrganizationRepository releaseOrganizationRepository,
-            ReleaseTypeRepository releaseTypeRepository
+            ReleaseTypeRepository releaseTypeRepository,
+            ReleaseOrganizationReleaseRepository releaseOrganizationReleaseRepository
 
     ) {
 
@@ -405,8 +410,8 @@ public class Release extends EntityDate {
         this.releaseContent = req.getReleaseContent() == null ? " " :
                 req.getReleaseContent();
 
-        this.releaseNumber = req.getReleaseNumber() == null ? " " :
-                req.getReleaseNumber();
+//        this.releaseNumber = req.getReleaseNumber() == null ? " " :
+//                req.getReleaseNumber();
 
         this.newItem = req.getReleaseItemId() == null ?
                 null :
@@ -424,23 +429,38 @@ public class Release extends EntityDate {
         this.releaseType = req.getReleaseType() == null ?
                 null:
                 releaseTypeRepository.findById(
-                        req.getReleaseCoId()
+                        req.getReleaseType()
                 ).orElseThrow(ReleaseTypeNotFoundException::new);
 
-        this.releaseOrganization =
+
+        List<ReleaseOrgRelease> releaseOrgReleases = releaseOrganizationReleaseRepository.findByRelease(this);
+
+        releaseOrganizationReleaseRepository.deleteAll(releaseOrgReleases);
+
+        this.releaseOrganization.clear();
+
+        Set<ReleaseOrgRelease> releaseOrganizations =
                 req.getReleaseOrganizationId().size() == 0 ?
                         null :
                         (req.getReleaseOrganizationId().stream().map(
-                                i -> releaseOrganizationRepository.findById(i).orElseThrow(CrEffectNotFoundException::new)
+                                i -> releaseOrganizationRepository.findById(i).orElseThrow(ReleaseOrganizationNotFoundException::new)
                         ).collect(toList())) //입력으로 받아온 co effect 값
                                 .stream().map(
                                         //다대다 관계를 만드는 구간
-                                        ro -> new ReleaseOrgRelease(
-                                                ro,
-                                                this
-                                        )
-                                ).collect(toList());
+                                        ro ->
+                                                new ReleaseOrgRelease(
+                                                        Long.parseLong((ro.getId().toString()+
+                                                                this.getId().toString())),
+                                                        ro,
+                                                        this
+                                                )
 
+                                ).collect(Collectors.toSet());
+
+        for(ReleaseOrgRelease release:releaseOrganizations){
+            releaseOrganizationReleaseRepository.save(release);
+        }
+        this.releaseOrganization.addAll(releaseOrganizations);
 
         ReleaseAttachmentUpdatedResult resultAttachment =
 
@@ -473,13 +493,14 @@ public class Release extends EntityDate {
 
     public FileUpdatedResult tempEnd(
             ReleaseUpdateRequest req,
-
+            String releaseNumber,
             MemberRepository memberRepository,
             AttachmentTagRepository attachmentTagRepository,
             NewItemRepository newItemRepository,
             ChangeOrderRepository changeOrderRepository,
             ReleaseOrganizationRepository releaseOrganizationRepository,
-            ReleaseTypeRepository releaseTypeRepository
+            ReleaseTypeRepository releaseTypeRepository,
+            ReleaseOrganizationReleaseRepository releaseOrganizationReleaseRepository
 
     ) {
 
@@ -519,6 +540,8 @@ public class Release extends EntityDate {
                 resultAttachment//, updatedAddedProjectAttachmentList
         );
 
+        this.releaseNumber = releaseNumber;
+
 
         this.modifier =
                 memberRepository.findById(req.getModifierId())
@@ -530,8 +553,8 @@ public class Release extends EntityDate {
         this.releaseContent = req.getReleaseContent() == null ? " " :
                 req.getReleaseContent();
 
-        this.releaseNumber = req.getReleaseNumber() == null ? " " :
-                req.getReleaseNumber();
+//        this.releaseNumber = req.getReleaseNumber() == null ? " " :
+//                req.getReleaseNumber();
 
         this.newItem = req.getReleaseItemId() == null ?
                 null :
@@ -549,24 +572,39 @@ public class Release extends EntityDate {
         this.releaseType = req.getReleaseType() == null ?
                 null:
                 releaseTypeRepository.findById(
-                        req.getReleaseCoId()
+                        req.getReleaseType()
                 ).orElseThrow(ReleaseTypeNotFoundException::new);
 
-        this.releaseOrganization =
+
+
+        List<ReleaseOrgRelease> releaseOrgReleases = releaseOrganizationReleaseRepository.findByRelease(this);
+
+        releaseOrganizationReleaseRepository.deleteAll(releaseOrgReleases);
+
+        this.releaseOrganization.clear();
+
+        Set<ReleaseOrgRelease> releaseOrganizations =
                 req.getReleaseOrganizationId().size() == 0 ?
                         null :
                         (req.getReleaseOrganizationId().stream().map(
-                                i -> releaseOrganizationRepository.findById(i).orElseThrow(CrEffectNotFoundException::new)
+                                i -> releaseOrganizationRepository.findById(i).orElseThrow(ReleaseOrganizationNotFoundException::new)
                         ).collect(toList())) //입력으로 받아온 co effect 값
                                 .stream().map(
                                         //다대다 관계를 만드는 구간
-                                        ro -> new ReleaseOrgRelease(
-                                                ro,
-                                                this
-                                        )
-                                ).collect(toList());
+                                        ro ->
+                                                new ReleaseOrgRelease(
+                                                        Long.parseLong((ro.getId().toString()+
+                                                                this.getId().toString())),
+                                                        ro,
+                                                        this
+                                                )
 
+                                ).collect(Collectors.toSet());
 
+        for(ReleaseOrgRelease release:releaseOrganizations){
+            releaseOrganizationReleaseRepository.save(release);
+        }
+        this.releaseOrganization.addAll(releaseOrganizations);
 
         return fileUpdatedResult;
     }

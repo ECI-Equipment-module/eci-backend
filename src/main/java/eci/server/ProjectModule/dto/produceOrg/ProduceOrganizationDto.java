@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -39,7 +40,7 @@ public class ProduceOrganizationDto {
     }
 
     public static List<ProduceOrganizationDto> toDtoList
-            (List<ReleaseOrgRelease> produceOrganization){
+            (Collection<ReleaseOrgRelease> produceOrganization){
 
         return produceOrganization.stream().map(
                ro -> new ProduceOrganizationDto(

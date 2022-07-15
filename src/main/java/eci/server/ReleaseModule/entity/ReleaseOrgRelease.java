@@ -9,15 +9,15 @@ import javax.persistence.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @EqualsAndHashCode
-@IdClass(ReleaseOrgReleaseId.class)
+//@IdClass(ReleaseOrgReleaseId.class)
 public class ReleaseOrgRelease {
-
     @Id
+    private Long id;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "release_org_id")
     private ReleaseOrganization releaseOrganization;
 
-    @Id
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "release_id")
     private Release release;
