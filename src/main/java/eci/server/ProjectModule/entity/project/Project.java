@@ -778,4 +778,18 @@ public class Project extends EntityDate {
                 this.id
         );
     }
+
+    public NewItemCreateResponse updateNewItem(
+            Long NewItemId,
+            NewItemRepository newItemRepository
+    ){
+        this.newItem =
+                newItemRepository.findById(NewItemId)
+                        .orElseThrow(ItemNotFoundException::new);
+
+        return new NewItemCreateResponse(newItem.getId());
+
+    }
+
+
 }
