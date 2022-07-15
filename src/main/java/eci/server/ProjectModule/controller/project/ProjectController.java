@@ -121,17 +121,20 @@ public class ProjectController {
             @PathVariable Long newMadeItemId,//바꿔치기 할 아이템 아이디
             @PathVariable Long revisedId, //기존 프로젝트 아이디
             @Valid @ModelAttribute ProjectUpdateRequest req) {
-
-        ProjectTempCreateUpdateResponse response = projectService.update(revisedId, req);
-        //기존 프로젝트 업데이트
         NewItemCreateResponse response1 =
                 projectService.changeProjectItemToNewMadeItem(revisedId, newMadeItemId);
-
-        System.out.println(response1 + "이 수행 ");
+        projectService.update2(revisedId, newMadeItemId);
+        System.out.println(response1 + "이 수행1111 ");
+        ProjectTempCreateUpdateResponse response = projectService.update(revisedId, req);
+        //기존 프로젝트 업데이트
+        NewItemCreateResponse response2 =
+                projectService.changeProjectItemToNewMadeItem(revisedId, newMadeItemId);
+        projectService.update2(revisedId, newMadeItemId);
+        System.out.println(response1 + "이 수행222 ");
         // 기존 프로젝트 아이템 값만 revisedId 라는 새 아이템으로 바꿔치기 해주기
         //response.setRouteId(projectService.routeIdReturn(newMadeItemId));
         return Response.success(
-                response1
+                response
         );
     }
 

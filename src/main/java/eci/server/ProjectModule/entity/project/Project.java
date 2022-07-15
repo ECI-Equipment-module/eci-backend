@@ -9,7 +9,6 @@ import eci.server.ItemModule.exception.member.sign.MemberNotFoundException;
 import eci.server.ItemModule.repository.member.MemberRepository;
 import eci.server.NewItemModule.dto.newItem.create.NewItemCreateResponse;
 import eci.server.NewItemModule.entity.NewItem;
-import eci.server.NewItemModule.entity.NewItemAttachment;
 import eci.server.NewItemModule.repository.attachment.AttachmentTagRepository;
 import eci.server.NewItemModule.repository.item.NewItemRepository;
 import eci.server.ProjectModule.dto.project.ProjectCreateRequest;
@@ -339,7 +338,17 @@ public class Project extends EntityDate {
         });
     }
 
+    public NewItemCreateResponse updateNewItem(
+            Long NewItemId,
+            NewItemRepository newItemRepository
+    ){
+                this.newItem =
+                newItemRepository.findById(NewItemId)
+                                .orElseThrow(ItemNotFoundException::new);
 
+                return new NewItemCreateResponse(newItem.getId());
+
+    }
     public FileUpdatedResult update(
             ProjectUpdateRequest req,
             NewItemRepository newItemRepository,

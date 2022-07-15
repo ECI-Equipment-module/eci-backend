@@ -194,6 +194,12 @@ public class ProjectService {
 
     }
 
+    public ProjectTempCreateUpdateResponse update2(Long id, Long NewitemId) {
+        Project project =  projectRepository.findById(id).orElseThrow(ProjectNotFoundException::new);
+        project.updateNewItem(NewitemId, newItemRepository);
+
+        return new ProjectTempCreateUpdateResponse(project.getId())
+    }
 
     @Transactional
     public DesignCreateUpdateResponse tempEnd(
