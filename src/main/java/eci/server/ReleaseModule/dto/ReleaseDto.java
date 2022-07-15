@@ -147,7 +147,7 @@ public class ReleaseDto{
 
                 ReleasePreRejected(routeOrdering ,routeProductRepository),
 
-                ProduceOrganizationDto.toDto(release.getReleaseOrganization()),
+                ProduceOrganizationDto.toDto(release.getReleaseOrganization().get(0)),
 
                 release.getNewItem()==null?
                         ItemProjectDto.toDto()
