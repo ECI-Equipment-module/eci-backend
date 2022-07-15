@@ -338,17 +338,6 @@ public class Project extends EntityDate {
         });
     }
 
-    public NewItemCreateResponse updateNewItem(
-            Long NewItemId,
-            NewItemRepository newItemRepository
-    ){
-                this.newItem =
-                newItemRepository.findById(NewItemId)
-                                .orElseThrow(ItemNotFoundException::new);
-
-                return new NewItemCreateResponse(newItem.getId());
-
-    }
     public FileUpdatedResult update(
             ProjectUpdateRequest req,
             NewItemRepository newItemRepository,
@@ -788,4 +777,18 @@ public class Project extends EntityDate {
         );
     }
 
+    public NewItemCreateResponse updateNewItem(
+            Long NewItemId,
+            NewItemRepository newItemRepository
+    ){
+        this.newItem =
+                newItemRepository.findById(NewItemId)
+                        .orElseThrow(ItemNotFoundException::new);
+
+        return new NewItemCreateResponse(newItem.getId());
+
+    }
+
+
 }
+
