@@ -20,6 +20,7 @@ import eci.server.CRCOModule.repository.features.CrImportanceRepository;
 import eci.server.CRCOModule.repository.features.CrReasonRepository;
 import eci.server.ItemModule.entity.member.Member;
 import eci.server.ItemModule.entitycommon.EntityDate;
+import eci.server.ItemModule.exception.item.ItemNotFoundException;
 import eci.server.ItemModule.exception.member.sign.MemberNotFoundException;
 import eci.server.ItemModule.repository.member.MemberRepository;
 import eci.server.NewItemModule.entity.NewItem;
@@ -115,7 +116,7 @@ public class ChangeOrder extends EntityDate {
             orphanRemoval = true,
             fetch = FetchType.LAZY)
     //affected item
-    private List<CoCoEffect> coEffect;
+    private Set<CoCoEffect> coEffect;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "co_importance_id")
@@ -227,12 +228,13 @@ public class ChangeOrder extends EntityDate {
         this.coEffect = coEffect.stream().map(
                         //다대다 관계를 만드는 구간
                         effect -> new CoCoEffect(
+                                Long.parseLong((this.getId().toString()+
+                                        effect.getId().toString())),
                                 this,
                                 effect
                         )
                 )
-                .collect(toList());
-
+                .collect(Collectors.toSet());
 
         this.coImportance = coImportance;
         this.name = name;
@@ -319,11 +321,13 @@ public class ChangeOrder extends EntityDate {
         this.coEffect = coEffect.stream().map(
                         //다대다 관계를 만드는 구간
                         effect -> new CoCoEffect(
+                                Long.parseLong((this.getId().toString()+
+                                        effect.getId().toString())),
                                 this,
                                 effect
                         )
                 )
-                .collect(toList());
+                .collect(Collectors.toSet());
 
         this.coImportance = coImportance;
         this.name = name;
@@ -542,7 +546,7 @@ public class ChangeOrder extends EntityDate {
 
         this.coNumber =
                 this.coNumber =
-                        String.valueOf(req.getCoReasonId() * 1000000 + (int) (Math.random() * 1000));
+                        String.valueOf(this.id * 1000000 + (int) (Math.random() * 1000));
 
         this.coPublishPeriod =
                 req.getCoPublishPeriod() ==null||
@@ -623,6 +627,8 @@ public class ChangeOrder extends EntityDate {
                         .stream().map(
                                 //다대다 관계를 만드는 구간
                                 effect -> new CoCoEffect(
+                                        Long.parseLong((this.getId().toString()+
+                                                effect.getId().toString())),
                                         this,
                                         effect
                                 )
@@ -698,7 +704,7 @@ public class ChangeOrder extends EntityDate {
         //coItem 을 만들자
         List<NewItem> newItems = req.getNewItemsIds().stream().map(
                 i ->
-                        newItemRepository.findById(i).orElseThrow(CrNotFoundException::new)
+                        newItemRepository.findById(i).orElseThrow(ItemNotFoundException::new)
         ).collect(
                 toList()
         );
@@ -726,7 +732,7 @@ public class ChangeOrder extends EntityDate {
                                                 .get(
                                                         req.getNewItemsIds().stream().map(
                                                                         i ->
-                                                                                newItemRepository.findById(i).orElseThrow(CrNotFoundException::new)
+                                                                                newItemRepository.findById(i).orElseThrow(ItemNotFoundException::new)
                                                                 ).collect(
                                                                         toList()
                                                                 )
@@ -791,8 +797,9 @@ public class ChangeOrder extends EntityDate {
                         req.getClientOrganizationId())
                 .orElseThrow(ClientOrganizationNotFoundException::new);
 
+
         this.coNumber =
-                String.valueOf(req.getCoReasonId() * 1000000 + (int) (Math.random() * 1000));
+                        String.valueOf(this.id * 1000000 + (int) (Math.random() * 1000));
 
         this.coPublishPeriod =
                 req.getCoPublishPeriod() ==null||
@@ -862,6 +869,8 @@ public class ChangeOrder extends EntityDate {
                         .stream().map(
                                 //다대다 관계를 만드는 구간
                                 effect -> new CoCoEffect(
+                                        Long.parseLong((this.getId().toString()+
+                                                effect.getId().toString())),
                                         this,
                                         effect
                                 )
@@ -941,7 +950,7 @@ public class ChangeOrder extends EntityDate {
         //coItem 을 만들자
         List<NewItem> newItems = req.getNewItemsIds().stream().map(
                 i ->
-                        newItemRepository.findById(i).orElseThrow(CrNotFoundException::new)
+                        newItemRepository.findById(i).orElseThrow(ItemNotFoundException::new)
         ).collect(
                 toList()
         );
@@ -969,7 +978,7 @@ public class ChangeOrder extends EntityDate {
                                                 .get(
                                                         req.getNewItemsIds().stream().map(
                                                                         i ->
-                                                                                newItemRepository.findById(i).orElseThrow(CrNotFoundException::new)
+                                                                                newItemRepository.findById(i).orElseThrow(ItemNotFoundException::new)
                                                                 ).collect(
                                                                         toList()
                                                                 )

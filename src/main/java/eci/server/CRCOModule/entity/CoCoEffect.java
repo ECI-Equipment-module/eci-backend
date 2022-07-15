@@ -11,15 +11,16 @@ import javax.persistence.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @EqualsAndHashCode
-@IdClass(CoCoEffectId.class)
+//@IdClass(CoCoEffectId.class)
 public class CoCoEffect {
-
     @Id
+    private Long id;
+//    @Id
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "co_id")
     private ChangeOrder changeOrder;
 
-    @Id
+//    @Id
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "co_effect_id")
     private CoEffect coEffect;
