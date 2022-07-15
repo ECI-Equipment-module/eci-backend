@@ -767,6 +767,7 @@ public class Project extends EntityDate {
     }
 
     public void setNewItem(NewItem newItem) {
+        System.out.println("setting newItem to "+ newItem.getId());
         this.newItem = newItem;
     }
 
@@ -777,4 +778,18 @@ public class Project extends EntityDate {
                 this.id
         );
     }
+
+    public NewItemCreateResponse updateNewItem(
+            Long NewItemId,
+            NewItemRepository newItemRepository
+    ){
+        this.newItem =
+                newItemRepository.findById(NewItemId)
+                        .orElseThrow(ItemNotFoundException::new);
+
+        return new NewItemCreateResponse(newItem.getId());
+
+    }
+
+
 }

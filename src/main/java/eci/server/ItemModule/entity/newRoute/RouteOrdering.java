@@ -554,10 +554,12 @@ public class RouteOrdering extends EntityDate {
             case "15":
                 this.getChangeRequest().setTempsave(true);
                 this.getChangeRequest().setReadonly(false);
+                break;
                 // 18 (CO REQUEST)
             case "18":
                 this.getChangeOrder().setTempsave(true);
                 this.getChangeOrder().setReadonly(false);
+                break;
         }
 
         /**
