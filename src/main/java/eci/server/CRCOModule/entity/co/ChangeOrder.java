@@ -150,12 +150,17 @@ public class ChangeOrder extends EntityDate {
     @Column(nullable = false)
     private Boolean readonly; //05-12반영
 
+//    @OneToMany(
+//            mappedBy = "changeOrder",
+//            cascade = CascadeType.ALL,
+//            orphanRemoval = true,
+//            fetch = FetchType.LAZY)
     @OneToMany(
             mappedBy = "changeOrder",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true,
-            fetch = FetchType.LAZY)
-    private List<ChangeRequest> changeRequests;
+            cascade = CascadeType.PERSIST,
+            orphanRemoval = true
+    )
+    private List<ChangeRequest> changeRequests = new ArrayList<>();
 
     @OneToMany(
             mappedBy = "changeOrder",
@@ -228,8 +233,8 @@ public class ChangeOrder extends EntityDate {
         this.coEffect = coEffect.stream().map(
                         //다대다 관계를 만드는 구간
                         effect -> new CoCoEffect(
-                                Long.parseLong((this.getId().toString()+
-                                        effect.getId().toString())),
+//                                Long.parseLong((this.getId().toString()+
+//                                        effect.getId().toString())),
                                 this,
                                 effect
                         )
@@ -255,10 +260,13 @@ public class ChangeOrder extends EntityDate {
                                         this,
                                         item,
 
-                                        changedFeatures.get(newItems.indexOf(item))==null?null //temp 에서는 걍 저장
+                                        changedFeatures.get(newItems.indexOf(item))==null?
+                                                null //temp 에서는 걍 저장
                                                 :changedFeatures.get(newItems.indexOf(item)),
 
-                                        changedContents.get(newItems.indexOf(item)).isBlank()?"":changedContents.get(newItems.indexOf(item))
+                                        changedContents.get(newItems.indexOf(item)).isBlank()?
+                                                ""
+                                                :changedContents.get(newItems.indexOf(item))
                                 )
                         )
                         .collect(toList());
@@ -288,7 +296,6 @@ public class ChangeOrder extends EntityDate {
             CoStage coStage,
             LocalDate applyPeriod,
 
-            //CoEffect coEffect,
             List<CoEffect> coEffect,
 
             CrImportance coImportance,
@@ -321,8 +328,6 @@ public class ChangeOrder extends EntityDate {
         this.coEffect = coEffect.stream().map(
                         //다대다 관계를 만드는 구간
                         effect -> new CoCoEffect(
-                                Long.parseLong((this.getId().toString()+
-                                        effect.getId().toString())),
                                 this,
                                 effect
                         )
@@ -349,10 +354,12 @@ public class ChangeOrder extends EntityDate {
                                 this,
                                 item,
 
-                                changedFeatures.get(newItems.indexOf(item))==null?null //temp 에서는 걍 저장
+                                changedFeatures.get(newItems.indexOf(item))==null?
+                                        null //temp 에서는 걍 저장
                                         :changedFeatures.get(newItems.indexOf(item)),
 
-                                changedContents.get(newItems.indexOf(item)).isBlank()?"":changedContents.get(newItems.indexOf(item))
+                                changedContents.get(newItems.indexOf(item)).isBlank()?
+                                        "":changedContents.get(newItems.indexOf(item))
                         )
                 )
                 .collect(toList());
@@ -530,6 +537,9 @@ public class ChangeOrder extends EntityDate {
 
     {
 
+        this.tempsave = true;
+        this.readonly = false;
+
         this.setModifiedAt(LocalDateTime.now());
 
         this.modifier =
@@ -569,7 +579,8 @@ public class ChangeOrder extends EntityDate {
         this.carType =
                 req.getCarTypeId()==null?
                         null:
-                        carTypeRepository.findById(req.getCarTypeId()).orElseThrow(CarTypeNotEmptyException::new);
+                        carTypeRepository.findById(req.getCarTypeId())
+                                .orElseThrow(CarTypeNotEmptyException::new);
 
         this.costDifferent =
                 req.getCostDifferent() != null && req.getCostDifferent();
@@ -598,47 +609,24 @@ public class ChangeOrder extends EntityDate {
                                         (req.getApplyPeriod(), DateTimeFormatter.ISO_DATE);
 
 
-//        this.coEffect = req.getCoEffectId()==null || req.getCoEffectId().size()==0?
-//                null
-//                :(req.getCoEffectId().stream().map(
-//                i -> coEffectRepository.findById(i).orElseThrow(CrEffectNotFoundException::new)
-//        ).collect(toList())) //입력으로 받아온 co effect 값
-//                .stream().map(
-//                //다대다 관계를 만드는 구간
-//                effect -> new CoCoEffect(
-//                        this,
-//                        effect
-//                )
-//        ).collect(toList());
-
-//////////////////////////////////////////////////////////////////////////
-        List<CoCoEffect> coCoEffects = coCoEffectRepository.findByChangeOrder(this);
-
-        coCoEffectRepository.deleteAll(coCoEffects);
-
         this.coEffect.clear();
 
         Set<CoCoEffect> coCoEffectsList =
                 req.getCoEffectId()==null || req.getCoEffectId().size()==0?
                         null
                         :(req.getCoEffectId().stream().map(
-                        i -> coEffectRepository.findById(i).orElseThrow(CrEffectNotFoundException::new)
+                        i -> coEffectRepository.findById(i)
+                                .orElseThrow(CrEffectNotFoundException::new)
                 ).collect(toList())) //입력으로 받아온 co effect 값
                         .stream().map(
                                 //다대다 관계를 만드는 구간
                                 effect -> new CoCoEffect(
-                                        Long.parseLong((this.getId().toString()+
-                                                effect.getId().toString())),
                                         this,
                                         effect
                                 )
                         ).collect(Collectors.toSet());
 
-        for(CoCoEffect coCoEffect: coCoEffectsList){
-            coCoEffectRepository.save(coCoEffect);
-        }
         this.coEffect.addAll(coCoEffectsList);
-        /////////////////////////////////////////////////////
 
         this.coImportance = req.getCoImportanceId()==null?
                 null:
@@ -651,20 +639,6 @@ public class ChangeOrder extends EntityDate {
         this.content = req.getContent().isEmpty()||req.getContent()==null?
                 " ":req.getContent();
 
-        this.changeRequests.clear();
-//
-//        for(ChangeRequest cr : this.changeRequests){
-//            cr.setChangeOrder(null);
-//        }
-
-        List<ChangeRequest> changeRequests =
-                req.getChangeRequestIds().stream().map(
-                        cr->changeRequestRepository.findById(cr).orElseThrow(CrNotFoundException::new)
-                ).collect(toList());
-
-        for(ChangeRequest cr : changeRequests) {
-            cr.setChangeOrder(this);
-        }
 
         CoAttachmentUpdatedResult resultAttachment =
 
@@ -691,17 +665,29 @@ public class ChangeOrder extends EntityDate {
                 resultAttachment//, updatedAddedProjectAttachmentList
         );
 
+        if(this.changeRequests!=null) {
+            this.changeRequests.clear();
+        }
 
-        this.changeRequests =
+        if(req.getChangeRequestIds()!=null || req.getChangeRequestIds().size()!=0) {
+            this.changeRequests.addAll(
+                    (req.getChangeRequestIds().stream().map(
+                            i -> changeRequestRepository.findById(i)
+                                    .orElseThrow(CrNotFoundException::new)
+                    ).collect(Collectors.toSet()))
+            );
+        }
 
-                req.getChangeRequestIds().stream().map(
+        List<ChangedFeature> changedFeatures =
+                req.getChangeFeaturesIds().stream().map(
                         i ->
-                                changeRequestRepository.findById(i).orElseThrow(CrNotFoundException::new)
+                                changedFeatureRepository
+                                        .findById(i)
+                                        .orElseThrow(ChangeFeatureNotFoundException::new)
                 ).collect(
                         toList()
-                ); //changeRequests,
+                );
 
-        //coItem 을 만들자
         List<NewItem> newItems = req.getNewItemsIds().stream().map(
                 i ->
                         newItemRepository.findById(i).orElseThrow(ItemNotFoundException::new)
@@ -709,17 +695,8 @@ public class ChangeOrder extends EntityDate {
                 toList()
         );
 
-        List<ChangedFeature> changedFeatures =
-                req.getChangeFeaturesIds().stream().map(
-                        i ->
-                                changedFeatureRepository.findById(i).orElseThrow(CrNotFoundException::new)
-                ).collect(
-                        toList()
-                );
-
-
-
-        this.coNewItems =
+        this.coNewItems.clear();
+        this.coNewItems.addAll(
                 newItems
                         .stream().map(
 
@@ -740,13 +717,12 @@ public class ChangeOrder extends EntityDate {
 
                                                 :changedFeatures.get(newItems.indexOf(item)),
 
-                                        req.getChangeContents().get(newItems.indexOf(item)).isBlank()?" ":req.getChangeContents().get(newItems.indexOf(item))
+                                        req.getChangeContents().get(newItems.indexOf(item)).isBlank()?
+                                                " ":req.getChangeContents().get(newItems.indexOf(item))
                                 )
                         )
-                        .collect(toList());
-
-
-
+                        .collect(toList())
+                );
 
         //newItems
 
@@ -823,7 +799,8 @@ public class ChangeOrder extends EntityDate {
                 req.getCarTypeId()==null?
                         carTypeRepository.findById(-1L).orElseThrow(CarTypeNotEmptyException::new)
     :
-                        carTypeRepository.findById(req.getCarTypeId()).orElseThrow(CarTypeNotEmptyException::new);
+                        carTypeRepository.findById(req.getCarTypeId())
+                                .orElseThrow(CarTypeNotEmptyException::new);
 
         this.costDifferent =
                 req.getCostDifferent() != null && req.getCostDifferent();
@@ -853,11 +830,6 @@ public class ChangeOrder extends EntityDate {
                         LocalDate.parse
                                 (req.getApplyPeriod(), DateTimeFormatter.ISO_DATE);
 
-
-        List<CoCoEffect> coCoEffects = coCoEffectRepository.findByChangeOrder(this);
-
-        coCoEffectRepository.deleteAll(coCoEffects);
-
         this.coEffect.clear();
 
         Set<CoCoEffect> coCoEffectsList =
@@ -869,16 +841,11 @@ public class ChangeOrder extends EntityDate {
                         .stream().map(
                                 //다대다 관계를 만드는 구간
                                 effect -> new CoCoEffect(
-                                        Long.parseLong((this.getId().toString()+
-                                                effect.getId().toString())),
                                         this,
                                         effect
                                 )
                         ).collect(Collectors.toSet());
 
-        for(CoCoEffect coCoEffect: coCoEffectsList){
-            coCoEffectRepository.save(coCoEffect);
-        }
         this.coEffect.addAll(coCoEffectsList);
 
         this.coImportance = req.getCoImportanceId()==null?
@@ -894,21 +861,17 @@ public class ChangeOrder extends EntityDate {
         this.content = req.getContent().isEmpty()||req.getContent()==null?
                 " ":req.getContent();
 
+        if(this.changeRequests!=null) {
+            this.changeRequests.clear();
+        }
 
-//        for(ChangeRequest cr : this.changeRequests){
-//            cr.setChangeOrder(null);
-//        }
-//        for(ChangeRequest cr : changeRequests) {
-//            cr.setChangeOrder(this);
-//        }
-
-        List<ChangeRequest> changeRequests =
-                req.getChangeRequestIds().stream().map(
-                        cr->changeRequestRepository.findById(cr).orElseThrow(CrNotFoundException::new)
-                ).collect(toList());
-
-        for(ChangeRequest cr : changeRequests) {
-            cr.setChangeOrder(this);
+        if(req.getChangeRequestIds()!=null || req.getChangeRequestIds().size()!=0) {
+            this.changeRequests.addAll(
+                    (req.getChangeRequestIds().stream().map(
+                            i -> changeRequestRepository.findById(i)
+                                    .orElseThrow(CrNotFoundException::new)
+                    ).collect(Collectors.toSet()))
+            );
         }
 
         CoAttachmentUpdatedResult resultAttachment =
@@ -937,15 +900,26 @@ public class ChangeOrder extends EntityDate {
         );
 
 
-
-        this.changeRequests =
+        this.changeRequests.clear();
+        this.changeRequests.addAll(
 
                 req.getChangeRequestIds().stream().map(
                         i ->
-                                changeRequestRepository.findById(i).orElseThrow(CrNotFoundException::new)
+                                changeRequestRepository.findById(i)
+                                        .orElseThrow(CrNotFoundException::new)
                 ).collect(
                         toList()
-                ); //changeRequests,
+                )
+        ); //changeRequests,
+
+        List<ChangedFeature> changedFeatures =
+                req.getChangeFeaturesIds().stream().map(
+                        i ->
+                                changedFeatureRepository.findById(i).
+                                        orElseThrow(ChangeFeatureNotFoundException::new)
+                ).collect(
+                        toList()
+                );
 
         //coItem 을 만들자
         List<NewItem> newItems = req.getNewItemsIds().stream().map(
@@ -954,18 +928,8 @@ public class ChangeOrder extends EntityDate {
         ).collect(
                 toList()
         );
-
-        List<ChangedFeature> changedFeatures =
-                req.getChangeFeaturesIds().stream().map(
-                        i ->
-                                changedFeatureRepository.findById(i).orElseThrow(CrNotFoundException::new)
-                ).collect(
-                        toList()
-                );
-
-
-
-        this.coNewItems =
+        this.coNewItems.clear();
+        this.coNewItems.addAll(
                 newItems
                         .stream().map(
 
@@ -982,19 +946,16 @@ public class ChangeOrder extends EntityDate {
                                                                 ).collect(
                                                                         toList()
                                                                 )
-                                                        .indexOf(item))==null?null //temp 에서는 걍 저장
+                                                                .indexOf(item))==null?null //temp 에서는 걍 저장
 
                                                 :changedFeatures.get(newItems.indexOf(item)),
 
-                                        req.getChangeContents().get(newItems.indexOf(item)).isBlank()?" ":req.getChangeContents().get(newItems.indexOf(item))
+                                        req.getChangeContents().get(newItems.indexOf(item)).isBlank()?
+                                                " ":req.getChangeContents().get(newItems.indexOf(item))
                                 )
                         )
-                        .collect(toList());
-
-
-
-
-                //newItems
+                        .collect(toList())
+        );
 
         return fileUpdatedResult;
     }

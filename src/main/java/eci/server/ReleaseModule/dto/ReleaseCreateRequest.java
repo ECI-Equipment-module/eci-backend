@@ -13,6 +13,7 @@ import eci.server.ReleaseModule.exception.ReleaseNeedsTargetException;
 import eci.server.ReleaseModule.exception.ReleaseNotFoundExcpetion;
 import eci.server.ReleaseModule.exception.ReleaseOrganizationNotFoundException;
 import eci.server.ReleaseModule.exception.ReleaseTypeNotEmptyException;
+import eci.server.ReleaseModule.repository.ReleaseOrganizationReleaseRepository;
 import eci.server.ReleaseModule.repository.ReleaseOrganizationRepository;
 import eci.server.ReleaseModule.repository.ReleaseTypeRepository;
 import lombok.AllArgsConstructor;
@@ -61,7 +62,8 @@ public class ReleaseCreateRequest {
             ChangeOrderRepository changeOrderRepository,
             ReleaseTypeRepository releaseTypeRepository,
             ReleaseOrganizationRepository releaseOrganizationRepository,
-            AttachmentTagRepository attachmentTagRepository
+            AttachmentTagRepository attachmentTagRepository,
+            ReleaseOrganizationReleaseRepository releaseOrganizationReleaseRepository
     ) {
 
         if(req.getReleaseType()==null){
@@ -112,6 +114,7 @@ public class ReleaseCreateRequest {
                                                     .orElseThrow(ReleaseOrganizationNotFoundException::new)
                                     )
                             ).collect(toList())
+
             );
 
         } else {
@@ -184,7 +187,7 @@ public class ReleaseCreateRequest {
         //projectNum 겹치지않도록 설정(순간의 연-월시분초
         String projectNum = new SimpleDateFormat("MMddHHmmss", Locale.ENGLISH).format(now);
         String finalProjNumber = new String();
-        System.out.println(ProjectLevelId+"!!!!!!!!!!!!!!!!!!!!!!!");
+
         if (ProjectLevelId.equals(1L)) {
             finalProjNumber = "M-" + year + "-" + projectNum;
         } else {

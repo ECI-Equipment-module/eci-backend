@@ -1,7 +1,6 @@
 package eci.server.ReleaseModule.entity;
 
 import eci.server.CRCOModule.entity.co.ChangeOrder;import eci.server.CRCOModule.exception.CoNotFoundException;
-import eci.server.CRCOModule.exception.CrEffectNotFoundException;
 import eci.server.CRCOModule.repository.co.ChangeOrderRepository;
 import eci.server.ItemModule.entity.entitycommon.EntityDate;
 import eci.server.ItemModule.entity.member.Member;
@@ -93,7 +92,7 @@ public class Release extends EntityDate {
 
     @OneToMany(
             mappedBy = "release",
-            cascade = CascadeType.MERGE,
+            cascade = CascadeType.ALL,//MERGE,
             orphanRemoval = true,
             fetch = FetchType.LAZY)
     private Set<ReleaseOrgRelease> releaseOrganization;
@@ -160,8 +159,7 @@ public class Release extends EntityDate {
         this.releaseOrganization = releaseOrganizations.stream().map(
                         //다대다 관계를 만드는 구간
                         ro -> new ReleaseOrgRelease(
-                                Long.parseLong((ro.getId().toString()+
-                                        this.getId().toString())),
+
                                 ro,
                                 this
                         )
@@ -223,13 +221,13 @@ public class Release extends EntityDate {
         this.releaseOrganization = releaseOrganizations.stream().map(
                         //다대다 관계를 만드는 구간
                         ro -> new ReleaseOrgRelease(
-                                Long.parseLong((ro.getId().toString()+
-                                        this.getId().toString())),
+
                                 ro,
                                 this
                         )
                 )
                 .collect(Collectors.toSet());
+
 
     }
 
@@ -398,6 +396,9 @@ public class Release extends EntityDate {
 
     ) {
 
+        this.tempsave = true;
+        this.readonly = false;
+
         this.setModifiedAt(LocalDateTime.now());
 
         this.modifier =
@@ -432,11 +433,6 @@ public class Release extends EntityDate {
                         req.getReleaseType()
                 ).orElseThrow(ReleaseTypeNotFoundException::new);
 
-
-        List<ReleaseOrgRelease> releaseOrgReleases = releaseOrganizationReleaseRepository.findByRelease(this);
-
-        releaseOrganizationReleaseRepository.deleteAll(releaseOrgReleases);
-
         this.releaseOrganization.clear();
 
         Set<ReleaseOrgRelease> releaseOrganizations =
@@ -449,17 +445,12 @@ public class Release extends EntityDate {
                                         //다대다 관계를 만드는 구간
                                         ro ->
                                                 new ReleaseOrgRelease(
-                                                        Long.parseLong((ro.getId().toString()+
-                                                                this.getId().toString())),
                                                         ro,
                                                         this
                                                 )
 
                                 ).collect(Collectors.toSet());
 
-        for(ReleaseOrgRelease release:releaseOrganizations){
-            releaseOrganizationReleaseRepository.save(release);
-        }
         this.releaseOrganization.addAll(releaseOrganizations);
 
         ReleaseAttachmentUpdatedResult resultAttachment =
@@ -499,8 +490,7 @@ public class Release extends EntityDate {
             NewItemRepository newItemRepository,
             ChangeOrderRepository changeOrderRepository,
             ReleaseOrganizationRepository releaseOrganizationRepository,
-            ReleaseTypeRepository releaseTypeRepository,
-            ReleaseOrganizationReleaseRepository releaseOrganizationReleaseRepository
+            ReleaseTypeRepository releaseTypeRepository
 
     ) {
 
@@ -575,12 +565,6 @@ public class Release extends EntityDate {
                         req.getReleaseType()
                 ).orElseThrow(ReleaseTypeNotFoundException::new);
 
-
-
-        List<ReleaseOrgRelease> releaseOrgReleases = releaseOrganizationReleaseRepository.findByRelease(this);
-
-        releaseOrganizationReleaseRepository.deleteAll(releaseOrgReleases);
-
         this.releaseOrganization.clear();
 
         Set<ReleaseOrgRelease> releaseOrganizations =
@@ -593,17 +577,12 @@ public class Release extends EntityDate {
                                         //다대다 관계를 만드는 구간
                                         ro ->
                                                 new ReleaseOrgRelease(
-                                                        Long.parseLong((ro.getId().toString()+
-                                                                this.getId().toString())),
                                                         ro,
                                                         this
                                                 )
 
                                 ).collect(Collectors.toSet());
 
-        for(ReleaseOrgRelease release:releaseOrganizations){
-            releaseOrganizationReleaseRepository.save(release);
-        }
         this.releaseOrganization.addAll(releaseOrganizations);
 
         return fileUpdatedResult;

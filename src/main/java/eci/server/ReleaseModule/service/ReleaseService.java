@@ -99,7 +99,8 @@ public class ReleaseService {
                         changeOrderRepository,
                         releaseTypeRepository,
                         releaseOrganizationRepository,
-                        attachmentTagRepository
+                        attachmentTagRepository,
+                        releaseOrganizationReleaseRepository
                 )
         );
 
@@ -167,8 +168,7 @@ public class ReleaseService {
                 newItemRepository,
                 changeOrderRepository,
                 releaseOrganizationRepository,
-                releaseTypeRepository,
-                releaseOrganizationReleaseRepository
+                releaseTypeRepository
         );
 
         uploadAttachments(

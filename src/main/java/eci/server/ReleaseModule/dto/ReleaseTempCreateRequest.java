@@ -9,10 +9,13 @@ import eci.server.NewItemModule.repository.attachment.AttachmentTagRepository;
 import eci.server.NewItemModule.repository.item.NewItemRepository;
 import eci.server.ReleaseModule.entity.Release;
 import eci.server.ReleaseModule.entity.ReleaseAttachment;
+import eci.server.ReleaseModule.entity.ReleaseOrgRelease;
+import eci.server.ReleaseModule.entity.ReleaseOrganization;
 import eci.server.ReleaseModule.exception.ReleaseNeedsTargetException;
 import eci.server.ReleaseModule.exception.ReleaseNotFoundExcpetion;
 import eci.server.ReleaseModule.exception.ReleaseOrganizationNotFoundException;
 import eci.server.ReleaseModule.exception.ReleaseTypeNotEmptyException;
+import eci.server.ReleaseModule.repository.ReleaseOrganizationReleaseRepository;
 import eci.server.ReleaseModule.repository.ReleaseOrganizationRepository;
 import eci.server.ReleaseModule.repository.ReleaseTypeRepository;
 import lombok.AllArgsConstructor;
@@ -22,6 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.Null;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
@@ -67,6 +71,7 @@ public class ReleaseTempCreateRequest{
     ) {
 
 
+
         if (req.tag.size() == 0) {
             return new Release(
 
@@ -97,6 +102,7 @@ public class ReleaseTempCreateRequest{
                             null:releaseTypeRepository.findById(req.getReleaseType()).
                             orElseThrow(ReleaseTypeNotEmptyException::new),
 
+
                     req.getReleaseOrganizationId().size()==0?
                             null:
                             req.getReleaseOrganizationId().stream().map(
@@ -105,7 +111,8 @@ public class ReleaseTempCreateRequest{
                                                     .findById(i)
                                                     .orElseThrow(ReleaseOrganizationNotFoundException::new)
                                     )
-                            ).collect(toList())
+                            ).collect(Collectors.toList())
+
             );
 
         } else {

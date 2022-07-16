@@ -276,7 +276,6 @@ public class CoService{
                 req,
                 coReasonId,
 
-
                 clientOrganizationRepository,
                 carTypeRepository,
                 coReasonRepository,
@@ -293,8 +292,6 @@ public class CoService{
                 coCoEffectRepository
         );
 
-
-
         uploadAttachments(
                 result.getAttachmentUpdatedResult().getAddedAttachments(),
                 result.getAttachmentUpdatedResult().getAddedAttachmentFiles()
@@ -302,10 +299,12 @@ public class CoService{
         deleteAttachments(
                 result.getAttachmentUpdatedResult().getDeletedAttachments()
         );
+
         Long routeId = -1L;
         if(routeOrderingRepository.findByChangeOrderOrderByIdAsc(co).size()>0) {
             List<RouteOrdering> routeOrdering = routeOrderingRepository.findByChangeOrderOrderByIdAsc(co);
-            routeId = routeOrderingRepository.findByChangeOrderOrderByIdAsc(co).get(routeOrdering.size() - 1).getId();
+            routeId = routeOrderingRepository.findByChangeOrderOrderByIdAsc(co)
+                    .get(routeOrdering.size() - 1).getId();
 
             RouteOrdering setRoute =
                     routeOrderingRepository.findById(routeId).orElseThrow(RouteNotFoundException::new);

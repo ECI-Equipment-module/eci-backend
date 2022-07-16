@@ -2,7 +2,6 @@ package eci.server.ReleaseModule.repository;
 
 import eci.server.ReleaseModule.entity.Release;
 import eci.server.ReleaseModule.entity.ReleaseOrgRelease;
-import eci.server.ReleaseModule.entity.ReleaseOrgReleaseId;
 import eci.server.ReleaseModule.entity.ReleaseOrganization;
 import org.springframework.data.jpa.repository.JpaRepository;
 

@@ -26,7 +26,7 @@ public class ReleaseOrganization{
 
     @OneToMany(
             mappedBy = "releaseOrganization",
-            cascade = CascadeType.MERGE,
+            cascade = CascadeType.ALL,//.MERGE,
             orphanRemoval = true,
             fetch = FetchType.LAZY)
     private Set<ReleaseOrgRelease> releaseOrgReleases;
