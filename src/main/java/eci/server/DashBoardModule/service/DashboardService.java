@@ -644,7 +644,7 @@ public class DashboardService {
                         new TodoResponse(
                                 d.getId(),
                                 d.getName(),
-                                d.getItemTypes()!=null?" ":d.getItemTypes().getItemType().toString(),
+                                d.getItemTypes()==null?" ":d.getItemTypes().getItemType().toString(),
                                 d.getItemNumber(),
                                 -1L
                         );
