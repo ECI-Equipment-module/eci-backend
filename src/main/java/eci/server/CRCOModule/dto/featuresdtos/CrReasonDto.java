@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class  CrReasonDto{
     private Long id;
-    private String name;
+    private String value;
 
     public static  CrReasonDto toDto(){
 

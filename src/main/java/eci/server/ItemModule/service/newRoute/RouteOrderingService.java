@@ -46,6 +46,8 @@ import eci.server.NewItemModule.service.item.NewItemService;
 import eci.server.ProjectModule.entity.project.Project;
 import eci.server.ProjectModule.exception.ProjectNotLinkedException;
 import eci.server.ProjectModule.repository.project.ProjectRepository;
+import eci.server.ReleaseModule.entity.Releasing;
+import eci.server.ReleaseModule.exception.ReleaseNotFoundException;
 import eci.server.ReleaseModule.repository.ReleaseRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -968,6 +970,51 @@ public class RouteOrderingService {
                 }
             }
 
+            else if (targetRoutProduct.getType().getModule().equals("RELEASE")
+                    && targetRoutProduct.getType().getName().equals("CREATE")) {
+
+                if ((routeOrdering.getRelease()==null)) {
+                    throw new ReleaseNotFoundException();
+                } else {
+
+                    // 이에 딸린 RELEASE 의 TEMP SAVE = FALSE
+                    Releasing release =routeOrdering.getRelease();
+
+                    release.updateTempsaveWhenMadeRoute();
+
+                }
+
+
+            }
+            else if (targetRoutProduct.getType().getModule().equals("RELEASE")
+                    && targetRoutProduct.getType().getName().equals("REVIEW")) {
+
+                // RELEASE 안에
+                // 1) ITEM 이 있다면, 이 아이템의 released 를 +1 시킨다.
+                // 2) CO 가 있다면, CO 안에 들어있는 아이템들을 돌면서 released 에 +1을 시킨다.
+
+                if ((routeOrdering.getRelease()==null)) {
+                    throw new ReleaseNotFoundException();
+                } else {
+
+                    // 0) target Release 데려오기
+                    Releasing release =routeOrdering.getRelease();
+
+                    // 1) ITEM 이 있다면, 이 아이템의 released 를 +1 시킨다.
+                    if(release.getNewItem()!=null){
+                        release.getNewItem().updateReleaseCnt();
+                    }
+
+                    // 2) CO 가 있다면, CO 안에 들어있는 아이템들을 돌면서 released 에 +1을 시킨다.
+                    else if(release.getChangeOrder()!=null){
+                        release.getChangeOrder().getCoNewItems().stream().forEach(
+                                coNewItem -> coNewItem.getNewItem().updateReleaseCnt()
+                        );
+                    }
+                }
+
+
+            }
             RouteOrderingUpdateRequest newRouteUpdateRequest =
                     routeOrdering
                             .update(
