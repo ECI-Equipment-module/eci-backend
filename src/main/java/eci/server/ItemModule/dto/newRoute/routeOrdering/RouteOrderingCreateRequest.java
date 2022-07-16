@@ -12,7 +12,7 @@ import eci.server.ItemModule.repository.newRoute.RouteTypeRepository;
 import eci.server.NewItemModule.entity.NewItem;
 import eci.server.NewItemModule.repository.item.NewItemRepository;
 import eci.server.ReleaseModule.exception.ReleaseNotFoundException;
-import eci.server.ReleaseModule.repository.ReleaseRepository;
+import eci.server.ReleaseModule.repository.ReleasingRepository;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -166,7 +166,7 @@ public class RouteOrderingCreateRequest {
     public static RouteOrdering toReleaseEntity(
             RouteOrderingCreateRequest req,
             RoutePreset routePreset,
-            ReleaseRepository releaseRepository
+            ReleasingRepository releaseRepository
     ){
 
         List<String> typeList = new ArrayList<>();

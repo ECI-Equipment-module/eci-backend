@@ -9,6 +9,7 @@ import eci.server.CRCOModule.entity.co.ChangeOrder;
 import eci.server.CRCOModule.entity.cr.ChangeRequest;
 import eci.server.CRCOModule.repository.co.ChangeOrderRepository;
 import eci.server.CRCOModule.repository.cr.ChangeRequestRepository;
+import eci.server.CRCOModule.service.co.CoService;
 import eci.server.DashBoardModule.dto.ToDoDoubleList;
 import eci.server.DashBoardModule.dto.ToDoSingle;
 import eci.server.DashBoardModule.dto.myProject.TotalProject;
@@ -28,10 +29,13 @@ import eci.server.ItemModule.repository.newRoute.RouteOrderingRepository;
 import eci.server.ItemModule.repository.newRoute.RouteProductRepository;
 import eci.server.NewItemModule.entity.NewItem;
 import eci.server.NewItemModule.repository.item.NewItemRepository;
+import eci.server.NewItemModule.service.item.NewItemService;
 import eci.server.ProjectModule.entity.project.Project;
 import eci.server.ProjectModule.exception.ProjectNotFoundException;
 import eci.server.ProjectModule.repository.project.ProjectRepository;
 import eci.server.ProjectModule.service.ProjectService;
+import eci.server.ReleaseModule.entity.Releasing;
+import eci.server.ReleaseModule.repository.ReleasingRepository;
 import eci.server.config.guard.AuthHelper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -57,6 +61,9 @@ public class DashboardService {
     private final ChangeOrderRepository changeOrderRepository;
     private final ChangeRequestRepository changeRequestRepository;
     private final ProjectService projectService;
+    private final ReleasingRepository releasingRepository;
+    private final NewItemService newItemService;
+    private final CoService changeOrderService;
 
     public TotalProject readProjectTotal() {
         //0) 현재 로그인 된 유저
@@ -1387,5 +1394,222 @@ public class DashboardService {
 
     }
 
+    /**
+     * RELEASE TODO
+     *
+     * @return
+     */
+    public ToDoDoubleList readRELEASETodo() {
+        //0) 현재 로그인 된 유저
+        Member member1 = memberRepository.findById(authHelper.extractMemberId()).orElseThrow(
+                AuthenticationEntryPointException::new
+        );
+        //new bom -> 아이템 목록
+        //1) 현재 진행 중인 라우트 프로덕트 카드들
+        List<RouteProduct> routeProductList = routeProductRepository.findAll().stream().filter(
+                rp -> rp.getSequence().equals(
+                        rp.getRouteOrdering().getPresent()
+                )
+        ).collect(Collectors.toList());
+
+        //2-1 ) 라우트 프로덕트들 중 나에게 할당된 카드들 & 단계가 개발 BOM 생성[설계자] 인 것
+        List<RouteProduct> myRouteReleaseCreateProductList = new ArrayList<>();
+
+        // 2-2 ) // & 단계가 개발 bom review 인 것
+        List<RouteProduct> myRouteReleaseReviewProductList = new ArrayList<>();
+
+        for (RouteProduct routeProduct : routeProductList) {
+            for (RouteProductMember routeProductMember : routeProduct.getMembers()) {
+
+                if (routeProductMember.getMember().getId().equals(member1.getId())) {
+                    // 내가 라우트 프로덕트에 지정되어 있고
+
+                    if (
+                        // 단계가 bom create 라면
+                            routeProduct.getType().getModule().equals("RELEASE")
+                                    &&
+                                    routeProduct.getType().getName().equals("CREATE")
+                    ) {
+                        myRouteReleaseCreateProductList.add(routeProduct);
+                        //break;
+
+                    } else if (
+                        // 단계가 bom review 라면
+                            routeProduct.getType().getModule().equals("RELEASE")
+                                    &&
+                                    routeProduct.getType().getName().equals("REVIEW")
+                    ) {
+                        myRouteReleaseReviewProductList.add(routeProduct);
+                        //break;
+                    }
+
+                }
+            }
+        }
+
+        //1 ::: TEMP SAVE RELEASE: RELEASE 중 TEMP SAVE = TRUE ;
+
+        List<TodoResponse> TEMP_SAVE = new ArrayList<>();
+
+        //1-1 temp save 용 ) 내가 작성자인 모든 디자인 데려오기
+        List<Releasing> myReleaseList = releasingRepository.findByMember(member1);
+
+        //1-2 temp-save 가 true 인 것만 담는 리스트
+
+        Set<Releasing> tempSavedReleaseList = new HashSet();
+        for (Releasing releasing : myReleaseList) {
+
+            if (releasing.getTempsave()){
+                if(routeOrderingRepository.findByReleaseOrderByIdAsc(releasing).size()>0){
+                    RouteOrdering ordering = routeOrderingRepository.findByReleaseOrderByIdAsc(releasing)
+                            .get(
+                                    routeOrderingRepository.findByReleaseOrderByIdAsc(releasing).size() - 1
+                            );
+
+                    int presentIdx = ordering.getPresent();
+
+                    if(routeProductRepository.findAllByRouteOrdering(ordering).size()>
+                            presentIdx) {
+                        RouteProduct routeProduct = routeProductRepository.findAllByRouteOrdering(ordering).get(presentIdx);
+                        if (!routeProduct.isPreRejected()) {
+                            tempSavedReleaseList.add(releasing);
+                        }
+                    }
+                }
+
+                else {
+                    tempSavedReleaseList.add(releasing);
+                }
+            }
+        }
+
+        if (tempSavedReleaseList.size() > 0) {
+            for (Releasing r: tempSavedReleaseList) {
+                TodoResponse
+                        releaseTodoResponse =
+                        new TodoResponse(
+                                r.getId(),
+                                r.getReleaseTitle(),
+                                r.getReleaseType().getName(),
+                                r.getReleaseNumber(),
+                                -1L
+                        );
+                TEMP_SAVE.add(releaseTodoResponse);
+            }
+        }
+
+        // 2 ::: 거절된 RELEASE 들
+        //  라우트 프로덕트들 중에서 현재이고,
+        // RELEASE CREATE 이고
+        // 라우트프로덕트 멤버가 나이고,
+        // PRE - REJECTED=TRUE 인 것
+        HashSet<TodoResponse> rejectedReleaseTodoResponses = new HashSet<>();
+
+        for (RouteProduct routeProduct : myRouteReleaseCreateProductList) {
+            if (
+                    routeProduct.isPreRejected()
+            ) {
+
+                Releasing targetReleasing = routeProduct.getRouteOrdering().getRelease();
+
+                if(targetReleasing!=null) {
+                    rejectedReleaseTodoResponses.add(
+                            new TodoResponse(
+                                    targetReleasing.getId(),
+                                    targetReleasing.getReleaseTitle(),
+                                    targetReleasing.getReleaseType().getName(),
+                                    targetReleasing.getReleaseNumber(),
+                                    -1L
+                            )
+                    );
+                }
+            }
+        }
+        List<TodoResponse> REJECTED = new ArrayList<>(rejectedReleaseTodoResponses);
+
+        //3 :: RELEASE REVIEW 인 단계, 현재 진행 중이고, 내꺼고 단계가 RELEASE REVIEW
+        HashSet<TodoResponse> needReviewRELEASETodoResponses = new HashSet<>();
+
+        for(RouteProduct routeProduct : myRouteReleaseReviewProductList){
+
+            //현재 라우트보다 하나 이전 라우트프로덕트의 봄만 존재함, 그 봄을 가져와야한다.
+            Releasing releasing = routeProduct.getRouteOrdering().getRelease();
+
+            needReviewRELEASETodoResponses.add(
+                    new TodoResponse(
+                            releasing.getId(),
+                            releasing.getReleaseTitle(),
+                            releasing.getReleaseType().getName(),
+                            releasing.getReleaseNumber(),
+                            -1L
+                    )
+            );
+        }
+
+        List<TodoResponse> REVIEW = new ArrayList<>(needReviewRELEASETodoResponses);
+
+
+        // 4 ::: NEW ITEM - ITEM 들 중 상태가 complete & released 가 0 인 것
+        HashSet<TodoResponse> unlinkedItemTodoResponses = new HashSet<>();
+
+        Set<NewItem> newItemForRelease =
+                newItemService.readAffectedItems().stream().filter(
+                newItem -> newItem.getReleased()!=null&&newItem.getReleased()==0
+        ).collect(Collectors.toSet());
+
+
+        for (NewItem newItem : newItemForRelease) {
+            unlinkedItemTodoResponses.add(
+                    new TodoResponse(
+                            newItem.getId(),
+                            newItem.getName(),
+                            newItem.getItemTypes().getItemType().toString(),
+                            newItem.getItemNumber(),
+                            -1L
+                    )
+            );
+
+        }
+        List<TodoResponse> NEW_ITEM = new ArrayList<>(unlinkedItemTodoResponses);
+
+        // 5 ::: NEW CO
+        HashSet<TodoResponse> unlinkedCoTodoResponses = new HashSet<>();
+
+        Set<ChangeOrder> changeOrders =
+                new HashSet<>(changeOrderService.readCoAvailableInRelease());
+
+        for (ChangeOrder changeOrder : changeOrders) {
+            unlinkedItemTodoResponses.add(
+                    new TodoResponse(
+                            changeOrder.getId(),
+                            changeOrder.getName(),
+                            "CO",
+                            changeOrder.getCoNumber(),
+                            -1L
+                    )
+            );
+
+        }
+        List<TodoResponse> NEW_CO = new ArrayList<>(unlinkedCoTodoResponses);
+
+        // TOTAL
+
+        ToDoSingle newItem = new ToDoSingle("New First Release", NEW_ITEM);
+        ToDoSingle newCo = new ToDoSingle("New CO Release", NEW_CO);
+        ToDoSingle tempRelease = new ToDoSingle("Save as Draft", TEMP_SAVE);
+        ToDoSingle rejectedRelease = new ToDoSingle("Rejected Release", REJECTED);
+        ToDoSingle reviewRelease = new ToDoSingle("Waiting Review", REVIEW);
+
+        List<ToDoSingle> toDoDoubleList = new ArrayList<ToDoSingle>();
+
+        toDoDoubleList.add(newItem);
+        toDoDoubleList.add(newCo);
+        toDoDoubleList.add(tempRelease);
+        toDoDoubleList.add(rejectedRelease);
+        toDoDoubleList.add(reviewRelease);
+
+        return new ToDoDoubleList(toDoDoubleList);
+
+    }
 
 }

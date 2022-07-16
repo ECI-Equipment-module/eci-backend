@@ -38,7 +38,7 @@ import java.util.stream.IntStream;
 @RequiredArgsConstructor
 public class ReleaseService {
 
-    private final ReleaseRepository releaseRepository;
+    private final ReleasingRepository releaseRepository;
     private final ReleaseTypeRepository releaseTypeRepository;
     private final ReleaseOrganizationRepository releaseOrganizationRepository;
     private final FileService fileService;

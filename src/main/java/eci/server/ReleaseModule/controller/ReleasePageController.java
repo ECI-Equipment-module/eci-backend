@@ -5,7 +5,7 @@ import eci.server.ItemModule.repository.newRoute.RouteProductRepository;
 import eci.server.NewItemModule.repository.attachment.AttachmentTagRepository;
 import eci.server.ReleaseModule.dto.ReleaseDto;
 import eci.server.ReleaseModule.entity.Releasing;
-import eci.server.ReleaseModule.repository.ReleaseRepository;
+import eci.server.ReleaseModule.repository.ReleasingRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 public class ReleasePageController {
 
     @Autowired
-    private final ReleaseRepository releaseRepository;
+    private final ReleasingRepository releaseRepository;
     private final RouteOrderingRepository routeOrderingRepository;
     private final RouteProductRepository routeProductRepository;
     private final AttachmentTagRepository attachmentTagRepositor;
