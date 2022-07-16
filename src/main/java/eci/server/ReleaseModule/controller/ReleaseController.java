@@ -17,13 +17,13 @@ import javax.validation.Valid;
 @RestController
 @RequiredArgsConstructor
 @Slf4j
-@CrossOrigin(origins = "https://localhost:3000")
+@CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
 public class ReleaseController {
     
     private final ReleaseService releaseService;
 
 
-    @CrossOrigin(origins = "https://localhost:3000")
+    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
     @PostMapping("/release/temp")
     @ResponseStatus(HttpStatus.CREATED)
     @AssignMemberId // Aspect : 인증된 사용자 정보로 아이템 작성자 지정 가능
@@ -36,7 +36,7 @@ public class ReleaseController {
                 releaseService.tempCreate(req));
     }
 
-    @CrossOrigin(origins = "https://localhost:3000")
+    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
     @PostMapping("/release")
     @ResponseStatus(HttpStatus.CREATED)
     @AssignMemberId // Aspect : 인증된 사용자 정보로 아이템 작성자 지정 가능
@@ -49,7 +49,7 @@ public class ReleaseController {
                 releaseService.create(req));
     }
 
-    @CrossOrigin(origins = "https://localhost:3000")
+    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
     @DeleteMapping("/release/{id}")
     @ResponseStatus(HttpStatus.OK)
     @AssignMemberId // Aspect : 인증된 사용자 정보로 아이템 작성자 지정 가능
@@ -62,7 +62,7 @@ public class ReleaseController {
     }
 
     @AssignMemberId
-    @CrossOrigin(origins = "https://localhost:3000")
+    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
     @GetMapping(value = "/release/{id}")
     @ResponseStatus(HttpStatus.OK)
     public Response read(
@@ -73,7 +73,7 @@ public class ReleaseController {
         );
     }
 
-    @CrossOrigin(origins = "https://localhost:3000")
+    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
     @PutMapping("/release/{id}")
     @ResponseStatus(HttpStatus.CREATED)
     @AssignModifierId //0605 : 수정 시에는 글쓴이 아디 주입 아니고, 수정자 아이디 주입
@@ -87,7 +87,7 @@ public class ReleaseController {
                 releaseService.update(id, req));
     }
 
-    @CrossOrigin(origins = "https://localhost:3000")
+    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
     @PutMapping("/release/temp/end/{id}")
     @ResponseStatus(HttpStatus.CREATED)
     @AssignModifierId

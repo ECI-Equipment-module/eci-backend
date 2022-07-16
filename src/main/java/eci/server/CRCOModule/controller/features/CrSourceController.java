@@ -14,10 +14,10 @@ import javax.validation.Valid;
 
 @RequiredArgsConstructor
 @RestController
-@CrossOrigin(origins = "https://localhost:3000")
+@CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
 public class CrSourceController {
     private final CrSourceService crSourceService;
-    @CrossOrigin(origins = "https://localhost:3000")
+    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
     @GetMapping("/crSourceId")
     @ResponseStatus(HttpStatus.OK)
     public Response readAll(@Valid CrSourceReadCondition cond) {
