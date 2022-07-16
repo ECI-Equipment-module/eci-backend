@@ -973,13 +973,11 @@ public class RouteOrderingService {
             else if (targetRoutProduct.getType().getModule().equals("RELEASE")
                     && targetRoutProduct.getType().getName().equals("CREATE")) {
 
-                // CO 안에 있는 CR 들의 crCompletedByCo() 호출해서 DONE = TRUE 로 바꾸기
-
                 if ((routeOrdering.getRelease()==null)) {
                     throw new ReleaseNotFoundException();
                 } else {
 
-                    // (1)  이 co의 cr 들의 done=true
+                    // 이에 딸린 RELEASE 의 TEMP SAVE = FALSE
                     Releasing release =routeOrdering.getRelease();
 
                     release.updateTempsaveWhenMadeRoute();
@@ -988,7 +986,35 @@ public class RouteOrderingService {
 
 
             }
+            else if (targetRoutProduct.getType().getModule().equals("RELEASE")
+                    && targetRoutProduct.getType().getName().equals("REVIEW")) {
 
+                // RELEASE 안에
+                // 1) ITEM 이 있다면, 이 아이템의 released 를 +1 시킨다.
+                // 2) CO 가 있다면, CO 안에 들어있는 아이템들을 돌면서 released 에 +1을 시킨다.
+
+                if ((routeOrdering.getRelease()==null)) {
+                    throw new ReleaseNotFoundException();
+                } else {
+
+                    // 0) target Release 데려오기
+                    Releasing release =routeOrdering.getRelease();
+
+                    // 1) ITEM 이 있다면, 이 아이템의 released 를 +1 시킨다.
+                    if(release.getNewItem()!=null){
+                        release.getNewItem().updateReleaseCnt();
+                    }
+
+                    // 2) CO 가 있다면, CO 안에 들어있는 아이템들을 돌면서 released 에 +1을 시킨다.
+                    else if(release.getChangeOrder()!=null){
+                        release.getChangeOrder().getCoNewItems().stream().forEach(
+                                coNewItem -> coNewItem.getNewItem().updateReleaseCnt()
+                        );
+                    }
+                }
+
+
+            }
             RouteOrderingUpdateRequest newRouteUpdateRequest =
                     routeOrdering
                             .update(
