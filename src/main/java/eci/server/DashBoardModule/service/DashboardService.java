@@ -613,7 +613,7 @@ public class DashboardService {
 
         for (NewItem newItem : NewItemList) {
 
-            if (newItem.isTempsave() && !newItem.isRevise_progress()){
+            if (newItem.isTempsave() && !newItem.isRevise_progress() &&!newItem.isRevise_progress()){
                 //07-10 REVISE 된 것이 아닐 때에 임시저장에 뜨게하기
                 // (REVISE 되는 거는 REVISE 에 떠야함)
 
@@ -644,7 +644,7 @@ public class DashboardService {
                         new TodoResponse(
                                 d.getId(),
                                 d.getName(),
-                                d.getItemTypes().getItemType().toString(),
+                                d.getItemTypes()!=null?" ":d.getItemTypes().getItemType().toString(),
                                 d.getItemNumber(),
                                 -1L
                         );
