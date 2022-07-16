@@ -102,4 +102,18 @@ public class DashboardController {
         );
     }
 
+    /**
+     * RELEASE to-do api
+     *
+     * @return 200 (success)
+     */
+    @CrossOrigin(origins = "https://localhost:3000")
+    @GetMapping("/dashboard/release/todo")
+    @ResponseStatus(HttpStatus.OK)
+    public Response RELEASETodo() {
+        return Response.success(
+                dashboardService.readRELEASETodo()
+        );
+    }
+
 }
