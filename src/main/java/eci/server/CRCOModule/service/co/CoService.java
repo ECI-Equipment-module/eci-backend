@@ -191,7 +191,8 @@ public class CoService{
     @Transactional
     public void delete(Long id) {
 
-        ChangeOrder changeOrder = changeOrderRepository.findById(id).orElseThrow(CoNotFoundException::new);
+        ChangeOrder changeOrder = changeOrderRepository
+                .findById(id).orElseThrow(CoNotFoundException::new);
 
         changeOrderRepository.delete(changeOrder);
     }
