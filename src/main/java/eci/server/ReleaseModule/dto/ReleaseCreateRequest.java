@@ -7,7 +7,7 @@ import eci.server.ItemModule.exception.member.sign.MemberNotFoundException;
 import eci.server.ItemModule.repository.member.MemberRepository;
 import eci.server.NewItemModule.repository.attachment.AttachmentTagRepository;
 import eci.server.NewItemModule.repository.item.NewItemRepository;
-import eci.server.ReleaseModule.entity.Release;
+import eci.server.ReleaseModule.entity.Releasing;
 import eci.server.ReleaseModule.entity.ReleaseAttachment;
 import eci.server.ReleaseModule.exception.ReleaseNeedsTargetException;
 import eci.server.ReleaseModule.exception.ReleaseNotFoundExcpetion;
@@ -55,7 +55,7 @@ public class ReleaseCreateRequest {
     private Long memberId;
 
 
-    public static Release toEntity(
+    public static Releasing toEntity(
             ReleaseCreateRequest req,
             MemberRepository memberRepository,
             NewItemRepository newItemRepository,
@@ -76,7 +76,7 @@ public class ReleaseCreateRequest {
         String finalReleaseNum = ProjectNumber(req.getReleaseType());
 
         if (req.tag.size() == 0) { //Project에 Attachment 존재하지 않을 시에 생성자
-            return new Release(
+            return new Releasing(
 
                     req.getReleaseTitle(),
 
@@ -119,7 +119,7 @@ public class ReleaseCreateRequest {
 
         } else {
 
-            return new Release(
+            return new Releasing(
 
                     req.getReleaseTitle(),
 

@@ -2,7 +2,6 @@ package eci.server.ReleaseModule.entity;
 
 import eci.server.ItemModule.entitycommon.EntityDate;
 import eci.server.ItemModule.exception.image.UnsupportedImageFormatException;
-import eci.server.ProjectModule.entity.project.Project;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -49,7 +48,7 @@ public class ReleaseAttachment extends EntityDate {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "release_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    private Release release;
+    private Releasing release;
 
     @Column(nullable = false)
     @Lob
@@ -121,7 +120,7 @@ public class ReleaseAttachment extends EntityDate {
      *
      * @param release
      */
-    public void initRelease(Release release) {
+    public void initRelease(Releasing release) {
         if (this.release == null) {
             this.release = release;
         }

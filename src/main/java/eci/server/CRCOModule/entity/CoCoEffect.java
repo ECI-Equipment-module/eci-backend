@@ -2,8 +2,6 @@ package eci.server.CRCOModule.entity;
 
 import eci.server.CRCOModule.entity.co.ChangeOrder;
 import eci.server.CRCOModule.entity.cofeatures.CoEffect;
-import eci.server.ReleaseModule.entity.Release;
-import eci.server.ReleaseModule.entity.ReleaseOrganization;
 import lombok.*;
 
 import javax.persistence.*;

@@ -15,12 +15,11 @@ import eci.server.ItemModule.exception.route.RejectImpossibleException;
 import eci.server.ItemModule.exception.route.UpdateImpossibleException;
 import eci.server.ItemModule.repository.newRoute.RouteOrderingRepository;
 import eci.server.ItemModule.repository.newRoute.RouteProductRepository;
-import eci.server.NewItemModule.dto.newItem.NewItemReadCondition;
 import eci.server.NewItemModule.entity.NewItem;
 import eci.server.NewItemModule.repository.item.NewItemRepository;
 import eci.server.NewItemModule.service.item.NewItemService;
 import eci.server.ProjectModule.entity.project.Project;
-import eci.server.ReleaseModule.entity.Release;
+import eci.server.ReleaseModule.entity.Releasing;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -122,7 +121,7 @@ public class RouteOrdering extends EntityDate {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "release_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
-    private Release release;
+    private Releasing release;
 
     //아이템 라우트용 생성자
     public RouteOrdering(
@@ -169,7 +168,7 @@ public class RouteOrdering extends EntityDate {
     //release 라우트용 생성자
     public RouteOrdering(
             String type,
-            Release release
+            Releasing release
     ){
         this.type = type;
         this.lifecycleStatus = "WORKING";
@@ -234,7 +233,7 @@ public class RouteOrdering extends EntityDate {
         this.bom = bom;
     }
 
-    public void setRelease(Release release) {
+    public void setRelease(Releasing release) {
         this.release = release;
     }
 

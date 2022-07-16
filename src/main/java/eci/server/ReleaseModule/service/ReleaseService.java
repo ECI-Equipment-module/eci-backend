@@ -19,7 +19,7 @@ import eci.server.ReleaseModule.dto.ReleaseCreateRequest;
 import eci.server.ReleaseModule.dto.ReleaseDto;
 import eci.server.ReleaseModule.dto.ReleaseTempCreateRequest;
 import eci.server.ReleaseModule.dto.ReleaseUpdateRequest;
-import eci.server.ReleaseModule.entity.Release;
+import eci.server.ReleaseModule.entity.Releasing;
 import eci.server.ReleaseModule.entity.ReleaseAttachment;
 import eci.server.ReleaseModule.exception.ReleaseNotFoundException;
 import eci.server.ReleaseModule.repository.*;
@@ -65,7 +65,7 @@ public class ReleaseService {
     @Transactional
     public ProjectTempCreateUpdateResponse tempCreate(ReleaseTempCreateRequest req) {
 
-        Release release = releaseRepository.save(
+        Releasing release = releaseRepository.save(
                 ReleaseTempCreateRequest.toEntity(
                         req,
                         memberRepository,
@@ -91,7 +91,7 @@ public class ReleaseService {
     @Transactional
     public ItemCreateResponse create(ReleaseCreateRequest req) {
 
-        Release release = releaseRepository.save(
+        Releasing release = releaseRepository.save(
                 ReleaseCreateRequest.toEntity(
                         req,
                         memberRepository,
@@ -120,11 +120,11 @@ public class ReleaseService {
 
     public ProjectTempCreateUpdateResponse update(Long id, ReleaseUpdateRequest req) {
 
-        Release release = releaseRepository.findById(id)
+        Releasing release = releaseRepository.findById(id)
                 .orElseThrow(ProjectNotFoundException::new);
 
 
-        Release.FileUpdatedResult result = release.update(
+        Releasing.FileUpdatedResult result = release.update(
                 req,
                 memberRepository,
                 attachmentTagRepository,
@@ -157,10 +157,10 @@ public class ReleaseService {
     public ProjectTempCreateUpdateResponse tempEnd(
             Long id, ReleaseUpdateRequest req) {
 
-        Release release = releaseRepository.findById(id)
+        Releasing release = releaseRepository.findById(id)
                 .orElseThrow(ReleaseNotFoundException::new);
 
-        Release.FileUpdatedResult result = release.tempEnd(
+        Releasing.FileUpdatedResult result = release.tempEnd(
                 req,
                 ReleaseCreateRequest.ProjectNumber(release.getId()),
                 memberRepository,
@@ -185,7 +185,7 @@ public class ReleaseService {
 
     @Transactional
     public void delete(Long id) {
-        Release release = releaseRepository.findById(id).orElseThrow(ProjectNotFoundException::new);
+        Releasing release = releaseRepository.findById(id).orElseThrow(ProjectNotFoundException::new);
         deleteReleaseAttachments(release.getAttachments());
         releaseRepository.delete(release);
     }
@@ -194,7 +194,7 @@ public class ReleaseService {
 
     // read one project
     public ReleaseDto read(Long id){
-        Release release = releaseRepository.findById(id)
+        Releasing release = releaseRepository.findById(id)
                 .orElseThrow(ReleaseNotFoundException::new);
 
         List<RouteOrderingDto> routeDtoList = Optional.ofNullable(
@@ -250,7 +250,7 @@ public class ReleaseService {
         releaseAttachments.forEach(i -> fileService.delete(i.getUniqueName()));
     }
 
-    private void saveTrueAttachment(Release target) {
+    private void saveTrueAttachment(Releasing target) {
         releaseAttachmentRepository.findByRelease(target).
                 forEach(
                         i->i.setSave(true)

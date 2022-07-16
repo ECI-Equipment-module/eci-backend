@@ -35,7 +35,7 @@ import static java.util.stream.Collectors.toList;
 @Entity
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Release extends EntityDate {
+public class Releasing extends EntityDate {
     @Id
 
     //@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -121,7 +121,7 @@ public class Release extends EntityDate {
      * @param releaseOrganizations
      * @param releaseAttachments
      */
-    public Release(
+    public Releasing(
 
             String releaseTitle,
             String releaseContent,
@@ -185,7 +185,7 @@ public class Release extends EntityDate {
      * @param releaseType
      * @param releaseOrganizations
      */
-    public Release(
+    public Releasing(
 
             String releaseTitle,
             String releaseContent,

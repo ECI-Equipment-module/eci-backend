@@ -12,6 +12,6 @@ import java.io.Serializable;
 @AllArgsConstructor
 public class ReleaseOrgReleaseId implements Serializable {
     private ReleaseOrganization releaseOrganization;
-    private Release release;
+    private Releasing release;
 }
 

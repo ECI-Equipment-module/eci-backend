@@ -3,21 +3,17 @@ package eci.server.ReleaseModule.dto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import eci.server.BomModule.repository.BomRepository;
 import eci.server.BomModule.repository.PreliminaryBomRepository;
-import eci.server.CRCOModule.dto.co.CoReadDto;
 import eci.server.CRCOModule.dto.co.CoSearchDto;
-import eci.server.CRCOModule.dto.cr.CrPagingDto;
 import eci.server.ItemModule.dto.item.ItemProjectDto;
 import eci.server.ItemModule.dto.member.MemberDto;
-import eci.server.ItemModule.dto.newRoute.routeOrdering.RouteOrderingDto;
 import eci.server.ItemModule.entity.newRoute.RouteOrdering;
 import eci.server.ItemModule.entity.newRoute.RouteProduct;
-import eci.server.ItemModule.exception.route.RouteNotFoundException;
 import eci.server.ItemModule.repository.newRoute.RouteOrderingRepository;
 import eci.server.ItemModule.repository.newRoute.RouteProductRepository;
 import eci.server.NewItemModule.repository.attachment.AttachmentTagRepository;
 import eci.server.ProjectModule.dto.produceOrg.ProduceOrganizationDto;
 import eci.server.ReleaseModule.dto.type.ReleaseTypeDto;
-import eci.server.ReleaseModule.entity.Release;
+import eci.server.ReleaseModule.entity.Releasing;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -26,7 +22,6 @@ import org.springframework.lang.Nullable;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 import static java.util.stream.Collectors.toList;
 
@@ -82,7 +77,7 @@ public class ReleaseDto{
 
 
     public static ReleaseDto toDto(
-            Release release,
+            Releasing release,
             RouteOrdering routeOrdering,
             RouteOrderingRepository routeOrderingRepository,
             RouteProductRepository routeProductRepository,
@@ -161,7 +156,7 @@ public class ReleaseDto{
     }
 
     public static ReleaseDto noRoutetoDto(
-            Release release,
+            Releasing release,
             //RouteOrdering routeOrdering,
             RouteOrderingRepository routeOrderingRepository,
             RouteProductRepository routeProductRepository,
@@ -234,7 +229,7 @@ public class ReleaseDto{
 
 
     public static List<ReleaseDto> toDtoList(
-            List<Release> releaseList,
+            List<Releasing> releaseList,
             RouteOrderingRepository routeOrderingRepository,
             RouteProductRepository routeProductRepository,
             AttachmentTagRepository attachmentTagRepository,

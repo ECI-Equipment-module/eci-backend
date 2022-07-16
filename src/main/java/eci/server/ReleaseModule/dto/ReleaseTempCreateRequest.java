@@ -7,15 +7,11 @@ import eci.server.ItemModule.exception.member.sign.MemberNotFoundException;
 import eci.server.ItemModule.repository.member.MemberRepository;
 import eci.server.NewItemModule.repository.attachment.AttachmentTagRepository;
 import eci.server.NewItemModule.repository.item.NewItemRepository;
-import eci.server.ReleaseModule.entity.Release;
+import eci.server.ReleaseModule.entity.Releasing;
 import eci.server.ReleaseModule.entity.ReleaseAttachment;
-import eci.server.ReleaseModule.entity.ReleaseOrgRelease;
-import eci.server.ReleaseModule.entity.ReleaseOrganization;
-import eci.server.ReleaseModule.exception.ReleaseNeedsTargetException;
 import eci.server.ReleaseModule.exception.ReleaseNotFoundExcpetion;
 import eci.server.ReleaseModule.exception.ReleaseOrganizationNotFoundException;
 import eci.server.ReleaseModule.exception.ReleaseTypeNotEmptyException;
-import eci.server.ReleaseModule.repository.ReleaseOrganizationReleaseRepository;
 import eci.server.ReleaseModule.repository.ReleaseOrganizationRepository;
 import eci.server.ReleaseModule.repository.ReleaseTypeRepository;
 import lombok.AllArgsConstructor;
@@ -60,7 +56,7 @@ public class ReleaseTempCreateRequest{
     private Long memberId;
 
 
-    public static Release toEntity(
+    public static Releasing toEntity(
             ReleaseTempCreateRequest req,
             MemberRepository memberRepository,
             NewItemRepository newItemRepository,
@@ -73,7 +69,7 @@ public class ReleaseTempCreateRequest{
 
 
         if (req.tag.size() == 0) {
-            return new Release(
+            return new Releasing(
 
                     req.getReleaseTitle(),
 
@@ -117,7 +113,7 @@ public class ReleaseTempCreateRequest{
 
         } else {
 
-            return new Release(
+            return new Releasing(
 
                     req.getReleaseTitle(),
 

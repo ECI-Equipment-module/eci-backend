@@ -1,17 +1,11 @@
 package eci.server.ReleaseModule.controller;
 
-import eci.server.CRCOModule.dto.cr.CrPagingDto;
-import eci.server.CRCOModule.entity.co.ChangeOrder;
-import eci.server.CRCOModule.repository.co.ChangeOrderRepository;
-import eci.server.CRCOModule.repository.co.CoNewItemRepository;
-import eci.server.CRCOModule.service.co.CoService;
 import eci.server.ItemModule.repository.newRoute.RouteOrderingRepository;
 import eci.server.ItemModule.repository.newRoute.RouteProductRepository;
 import eci.server.NewItemModule.repository.attachment.AttachmentTagRepository;
 import eci.server.ReleaseModule.dto.ReleaseDto;
-import eci.server.ReleaseModule.entity.Release;
+import eci.server.ReleaseModule.entity.Releasing;
 import eci.server.ReleaseModule.repository.ReleaseRepository;
-import eci.server.ReleaseModule.service.ReleaseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -58,10 +52,10 @@ public class ReleasePageController {
                                         })
                                                 Pageable pageRequest) {
 
-        Page<Release> ListBefore =
+        Page<Releasing> ListBefore =
                 releaseRepository.findAll(pageRequest);
 
-        List<Release> crs =
+        List<Releasing> crs =
                 ListBefore.stream().filter(
                         i -> (!i.getTempsave())
                 ).collect(Collectors.toList());

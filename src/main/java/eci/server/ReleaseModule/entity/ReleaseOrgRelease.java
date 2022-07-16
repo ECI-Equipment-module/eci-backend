@@ -23,11 +23,11 @@ public class ReleaseOrgRelease {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "release_id")
-    private Release release;
+    private Releasing release;
 
     public ReleaseOrgRelease(
             ReleaseOrganization releaseOrganization,
-            Release release
+            Releasing release
     ){
         this.releaseOrganization = releaseOrganization;
         this.release = release;
