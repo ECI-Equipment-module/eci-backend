@@ -653,6 +653,13 @@ public class NewItemService {
 
     }
 
+    public NewItemParentDto topTreeAndItsParents(Long id){
+        NewItem newItem = newItemRepository.findById(id).orElseThrow(ItemNotFoundException::new);
+        NewItemParentDto result = NewItemParentDto.toTopDto(newItem);
+        result.setChildren(readParentAll(id));
+        return result;
+    }
+
     public List<TempNewItemChildDto> readDevChildAll(Long id) {
 
         return TempNewItemChildDto.toDtoList(

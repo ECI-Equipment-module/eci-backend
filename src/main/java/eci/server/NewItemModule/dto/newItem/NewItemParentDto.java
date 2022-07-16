@@ -1,5 +1,6 @@
 package eci.server.NewItemModule.dto.newItem;
 
+import eci.server.NewItemModule.entity.NewItem;
 import eci.server.NewItemModule.entity.NewItemParentChildren;
 import eci.server.NewItemModule.repository.item.NewItemParentChildrenRepository;
 import lombok.AllArgsConstructor;
@@ -21,7 +22,26 @@ public class NewItemParentDto {
     private String thumbNail;
     private String name;
     private List<NewItemParentDto> children;
+    private boolean top;
 
+    public static NewItemParentDto toTopDto(NewItem newItem){
+        return new NewItemParentDto(
+                newItem.getId(),//엔티티를 DTO로 변환하는 함수
+                newItem.getClassification().getClassification1().getName()
+                        +"/"+newItem.getClassification().getClassification2().getName()+
+                        (
+                                newItem.getClassification().getClassification3().getId()==99999L?
+                                        "":"/"+"/"+newItem.getClassification().getClassification3().getName()
+                        )
+                ,
+                newItem.getName(),
+                newItem.getThumbnail().getImageaddress(),
+                newItem.getItemTypes().getItemType().name(),
+                new ArrayList<>(),
+                true // 지금 찾고자 하는 아이는 top = true !
+
+        );
+    }
 
     public static List<NewItemParentDto> toDtoList(
             List<NewItemParentChildren> NewItems,
@@ -44,7 +64,9 @@ public class NewItemParentDto {
                                 toDtoList(newItemParentChildrenRepository
                                                 .findAllWithChildByChildId(c.getParent().getId()),
                                         newItemParentChildrenRepository)
-                                :new ArrayList<>()
+                                :new ArrayList<>(),
+
+                        false
 
                 )
         ).collect(Collectors.toList());
