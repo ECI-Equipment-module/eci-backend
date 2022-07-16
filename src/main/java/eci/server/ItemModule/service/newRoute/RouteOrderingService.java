@@ -909,8 +909,13 @@ public class RouteOrderingService {
                                 ItemNotFoundException::new
                         );
 
-                        chkItem.updateRevision(targetItem.getRevision()+1);
-                        //targetItem.getRevision() 보다 하나 더 큰 값으로 갱신
+                        //chkItem.updateRevision(targetItem.getRevision()+1);
+                        chkItem.updateRevisionAndHeritageReleaseCnt(
+                                targetItem.getRevision()+1,
+                                targetItem.getReleased());
+
+                        // 제품 아닌 아이들은 이 단계에서 revision 갱신 및 released 를 상속 받기
+
                     }
 
 
@@ -1026,6 +1031,7 @@ public class RouteOrderingService {
         // => 거절 가능타입 검증
         // => DISABLE 아닌지 검증
         // =>
+        // 이 reviewRouteArrList 에 추가해줘야 함 (꺼절 가능 라우트 번호)
         if (routePreset.reviewRouteArrList.contains(targetRoutProduct.getType().getId().toString())) {
             //만약 리뷰타입의 라우트라면
             Long rejectPossibleTypeId = null;
@@ -1055,8 +1061,8 @@ public class RouteOrderingService {
                     rejectPossibleTypeId = 18L; //CO 신청
 
                     break;
-
-                case "23": //release review
+                //release review
+                case "23":
                     rejectPossibleTypeId = 22L; //release request
 
                     break;

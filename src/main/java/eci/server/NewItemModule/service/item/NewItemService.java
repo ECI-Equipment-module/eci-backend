@@ -170,7 +170,10 @@ public class NewItemService {
             System.out.println("equals 제품 이면 , 아이템 만들 때 controller에서 바로 item에 targetitme 등록 & 개정 ");
 
             NewItem targetItem = newItemRepository.findById(targetId).orElseThrow(ItemNotFoundException::new);
-            NewItemCreateResponse res2 =  item.updateRevision(targetItem.getRevision()+1);
+            NewItemCreateResponse res2 =  item.updateRevisionAndHeritageReleaseCnt
+                    (targetItem.getRevision()+1,
+                            targetItem.getReleased());
+
             item.setRevision(targetItem.getRevision()+1);
 
         }
@@ -273,7 +276,9 @@ public class NewItemService {
             System.out.println("equals 제품 이면 , 아이템 만들 때 controller에서 바로 item에 targetitme 등록 & 개정 ");
 
             NewItem targetItem = newItemRepository.findById(targetId).orElseThrow(ItemNotFoundException::new);
-            NewItemCreateResponse res2 =  item.updateRevision(targetItem.getRevision()+1);
+            NewItemCreateResponse res2 =  item.updateRevisionAndHeritageReleaseCnt
+                    (targetItem.getRevision()+1,
+                            targetItem.getReleased());
             item.setRevision(targetItem.getRevision()+1);
 
         }
@@ -842,13 +847,11 @@ public class NewItemService {
 
     /**
      * Release 시 선택가능 후보들
-<<<<<<< HEAD
      * release, complete 된 애들 중 release 가 0 인 애들 (배포 시 1.0으로 되는 애들)
      * @return
      */
     public List<NewItem> releaseItem(){
         List<NewItem> affItemList = readAffectedItems();
-        System.out.println(affItemList + "다 차즈으으ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅁ");
         List<NewItem> releaseItemList = new ArrayList<>();
 
         for(NewItem newItem : affItemList){
@@ -992,14 +995,23 @@ public class NewItemService {
      */
     public NewItemCreateResponse registerTargetReviseItem(Long targetId, Long newItemId){
 
+        // 1. 공통 작업 (제품이든 아니든) - target_id 및 revise_id 로 내가 지금 복제할 대상 등록
+        //(1)
         System.out.println("register target revise item rrrrrrrrrrrrrrr rrrrrr");
         NewItem newItemForRevise = newItemRepository.findById(newItemId).orElseThrow(ItemNotFoundException::new);
         NewItemCreateResponse res1 = newItemForRevise.register_target_revise_item(targetId);
-        // newItemForRevise.setReviseTargetId(targetId);
-        System.out.println("등ㄹ고됨??????????????????????????????????????????????");
+
+        // (2) 내가 복제할 대상인 아이템
+        NewItem targetNewItem  = newItemRepository.findById(targetId).orElseThrow(ItemNotFoundException::new);
+
+        // (3) 이 아이템[(2)]을 revise target item 으로 등록해주기 (나중에 revise group 찾기 용임)
+        NewItemCreateResponse res2 = newItemForRevise.saving_target_revise_item(targetNewItem);
+
+
         System.out.println(newItemForRevise.getReviseTargetId());
         System.out.println(newItemForRevise.getId());
 
+        // 2. 제품인 아이들에 한해서만 초기 작업 -> 제품 아니라면 라우트오더링서비스에서 ITEM_REVIEW 승인할 때 아래 작업 진행
         // 그리고 아기(new item) 제품 타입이라면 아이템 등록할 때부터 revision update 진행
         // 아닌 애들은 어디서 updateRevision 하냐면 아이템 리뷰할 때 ! (아이템 리뷰 승인나야 revise o o )
         if(newItemForRevise.getItemTypes().getItemType().name().equals("파트제품") ||
@@ -1007,7 +1019,9 @@ public class NewItemService {
             System.out.println("equals 제품 이면 , 아이템 만들 때 controller에서 바로 item에 targetitme 등록 & 개정 ");
 
             NewItem targetItem = newItemRepository.findById(targetId).orElseThrow(ItemNotFoundException::new);
-            NewItemCreateResponse res2 = newItemForRevise.updateRevision(targetItem.getRevision()+1);
+            NewItemCreateResponse res3 = newItemForRevise.updateRevisionAndHeritageReleaseCnt(
+                    targetItem.getRevision()+1,
+                    targetItem.getReleased());
             //newItemForRevise.setRevision(targetItem.getRevision()+1);
 
         }
