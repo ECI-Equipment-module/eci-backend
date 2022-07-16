@@ -17,7 +17,7 @@ public class CoListDto {
     private Long totalElements;
     private Integer totalPages;
     private boolean hasNext;
-        private List<CoSearchDto> content;
+        private List<CoSearchDto> contents;
 
     public static CoListDto toDto(Page<CoSearchDto> page) {
 
