@@ -1,5 +1,6 @@
 package eci.server.ReleaseModule.dto;
 
+import eci.server.CRCOModule.exception.CoNotFoundException;
 import eci.server.CRCOModule.repository.co.ChangeOrderRepository;
 import eci.server.ItemModule.exception.item.AttachmentNotFoundException;
 import eci.server.ItemModule.exception.item.ItemNotFoundException;
@@ -92,7 +93,7 @@ public class ReleaseCreateRequest {
                     req.getReleaseCoId()==null?
                             null:changeOrderRepository.findById(
                                     req.getReleaseCoId()
-                    ).orElseThrow(ReleaseNotFoundExcpetion::new),
+                    ).orElseThrow(CoNotFoundException::new),
 
                     memberRepository.findById(
                             req.getMemberId()
