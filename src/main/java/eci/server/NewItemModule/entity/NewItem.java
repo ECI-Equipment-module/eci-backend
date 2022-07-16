@@ -199,7 +199,6 @@ public class NewItem extends EntityDate {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Maker makers;
 
-
     private String partNumber;
 //    @ManyToOne(fetch = FetchType.LAZY)
 //    @JoinColumn(name = "supplier_id")
@@ -226,6 +225,11 @@ public class NewItem extends EntityDate {
 
     @Column//nullable 하다 - 얘가 존재하면 revise copying new item 이라는 식별
     private Long reviseTargetId;
+
+    //nullable
+    @OneToOne
+    @JoinColumn(name = "revise_id")
+    private NewItem reviseTargetNewItem;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(
@@ -1249,8 +1253,25 @@ public class NewItem extends EntityDate {
         );
     }
 
-    public NewItemCreateResponse updateRevision(int revision){
+    public NewItemCreateResponse saving_target_revise_item(NewItem newItem){
+        this.reviseTargetNewItem = newItem;
+
+        return new NewItemCreateResponse(
+                this.id
+        );
+    }
+
+    /**
+     * 내가 지금 revise 복사하는 대상의 revision+1 로 나의 revision 갱신
+     * 그 대상의 released_cnt 와 똑같이 내 released 를 저장시켜주기
+     * @param revision <- 넘어올 때 이미 revision+1 돼서 옴
+     * @param released_cnt <- 그대로 오고, 그대로 저장할 거임
+     * @return
+     */
+    public NewItemCreateResponse updateRevisionAndHeritageReleaseCnt(int revision, int released_cnt){
         this.revision = Math.toIntExact(revision);
+        this.released = Math.toIntExact(released_cnt);
+
         return new NewItemCreateResponse(
                 this.id
         );

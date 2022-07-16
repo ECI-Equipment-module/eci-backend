@@ -909,8 +909,13 @@ public class RouteOrderingService {
                                 ItemNotFoundException::new
                         );
 
-                        chkItem.updateRevision(targetItem.getRevision()+1);
-                        //targetItem.getRevision() 보다 하나 더 큰 값으로 갱신
+                        //chkItem.updateRevision(targetItem.getRevision()+1);
+                        chkItem.updateRevisionAndHeritageReleaseCnt(
+                                targetItem.getRevision()+1,
+                                targetItem.getReleased());
+
+                        // 제품 아닌 아이들은 이 단계에서 revision 갱신 및 released 를 상속 받기
+
                     }
 
 
