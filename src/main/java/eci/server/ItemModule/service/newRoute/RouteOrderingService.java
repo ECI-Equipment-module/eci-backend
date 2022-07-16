@@ -46,6 +46,8 @@ import eci.server.NewItemModule.service.item.NewItemService;
 import eci.server.ProjectModule.entity.project.Project;
 import eci.server.ProjectModule.exception.ProjectNotLinkedException;
 import eci.server.ProjectModule.repository.project.ProjectRepository;
+import eci.server.ReleaseModule.entity.Releasing;
+import eci.server.ReleaseModule.exception.ReleaseNotFoundException;
 import eci.server.ReleaseModule.repository.ReleaseRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -966,6 +968,25 @@ public class RouteOrderingService {
 
 
                 }
+            }
+
+            else if (targetRoutProduct.getType().getModule().equals("RELEASE")
+                    && targetRoutProduct.getType().getName().equals("CREATE")) {
+
+                // CO 안에 있는 CR 들의 crCompletedByCo() 호출해서 DONE = TRUE 로 바꾸기
+
+                if ((routeOrdering.getRelease()==null)) {
+                    throw new ReleaseNotFoundException();
+                } else {
+
+                    // (1)  이 co의 cr 들의 done=true
+                    Releasing release =routeOrdering.getRelease();
+
+                    release.updateTempsaveWhenMadeRoute();
+
+                }
+
+
             }
 
             RouteOrderingUpdateRequest newRouteUpdateRequest =
