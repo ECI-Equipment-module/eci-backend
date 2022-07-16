@@ -352,6 +352,9 @@ public class Project extends EntityDate {
             AttachmentTagRepository attachmentTagRepository
     ) {
 
+        this.readonly = false;
+        this.tempsave = true;
+
         this.setModifiedAt(LocalDateTime.now());
 
         this.name = req.getName().isBlank() ? this.name : req.getName();
@@ -648,8 +651,6 @@ public class Project extends EntityDate {
                         req.getModifierId()
                 ).orElseThrow(MemberNotFoundException::new);//05 -22 생성자 추가
 
-        // 수정 시간 갱신
-        this.setModifiedAt(LocalDateTime.now());
 
         this.name = req.getName() == null || req.getName().isBlank() ?
                 projectLevelRepository.findById(-1L).orElseThrow(

@@ -46,6 +46,7 @@ import eci.server.NewItemModule.service.item.NewItemService;
 import eci.server.ProjectModule.entity.project.Project;
 import eci.server.ProjectModule.exception.ProjectNotLinkedException;
 import eci.server.ProjectModule.repository.project.ProjectRepository;
+import eci.server.ReleaseModule.repository.ReleaseRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -76,6 +77,7 @@ public class RouteOrderingService {
     private final ChangeOrderRepository changeOrderRepository;
     private final NewItemService newItemService;
     private final CoNewItemRepository coNewItemRepository;
+    private final ReleaseRepository releaseRepository;
 
     @Value("${default.image.address}")
     private String defaultImageAddress;
@@ -463,6 +465,44 @@ public class RouteOrderingService {
 
 
     @Transactional
+    public RouteOrderingCreateResponse createReleaseRoute(RouteOrderingCreateRequest req) {
+
+        RouteOrdering newRoute = routeOrderingRepository
+                .save(RouteOrderingCreateRequest.
+                toReleaseEntity(
+                        req,
+                        routePreset,
+                        releaseRepository
+                )
+        );
+
+        List<RouteProduct> routeProductList =
+                RouteProductCreateRequest.toRELEASEEntityList(
+                        req,
+                        newRoute,
+                        routePreset,
+                        memberRepository,
+                        routeTypeRepository
+
+                );
+
+        for (RouteProduct routeProduct : routeProductList) {
+
+            RouteProduct routeProduct1 =
+                    routeProductRepository.save(routeProduct);
+            System.out.println(routeProduct1.getRoute_name());
+            System.out.println(routeProduct1.getMembers().get(0).getMember());
+            System.out.println(routeProduct1.getMembers().get(0).getRouteProduct());
+        }
+
+        newRoute.getRelease().updateTempsaveWhenMadeRoute();
+        //라우트 만들면 임시저장 해제
+
+
+        return new RouteOrderingCreateResponse(newRoute.getId());
+    }
+
+    @Transactional
     public List<RouteProductDto> rejectUpdate(
             Long id,
             String rejectComment,
@@ -587,8 +627,8 @@ public class RouteOrderingService {
 //
 //                    // (3) checkCo의 routeOrdering 찾아오기
 //                    RouteOrdering routeOrderingOfChkCo =
-//                            routeOrderingRepository.findByChangeOrder(checkCo).get(
-//                                    routeOrderingRepository.findByChangeOrder(checkCo).size()-1
+//                            routeOrderingRepository.findByChangeOrderOrderByIdAsc(checkCo).get(
+//                                    routeOrderingRepository.findByChangeOrderOrderByIdAsc(checkCo).size()-1
 //                            );
 //
 //                    // (4) affected item 이 모두 revise 완료된다면 update route
@@ -923,9 +963,6 @@ public class RouteOrderingService {
                 }
             }
 
-            System.out.println("presenrrrrrrrrrrrrrrrrt : " +
-                    routeOrdering.getPresent()+"/"+presentRouteProductCandidate.size());
-
             RouteOrderingUpdateRequest newRouteUpdateRequest =
                     routeOrdering
                             .update(
@@ -1016,6 +1053,11 @@ public class RouteOrderingService {
                 //CR REQUEST
                 case "19": //CO 신청 승인 APPROVE
                     rejectPossibleTypeId = 18L; //CO 신청
+
+                    break;
+
+                case "23": //release review
+                    rejectPossibleTypeId = 22L; //release request
 
                     break;
                 default:        // 모두 해당이 안되는 경우

@@ -19,7 +19,7 @@ import eci.server.NewItemModule.entity.NewItem;
 import eci.server.NewItemModule.repository.item.NewItemRepository;
 import eci.server.NewItemModule.service.item.NewItemService;
 import eci.server.ProjectModule.entity.project.Project;
-import eci.server.ReleaseModule.entity.Release;
+import eci.server.ReleaseModule.entity.Releasing;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -121,7 +121,7 @@ public class RouteOrdering extends EntityDate {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "release_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
-    private Release release;
+    private Releasing release;
 
     //아이템 라우트용 생성자
     public RouteOrdering(
@@ -168,7 +168,7 @@ public class RouteOrdering extends EntityDate {
     //release 라우트용 생성자
     public RouteOrdering(
             String type,
-            Release release
+            Releasing release
     ){
         this.type = type;
         this.lifecycleStatus = "WORKING";
@@ -233,7 +233,7 @@ public class RouteOrdering extends EntityDate {
         this.bom = bom;
     }
 
-    public void setRelease(Release release) {
+    public void setRelease(Releasing release) {
         this.release = release;
     }
 
@@ -298,6 +298,10 @@ public class RouteOrdering extends EntityDate {
                     //얘는 create인 상태에선 ㄴㄴ 오로지 request 상태만 tempsave 여기서 false 돼야함
                     this.getChangeOrder().setTempsave(false); //라우트 만든 순간 임시저장 다시 거짓으로
                 }
+                else if(routeProductList.get(this.present).getType().getModule().equals("RELEASE")
+                        && routeProductList.get(this.present).getType().getName().equals("REQUEST")){
+                    this.getRelease().setTempsave(false); //라우트 만든 순간 임시저장 다시 거짓으로
+                }
             }
 
         }else{
@@ -353,8 +357,8 @@ public class RouteOrdering extends EntityDate {
                     // (3) checkCo의 routeOrdering 찾아오기
                     System.out.println("(3) checkCo의 routeOrdering 찾아오기");
                     RouteOrdering routeOrderingOfChkCo =
-                            routeOrderingRepository.findByChangeOrder(checkCo).get(
-                                    routeOrderingRepository.findByChangeOrder(checkCo).size()-1
+                            routeOrderingRepository.findByChangeOrderOrderByIdAsc(checkCo).get(
+                                    routeOrderingRepository.findByChangeOrderOrderByIdAsc(checkCo).size()-1
                             );
 
                     // (4) affected item 이 모두 revise 완료된다면 update route
@@ -560,6 +564,12 @@ public class RouteOrdering extends EntityDate {
                 this.getChangeOrder().setTempsave(true);
                 this.getChangeOrder().setReadonly(false);
                 break;
+            //RELEASE REQUEST
+            case "22":
+                this.getRelease().setTempsave(true);
+                this.getRelease().setReadonly(false);
+                break;
+
         }
 
         /**

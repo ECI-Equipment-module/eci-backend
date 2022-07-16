@@ -225,7 +225,10 @@ public class DesignService {
     // read one project
     public DesignDto read(Long id) {
         Design targetDesign = designRepository.findById(id).orElseThrow(DesignNotFoundException::new);
-        RouteOrdering routeOrdering = routeOrderingRepository.findByNewItemOrderByIdAsc(targetDesign.getNewItem()).get(0);
+        RouteOrdering routeOrdering = routeOrderingRepository.findByNewItemOrderByIdAsc(targetDesign.getNewItem())
+                .get(
+                        routeOrderingRepository.findByNewItemOrderByIdAsc(targetDesign.getNewItem()).size()-1
+                );
         return DesignDto.toDto(
                 routeOrdering,
                 targetDesign,

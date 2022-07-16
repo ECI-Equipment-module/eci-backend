@@ -11,6 +11,8 @@ import eci.server.ItemModule.exception.member.sign.MemberNotFoundException;
 import eci.server.ItemModule.repository.newRoute.RouteTypeRepository;
 import eci.server.NewItemModule.entity.NewItem;
 import eci.server.NewItemModule.repository.item.NewItemRepository;
+import eci.server.ReleaseModule.exception.ReleaseNotFoundException;
+import eci.server.ReleaseModule.repository.ReleaseRepository;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -157,6 +159,29 @@ public class RouteOrderingCreateRequest {
                 typeList.toString(),
                 changeOrderRepository.findById(req.itemId)
                         .orElseThrow(CoNotFoundException::new)
+        );
+    }
+
+
+    public static RouteOrdering toReleaseEntity(
+            RouteOrderingCreateRequest req,
+            RoutePreset routePreset,
+            ReleaseRepository releaseRepository
+    ){
+
+        List<String> typeList = new ArrayList<>();
+
+        List routeProduct = List.of((routePreset.RELEASERouteName[0]));
+
+        for(Object type : routeProduct){
+            typeList.add(type.toString());
+
+        }
+
+        return new RouteOrdering(
+                typeList.toString(),
+                releaseRepository.findById(req.itemId)
+                        .orElseThrow(ReleaseNotFoundException::new)
         );
     }
 }

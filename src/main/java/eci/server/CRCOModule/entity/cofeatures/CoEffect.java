@@ -1,7 +1,6 @@
 package eci.server.CRCOModule.entity.cofeatures;
 
 import eci.server.CRCOModule.entity.CoCoEffect;
-import eci.server.CRCOModule.entity.CoNewItem;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

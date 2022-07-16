@@ -14,6 +14,7 @@ import eci.server.CRCOModule.exception.CoUpdateImpossibleException;
 import eci.server.CRCOModule.exception.CrNotFoundException;
 import eci.server.CRCOModule.exception.CrUpdateImpossibleException;
 import eci.server.CRCOModule.repository.co.CoAttachmentRepository;
+import eci.server.CRCOModule.repository.co.CoCoEffectRepository;
 import eci.server.CRCOModule.repository.cr.CrAttachmentRepository;
 import eci.server.CRCOModule.repository.co.ChangeOrderRepository;
 import eci.server.CRCOModule.repository.cofeature.ChangedFeatureRepository;
@@ -25,6 +26,8 @@ import eci.server.CRCOModule.repository.features.CrReasonRepository;
 import eci.server.CRCOModule.repository.features.CrSourceRepository;
 import eci.server.DesignModule.dto.DesignCreateUpdateResponse;
 import eci.server.ItemModule.dto.newRoute.routeOrdering.RouteOrderingDto;
+import eci.server.ItemModule.entity.item.ItemType;
+import eci.server.ItemModule.entity.item.ItemTypes;
 import eci.server.ItemModule.entity.newRoute.RouteOrdering;
 import eci.server.ItemModule.exception.route.RouteNotFoundException;
 import eci.server.ItemModule.repository.member.MemberRepository;
@@ -32,6 +35,7 @@ import eci.server.ItemModule.repository.newRoute.RouteOrderingRepository;
 import eci.server.ItemModule.repository.newRoute.RouteProductRepository;
 import eci.server.ItemModule.service.file.FileService;
 import eci.server.NewItemModule.dto.newItem.create.NewItemCreateResponse;
+import eci.server.NewItemModule.entity.NewItem;
 import eci.server.NewItemModule.repository.attachment.AttachmentTagRepository;
 import eci.server.NewItemModule.repository.item.NewItemRepository;
 import eci.server.ProjectModule.dto.project.ProjectTempCreateUpdateResponse;
@@ -43,6 +47,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.IntStream;
@@ -72,6 +77,7 @@ public class CoService{
     private final ChangedFeatureRepository changedFeatureRepository;
     private final CoAttachmentRepository coAttachmentRepository;
     private final CrReasonRepository coReasonRepository;
+    private final CoCoEffectRepository coCoEffectRepository;
 
     @Value("${default.image.address}")
     private String defaultImageAddress;
@@ -221,7 +227,9 @@ public class CoService{
                 attachmentTagRepository,
                 newItemRepository,
                 changeRequestRepository,
-                changedFeatureRepository
+                changedFeatureRepository,
+
+                coCoEffectRepository
         );
 
         uploadAttachments(
@@ -279,10 +287,10 @@ public class CoService{
 
                 newItemRepository,
                 changeRequestRepository,
-                changedFeatureRepository
+                changedFeatureRepository,
+
+                coCoEffectRepository
         );
-
-
 
         uploadAttachments(
                 result.getAttachmentUpdatedResult().getAddedAttachments(),
@@ -291,10 +299,12 @@ public class CoService{
         deleteAttachments(
                 result.getAttachmentUpdatedResult().getDeletedAttachments()
         );
+
         Long routeId = -1L;
-        if(routeOrderingRepository.findByChangeOrder(co).size()>0) {
-            List<RouteOrdering> routeOrdering = routeOrderingRepository.findByChangeOrder(co);
-            routeId = routeOrderingRepository.findByChangeOrder(co).get(routeOrdering.size() - 1).getId();
+        if(routeOrderingRepository.findByChangeOrderOrderByIdAsc(co).size()>0) {
+            List<RouteOrdering> routeOrdering = routeOrderingRepository.findByChangeOrderOrderByIdAsc(co);
+            routeId = routeOrderingRepository.findByChangeOrderOrderByIdAsc(co)
+                    .get(routeOrdering.size() - 1).getId();
 
             RouteOrdering setRoute =
                     routeOrderingRepository.findById(routeId).orElseThrow(RouteNotFoundException::new);
@@ -309,7 +319,7 @@ public class CoService{
     }
 
     private void saveTrueAttachment(ChangeOrder target) {
-        coAttachmentRepository.findByChangeOrder(target).
+        coAttachmentRepository.findByChangeOrderOrderByIdAsc(target).
                 forEach(
                         i->i.setSave(true)
                 );
@@ -322,7 +332,7 @@ public class CoService{
 
         List<RouteOrderingDto> routeDtoList = Optional.ofNullable(
                 RouteOrderingDto.toDtoList(
-                        routeOrderingRepository.findByChangeOrder(co),
+                        routeOrderingRepository.findByChangeOrderOrderByIdAsc(co),
                         routeProductRepository,
                         routeOrderingRepository,
                         bomRepository,
@@ -334,8 +344,8 @@ public class CoService{
 
         if (routeDtoList.size() > 0) {
             RouteOrdering routeOrdering =
-                    routeOrderingRepository.findByChangeOrder(co).get(
-                            routeOrderingRepository.findByChangeOrder(co).size()-1
+                    routeOrderingRepository.findByChangeOrderOrderByIdAsc(co).get(
+                            routeOrderingRepository.findByChangeOrderOrderByIdAsc(co).size()-1
                     );
             return CoReadDto.toDto(
                     co,
@@ -356,6 +366,36 @@ public class CoService{
                 attachmentTagRepository,
                 defaultImageAddress
         );
+    }
+
+    /**
+     * CO 중 상태가 COMPLETE 인 것
+     * @return
+     */
+    public List<ChangeOrder> readCoAvailableInRelease() {
+
+        List<ChangeOrder> changeOrders = changeOrderRepository.findAllByOrderByIdAsc();
+
+        //1-2) 상태가 release 나 complete인 것만 최종 제품에 담을 예정
+        List<ChangeOrder> finalChangeOrders = new ArrayList<>();
+
+        for(ChangeOrder  co : changeOrders){
+            if(
+                    routeOrderingRepository.findByChangeOrderOrderByIdAsc(co).size()>0
+                            && (routeOrderingRepository.findByChangeOrderOrderByIdAsc(co).get(
+                            routeOrderingRepository.findByChangeOrderOrderByIdAsc(co).size()-1
+                    ).getLifecycleStatus().equals("COMPLETE")
+//                            ||
+//                            (routeOrderingRepository.findByChangeOrderOrderByIdAsc(co).get(
+//                                    routeOrderingRepository.findByChangeOrderOrderByIdAsc(co).size()-1
+//                            ).getLifecycleStatus().equals("RELEASE")
+//                            )
+                    )
+            ){
+                finalChangeOrders.add(co);
+            }
+        }
+            return finalChangeOrders;
     }
 
 }

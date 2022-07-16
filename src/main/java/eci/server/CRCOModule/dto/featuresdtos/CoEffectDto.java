@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,7 +33,7 @@ public class  CoEffectDto{
         );
     }
 
-    public static List<CoEffectDto> toDtoList(List<CoCoEffect> coEffect){
+    public static List<CoEffectDto> toDtoList(Collection<CoCoEffect> coEffect){
 
         List<CoEffect> onlyCoEffects =
                 coEffect.stream().map(

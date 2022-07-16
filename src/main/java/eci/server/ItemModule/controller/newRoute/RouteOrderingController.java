@@ -60,6 +60,17 @@ public class RouteOrderingController {
         );
     }
 
+    @PostMapping("/route/release")
+    @ResponseStatus(HttpStatus.CREATED)
+    @AssignMemberId
+    public Response createReleaseRoutes(
+            @Valid RouteOrderingCreateRequest req) {
+
+        return Response.success(
+                newRouteService.createReleaseRoute(req)
+        );
+    }
+
 
     @GetMapping("/route/{id}")
     @ResponseStatus(HttpStatus.OK)

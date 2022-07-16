@@ -14,5 +14,6 @@ public interface ChangeOrderRepository extends JpaRepository<ChangeOrder, Long> 
 
     List<ChangeOrder> findByMember(Member member);
 
-
+    List<ChangeOrder> findAllByOrderByIdAsc();
+    
 }

@@ -379,7 +379,14 @@ public class NewItemService {
 
 
         if (routeDtoList.size() > 0) {//아이템에 딸린 routeDto가 존재할 때
-            RouteOrdering routeOrdering = routeOrderingRepository.findByNewItemOrderByIdAsc(targetItem).get(0);
+            RouteOrdering routeOrdering = routeOrderingRepository
+                    .findByNewItemOrderByIdAsc(targetItem).get(
+
+                            routeOrderingRepository
+                                    .findByNewItemOrderByIdAsc(targetItem)
+                                    .size()-1
+
+                    );
             return NewItemDetailDto.toDto(
                     targetItem,
                     routeOrdering,
@@ -833,6 +840,29 @@ public class NewItemService {
         return affectedItemList;
     }
 
+    /**
+     * Release 시 선택가능 후보들
+<<<<<<< HEAD
+     * release, complete 된 애들 중 release 가 0 인 애들 (배포 시 1.0으로 되는 애들)
+     * @return
+     */
+    public List<NewItem> releaseItem(){
+        List<NewItem> affItemList = readAffectedItems();
+        System.out.println(affItemList + "다 차즈으으ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅁ");
+        List<NewItem> releaseItemList = new ArrayList<>();
+
+        for(NewItem newItem : affItemList){
+            if (newItem.getReleased()==0){
+                releaseItemList.add(newItem);
+            }
+        }
+//        List<NewItem> releaseItem = affItemList.stream().filter(
+//                i->i.getRelease()==0
+//        ).collect(Collectors.toList());
+
+        return releaseItemList;
+
+    }
     /**
      * createDevelopmentCard 에서 쓰일 것
 

@@ -3,21 +3,17 @@ package eci.server.ReleaseModule.dto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import eci.server.BomModule.repository.BomRepository;
 import eci.server.BomModule.repository.PreliminaryBomRepository;
-import eci.server.CRCOModule.dto.co.CoReadDto;
 import eci.server.CRCOModule.dto.co.CoSearchDto;
-import eci.server.CRCOModule.dto.cr.CrPagingDto;
 import eci.server.ItemModule.dto.item.ItemProjectDto;
 import eci.server.ItemModule.dto.member.MemberDto;
-import eci.server.ItemModule.dto.newRoute.routeOrdering.RouteOrderingDto;
 import eci.server.ItemModule.entity.newRoute.RouteOrdering;
 import eci.server.ItemModule.entity.newRoute.RouteProduct;
-import eci.server.ItemModule.exception.route.RouteNotFoundException;
 import eci.server.ItemModule.repository.newRoute.RouteOrderingRepository;
 import eci.server.ItemModule.repository.newRoute.RouteProductRepository;
 import eci.server.NewItemModule.repository.attachment.AttachmentTagRepository;
 import eci.server.ProjectModule.dto.produceOrg.ProduceOrganizationDto;
 import eci.server.ReleaseModule.dto.type.ReleaseTypeDto;
-import eci.server.ReleaseModule.entity.Release;
+import eci.server.ReleaseModule.entity.Releasing;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -26,13 +22,15 @@ import org.springframework.lang.Nullable;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 import static java.util.stream.Collectors.toList;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+/**
+ *
+ */
 public class ReleaseDto{
     private Long id;
 
@@ -69,7 +67,7 @@ public class ReleaseDto{
 
     private boolean preRejected;
 
-    private ProduceOrganizationDto releaseOrganizationId;
+    private List<ProduceOrganizationDto> releaseOrganizationId;
 
     @Nullable
     private ItemProjectDto item;
@@ -79,7 +77,7 @@ public class ReleaseDto{
 
 
     public static ReleaseDto toDto(
-            Release release,
+            Releasing release,
             RouteOrdering routeOrdering,
             RouteOrderingRepository routeOrderingRepository,
             RouteProductRepository routeProductRepository,
@@ -88,16 +86,7 @@ public class ReleaseDto{
             PreliminaryBomRepository preliminaryBomRepository,
             String defaultImageAddress
     ) {
-        List<RouteOrderingDto> routeDtoList = Optional.ofNullable(
-                RouteOrderingDto.toDtoList(
-                        routeOrderingRepository.findByReleaseOrderByIdAsc(release),
-                        routeProductRepository,
-                        routeOrderingRepository,
-                        bomRepository,
-                        preliminaryBomRepository,
-                        defaultImageAddress
-                )
-        ).orElseThrow(RouteNotFoundException::new);
+
 
         return new ReleaseDto(
 
@@ -120,7 +109,7 @@ public class ReleaseDto{
 
                 MemberDto.toDto(release.getMember(),defaultImageAddress),
 
-                release.getReleaseAttachments().
+                release.getAttachments().
                         stream().
                         map(i -> ReleaseAttachmentDto.toDto(
                                 i,
@@ -147,7 +136,9 @@ public class ReleaseDto{
 
                 ReleasePreRejected(routeOrdering ,routeProductRepository),
 
-                ProduceOrganizationDto.toDto(release.getReleaseOrganization()),
+                ProduceOrganizationDto.toDtoList(
+                        release.getReleaseOrganization()
+                ),
 
                 release.getNewItem()==null?
                         ItemProjectDto.toDto()
@@ -162,6 +153,165 @@ public class ReleaseDto{
 
 
         );
+    }
+
+    public static ReleaseDto noRoutetoDto(
+            Releasing release,
+            //RouteOrdering routeOrdering,
+            RouteOrderingRepository routeOrderingRepository,
+            RouteProductRepository routeProductRepository,
+            AttachmentTagRepository attachmentTagRepository,
+            BomRepository bomRepository,
+            PreliminaryBomRepository preliminaryBomRepository,
+            String defaultImageAddress
+    ) {
+
+        return new ReleaseDto(
+
+                release.getId(),
+
+                release.getReleaseNumber(),
+
+                release.getReleaseType()==null?ReleaseTypeDto.toDto()
+                        :ReleaseTypeDto.toDto(release.getReleaseType()),
+
+                release.getReleaseTitle(),
+
+                release.getNewItem()==null?
+                        " " : release.getNewItem().getItemNumber(),
+
+                release.getChangeOrder()==null?
+                        " " : release.getChangeOrder().getCoNumber(),
+
+                release.getReleaseContent(),
+
+                MemberDto.toDto(release.getMember(),defaultImageAddress),
+
+                release.getAttachments().
+                        stream().
+                        map(i -> ReleaseAttachmentDto.toDto(
+                                i,
+                                attachmentTagRepository))
+                        .collect(toList()),
+
+                -1L ,
+
+                //05-22추가
+                release.getCreatedAt(),
+                MemberDto.toDto(release.getMember(), defaultImageAddress),
+
+                release.getModifier()==null?null:release.getModifiedAt(),
+                release.getModifier()==null?null:MemberDto.toDto(release.getModifier(), defaultImageAddress),
+
+                release.getTempsave(),
+                release.getReadonly(),
+
+                false,
+
+                ProduceOrganizationDto.toDtoList(
+                        release.getReleaseOrganization()
+                ),
+
+                release.getNewItem()==null?
+                        ItemProjectDto.toDto()
+                        :
+                        ItemProjectDto.toDto(release.getNewItem(),routeOrderingRepository),
+
+                release.getChangeOrder()==null?
+                        CoSearchDto.toDto():
+                        CoSearchDto.toDto(
+                                release.getChangeOrder()
+                        )
+
+
+        );
+    }
+
+
+    public static List<ReleaseDto> toDtoList(
+            List<Releasing> releaseList,
+            RouteOrderingRepository routeOrderingRepository,
+            RouteProductRepository routeProductRepository,
+            AttachmentTagRepository attachmentTagRepository,
+            String defaultImageAddress
+    ) {
+        List<ReleaseDto> releaseDtos = releaseList.stream().map(
+
+                release -> new ReleaseDto(
+
+                release.getId(),
+
+                release.getReleaseNumber(),
+
+                release.getReleaseType()==null?ReleaseTypeDto.toDto()
+                        :ReleaseTypeDto.toDto(release.getReleaseType()),
+
+                release.getReleaseTitle(),
+
+                release.getNewItem()==null?
+                        " " : release.getNewItem().getItemNumber(),
+
+                release.getChangeOrder()==null?
+                        " " : release.getChangeOrder().getCoNumber(),
+
+                release.getReleaseContent(),
+
+                MemberDto.toDto(release.getMember(),defaultImageAddress),
+
+                release.getAttachments().
+                        stream().
+                        map(i -> ReleaseAttachmentDto.toDto(
+                                i,
+                                attachmentTagRepository))
+                        .collect(toList()),
+
+                //가장 최신의 라우트 오더링 중 최신의 라우트 오더링 아이디
+                routeOrderingRepository.findByReleaseOrderByIdAsc(release).size()>0?
+                        routeOrderingRepository.findByReleaseOrderByIdAsc(release).
+                                get(routeOrderingRepository.findByReleaseOrderByIdAsc(release).size() - 1)
+                                .getId()
+                        : //라우트 없는 경우엔
+                        -1L ,
+
+                //05-22추가
+                release.getCreatedAt(),
+                MemberDto.toDto(release.getMember(), defaultImageAddress),
+
+                release.getModifier()==null?null:release.getModifiedAt(),
+                release.getModifier()==null?null:MemberDto.toDto(release.getModifier(), defaultImageAddress),
+
+                release.getTempsave(),
+                release.getReadonly(),
+
+                ReleasePreRejected(
+                        routeOrderingRepository.findByReleaseOrderByIdAsc(release).size()>0?
+                        routeOrderingRepository.findByReleaseOrderByIdAsc(release).
+                                get(routeOrderingRepository.findByReleaseOrderByIdAsc(release).size() - 1)
+                                :null
+
+                        ,routeProductRepository),
+
+                ProduceOrganizationDto.toDtoList(
+                        release.getReleaseOrganization()
+                ),
+
+                release.getNewItem()==null?
+                        ItemProjectDto.toDto()
+                        :
+                        ItemProjectDto.toDto(release.getNewItem(),routeOrderingRepository),
+
+                release.getChangeOrder()==null?
+                        CoSearchDto.toDto():
+                        CoSearchDto.toDto(
+                                release.getChangeOrder()
+                        )
+
+
+        )
+
+        ).collect(toList());
+
+        return releaseDtos;
     }
 
 
