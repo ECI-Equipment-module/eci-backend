@@ -62,6 +62,7 @@ public class DashboardService {
     private final ChangeRequestRepository changeRequestRepository;
     private final ProjectService projectService;
     private final ReleasingRepository releasingRepository;
+
     private final NewItemService newItemService;
     private final CoService changeOrderService;
 
@@ -1554,8 +1555,8 @@ public class DashboardService {
 
         Set<NewItem> newItemForRelease =
                 newItemService.readAffectedItems().stream().filter(
-                newItem -> newItem.getReleased()!=null&&newItem.getReleased()==0
-        ).collect(Collectors.toSet());
+                        newItem -> newItem.getReleased()!=null&&newItem.getReleased()==0
+                ).collect(Collectors.toSet());
 
 
         for (NewItem newItem : newItemForRelease) {
@@ -1611,5 +1612,7 @@ public class DashboardService {
         return new ToDoDoubleList(toDoDoubleList);
 
     }
+
+
 
 }

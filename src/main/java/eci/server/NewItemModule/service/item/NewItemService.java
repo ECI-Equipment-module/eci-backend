@@ -386,7 +386,6 @@ public class NewItemService {
         if (routeDtoList.size() > 0) {//아이템에 딸린 routeDto가 존재할 때
             RouteOrdering routeOrdering = routeOrderingRepository
                     .findByNewItemOrderByIdAsc(targetItem).get(
-
                             routeOrderingRepository
                                     .findByNewItemOrderByIdAsc(targetItem)
                                     .size()-1
