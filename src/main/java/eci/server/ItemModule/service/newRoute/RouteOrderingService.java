@@ -46,6 +46,8 @@ import eci.server.NewItemModule.service.item.NewItemService;
 import eci.server.ProjectModule.entity.project.Project;
 import eci.server.ProjectModule.exception.ProjectNotLinkedException;
 import eci.server.ProjectModule.repository.project.ProjectRepository;
+import eci.server.ReleaseModule.entity.Releasing;
+import eci.server.ReleaseModule.exception.ReleaseNotFoundException;
 import eci.server.ReleaseModule.repository.ReleaseRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -909,8 +911,13 @@ public class RouteOrderingService {
                                 ItemNotFoundException::new
                         );
 
-                        chkItem.updateRevision(targetItem.getRevision()+1);
-                        //targetItem.getRevision() 보다 하나 더 큰 값으로 갱신
+                        //chkItem.updateRevision(targetItem.getRevision()+1);
+                        chkItem.updateRevisionAndHeritageReleaseCnt(
+                                targetItem.getRevision()+1,
+                                targetItem.getReleased());
+
+                        // 제품 아닌 아이들은 이 단계에서 revision 갱신 및 released 를 상속 받기
+
                     }
 
 
@@ -963,6 +970,51 @@ public class RouteOrderingService {
                 }
             }
 
+            else if (targetRoutProduct.getType().getModule().equals("RELEASE")
+                    && targetRoutProduct.getType().getName().equals("CREATE")) {
+
+                if ((routeOrdering.getRelease()==null)) {
+                    throw new ReleaseNotFoundException();
+                } else {
+
+                    // 이에 딸린 RELEASE 의 TEMP SAVE = FALSE
+                    Releasing release =routeOrdering.getRelease();
+
+                    release.updateTempsaveWhenMadeRoute();
+
+                }
+
+
+            }
+            else if (targetRoutProduct.getType().getModule().equals("RELEASE")
+                    && targetRoutProduct.getType().getName().equals("REVIEW")) {
+
+                // RELEASE 안에
+                // 1) ITEM 이 있다면, 이 아이템의 released 를 +1 시킨다.
+                // 2) CO 가 있다면, CO 안에 들어있는 아이템들을 돌면서 released 에 +1을 시킨다.
+
+                if ((routeOrdering.getRelease()==null)) {
+                    throw new ReleaseNotFoundException();
+                } else {
+
+                    // 0) target Release 데려오기
+                    Releasing release =routeOrdering.getRelease();
+
+                    // 1) ITEM 이 있다면, 이 아이템의 released 를 +1 시킨다.
+                    if(release.getNewItem()!=null){
+                        release.getNewItem().updateReleaseCnt();
+                    }
+
+                    // 2) CO 가 있다면, CO 안에 들어있는 아이템들을 돌면서 released 에 +1을 시킨다.
+                    else if(release.getChangeOrder()!=null){
+                        release.getChangeOrder().getCoNewItems().stream().forEach(
+                                coNewItem -> coNewItem.getNewItem().updateReleaseCnt()
+                        );
+                    }
+                }
+
+
+            }
             RouteOrderingUpdateRequest newRouteUpdateRequest =
                     routeOrdering
                             .update(
@@ -1026,6 +1078,7 @@ public class RouteOrderingService {
         // => 거절 가능타입 검증
         // => DISABLE 아닌지 검증
         // =>
+        // 이 reviewRouteArrList 에 추가해줘야 함 (꺼절 가능 라우트 번호)
         if (routePreset.reviewRouteArrList.contains(targetRoutProduct.getType().getId().toString())) {
             //만약 리뷰타입의 라우트라면
             Long rejectPossibleTypeId = null;
@@ -1055,8 +1108,8 @@ public class RouteOrderingService {
                     rejectPossibleTypeId = 18L; //CO 신청
 
                     break;
-
-                case "23": //release review
+                //release review
+                case "23":
                     rejectPossibleTypeId = 22L; //release request
 
                     break;

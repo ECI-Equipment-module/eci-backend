@@ -5,7 +5,6 @@ import eci.server.CRCOModule.entity.cr.ChangeRequest;
 import eci.server.CRCOModule.repository.cr.ChangeRequestRepository;
 import eci.server.CRCOModule.service.cr.CrService;
 import eci.server.ItemModule.repository.newRoute.RouteOrderingRepository;
-import eci.server.NewItemModule.entity.NewItem;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
