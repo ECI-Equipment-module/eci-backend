@@ -14,20 +14,20 @@ import javax.validation.Valid;
 @RequiredArgsConstructor
 @Slf4j
 
-@CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
+@CrossOrigin(origins = "https://localhost:3000")
 public class MemberController {
 
     private final MemberService memberService;
 
 
-    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
+    @CrossOrigin(origins = "https://localhost:3000")
     @GetMapping("/members/{id}")
     @ResponseStatus(HttpStatus.OK)
     public Response read(@PathVariable Long id) {
         return Response.success(memberService.read(id));
     }
 
-    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
+    @CrossOrigin(origins = "https://localhost:3000")
     @DeleteMapping("/members/{id}")
     @ResponseStatus(HttpStatus.OK)
     public Response delete(@PathVariable Long id) {
@@ -35,7 +35,7 @@ public class MemberController {
         return Response.success();
     }
 
-    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
+    @CrossOrigin(origins = "https://localhost:3000")
     @GetMapping("/members")
     @ResponseStatus(HttpStatus.OK)
     public Response readAll(@Valid MemberReadCondition cond) {
