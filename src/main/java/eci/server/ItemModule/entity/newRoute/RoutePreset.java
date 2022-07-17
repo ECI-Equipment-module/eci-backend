@@ -276,6 +276,30 @@ public String[][] routeByItemName = {
             {"RELEASE", "RELEASE", "RELEASE"}
 
     };
+
+    // DOCUMENT
+
+    public String[][] DOCRouteName = {
+
+            {
+                    "문서 Request",
+                    "문서 Review"
+            }
+    };
+
+    public String[][] DOCRouteType = {
+
+
+            {"REQUEST", "REVIEW", "COMPLETE"},
+
+    };
+
+    public String[][] DOCRouteTypeModule = {
+
+            {"DOC" , "DOC" , "DOC"}
+
+    };
+
 }
 
 

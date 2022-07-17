@@ -3,6 +3,7 @@ package eci.server.ItemModule.dto.newRoute.routeOrdering;
 import eci.server.CRCOModule.exception.CoNotFoundException;
 import eci.server.CRCOModule.repository.co.ChangeOrderRepository;
 import eci.server.CRCOModule.repository.cr.ChangeRequestRepository;
+import eci.server.DocumentModule.repository.DocumentRepository;
 import eci.server.ItemModule.entity.item.ItemType;
 import eci.server.ItemModule.entity.newRoute.RouteOrdering;
 import eci.server.ItemModule.entity.newRoute.RoutePreset;
@@ -181,6 +182,36 @@ public class RouteOrderingCreateRequest {
         return new RouteOrdering(
                 typeList.toString(),
                 releaseRepository.findById(req.itemId)
+                        .orElseThrow(ReleaseNotFoundException::new)
+        );
+    }
+
+
+    /**
+     * DOCUMENT
+     * @param req
+     * @param routePreset
+     * @param documentRepository
+     * @return
+     */
+    public static RouteOrdering toDocumentEntity(
+            RouteOrderingCreateRequest req,
+            RoutePreset routePreset,
+            DocumentRepository documentRepository
+    ){
+
+        List<String> typeList = new ArrayList<>();
+
+        List routeProduct = List.of((routePreset.DOCRouteName[0]));
+
+        for(Object type : routeProduct){
+            typeList.add(type.toString());
+
+        }
+
+        return new RouteOrdering(
+                typeList.toString(),
+                documentRepository.findById(req.itemId)
                         .orElseThrow(ReleaseNotFoundException::new)
         );
     }
