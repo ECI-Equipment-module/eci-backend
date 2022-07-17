@@ -1,5 +1,6 @@
 package eci.server.NewItemModule.dto.classification;
 
+import eci.server.DocumentModule.entity.classification.DocClassification2;
 import eci.server.NewItemModule.entity.classification.Classification2;
 import eci.server.NewItemModule.repository.classification.Classification2Repository;
 import eci.server.NewItemModule.repository.classification.Classification3Repository;
@@ -7,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
@@ -65,6 +67,32 @@ public class C2SelectDto {
         );
         return classification1SelectDtoList;
     }
+
+
+    public static List<C2SelectDto> toDocDtoList(
+            String beforeName,
+            String beforeId,
+            List <DocClassification2> docClassification2s
+    ) {
+
+        List<C2SelectDto> classification1SelectDtoList
+                = docClassification2s.stream().map(
+                c -> new C2SelectDto(
+                        c.getId(),
+                        c.getName(),
+                        c.getLast(),
+
+                        beforeName+"/"+c.getName(),
+                        beforeId+"/"+c.getId()+"/"+(c.getLast()==1?"99999":""),
+
+                        new ArrayList<>()
+                )
+        ).collect(
+                toList()
+        );
+        return classification1SelectDtoList;
+    }
+
 
 }
 

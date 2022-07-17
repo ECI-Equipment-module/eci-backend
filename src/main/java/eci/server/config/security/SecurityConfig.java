@@ -147,8 +147,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.PUT, "/co/{id}").authenticated()
                 .antMatchers(HttpMethod.PUT, "/co/temp/end/{id}").authenticated()
                 .antMatchers(HttpMethod.GET, "co/page").authenticated()
-                .antMatchers(HttpMethod.DELETE, "/co").authenticated()
+                .antMatchers(HttpMethod.DELETE, "/co/{id}").authenticated()
                 .antMatchers(HttpMethod.POST, "/route/co").authenticated()
+
+                .antMatchers(HttpMethod.POST, "/release").authenticated()
+                .antMatchers(HttpMethod.POST, "/release/temp").authenticated()
+                .antMatchers(HttpMethod.PUT, "/release/{id}").authenticated()
+                .antMatchers(HttpMethod.PUT, "/release/temp/end/{id}").authenticated()
+                .antMatchers(HttpMethod.DELETE, "/release/{id}").authenticated()
+                .antMatchers(HttpMethod.POST, "/route/release").authenticated()
 
                 .anyRequest().hasAnyRole("ADMIN")//멤버의 역할이 관리자인 경우에는 모든 것을 허용
 

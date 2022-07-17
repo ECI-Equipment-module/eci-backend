@@ -1,7 +1,5 @@
 package eci.server.NewItemModule.entity.classification;
 
-
-import eci.server.NewItemModule.entity.classification.Classification1;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

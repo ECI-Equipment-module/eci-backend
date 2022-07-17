@@ -24,6 +24,8 @@ import eci.server.ProjectModule.dto.carType.CarTypeDto;
 import eci.server.ProjectModule.dto.clientOrg.ClientOrganizationDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.lang.Nullable;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -35,6 +37,7 @@ import static java.util.stream.Collectors.toList;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class CoReadDto {
 
     private Long id;
@@ -91,7 +94,9 @@ public class CoReadDto {
 
     private boolean preRejected;
 
-
+    public static CoReadDto toDto(){
+        return new CoReadDto();
+    }
 
     public static CoReadDto toDto(
             ChangeOrder co,
@@ -105,7 +110,7 @@ public class CoReadDto {
     ) {
         List<RouteOrderingDto> routeDtoList = Optional.ofNullable(
                 RouteOrderingDto.toDtoList(
-                        routeOrderingRepository.findByChangeOrder(co),
+                        routeOrderingRepository.findByChangeOrderOrderByIdAsc(co),
                         routeProductRepository,
                         routeOrderingRepository,
                         bomRepository,
@@ -191,8 +196,8 @@ public class CoReadDto {
                 co.getTempsave(),
                 co.getReadonly(),
 
-                routeOrderingRepository.findByChangeOrder(co).
-                        get(routeOrderingRepository.findByChangeOrder(
+                routeOrderingRepository.findByChangeOrderOrderByIdAsc(co).
+                        get(routeOrderingRepository.findByChangeOrderOrderByIdAsc(
                                 co).size() - 1)
                         .getId(),
 

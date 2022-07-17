@@ -135,26 +135,6 @@ public class ProjectService {
         return new ProjectCreateUpdateResponse(project.getId(), routeId);
     }
 
-    private void uploadAttachments(List<ProjectAttachment> attachments, List<MultipartFile> filedAttachments) {
-        // 실제 이미지 파일을 가지고 있는 Multipart 파일을
-        // 파일이 가지는 unique name 을 파일명으로 해서 파일저장소 업로드
-        IntStream.range(0, attachments.size())
-                .forEach(
-                        i -> fileService.upload
-                                (
-                                        filedAttachments.get(i),
-                                        attachments.get(i).getUniqueName()
-                                )
-                );
-    }
-
-    private void deleteAttachments(List<ProjectAttachment> attachments) {
-        for(ProjectAttachment attachment:attachments){
-            if(!attachment.isSave()){
-                fileService.delete(attachment.getUniqueName());
-            }
-        }
-    }
 
     @Transactional
 
@@ -194,6 +174,12 @@ public class ProjectService {
 
     }
 
+    public ProjectTempCreateUpdateResponse update2(Long id, Long NewitemId) {
+        Project project =  projectRepository.findById(id).orElseThrow(ProjectNotFoundException::new);
+        project.updateNewItem(NewitemId, newItemRepository);
+        System.out.println("이 서비스 츠로젝트 up2date22222222222222222222222222222 ");
+        return new ProjectTempCreateUpdateResponse(project.getId());
+    }
 
     @Transactional
     public DesignCreateUpdateResponse tempEnd(
@@ -261,9 +247,18 @@ public class ProjectService {
 
 
     // read one project
+
     public ProjectDto read(Long id){
         Project targetProject = projectRepository.findById(id).orElseThrow(ProjectNotFoundException::new);
-        RouteOrdering routeOrdering = routeOrderingRepository.findByNewItemOrderByIdAsc(targetProject.getNewItem()).get(0);
+
+
+        RouteOrdering routeOrdering = routeOrderingRepository
+                .findByNewItemOrderByIdAsc(targetProject.getNewItem())
+                .get(routeOrderingRepository
+                        .findByNewItemOrderByIdAsc(targetProject.getNewItem())
+                        .size()-1);
+
+
         return ProjectDto.toDto(
                 targetProject,
                 routeOrdering,
@@ -619,24 +614,6 @@ public class ProjectService {
                                 ).size()-1
                         ).getLifecycleStatus(),//라우트 오더링 중에서 현재 진행중인 라우트프로덕트
                         //현재 phase의 sequence가
-//
-//                        (double) routeOrderingRepository.findByItem(
-//                                                project.getItem()
-//                                        ).get(
-//                                                routeOrderingRepository.findByItem(
-//                                                        project.getItem()
-//                                                ).size()-1
-//                                        ).getPresent() //라우트 오더링 중에서 현재 진행중인 라우트프로덕트
-//                                /
-//                                routeProductRepository.findAllByRouteOrdering(
-//                                routeOrderingRepository.findByItem(
-//                                        project.getItem()
-//                                ).get(
-//                                        routeOrderingRepository.findByItem(
-//                                                project.getItem()
-//                                        ).size()-1 //아이템의 라우트 오더링 중에서 최신 아이
-//                                )
-//                        ).size(),
 
                         project.getCreatedAt()
                 )
@@ -655,6 +632,27 @@ public class ProjectService {
         projectRepository.delete(project);
     }
 
+
+    public NewItemCreateResponse changeProjectItemToNewMadeItem(Long targetProjId, Long newMadeItemid){
+
+        Project targetProj = projectRepository.findById(targetProjId).orElseThrow(ProjectNotFoundException::new);
+        NewItem newMadeItem = newItemRepository.findById(newMadeItemid).orElseThrow(ItemNotFoundException::new);
+
+        // 이 타겟 프로젝트의 아이템을 지금 새로 만들어진 아이템으로 변경해주면 된다.
+        //targetProj.changeItemIdOfProjectByNewMadeItem(newMadeItem);
+        targetProj.setNewItem(newMadeItem);
+        System.out.println("sett 했어 ");
+        return new NewItemCreateResponse(targetProjId);
+
+    }
+
+    public NewItemCreateResponse projectUpdateToReadonlyFalseTempsaveTrue(Project project){
+
+        project.projectUpdateToReadonlyFalseTempSaveTrue();
+        return new NewItemCreateResponse(project.getId());
+    }
+
+
     private void deleteProjectAttachments(List<ProjectAttachment> projectAttachments) {
         projectAttachments.forEach(i -> fileService.delete(i.getUniqueName()));
     }
@@ -664,25 +662,30 @@ public class ProjectService {
                 forEach(
                         i->i.setSave(true)
                 );
-
     }
 
-    public void changeProjectItemToNewMadeItem(Long targetProjId, Long newMadeItemid){
-
-        Project targetProj = projectRepository.findById(targetProjId).orElseThrow(ProjectNotFoundException::new);
-        NewItem newMadeItem = newItemRepository.findById(newMadeItemid).orElseThrow(ItemNotFoundException::new);
-
-        // 이 타겟 프로젝트의 아이템을 지금 새로 만들어진 아이템으로 변경해주면 된다.
-        targetProj.changeItemIdOfProjectByNewMadeItem(newMadeItem);
-        targetProj.setNewItem(newMadeItem);
-
+    private void uploadAttachments(List<ProjectAttachment> attachments, List<MultipartFile> filedAttachments) {
+        // 실제 이미지 파일을 가지고 있는 Multipart 파일을
+        // 파일이 가지는 unique name 을 파일명으로 해서 파일저장소 업로드
+        IntStream.range(0, attachments.size())
+                .forEach(
+                        i -> fileService.upload
+                                (
+                                        filedAttachments.get(i),
+                                        attachments.get(i).getUniqueName()
+                                )
+                );
     }
 
-    public NewItemCreateResponse projectUpdateToReadonlyFalseTempsaveTrue(Project project){
-
-        project.projectUpdateToReadonlyFalseTempSaveTrue();
-        return new NewItemCreateResponse(project.getId());
+    private void deleteAttachments(List<ProjectAttachment> attachments) {
+        for(ProjectAttachment attachment:attachments){
+            if(!attachment.isSave()){
+                fileService.delete(attachment.getUniqueName());
+            }
+        }
     }
+
+
 
 
 }

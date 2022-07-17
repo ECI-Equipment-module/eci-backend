@@ -1,10 +1,13 @@
 package eci.server.CRCOModule.controller.co;
 
+import eci.server.CRCOModule.dto.co.CoSearchDto;
 import eci.server.CRCOModule.dto.cr.CrPagingDto;
 import eci.server.CRCOModule.entity.co.ChangeOrder;
 import eci.server.CRCOModule.repository.co.ChangeOrderRepository;
 import eci.server.CRCOModule.repository.co.CoNewItemRepository;
+import eci.server.CRCOModule.service.co.CoService;
 import eci.server.ItemModule.repository.newRoute.RouteOrderingRepository;
+import eci.server.ReleaseModule.dto.CoListDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,14 +28,14 @@ import java.util.stream.Collectors;
 @Transactional
 @RestController
 @RequiredArgsConstructor
-
-
 public class CoPageController{
 
     @Autowired
     ChangeOrderRepository changeOrderRepository;
     private final RouteOrderingRepository routeOrderingRepository;
     private final CoNewItemRepository coNewItemRepository;
+    private final CoService coService;
+
     @Value("${default.image.address}")
     private String defaultImageAddress;
 
@@ -66,6 +69,33 @@ public class CoPageController{
          * 수정 필요
          */
         return crList;
+
+    }
+
+    @CrossOrigin(origins = "https://localhost:3000")
+    @GetMapping("/releaseCoId")
+    public CoListDto readCoFromRelease(@PageableDefault(size=5)
+                                         @SortDefault.SortDefaults({
+                                                 @SortDefault(
+                                                         sort = "createdAt",
+                                                         direction = Sort.Direction.DESC)
+                                         })
+                                                 Pageable pageRequest) {
+
+        List<ChangeOrder> cos =
+                coService.readCoAvailableInRelease();
+
+        List<CoSearchDto> coPagingDtos =
+                cos.stream().map(
+                        CoSearchDto::toDto
+                ).collect(Collectors.toList());
+
+        Page<CoSearchDto> crList = new PageImpl<>(coPagingDtos);
+
+        /**
+         * 수정 필요
+         */
+        return CoListDto.toDto(crList);
 
     }
 

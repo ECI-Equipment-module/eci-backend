@@ -1,6 +1,7 @@
 package eci.server.ProjectModule.entity.project;
 
 
+import eci.server.CRCOModule.entity.cr.ChangeRequest;
 import eci.server.ItemModule.entity.entitycommon.EntityDate;
 import eci.server.ItemModule.entity.member.Member;
 import eci.server.ItemModule.exception.item.AttachmentNotFoundException;
@@ -145,6 +146,7 @@ public class Project extends EntityDate {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private CarType carType;
 
+
     @OneToMany(
             mappedBy = "project",
             cascade = CascadeType.PERSIST,
@@ -154,6 +156,14 @@ public class Project extends EntityDate {
 
     @Column
     private char revision;
+
+
+    @OneToMany( //0717 추가
+            mappedBy = "project",
+            cascade = CascadeType.PERSIST,
+            orphanRemoval = true
+    )
+    private List<NewItem> newItems = new ArrayList<>();
 
     public Project(
             String name,
@@ -351,6 +361,9 @@ public class Project extends EntityDate {
             MemberRepository memberRepository,
             AttachmentTagRepository attachmentTagRepository
     ) {
+
+        this.readonly = false;
+        this.tempsave = true;
 
         this.setModifiedAt(LocalDateTime.now());
 
@@ -648,8 +661,6 @@ public class Project extends EntityDate {
                         req.getModifierId()
                 ).orElseThrow(MemberNotFoundException::new);//05 -22 생성자 추가
 
-        // 수정 시간 갱신
-        this.setModifiedAt(LocalDateTime.now());
 
         this.name = req.getName() == null || req.getName().isBlank() ?
                 projectLevelRepository.findById(-1L).orElseThrow(
@@ -767,6 +778,7 @@ public class Project extends EntityDate {
     }
 
     public void setNewItem(NewItem newItem) {
+        System.out.println("setting newItem to "+ newItem.getId());
         this.newItem = newItem;
     }
 
@@ -777,4 +789,18 @@ public class Project extends EntityDate {
                 this.id
         );
     }
+
+    public NewItemCreateResponse updateNewItem(
+            Long NewItemId,
+            NewItemRepository newItemRepository
+    ){
+        this.newItem =
+                newItemRepository.findById(NewItemId)
+                        .orElseThrow(ItemNotFoundException::new);
+
+        return new NewItemCreateResponse(newItem.getId());
+
+    }
+
+
 }

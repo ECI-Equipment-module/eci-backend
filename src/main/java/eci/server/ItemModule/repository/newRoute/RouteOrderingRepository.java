@@ -4,9 +4,8 @@ import eci.server.CRCOModule.entity.co.ChangeOrder;
 import eci.server.CRCOModule.entity.cr.ChangeRequest;
 import eci.server.ItemModule.entity.newRoute.RouteOrdering;
 import eci.server.NewItemModule.entity.NewItem;
+import eci.server.ReleaseModule.entity.Releasing;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
@@ -16,7 +15,10 @@ public interface RouteOrderingRepository extends JpaRepository<RouteOrdering, Lo
 
     List<RouteOrdering> findByChangeRequest(ChangeRequest changeRequest);
 
-    List<RouteOrdering> findByChangeOrder(ChangeOrder changeOrder);
+    List<RouteOrdering> findByChangeOrderOrderByIdAsc(ChangeOrder changeOrder);
+
+    List<RouteOrdering> findByReleaseOrderByIdAsc(Releasing release);
+
 
     RouteOrdering findByRevisedCnt(Integer integer);
 

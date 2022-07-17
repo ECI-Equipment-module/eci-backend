@@ -14,6 +14,7 @@ import eci.server.NewItemModule.dto.newItem.ItemClassificationDto;
 import eci.server.NewItemModule.entity.NewItem;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -23,6 +24,7 @@ import java.util.Set;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class CrPagingDto {
 
     private String imageAddress;
@@ -49,6 +51,9 @@ public class CrPagingDto {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime createdAt;
 
+    public static CrPagingDto toDto(){
+        return  new CrPagingDto();
+    }
 
     public static CrPagingDto toDto(
             NewItem Item,
@@ -97,7 +102,6 @@ public class CrPagingDto {
 
     public static CrPagingDto toCoDto(
             NewItem Item,
-            //List<CoNewItem> coNewItemList,
             RouteOrderingRepository routeOrderingRepository,
             ChangeOrder co,
             String defaultImageAddress
