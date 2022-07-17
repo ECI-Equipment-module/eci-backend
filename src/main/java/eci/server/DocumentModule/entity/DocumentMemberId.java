@@ -1,4 +1,4 @@
-package eci.server.CRCOModule.entity.cr;
+package eci.server.DocumentModule.entity;
 
 import eci.server.ItemModule.entity.member.Member;
 import lombok.*;
@@ -11,8 +11,8 @@ import java.io.Serializable;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class CrMemberId implements Serializable {
-    private ChangeRequest changeRequest;
+public class DocumentMemberId implements Serializable {
+    private Document document;
     private Member member;
 }
 

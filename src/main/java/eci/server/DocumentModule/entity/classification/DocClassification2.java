@@ -1,4 +1,4 @@
-package eci.server.NewItemModule.entity.classification;
+package eci.server.DocumentModule.entity.classification;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -7,12 +7,11 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Classification2 {
+public class DocClassification2{
     @Id
     //@GeneratedValue(strategy = GenerationType.IDENTITY)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQUENCE2")
@@ -26,18 +25,11 @@ public class Classification2 {
     @Column
     private Integer last;
 
-
-
-
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "classification1_id", nullable = false)
+    @JoinColumn(name = "doc_classification1_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    private Classification1 classification1;
+    private DocClassification1 docClassification1;
 
-    @OneToMany(
-            mappedBy = "classification2",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true
-    )
-    private List<Classification3> classification3_list;
+
 }
+
