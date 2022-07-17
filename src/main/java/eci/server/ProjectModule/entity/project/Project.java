@@ -1,6 +1,7 @@
 package eci.server.ProjectModule.entity.project;
 
 
+import eci.server.CRCOModule.entity.cr.ChangeRequest;
 import eci.server.ItemModule.entity.entitycommon.EntityDate;
 import eci.server.ItemModule.entity.member.Member;
 import eci.server.ItemModule.exception.item.AttachmentNotFoundException;
@@ -145,6 +146,7 @@ public class Project extends EntityDate {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private CarType carType;
 
+
     @OneToMany(
             mappedBy = "project",
             cascade = CascadeType.PERSIST,
@@ -154,6 +156,14 @@ public class Project extends EntityDate {
 
     @Column
     private char revision;
+
+
+    @OneToMany( //0717 추가
+            mappedBy = "project",
+            cascade = CascadeType.PERSIST,
+            orphanRemoval = true
+    )
+    private List<NewItem> newItems = new ArrayList<>();
 
     public Project(
             String name,

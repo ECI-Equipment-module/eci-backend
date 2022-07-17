@@ -27,6 +27,7 @@ import eci.server.NewItemModule.repository.maker.MakerRepository;
 import eci.server.NewItemModule.repository.supplier.SupplierRepository;
 import eci.server.ProjectModule.entity.project.CarType;
 import eci.server.ProjectModule.entity.project.ClientOrganization;
+import eci.server.ProjectModule.entity.project.Project;
 import eci.server.ProjectModule.exception.CarTypeNotFoundException;
 import eci.server.ProjectModule.exception.ClientOrganizationNotFoundException;
 import eci.server.ProjectModule.repository.carType.CarTypeRepository;
@@ -278,6 +279,14 @@ public class NewItem extends EntityDate {
             orphanRemoval = true,
             fetch = FetchType.LAZY)
     private List<CoNewItem> coNewItems;
+
+    //0717 여러 아이템은 한 프로젝트에 귀속되기 가능
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "project_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private Project project;
+
+
     /**
      * attachment 있을 때, thumbnail 있을 때 생성자
      * @param classification
