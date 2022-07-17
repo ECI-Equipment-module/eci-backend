@@ -341,7 +341,6 @@ public class ChangeOrder extends EntityDate {
         this.modifier = member;
         this.tempsave = tempsave;
         this.readonly = readonly;
-        System.out.println(name+"!!!!!!!!!!!!!!!!!!!!!!!!!!");
 
         for(ChangeRequest cr : changeRequests) {
             cr.setChangeOrder(this);

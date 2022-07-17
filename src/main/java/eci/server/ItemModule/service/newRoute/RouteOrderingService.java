@@ -17,6 +17,7 @@ import eci.server.CRCOModule.repository.cr.ChangeRequestRepository;
 import eci.server.DesignModule.entity.design.Design;
 import eci.server.DesignModule.exception.DesignNotLinkedException;
 import eci.server.DesignModule.repository.DesignRepository;
+import eci.server.DocumentModule.repository.DocumentRepository;
 import eci.server.ItemModule.dto.member.MemberDto;
 import eci.server.ItemModule.dto.newRoute.routeOrdering.*;
 import eci.server.ItemModule.dto.newRoute.routeProduct.RouteProductCreateRequest;
@@ -75,7 +76,9 @@ public class RouteOrderingService {
     private final ChangeOrderRepository changeOrderRepository;
     private final NewItemService newItemService;
     private final CoNewItemRepository coNewItemRepository;
-    private final ReleasingRepository releaseRepository;
+
+    private final ReleasingRepository releasingRepository;
+    private final DocumentRepository documentRepository;
 
     @Value("${default.image.address}")
     private String defaultImageAddress;
@@ -154,8 +157,6 @@ public class RouteOrderingService {
                 newRoutes,
                 routeProductRepository,
                 routeOrderingRepository,
-                bomRepository,
-                preliminaryBomRepository,
                 defaultImageAddress
         );
     }
@@ -470,7 +471,7 @@ public class RouteOrderingService {
                 toReleaseEntity(
                         req,
                         routePreset,
-                        releaseRepository
+                        releasingRepository
                 )
         );
 
@@ -499,6 +500,46 @@ public class RouteOrderingService {
 
         return new RouteOrderingCreateResponse(newRoute.getId());
     }
+
+
+    @Transactional
+    public RouteOrderingCreateResponse createDocRoute(RouteOrderingCreateRequest req) {
+
+        RouteOrdering newRoute = routeOrderingRepository
+                .save(RouteOrderingCreateRequest.
+                        toDocumentEntity(
+                                req,
+                                routePreset,
+                                documentRepository
+                        )
+                );
+
+        List<RouteProduct> routeProductList =
+                RouteProductCreateRequest.toDocumentEntityList(
+                        req,
+                        newRoute,
+                        routePreset,
+                        memberRepository,
+                        routeTypeRepository
+
+                );
+
+        for (RouteProduct routeProduct : routeProductList) {
+
+            RouteProduct routeProduct1 =
+                    routeProductRepository.save(routeProduct);
+            System.out.println(routeProduct1.getRoute_name());
+            System.out.println(routeProduct1.getMembers().get(0).getMember());
+            System.out.println(routeProduct1.getMembers().get(0).getRouteProduct());
+        }
+
+        newRoute.getDocument().updateTempsaveWhenMadeRoute();
+        //라우트 만들면 임시저장 해제
+
+
+        return new RouteOrderingCreateResponse(newRoute.getId());
+    }
+
 
     @Transactional
     public List<RouteProductDto> rejectUpdate(
@@ -1107,6 +1148,11 @@ public class RouteOrderingService {
                 //release review
                 case "23":
                     rejectPossibleTypeId = 22L; //release request
+
+                    break;
+                //document review
+                case "25":
+                    rejectPossibleTypeId = 24L; //document request
 
                     break;
                 default:        // 모두 해당이 안되는 경우

@@ -108,6 +108,8 @@ public class ReleaseService {
             uploadAttachments(release.getAttachments(), req.getAttachments());
         }
 
+        saveTrueAttachment(release);
+
 
         return new ItemCreateResponse(release.getId());
     }
@@ -179,6 +181,8 @@ public class ReleaseService {
                 result.getAttachmentUpdatedResult().getDeletedAttachments()
         );
 
+        saveTrueAttachment(release);
+
         return new ProjectTempCreateUpdateResponse(id);
 
     }
@@ -202,8 +206,6 @@ public class ReleaseService {
                         routeOrderingRepository.findByReleaseOrderByIdAsc(release),
                         routeProductRepository,
                         routeOrderingRepository,
-                        bomRepository,
-                        preliminaryBomRepository,
                         defaultImageAddress
 
                 )
