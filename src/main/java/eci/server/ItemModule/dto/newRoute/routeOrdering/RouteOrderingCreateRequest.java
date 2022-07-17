@@ -3,6 +3,8 @@ package eci.server.ItemModule.dto.newRoute.routeOrdering;
 import eci.server.CRCOModule.exception.CoNotFoundException;
 import eci.server.CRCOModule.repository.co.ChangeOrderRepository;
 import eci.server.CRCOModule.repository.cr.ChangeRequestRepository;
+import eci.server.DocumentModule.entity.Document;
+import eci.server.DocumentModule.exception.DocumentNotFoundException;
 import eci.server.DocumentModule.repository.DocumentRepository;
 import eci.server.ItemModule.entity.item.ItemType;
 import eci.server.ItemModule.entity.newRoute.RouteOrdering;
@@ -212,7 +214,7 @@ public class RouteOrderingCreateRequest {
         return new RouteOrdering(
                 typeList.toString(),
                 documentRepository.findById(req.itemId)
-                        .orElseThrow(ReleaseNotFoundException::new)
+                        .orElseThrow(DocumentNotFoundException::new)
         );
     }
 }

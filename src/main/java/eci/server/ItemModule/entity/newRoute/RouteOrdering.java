@@ -321,6 +321,10 @@ public class RouteOrdering extends EntityDate {
                         && routeProductList.get(this.present).getType().getName().equals("REQUEST")){
                     this.getRelease().setTempsave(false); //라우트 만든 순간 임시저장 다시 거짓으로
                 }
+                else if(routeProductList.get(this.present).getType().getModule().equals("DOC")
+                        && routeProductList.get(this.present).getType().getName().equals("REQUEST")){
+                    this.getDocument().setTempsave(false); //라우트 만든 순간 임시저장 다시 거짓으로
+                }
             }
 
         }else{
@@ -587,6 +591,12 @@ public class RouteOrdering extends EntityDate {
             case "22":
                 this.getRelease().setTempsave(true);
                 this.getRelease().setReadonly(false);
+                break;
+
+            //document REQUEST
+            case "24":
+                this.getDocument().setTempsave(true);
+                this.getDocument().setReadonly(false);
                 break;
 
         }
