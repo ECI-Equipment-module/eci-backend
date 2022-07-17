@@ -371,8 +371,6 @@ public class NewItemService {
                         routeOrderingRepository.findByNewItemOrderByIdAsc(targetItem),
                         routeProductRepository,
                         routeOrderingRepository,
-                        bomRepository,
-                        preliminaryBomRepository,
                         defaultImageAddress
 
                 )
@@ -533,7 +531,11 @@ public class NewItemService {
                 coatingWayRepository,
                 coatingTypeRepository,
                 carTypeRepository,
-                attachmentTagRepository
+                attachmentTagRepository,
+
+                classification1Repository,
+                classification2Repository,
+                classification3Repository
         );
 
 
@@ -600,7 +602,11 @@ public class NewItemService {
                 coatingWayRepository,
                 coatingTypeRepository,
                 carTypeRepository,
-                attachmentTagRepository
+                attachmentTagRepository,
+
+                classification1Repository,
+                classification2Repository,
+                classification3Repository
         );
 
         if(

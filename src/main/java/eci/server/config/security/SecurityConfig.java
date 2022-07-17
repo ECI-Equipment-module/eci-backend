@@ -122,7 +122,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET, "compare/bom/items/page").authenticated()
                 .antMatchers(HttpMethod.DELETE, "/compare").authenticated()
 
+                .antMatchers(HttpMethod.POST, "/doc").authenticated()
 
+                .antMatchers(HttpMethod.POST, "/doc/temp").authenticated()
+                .antMatchers(HttpMethod.PUT, "/doc/{id}").authenticated()
+                .antMatchers(HttpMethod.PUT, "/doc/temp/end/{id}").authenticated()
+                .antMatchers(HttpMethod.GET, "/doc/{id}").authenticated()
+                .antMatchers(HttpMethod.DELETE, "/doc/{id}").authenticated()
 
                 .antMatchers(HttpMethod.PUT, "/project/temp/end/{id}").access("@projectGuard.check(#id)")
                 .antMatchers(HttpMethod.PUT, "/project/{revisedId}/{newMadeItemId}").access("@projectGuard.check(#revisedId)")

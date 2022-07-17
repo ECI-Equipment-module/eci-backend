@@ -6,8 +6,9 @@ import javax.persistence.*;
 
 @Entity
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 @EqualsAndHashCode
+@AllArgsConstructor
 @IdClass(DocClassificationId.class)
 public class DocClassification{
 

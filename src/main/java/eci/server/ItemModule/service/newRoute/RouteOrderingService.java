@@ -158,8 +158,6 @@ public class RouteOrderingService {
                 newRoutes,
                 routeProductRepository,
                 routeOrderingRepository,
-                bomRepository,
-                preliminaryBomRepository,
                 defaultImageAddress
         );
     }

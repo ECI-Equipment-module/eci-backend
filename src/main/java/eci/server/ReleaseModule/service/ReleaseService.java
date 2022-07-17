@@ -206,8 +206,6 @@ public class ReleaseService {
                         routeOrderingRepository.findByReleaseOrderByIdAsc(release),
                         routeProductRepository,
                         routeOrderingRepository,
-                        bomRepository,
-                        preliminaryBomRepository,
                         defaultImageAddress
 
                 )

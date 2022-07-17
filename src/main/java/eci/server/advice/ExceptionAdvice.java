@@ -6,6 +6,7 @@ import eci.server.DesignModule.exception.DesignContentNotEmptyException;
 import eci.server.DesignModule.exception.DesignNotFoundException;
 import eci.server.DesignModule.exception.DesignNotLinkedException;
 import eci.server.DesignModule.exception.DesignUpdateImpossibleException;
+import eci.server.DocumentModule.exception.DocumentNotFoundException;
 import eci.server.ItemModule.dto.response.Response;
 import eci.server.ItemModule.exception.file.FileUploadFailureException;
 import eci.server.ItemModule.exception.item.ItemCreateNotEmptyException;
@@ -584,5 +585,11 @@ public class ExceptionAdvice {
                 "존재하지 않는 RELEASE 입니다.");
     }
 
-
+    @ExceptionHandler(DocumentNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Response DocumentNotFoundException(DocumentNotFoundException e) {
+        log.info("e = {}", e.getMessage());
+        return Response.failure(404,
+                "존재하지 않는 Document 입니다.");
+    }
 }

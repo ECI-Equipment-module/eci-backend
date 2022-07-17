@@ -52,9 +52,6 @@ public class DocumentAttachment extends EntityDate {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Document document;
 
-    @Column(nullable = false)
-    @Lob
-    private String attach_comment;
 
     /**
      * 지워졌는지 여부를 나타내는 것
@@ -65,8 +62,6 @@ public class DocumentAttachment extends EntityDate {
     @Column(nullable = false)
     private boolean save;
 
-    @Column(nullable = false)
-    private String tag;
 
     @Column
     private String attachmentaddress;
@@ -86,8 +81,7 @@ public class DocumentAttachment extends EntityDate {
      */
     public DocumentAttachment(
             String originName,
-            String tag,
-            String attach_comment,
+            String just,
             boolean save) {
         SimpleDateFormat sdf1 =
                 new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -95,8 +89,6 @@ public class DocumentAttachment extends EntityDate {
 
         this.uniqueName = generateUniqueName(extractExtension(originName));
         this.originName = originName;
-        this.tag = tag;
-        this.attach_comment = attach_comment;
         this.attachmentaddress =
                 "src/main/prodmedia/image/" +
                         sdf1.format(now).substring(0, 10)
