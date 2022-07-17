@@ -2,6 +2,7 @@ package eci.server.ItemModule.repository.newRoute;
 
 import eci.server.CRCOModule.entity.co.ChangeOrder;
 import eci.server.CRCOModule.entity.cr.ChangeRequest;
+import eci.server.DocumentModule.entity.Document;
 import eci.server.ItemModule.entity.newRoute.RouteOrdering;
 import eci.server.NewItemModule.entity.NewItem;
 import eci.server.ReleaseModule.entity.Releasing;
@@ -19,6 +20,7 @@ public interface RouteOrderingRepository extends JpaRepository<RouteOrdering, Lo
 
     List<RouteOrdering> findByReleaseOrderByIdAsc(Releasing release);
 
+    List<RouteOrdering> findByDocumentOrderByIdAsc(Document document);
 
     RouteOrdering findByRevisedCnt(Integer integer);
 

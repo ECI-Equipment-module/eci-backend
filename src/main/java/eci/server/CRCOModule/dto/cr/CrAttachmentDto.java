@@ -25,7 +25,7 @@ public class CrAttachmentDto  {
     private String attachmentaddress;
     private String date;
     private String upload;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd hh:mm:ss.SSS", timezone = "Asia/Seoul")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd hh:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime modifiedAt;
 
     public static CrAttachmentDto  toDto(

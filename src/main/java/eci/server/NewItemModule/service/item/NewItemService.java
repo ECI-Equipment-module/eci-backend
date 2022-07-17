@@ -371,8 +371,6 @@ public class NewItemService {
                         routeOrderingRepository.findByNewItemOrderByIdAsc(targetItem),
                         routeProductRepository,
                         routeOrderingRepository,
-                        bomRepository,
-                        preliminaryBomRepository,
                         defaultImageAddress
 
                 )
@@ -533,7 +531,11 @@ public class NewItemService {
                 coatingWayRepository,
                 coatingTypeRepository,
                 carTypeRepository,
-                attachmentTagRepository
+                attachmentTagRepository,
+
+                classification1Repository,
+                classification2Repository,
+                classification3Repository
         );
 
 
@@ -600,7 +602,11 @@ public class NewItemService {
                 coatingWayRepository,
                 coatingTypeRepository,
                 carTypeRepository,
-                attachmentTagRepository
+                attachmentTagRepository,
+
+                classification1Repository,
+                classification2Repository,
+                classification3Repository
         );
 
         if(
@@ -651,6 +657,13 @@ public class NewItemService {
 
         );
 
+    }
+
+    public NewItemParentDto topTreeAndItsParents(Long id){
+        NewItem newItem = newItemRepository.findById(id).orElseThrow(ItemNotFoundException::new);
+        NewItemParentDto result = NewItemParentDto.toTopDto(newItem);
+        result.setChildren(readParentAll(id));
+        return result;
     }
 
     public List<TempNewItemChildDto> readDevChildAll(Long id) {

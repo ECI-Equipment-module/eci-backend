@@ -1,5 +1,6 @@
 package eci.server.NewItemModule.dto.attachment;
 
+import eci.server.DocumentModule.entity.classification.DocTag;
 import eci.server.NewItemModule.entity.attachment.AttachmentTag;
 import eci.server.NewItemModule.entity.coating.activateAttributes.ActivateAttributes;
 import eci.server.NewItemModule.entity.attachment.Classification1AttachmentTag;
@@ -24,6 +25,21 @@ public class AttachmentTagDto {
         return new  AttachmentTagDto(
                 attachmentTag.getId(),
                 attachmentTag.getName()
+        );
+    }
+
+    public static AttachmentTagDto toDocDto(
+            DocTag attachmentTag) {
+
+        return new  AttachmentTagDto(
+                attachmentTag.getId(),
+                attachmentTag.getName()
+        );
+    }
+
+    public static AttachmentTagDto toDto() {
+
+        return new  AttachmentTagDto(
         );
     }
 

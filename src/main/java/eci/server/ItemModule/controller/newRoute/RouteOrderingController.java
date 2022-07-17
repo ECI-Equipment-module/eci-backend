@@ -71,6 +71,17 @@ public class RouteOrderingController {
         );
     }
 
+    @PostMapping("/route/doc")
+    @ResponseStatus(HttpStatus.CREATED)
+    @AssignMemberId
+    public Response createDocRoutes(
+            @Valid RouteOrderingCreateRequest req) {
+
+        return Response.success(
+                newRouteService.createDocRoute(req)
+        );
+    }
+
 
     @GetMapping("/route/{id}")
     @ResponseStatus(HttpStatus.OK)

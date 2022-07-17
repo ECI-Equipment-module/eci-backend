@@ -219,7 +219,7 @@ public class NewItemController {
     public Response readDevBomItem(@PathVariable Long id) {
         return Response.success(
                 newItemService.
-                        readParentAll(id));
+                        topTreeAndItsParents(id));
     }
 
 }

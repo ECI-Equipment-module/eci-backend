@@ -1,14 +1,10 @@
 package eci.server.NewItemModule.controller.classification;
 
 import eci.server.ItemModule.dto.response.Response;
-import eci.server.NewItemModule.dto.coatingType.CoatingTypeReadCondition;
 import eci.server.NewItemModule.service.classification.ClassificationService;
-import eci.server.NewItemModule.service.coating.CoatingTypeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-
-import javax.validation.Valid;
 
 @RequiredArgsConstructor
 @RestController

@@ -17,7 +17,7 @@ public class CoSearchDto {
     private String coNumber;
     private String coType;
     private CrReasonDto coReason;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd hh:mm:ss.SSS", timezone = "Asia/Seoul")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd hh:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime createdAt;
 
     public static CoSearchDto toDto(){

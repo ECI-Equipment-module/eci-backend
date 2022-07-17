@@ -336,8 +336,6 @@ public class CoService{
                         routeOrderingRepository.findByChangeOrderOrderByIdAsc(co),
                         routeProductRepository,
                         routeOrderingRepository,
-                        bomRepository,
-                        preliminaryBomRepository,
                         defaultImageAddress
 
                 )
