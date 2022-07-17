@@ -1155,7 +1155,7 @@ public class RouteOrderingService {
                     break;
                 //document review
                 case "25":
-                    rejectPossibleTypeId = 25L; //document request
+                    rejectPossibleTypeId = 24L; //document request
 
                     break;
                 default:        // 모두 해당이 안되는 경우
