@@ -108,6 +108,8 @@ public class ReleaseService {
             uploadAttachments(release.getAttachments(), req.getAttachments());
         }
 
+        saveTrueAttachment(release);
+
 
         return new ItemCreateResponse(release.getId());
     }
@@ -178,6 +180,8 @@ public class ReleaseService {
         deleteAttachments(
                 result.getAttachmentUpdatedResult().getDeletedAttachments()
         );
+
+        saveTrueAttachment(release);
 
         return new ProjectTempCreateUpdateResponse(id);
 

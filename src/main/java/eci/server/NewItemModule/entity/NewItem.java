@@ -285,7 +285,6 @@ public class NewItem extends EntityDate {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Project project;
 
-
     /**
      * attachment 있을 때, thumbnail 있을 때 생성자
      * @param classification

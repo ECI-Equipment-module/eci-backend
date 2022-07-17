@@ -3,7 +3,6 @@ package eci.server.DocumentModule.entity;
 import eci.server.DocumentModule.entity.classification.DocClassification;
 import eci.server.ItemModule.entity.member.Member;
 import eci.server.ItemModule.entitycommon.EntityDate;
-import eci.server.ReleaseModule.entity.ReleaseAttachment;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -63,16 +62,29 @@ public class Document extends EntityDate {
     @Column(nullable = false)
     private Boolean readonly; //05-12반영
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "doc_type_id")
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private DocumentsType documentType;
+    @Column(nullable = false)
+    private boolean revise_progress;
+
+    @Column
+    private int revision;
+
+    @Column
+    private Integer released;
+
+    //nullable
+    @OneToOne
+    @JoinColumn(name = "revise_id")
+    private Document reviseTargetNewItem;
 
     @OneToMany(
-            mappedBy = "release",
+            mappedBy = "document",
             cascade = CascadeType.PERSIST,
             orphanRemoval = true
     )
-    private List<ReleaseAttachment> attachments;
+    private List<DocumentAttachment> attachments;
+
+
+
 
 }
+

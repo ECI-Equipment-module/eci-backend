@@ -2,6 +2,7 @@ package eci.server.DocumentModule.service;
 
 import eci.server.DocumentModule.repository.DocClassification1Repository;
 import eci.server.DocumentModule.repository.DocClassification2Repository;
+import eci.server.DocumentModule.repository.DocTagRepository;
 import eci.server.NewItemModule.dto.classification.C1SelectDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,11 +17,14 @@ public class DocClassificationService {
 
     private final DocClassification1Repository docClassification1Repository;
     private final DocClassification2Repository docClassification2Repository;
+    private final DocTagRepository docTagRepository;
 
     public List<C1SelectDto> readAllDocClassification1() {
         return  C1SelectDto.toDocDtoList(
                 docClassification1Repository.findAll(),
-                docClassification2Repository
+                docClassification2Repository,
+                docTagRepository
+
         );
     }
 
