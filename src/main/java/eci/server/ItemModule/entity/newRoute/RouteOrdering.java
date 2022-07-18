@@ -335,7 +335,10 @@ public class RouteOrdering extends EntityDate {
 
             RouteOrdering routeOrdering = routeProductList.get(this.present).getRouteOrdering();
 
-            if(routeProductList.get(this.present).getRouteOrdering().getRevisedCnt()>0){
+            /**
+             * 1인 경우는 item revise route ordering 이라는 뜻
+             */
+            if(routeProductList.get(this.present).getRouteOrdering().getRevisedCnt()==1){
                 //지금 승인된 라우트가 revise 로 인해 새로 생긴 아이템이라면
                 System.out.println("여기 들어와찌ㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣ");
                 routeOrdering.setRevisedCnt(0);
@@ -399,8 +402,6 @@ public class RouteOrdering extends EntityDate {
                 // 0710 : 이 아이템과 엮인 아이들 (CHILDREN , PARENT )들의 REVISION +=1 진행 !
                 // 대상 아이템들은 이미 각각 아이템 리뷰 / 프로젝트 링크할 때 REVISION+1 당함
                 newItemService.revisionUpdateAllChildrenAndParentItem(routeOrdering.getNewItem());
-
-
 
             }
 

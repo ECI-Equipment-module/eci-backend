@@ -151,6 +151,7 @@ public class Document extends EntityDate {
             addAttachments(attachments);
         }
 
+        this.docTag = docTag;
         
     }
     
