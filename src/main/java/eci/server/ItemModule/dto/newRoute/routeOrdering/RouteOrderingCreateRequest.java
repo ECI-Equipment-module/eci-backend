@@ -83,7 +83,7 @@ public class RouteOrderingCreateRequest {
     }
 
 
-    public static RouteOrdering toRevisedRouteOrderingEntity(
+    public static RouteOrdering toRevisedItemRouteOrderingEntity(
             RouteOrderingCreateRequest req,
             NewItemRepository newItemRepository,
             RoutePreset routePreset,
@@ -212,6 +212,30 @@ public class RouteOrderingCreateRequest {
         }
 
         return new RouteOrdering(
+                typeList.toString(),
+                documentRepository.findById(req.itemId)
+                        .orElseThrow(DocumentNotFoundException::new)
+        );
+    }
+
+
+    public static RouteOrdering toRevisedDocumentEntity(
+            RouteOrderingCreateRequest req,
+            RoutePreset routePreset,
+            DocumentRepository documentRepository
+    ){
+
+        List<String> typeList = new ArrayList<>();
+
+        List routeProduct = List.of((routePreset.DOCRouteName[0]));
+
+        for(Object type : routeProduct){
+            typeList.add(type.toString());
+
+        }
+
+        return new RouteOrdering(
+                2,
                 typeList.toString(),
                 documentRepository.findById(req.itemId)
                         .orElseThrow(DocumentNotFoundException::new)

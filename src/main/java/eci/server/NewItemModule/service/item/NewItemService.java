@@ -4,6 +4,7 @@ import eci.server.BomModule.repository.BomRepository;
 import eci.server.BomModule.repository.PreliminaryBomRepository;
 import eci.server.DesignModule.dto.DesignContentDto;
 import eci.server.DesignModule.repository.DesignRepository;
+import eci.server.DocumentModule.entity.DocumentAttachment;
 import eci.server.ItemModule.dto.item.*;
 import eci.server.ItemModule.dto.newRoute.routeOrdering.RouteOrderingDto;
 
@@ -32,6 +33,7 @@ import eci.server.NewItemModule.dto.newItem.create.NewItemCreateResponse;
 import eci.server.NewItemModule.dto.newItem.create.NewItemTemporaryCreateRequest;
 import eci.server.NewItemModule.dto.newItem.update.NewItemUpdateRequest;
 import eci.server.NewItemModule.entity.*;
+import eci.server.NewItemModule.entity.attachment.Attachment;
 import eci.server.NewItemModule.repository.TempNewItemParentChildrenRepository;
 import eci.server.NewItemModule.repository.attachment.AttachmentTagRepository;
 import eci.server.NewItemModule.repository.attachment.NewItemAttachmentRepository;
@@ -124,7 +126,8 @@ public class NewItemService {
                         memberRepository,
                         colorRepository,
                         makerRepository,
-                        attachmentTagRepository
+                        attachmentTagRepository,
+                        newItemAttachmentRepository
                 )
         );
 
@@ -159,7 +162,8 @@ public class NewItemService {
                         memberRepository,
                         colorRepository,
                         makerRepository,
-                        attachmentTagRepository
+                        attachmentTagRepository,
+                        newItemAttachmentRepository
                 )
         );
 
@@ -216,7 +220,8 @@ public class NewItemService {
                         memberRepository,
                         colorRepository,
                         makerRepository,
-                        attachmentTagRepository
+                        attachmentTagRepository,
+                        newItemAttachmentRepository
                 )
 
         );
@@ -264,7 +269,8 @@ public class NewItemService {
                         memberRepository,
                         colorRepository,
                         makerRepository,
-                        attachmentTagRepository
+                        attachmentTagRepository,
+                        newItemAttachmentRepository
                 )
 
         );
@@ -335,14 +341,22 @@ public class NewItemService {
             List<NewItemAttachment> attachments,
             List<MultipartFile> filedAttachments
     ) {
+
+        List<NewItemAttachment> neededToBeUploaded =
+                attachments.stream().filter(
+                                documentAttachment -> //duplicate = false 인 것만 모아서 찐 저장!
+                                        !documentAttachment.isDuplicate()
+                        )
+                        .collect(Collectors.toList());
+
         // 실제 이미지 파일을 가지고 있는 Multipart 파일을
-        // 파일이 가지는 uniquename을 파일명으로 해서 파일저장소 업로드
-        IntStream.range(0, attachments.size())
+        // 파일이 가지는 unique name 을 파일명으로 해서 파일저장소 업로드
+        IntStream.range(0, neededToBeUploaded.size())
                 .forEach(
                         i -> fileService.upload
                                 (
                                         filedAttachments.get(i),
-                                        attachments.get(i).getUniqueName()
+                                        neededToBeUploaded.get(i).getUniqueName()
                                 )
                 );
     }

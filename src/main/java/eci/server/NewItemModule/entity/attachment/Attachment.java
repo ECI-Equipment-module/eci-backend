@@ -58,11 +58,13 @@ public class Attachment extends EntityDate {
     @Column(nullable = false)
     private boolean deleted;
 
+
     @Column(nullable = false)
     private String tag;
 
     @Column
     private String attachmentaddress;
+
 
     /**
      * 지원하는 파일 확장자
@@ -77,7 +79,11 @@ public class Attachment extends EntityDate {
      *
      * @param originName
      */
-    public Attachment(String originName, String tag, String attach_comment) {
+    public Attachment(
+            String originName,
+            String tag,
+            String attach_comment
+    ) {
         SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date now = new Date();
 
@@ -91,6 +97,8 @@ public class Attachment extends EntityDate {
                         + "/"
                         + this.uniqueName; //이미지 저장 폴더 + 이미지 저장명
     }
+
+
 
 
     /**

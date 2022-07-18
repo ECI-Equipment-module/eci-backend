@@ -9,6 +9,7 @@ import eci.server.CRCOModule.entity.cr.ChangeRequest;
 import eci.server.CRCOModule.repository.co.CoNewItemRepository;
 import eci.server.DesignModule.entity.design.Design;
 import eci.server.DocumentModule.entity.Document;
+import eci.server.DocumentModule.exception.DocumentNotFoundException;
 import eci.server.ItemModule.dto.newRoute.routeOrdering.RouteOrderingUpdateRequest;
 import eci.server.ItemModule.entitycommon.EntityDate;
 import eci.server.ItemModule.exception.item.ItemNotFoundException;
@@ -223,6 +224,22 @@ public class RouteOrdering extends EntityDate {
     }
 
 
+
+    //revise 된 document 라우트용 생성자
+    public RouteOrdering(
+            Integer revised_cnt,
+            String type,
+            Document document
+
+    ){
+        this.type = type;
+        this.lifecycleStatus = "WORKING";
+        this.revisedCnt = 2; //revise 표시는 revisedCnt > 0
+        this.present = 1;
+        this.document = document;
+    }
+
+
     public void setPresent(Integer present) {
         //초기 값은 1(진행 중인 아이)
         this.present = present;
@@ -335,7 +352,10 @@ public class RouteOrdering extends EntityDate {
 
             RouteOrdering routeOrdering = routeProductList.get(this.present).getRouteOrdering();
 
-            if(routeProductList.get(this.present).getRouteOrdering().getRevisedCnt()>0){
+            /** #####경우 1 ) item revise route ordering 이었을 때
+             * 1인 경우는 item revise route ordering 이라는 뜻
+             */
+            if(routeProductList.get(this.present).getRouteOrdering().getRevisedCnt()==1){
                 //지금 승인된 라우트가 revise 로 인해 새로 생긴 아이템이라면
                 System.out.println("여기 들어와찌ㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣ");
                 routeOrdering.setRevisedCnt(0);
@@ -400,6 +420,22 @@ public class RouteOrdering extends EntityDate {
                 // 대상 아이템들은 이미 각각 아이템 리뷰 / 프로젝트 링크할 때 REVISION+1 당함
                 newItemService.revisionUpdateAllChildrenAndParentItem(routeOrdering.getNewItem());
 
+            }
+
+
+            /** #####경우 1 ) item revise route ordering 이었을 때
+             * 1인 경우는 item revise route ordering 이라는 뜻
+             */
+            else if(routeProductList.get(this.present).getRouteOrdering().getRevisedCnt()==2){
+
+                Document oldDocument
+                        = routeProductList.get(0)
+                        .getRouteOrdering()
+                        .getDocument()
+                        .getReviseTargetDoc()
+                        ;
+
+                oldDocument.reviseProgressFalse();
 
 
             }

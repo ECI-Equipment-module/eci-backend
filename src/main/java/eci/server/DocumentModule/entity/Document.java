@@ -130,7 +130,9 @@ public class Document extends EntityDate {
             String documentNumber,
 
             boolean tempsave,
-            boolean readonly
+            boolean readonly,
+
+            List<DocumentAttachment> duplicatedAttachments
             
     ){
         this.tempsave = tempsave;
@@ -151,6 +153,13 @@ public class Document extends EntityDate {
             addAttachments(attachments);
         }
 
+        this.docTag = docTag;
+
+        if(duplicatedAttachments!=null){
+            this.attachments
+                    .addAll(duplicatedAttachments);
+            addAttachments(duplicatedAttachments);
+        }
         
     }
     
@@ -452,6 +461,39 @@ public class Document extends EntityDate {
         this.readonly = true;
     }
 
+    /**
+     * revise 로 생성 /임시저장 되면
+     * 지금 만들어지는 아이템의 target doc 은 old doc
+     * @param oldDocument
+     */
+    public void registerOldDoc(Document oldDocument){
+
+        this.reviseTargetDoc = oldDocument;
+
+    }
+
+    /**
+     * 라우트까지 만들면 old doc 의 revision+1로
+     * @param oldReviseCnt
+     */
+    public void updateRevisionAndHeritageReleased(int oldReviseCnt, int releasedCnt){
+        this.revision = oldReviseCnt+1;
+    }
+
+    /**
+     * old doc 은 (라우트까지 만들어지면 ( revise 진행
+     */
+
+    public void reviseProgressTrue(){
+        this.revise_progress=true;
+    }
+
+    /**
+     * 라우트 complete 되면 old doc 의 revise progress 되돌리기
+     */
+    public void reviseProgressFalse(){
+        this.revise_progress=false;
+    }
 
 }
 
