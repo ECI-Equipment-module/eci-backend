@@ -8,11 +8,11 @@ import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @RestController
-@CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
+@CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app/")
 public class ClassificationController {
     private final ClassificationService classificationService;
 
-    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
+    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app/")
     @GetMapping("/classification1")
     @ResponseStatus(HttpStatus.OK)
     public Response readClassification1All() {
@@ -21,7 +21,7 @@ public class ClassificationController {
                         readAllClassification1());
     }
 
-    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
+    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app/")
     @GetMapping(value = "/attributes/{c1}/{c2}/{c3}")
     @ResponseStatus(HttpStatus.OK)
     public Response read(

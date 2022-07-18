@@ -36,7 +36,7 @@ public class CrPageController {
     private String defaultImageAddress;
     private final CrService crService;
 
-    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
+    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app/")
     @GetMapping("/cr/page")
     public Page<CrPagingDto> readCrPages(@PageableDefault(size=5)
                                                         @SortDefault.SortDefaults({
@@ -68,7 +68,7 @@ public class CrPageController {
      * CO 에서 선택할 수 있는 CR 후보들
      */
 
-    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
+    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app/")
     @GetMapping("co/cr/page")
     public Page<CrPagingDto> readCoPages(@PageableDefault(size=5)
                                          @SortDefault.SortDefaults({

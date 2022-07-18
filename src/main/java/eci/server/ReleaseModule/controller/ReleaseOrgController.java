@@ -14,7 +14,7 @@ import javax.validation.Valid;
 
 @RequiredArgsConstructor
 @RestController
-@CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
+@CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app/")
 public class ReleaseOrgController {
     private final ReleaseOrgService releaseOrgService;
 

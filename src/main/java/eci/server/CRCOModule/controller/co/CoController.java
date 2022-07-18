@@ -17,12 +17,12 @@ import javax.validation.Valid;
 @RestController
 @RequiredArgsConstructor
 @Slf4j
-@CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
+@CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app/")
 public class CoController {
     private final CoService coService;
 
 
-    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
+    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app/")
     @PostMapping("/co/temp")
     @ResponseStatus(HttpStatus.CREATED)
     @AssignMemberId // Aspect : 인증된 사용자 정보로 아이템 작성자 지정 가능
@@ -35,7 +35,7 @@ public class CoController {
                 coService.tempCreate(req));
     }
 
-    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
+    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app/")
     @PostMapping("/co")
     @ResponseStatus(HttpStatus.CREATED)
     @AssignMemberId // Aspect : 인증된 사용자 정보로 아이템 작성자 지정 가능
@@ -48,7 +48,7 @@ public class CoController {
                 coService.create(req));
     }
 
-    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
+    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app/")
     @DeleteMapping("/co/{id}")
     @ResponseStatus(HttpStatus.OK)
     @AssignMemberId // Aspect : 인증된 사용자 정보로 아이템 작성자 지정 가능
@@ -61,7 +61,7 @@ public class CoController {
     }
 
     @AssignMemberId
-    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
+    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app/")
     @GetMapping(value = "/co/{id}")
     @ResponseStatus(HttpStatus.OK)
     public Response read(
@@ -72,7 +72,7 @@ public class CoController {
         );
     }
 
-    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
+    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app/")
     @PutMapping("/co/{id}")
     @ResponseStatus(HttpStatus.CREATED)
     @AssignModifierId //0605 : 수정 시에는 글쓴이 아디 주입 아니고, 수정자 아이디 주입
@@ -86,7 +86,7 @@ public class CoController {
                 coService.update(id, req));
     }
 
-    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
+    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app/")
     @PutMapping("/co/temp/end/{id}")
     @ResponseStatus(HttpStatus.CREATED)
     @AssignModifierId

@@ -14,7 +14,7 @@
 //@RestController
 //@RequiredArgsConstructor
 //@Slf4j
-//@CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
+//@CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app/")
 //
 //public class ItemController {
 //
@@ -38,7 +38,7 @@
 //
 //                itemService.tempCreate(req));
 //    }
-//    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
+//    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app/")
 //    /**
 //     * 아이템 생성 (찐 저장)
 //     *
@@ -66,7 +66,7 @@
 //     * @param id
 //     * @return 200 (success)
 //     */
-//    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
+//    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app/")
 //    @GetMapping(value = "/items/{id}")
 //    @ResponseStatus(HttpStatus.OK)
 //    public Response read(
@@ -85,7 +85,7 @@
 //     * @param id
 //     * @return 200 (success)
 //     */
-//    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
+//    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app/")
 //    @DeleteMapping("/items/{id}")
 //    @ResponseStatus(HttpStatus.OK)
 //    public Response delete(
@@ -102,7 +102,7 @@
 //     * @param req
 //     * @return
 //     */
-//    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
+//    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app/")
 //    @PutMapping("/items/{id}")
 //    @ResponseStatus(HttpStatus.OK)
 //    @AssignModifierId
@@ -120,7 +120,7 @@
 //     * @return
 //     */
 ////
-////    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
+////    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app/")
 ////    @GetMapping("/items")
 ////    @ResponseStatus(HttpStatus.OK)
 ////    public Response readAll(@Valid ItemReadCondition cond) {
@@ -133,7 +133,7 @@
 //     * @return 200 (success)
 //     */
 //
-////    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
+////    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app/")
 ////    @GetMapping(value=  "/images/{id}", produces= MediaType.IMAGE_PNG_VALUE)
 ////    @ResponseStatus(HttpStatus.OK)
 ////    public byte[] img(
@@ -151,7 +151,7 @@
 //     *
 //     * @return 200 (success)
 //     */
-//    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
+//    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app/")
 //    @GetMapping("/link-needed")
 //    @ResponseStatus(HttpStatus.OK)
 //    public Response linkNeeded() {
@@ -165,7 +165,7 @@
 ////     *
 ////     * @return 200 (success)
 ////     */
-////    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
+////    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app/")
 ////    @GetMapping("/item-candidates")
 ////    @ResponseStatus(HttpStatus.OK)
 ////    public Response linkNeededItemForProject() {
@@ -175,7 +175,7 @@
 ////    }
 //
 //
-////    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
+////    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app/")
 ////    @GetMapping("/item-candidates")
 ////    @ResponseStatus(HttpStatus.OK)
 ////    public Response linkNeededItemForProject(

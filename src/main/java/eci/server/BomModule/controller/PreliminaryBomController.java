@@ -15,13 +15,13 @@ import javax.validation.Valid;
 @RestController
 @RequiredArgsConstructor
 @Slf4j
-@CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
+@CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app/")
 public class PreliminaryBomController {
 
     private final PreliminaryBomService bomService;
 
     // 1) Preliminary BOM
-    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
+    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app/")
     @PostMapping("/preliminary")
     @ResponseStatus(HttpStatus.CREATED)
     @AssignMemberId
@@ -33,7 +33,7 @@ public class PreliminaryBomController {
         );
     }
 
-    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
+    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app/")
     @GetMapping("/preliminary/{id}")
     @ResponseStatus(HttpStatus.OK)
     public Response getPreliminary(@PathVariable Long id) {
