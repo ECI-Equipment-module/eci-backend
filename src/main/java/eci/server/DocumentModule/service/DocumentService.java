@@ -83,6 +83,46 @@ public class DocumentService {
     }
 
     /**
+     * 임시저장 release
+     * @param req
+     * @return
+     */
+    @Transactional
+    public ProjectTempCreateUpdateResponse tempReviseCreate(DocumentTempCreateRequest req,
+                                                            Long oldDocId) {
+
+        Document newDocument = documentRepository.save(
+                DocumentTempCreateRequest.toEntity(
+                        req,
+                        docClassification1Repository,
+                        docClassification2Repository,
+                        memberRepository,
+                        docTagRepository
+                )
+        );
+
+        if(!(req.getAttachments().size()==0)) {
+            uploadAttachments(newDocument.getAttachments(), req.getAttachments());
+        }
+
+        saveTrueAttachment(newDocument);
+
+        ///////// 기존과 달라지는 부분 시작
+        Document oldDocument
+                = documentRepository.findById(oldDocId).orElseThrow(
+                DocumentNotFoundException::new
+        );
+
+        newDocument.setReviseTargetDoc(oldDocument);
+
+        oldDocument.reviseProgressTrue();
+        ///////// 기존과 달라지는 부분 끝
+
+
+        return new ProjectTempCreateUpdateResponse(newDocument.getId());
+    }
+
+    /**
      * release 찐 저장
      * @param req
      * @return
@@ -108,6 +148,53 @@ public class DocumentService {
 
 
         return new NewItemCreateResponse(document.getId());
+    }
+
+
+    /**
+     * release revise 되는 거 찐 저장
+     *
+     *
+     *
+     *      * 새로 만들어진 new doc에
+     *      * targetDoc으로 old doc 등록
+     *      * old doc의 revise - progress = true
+     *
+     * @param req
+     * @return
+     */
+    @Transactional
+    public NewItemCreateResponse reviseCreate(DocumentCreateRequest req, Long oldDocId) {
+
+        Document newDocument = documentRepository.save(
+                DocumentCreateRequest.toEntity(
+                        req,
+                        docClassification1Repository,
+                        docClassification2Repository,
+                        memberRepository,
+                        docTagRepository
+                )
+        );
+
+        if(!(req.getAttachments().size()==0)){
+            uploadAttachments(newDocument.getAttachments(), req.getAttachments());
+        }
+
+
+        saveTrueAttachment(newDocument);
+
+        ///////// 기존과 달라지는 부분 시작
+        Document oldDocument
+                = documentRepository.findById(oldDocId).orElseThrow(
+                DocumentNotFoundException::new
+        );
+
+        newDocument.setReviseTargetDoc(oldDocument);
+
+        oldDocument.reviseProgressTrue();
+        ///////// 기존과 달라지는 부분 끝
+
+        return new NewItemCreateResponse(newDocument.getId());
     }
 
 
@@ -271,30 +358,7 @@ public class DocumentService {
         }
     }
 
-    /**
-     * 새로 만들어진 new doc에
-     * targetDoc으로 old doc 등록
-     * old doc의 revise - progress = true
-     * @param newDocId
-     * @param oldDocId
-     */
-    public void reviseCreate(Long newDocId , Long oldDocId){
 
-        Document oldDocument
-                = documentRepository.findById(oldDocId).orElseThrow(
-                DocumentNotFoundException::new
-        );
-
-        oldDocument.reviseProgressTrue();
-
-        Document newDocument
-                = documentRepository.findById(newDocId).orElseThrow(
-                DocumentNotFoundException::new
-        );
-
-        newDocument.setReviseTargetDoc(oldDocument);
-
-    }
 
 
 }

@@ -42,10 +42,8 @@ public class DocumentController {
     ) {
 
         NewItemCreateResponse response =
-                documentService.create(req);
-
-        documentService.reviseCreate(response.getId(), targetId);
-
+                documentService.reviseCreate
+                (req, targetId);
 
         return Response.success(
                 response
@@ -99,8 +97,6 @@ public class DocumentController {
                 documentService.tempCreate(
                 req
         );
-
-        documentService.reviseCreate(response.getId(), targetId);
 
         return Response.success(
                 response
