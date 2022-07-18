@@ -1319,7 +1319,9 @@ public class NewItem extends EntityDate {
     }
 
     /**
-     * release review 가 approve Route 된다면 그 때 release 에 딸린 아이템 or CO 에 딸린 아이템들은 RELEASE + 1 돼야 함
+     * release review 가 approve Route
+     * 된다면 그 때 release 에 딸린 아이템 or CO 에 딸린 아이템들은
+     * RELEASE + 1 돼야 함
      */
     public void updateReleaseCnt(){
         this.released = this.released+1;

@@ -67,7 +67,7 @@ public class NewItemController {
                     NewItemTemporaryCreateRequest req
     ) {
 
-        NewItemCreateResponse response = newItemService.tempCreate(req);
+        NewItemCreateResponse response = newItemService.tempReviseCreate(req, targetId);
         newItemService.registerTargetReviseItem(targetId, response.getId());
 
         return Response.success(
