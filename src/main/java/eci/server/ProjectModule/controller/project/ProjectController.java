@@ -17,7 +17,7 @@ import javax.validation.Valid;
 @RestController
 @RequiredArgsConstructor
 @Slf4j
-@CrossOrigin(origins = "https://localhost:3000")
+@CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
 public class ProjectController {
 
     private final ProjectService projectService;
@@ -26,7 +26,7 @@ public class ProjectController {
      * @param cond
      * @return
      */
-    @CrossOrigin(origins = "https://localhost:3000")
+    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
     @AssignMemberId
     @GetMapping("/project")
     @ResponseStatus(HttpStatus.OK)
@@ -36,7 +36,7 @@ public class ProjectController {
                         readDashboardAll(cond));
     }
 
-    @CrossOrigin(origins = "https://localhost:3000")
+    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
     @PostMapping("/project/temp")
     @ResponseStatus(HttpStatus.CREATED)
     @AssignMemberId
@@ -57,7 +57,7 @@ public class ProjectController {
      * @param req
      * @return 200 (success)
      */
-    @CrossOrigin(origins = "https://localhost:3000")
+    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
     @PostMapping("/project")
     @ResponseStatus(HttpStatus.CREATED)
     @AssignMemberId
@@ -78,7 +78,7 @@ public class ProjectController {
      * @param req
      * @return
      */
-    @CrossOrigin(origins = "https://localhost:3000")
+    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
     @PutMapping("/project/{id}")
     @ResponseStatus(HttpStatus.OK)
     @AssignModifierId //수정자 추가
@@ -89,7 +89,7 @@ public class ProjectController {
         return Response.success(projectService.update(id, req));
     }
 
-    @CrossOrigin(origins = "https://localhost:3000")
+    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
     @PutMapping("/project/temp/end/{id}")
     @ResponseStatus(HttpStatus.CREATED)
     @AssignModifierId //0605 : 수정 시에는 글쓴이 아디 주입 아니고, 수정자 아이디 주입
@@ -113,7 +113,7 @@ public class ProjectController {
      * @param req
      * @return
      */
-    @CrossOrigin(origins = "https://localhost:3000")
+    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
     @PutMapping("/project/{revisedId}/{newMadeItemId}")
     @ResponseStatus(HttpStatus.OK)
     @AssignModifierId //수정자 추가
@@ -127,10 +127,12 @@ public class ProjectController {
         System.out.println(response1 + "이 수행1111 ");
         ProjectTempCreateUpdateResponse response = projectService.update(revisedId, req);
         //기존 프로젝트 업데이트
+
         NewItemCreateResponse response2 =
                 projectService.changeProjectItemToNewMadeItem(revisedId, newMadeItemId);
         projectService.update2(revisedId, newMadeItemId);
         System.out.println(response1 + "이 수행222 ");
+
         // 기존 프로젝트 아이템 값만 revisedId 라는 새 아이템으로 바꿔치기 해주기
         //response.setRouteId(projectService.routeIdReturn(newMadeItemId));
         return Response.success(
@@ -138,7 +140,7 @@ public class ProjectController {
         );
     }
 
-    @CrossOrigin(origins = "https://localhost:3000")
+    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
     @PutMapping("/project/temp/end/{revisedId}/{newMadeItemId}")
     @ResponseStatus(HttpStatus.CREATED)
     @AssignModifierId
@@ -167,7 +169,7 @@ public class ProjectController {
 
     ///0712
 
-    @CrossOrigin(origins = "https://localhost:3000")
+    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
     @DeleteMapping("project/{id}")
     @ResponseStatus(HttpStatus.OK)
     public Response delete(@PathVariable Long id) {

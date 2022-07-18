@@ -26,7 +26,7 @@ public class DashboardPageController {
     //이걸로 프로젝트의 라우트 오더링, 프로덕트에 해당하는 아이들을 찾아서 데려올 것이다
     @Autowired
     ProjectService projectService;
-    @CrossOrigin(origins = "https://localhost:3000")
+    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
     @GetMapping("dashboard/project/page")
     @AssignMemberId //작성한 멤버
     public Page<ProjectDashboardDto> pagingDashboardProject

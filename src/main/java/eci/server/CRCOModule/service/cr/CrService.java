@@ -131,8 +131,6 @@ public class CrService {
                         routeOrderingRepository.findByChangeRequest(changeRequest),
                         routeProductRepository,
                         routeOrderingRepository,
-                        bomRepository,
-                        preliminaryBomRepository,
                         defaultImageAddress
 
                 )

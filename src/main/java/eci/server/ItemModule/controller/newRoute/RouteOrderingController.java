@@ -13,7 +13,7 @@ import javax.validation.Valid;
 
 @RestController
 @RequiredArgsConstructor
-@CrossOrigin(origins = "https://localhost:3000")
+@CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
 public class RouteOrderingController {
     private final RouteOrderingService newRouteService;
 
@@ -71,6 +71,17 @@ public class RouteOrderingController {
         );
     }
 
+    @PostMapping("/route/doc")
+    @ResponseStatus(HttpStatus.CREATED)
+    @AssignMemberId
+    public Response createDocRoutes(
+            @Valid RouteOrderingCreateRequest req) {
+
+        return Response.success(
+                newRouteService.createDocRoute(req)
+        );
+    }
+
 
     @GetMapping("/route/{id}")
     @ResponseStatus(HttpStatus.OK)
@@ -85,7 +96,7 @@ public class RouteOrderingController {
      * @param id
      * @return
      */
-    @CrossOrigin(origins = "https://localhost:3000")
+    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
     @GetMapping("/routeByItem/{id}")
     @ResponseStatus(HttpStatus.OK)
     public Response readRouteByItem(@PathVariable Long id) {

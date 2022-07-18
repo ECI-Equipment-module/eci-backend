@@ -110,8 +110,8 @@ public class RoutePreset {
      * 리뷰 대상인 타입 아이디
      */
 
-    public String[] reviewRouteList = {"4", "5", "6", "12", "16", "17", "19", "23"};
-    //CO - 19는 신청 승인 , 얘도 신청 거절 가능 // /23 은 release review
+    public String[] reviewRouteList = {"4", "5", "6", "12", "16", "17", "19", "23", "25"};
+    //CO - 19는 신청 승인 , 얘도 신청 거절 가능 // /23 은 release review // 25 doc
     public ArrayList<String> reviewRouteArrList = new ArrayList<>(Arrays.asList(reviewRouteList));
 
 
@@ -276,6 +276,30 @@ public String[][] routeByItemName = {
             {"RELEASE", "RELEASE", "RELEASE"}
 
     };
+
+    // DOCUMENT
+
+    public String[][] DOCRouteName = {
+
+            {
+                    "문서 Request",
+                    "문서 Review"
+            }
+    };
+
+    public String[][] DOCRouteType = {
+
+
+            {"REQUEST", "REVIEW", "COMPLETE"},
+
+    };
+
+    public String[][] DOCRouteTypeModule = {
+
+            {"DOC" , "DOC" , "DOC"}
+
+    };
+
 }
 
 

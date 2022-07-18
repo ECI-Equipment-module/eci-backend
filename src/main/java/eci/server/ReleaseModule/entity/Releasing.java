@@ -37,10 +37,9 @@ import static java.util.stream.Collectors.toList;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Releasing extends EntityDate {
     @Id
-
-    //@GeneratedValue(strategy = GenerationType.IDENTITY)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQUENCE2")
-    @SequenceGenerator(name = "SEQUENCE2", sequenceName = "SEQUENCE2", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    //@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQUENCE2")
+    //@SequenceGenerator(name="SEQUENCE2", sequenceName="SEQUENCE2", allocationSize=1)
 
     private Long id;
 
@@ -374,7 +373,7 @@ public class Releasing extends EntityDate {
         }
     }
 
-    public void finalSaveProject() {
+    public void finalSaveRelease() {
         //라우트까지 만들어져야 temp save 가 비로소 true
         this.tempsave = false;
         this.readonly = true;

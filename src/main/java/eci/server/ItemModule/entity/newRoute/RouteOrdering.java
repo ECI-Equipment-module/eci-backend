@@ -8,6 +8,7 @@ import eci.server.CRCOModule.entity.co.ChangeOrder;
 import eci.server.CRCOModule.entity.cr.ChangeRequest;
 import eci.server.CRCOModule.repository.co.CoNewItemRepository;
 import eci.server.DesignModule.entity.design.Design;
+import eci.server.DocumentModule.entity.Document;
 import eci.server.ItemModule.dto.newRoute.routeOrdering.RouteOrderingUpdateRequest;
 import eci.server.ItemModule.entitycommon.EntityDate;
 import eci.server.ItemModule.exception.item.ItemNotFoundException;
@@ -49,9 +50,9 @@ public class RouteOrdering extends EntityDate {
 
     @Id
 
-    // @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQUENCE1")
-    @SequenceGenerator(name="SEQUENCE1", sequenceName="SEQUENCE1", allocationSize=1)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    //@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQUENCE1")
+    //@SequenceGenerator(name="SEQUENCE1", sequenceName="SEQUENCE1", allocationSize=1)
 
     private Long id;
 
@@ -123,6 +124,11 @@ public class RouteOrdering extends EntityDate {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Releasing release;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "document_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private Document document;
+
     //아이템 라우트용 생성자
     public RouteOrdering(
             String type,
@@ -187,6 +193,19 @@ public class RouteOrdering extends EntityDate {
         this.lifecycleStatus = "WORKING";
         this.revisedCnt = 0;
         this.present = 1;
+    }
+
+    // DOCUMENT 라우트용 생성자
+    public RouteOrdering(
+            String type,
+            Document document
+
+    ){
+        this.type = type;
+        this.lifecycleStatus = "WORKING";
+        this.revisedCnt = 0;
+        this.present = 1;
+        this.document = document;
     }
 
     //revise 된 아이템 라우트용 생성자
@@ -301,6 +320,10 @@ public class RouteOrdering extends EntityDate {
                 else if(routeProductList.get(this.present).getType().getModule().equals("RELEASE")
                         && routeProductList.get(this.present).getType().getName().equals("REQUEST")){
                     this.getRelease().setTempsave(false); //라우트 만든 순간 임시저장 다시 거짓으로
+                }
+                else if(routeProductList.get(this.present).getType().getModule().equals("DOC")
+                        && routeProductList.get(this.present).getType().getName().equals("REQUEST")){
+                    this.getDocument().setTempsave(false); //라우트 만든 순간 임시저장 다시 거짓으로
                 }
             }
 
@@ -568,6 +591,12 @@ public class RouteOrdering extends EntityDate {
             case "22":
                 this.getRelease().setTempsave(true);
                 this.getRelease().setReadonly(false);
+                break;
+
+            //document REQUEST
+            case "24":
+                this.getDocument().setTempsave(true);
+                this.getDocument().setReadonly(false);
                 break;
 
         }

@@ -1,6 +1,7 @@
 package eci.server.NewItemModule.dto.classification;
 
 import eci.server.DocumentModule.entity.classification.DocClassification2;
+import eci.server.DocumentModule.repository.DocTagRepository;
 import eci.server.NewItemModule.entity.classification.Classification2;
 import eci.server.NewItemModule.repository.classification.Classification2Repository;
 import eci.server.NewItemModule.repository.classification.Classification3Repository;
@@ -60,6 +61,7 @@ public class C2SelectDto {
                                 beforeName+"/"+c.getName(),
                                 beforeId+"/"+c.getId(),
                                 classification3Repository.findByClassification2(c)
+
                         )
                 )
         ).collect(
@@ -72,7 +74,8 @@ public class C2SelectDto {
     public static List<C2SelectDto> toDocDtoList(
             String beforeName,
             String beforeId,
-            List <DocClassification2> docClassification2s
+            List <DocClassification2> docClassification2s,
+            DocTagRepository docTagRepository
     ) {
 
         List<C2SelectDto> classification1SelectDtoList
@@ -83,9 +86,14 @@ public class C2SelectDto {
                         c.getLast(),
 
                         beforeName+"/"+c.getName(),
-                        beforeId+"/"+c.getId()+"/"+(c.getLast()==1?"99999":""),
+                        beforeId+"/"+c.getId(),
 
-                        new ArrayList<>()
+                        C3SelectDto.toDocDtoList(
+                                beforeName+"/"+c.getName(),
+                                beforeId+"/"+c.getId(),
+                                docTagRepository.findByDocClassification2(c)
+
+                        )
                 )
         ).collect(
                 toList()

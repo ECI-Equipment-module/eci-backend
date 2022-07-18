@@ -11,6 +11,7 @@ import eci.server.ItemModule.repository.item.ItemTypesRepository;
 import eci.server.ItemModule.repository.member.MemberRepository;
 import eci.server.NewItemModule.dto.newItem.create.NewItemCreateResponse;
 import eci.server.NewItemModule.dto.newItem.update.NewItemUpdateRequest;
+import eci.server.NewItemModule.entity.classification.Classification2;
 import eci.server.NewItemModule.entity.supplier.Maker;
 import eci.server.ItemModule.entity.member.Member;
 import eci.server.NewItemModule.entity.classification.Classification;
@@ -21,6 +22,9 @@ import eci.server.NewItemModule.exception.CoatingNotFoundException;
 import eci.server.NewItemModule.exception.SupplierNotFoundException;
 import eci.server.NewItemModule.repository.attachment.AttachmentTagRepository;
 import eci.server.NewItemModule.exception.*;
+import eci.server.NewItemModule.repository.classification.Classification1Repository;
+import eci.server.NewItemModule.repository.classification.Classification2Repository;
+import eci.server.NewItemModule.repository.classification.Classification3Repository;
 import eci.server.NewItemModule.repository.coatingType.CoatingTypeRepository;
 import eci.server.NewItemModule.repository.coatingWay.CoatingWayRepository;
 import eci.server.NewItemModule.repository.maker.MakerRepository;
@@ -51,9 +55,9 @@ import static java.util.stream.Collectors.toList;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class NewItem extends EntityDate {
     @Id
-    //@GeneratedValue(strategy = GenerationType.IDENTITY)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQUENCE3")
-    @SequenceGenerator(name="SEQUENCE3", sequenceName="SEQUENCE3", allocationSize=1)
+          @GeneratedValue(strategy = GenerationType.IDENTITY)
+     //@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQUENCE3")
+     //@SequenceGenerator(name="SEQUENCE3", sequenceName="SEQUENCE3", allocationSize=1)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -284,7 +288,6 @@ public class NewItem extends EntityDate {
     @JoinColumn(name = "project_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Project project;
-
 
     /**
      * attachment 있을 때, thumbnail 있을 때 생성자
@@ -845,9 +848,22 @@ public class NewItem extends EntityDate {
             CoatingWayRepository coatingWayRepository,
             CoatingTypeRepository coatingTypeRepository,
             CarTypeRepository carTypeRepository,
-            AttachmentTagRepository attachmentTagRepository
+            AttachmentTagRepository attachmentTagRepository,
+
+            Classification1Repository classification1Repository,
+            Classification2Repository classification2Repository,
+            Classification3Repository classification3Repository
     ) {
-        
+
+        this.classification = new Classification(
+                classification1Repository.findById(req.getClassification1Id())
+                        .orElseThrow(ClassificationNotFoundException::new),
+                classification2Repository.findById(req.getClassification2Id())
+                        .orElseThrow(ClassificationNotFoundException::new),
+                classification3Repository.findById(req.getClassification3Id())
+                        .orElseThrow(ClassificationNotFoundException::new)
+        );
+
         //TODO update할 때 사용자가 기존 값 없애고 보낼 수도 있자나 => fix needed
         //isBlank 랑 isNull로 판단해서 기존 값 / req 값 채워넣기
         this.name = req.getName()==null || req.getName().isBlank() ?
@@ -1037,7 +1053,11 @@ public class NewItem extends EntityDate {
             CoatingWayRepository coatingWayRepository,
             CoatingTypeRepository coatingTypeRepository,
             CarTypeRepository carTypeRepository,
-            AttachmentTagRepository attachmentTagRepository
+            AttachmentTagRepository attachmentTagRepository,
+
+            Classification1Repository classification1Repository,
+            Classification2Repository classification2Repository,
+            Classification3Repository classification3Repository
     ) {
 
         if(req.getClassification1Id()==null || req.getClassification2Id() ==null || req.getClassification3Id()==null){
@@ -1052,6 +1072,15 @@ public class NewItem extends EntityDate {
         if(req.getClassification1Id()==99999L && req.getClassification2Id() ==99999L && req.getClassification3Id()==99999L){
             throw new ProperClassificationRequiredException();
         }
+
+        this.classification = new Classification(
+                classification1Repository.findById(req.getClassification1Id())
+                        .orElseThrow(ClassificationNotFoundException::new),
+                classification2Repository.findById(req.getClassification2Id())
+                        .orElseThrow(ClassificationNotFoundException::new),
+                classification3Repository.findById(req.getClassification3Id())
+                        .orElseThrow(ClassificationNotFoundException::new)
+        );
 
         //아이템 타입 체크
         if(req.getTypeId()==null){

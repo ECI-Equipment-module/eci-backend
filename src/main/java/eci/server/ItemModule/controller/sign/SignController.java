@@ -24,12 +24,12 @@ import static eci.server.ItemModule.dto.response.Response.success;
 
 @RestController
 @RequiredArgsConstructor
-@CrossOrigin(origins = "https://localhost:3000")
+@CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
 public class SignController {
     private final SignService signService;
 
     Logger logger = LoggerFactory.getLogger(SignController.class);
-    @CrossOrigin(origins = "https://localhost:3000")
+    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
     @PostMapping("sign-up")
     @ResponseStatus(HttpStatus.CREATED)
 
@@ -37,7 +37,7 @@ public class SignController {
         signService.signUp(req);
         return success();
     }
-    @CrossOrigin(origins = "https://localhost:3000")
+    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
     @PostMapping("/sign-in")
     @ResponseBody
     public Response signIn(@Valid SignInRequest req, HttpServletResponse response) throws IOException {
@@ -78,7 +78,7 @@ public class SignController {
      * @return success
      *
      */
-    @CrossOrigin(origins = "https://localhost:3000")
+    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
     @PostMapping("/refresh-token")
     @ResponseStatus(HttpStatus.OK)
     public Response refreshToken(@RequestHeader(value = "cookie") String refreshToken) {

@@ -11,6 +11,7 @@ import eci.server.NewItemModule.repository.item.NewItemRepository;
 import eci.server.NewItemModule.service.item.NewItemService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -32,7 +33,7 @@ public class NewItemPageController {
 
     @Autowired
     NewItemRepository newItemRepository;
-    @CrossOrigin(origins = "https://localhost:3000")
+    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
     @GetMapping("/items/page")
     public Page<NewItemPagingDto> paging(@PageableDefault(size=5)
                                          @SortDefault.SortDefaults({
@@ -65,7 +66,7 @@ public class NewItemPageController {
      */
     @Autowired
     NewItemService itemService;
-    @CrossOrigin(origins = "https://localhost:3000")
+    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
     @GetMapping("/item-candidates")
     public Page<ItemProjectCreateDto> readItemCandidate(@PageableDefault(size=5)
                                                         @SortDefault.SortDefaults({
@@ -88,7 +89,7 @@ public class NewItemPageController {
 
     }
 
-    @CrossOrigin(origins = "https://localhost:3000")
+    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
     @GetMapping("bom/items/page")
     public Page<NewItemPagingDto> bomItems(@PageableDefault(size=5)
                                            @SortDefault.SortDefaults({
@@ -122,7 +123,7 @@ public class NewItemPageController {
     private final ItemTypesRepository itemTypesRepository;
     private final RouteOrderingRepository routeOrderingRepository;
     private final NewItemService newItemService;
-    @CrossOrigin(origins = "https://localhost:3000")
+    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
     @GetMapping("dev/bom/items/page")
     public Page<NewItemChildDto> devBomItems(@PageableDefault(size=5)
                                              @SortDefault.SortDefaults({
@@ -146,7 +147,7 @@ public class NewItemPageController {
      * @return
      */
 
-    @CrossOrigin(origins = "https://localhost:3000")
+    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
     @GetMapping("compare/bom/items/page")
     public Page<NewItemChildDto> compareBomItems(@PageableDefault(size=5)
                                              @SortDefault.SortDefaults({
@@ -165,7 +166,7 @@ public class NewItemPageController {
     }
 
     // affectedItem
-    @CrossOrigin(origins = "https://localhost:3000")
+    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
     @GetMapping("affected/items/page")
     public Page<NewItemChildDto> affectedItems(@PageableDefault(size=5)
                                                  @SortDefault.SortDefaults({
@@ -183,7 +184,7 @@ public class NewItemPageController {
         return NewItemChildDto.toAddChildDtoList(concatItemList, newItemService);
     }
 
-    @CrossOrigin(origins = "https://localhost:3000")
+    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
     @GetMapping("/releaseItemId")
     public Page<NewItemChildDto> releaseChodoItems(@PageableDefault(size=5)
                                            @SortDefault.SortDefaults({

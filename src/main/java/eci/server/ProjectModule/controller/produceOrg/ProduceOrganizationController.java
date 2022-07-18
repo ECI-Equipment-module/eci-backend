@@ -14,11 +14,11 @@ import javax.validation.Valid;
 
 @RequiredArgsConstructor
 @RestController
-@CrossOrigin(origins = "https://localhost:3000")
+@CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
 public class ProduceOrganizationController {
     private final ProduceOrganizationService produceOrganizationService;
 
-    @GetMapping("/supplier")
+    @GetMapping("/supplierId")
     @ResponseStatus(HttpStatus.OK)
     public Response readAll(@Valid ProduceOrganizationReadCondition cond) {
         return Response.success(

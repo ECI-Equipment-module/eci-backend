@@ -42,7 +42,7 @@ public class ReleasePageController {
      * @param pageRequest
      * @return
      */
-    @CrossOrigin(origins = "https://localhost:3000")
+    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
     @GetMapping("/release/page")
     public Page<ReleaseDto> readCrPages(@PageableDefault(size = 5)
                                         @SortDefault.SortDefaults({

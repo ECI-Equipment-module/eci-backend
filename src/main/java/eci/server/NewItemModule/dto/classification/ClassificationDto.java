@@ -1,5 +1,6 @@
 package eci.server.NewItemModule.dto.classification;
 
+import eci.server.DocumentModule.entity.classification.DocClassification;
 import eci.server.NewItemModule.entity.classification.Classification;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -11,6 +12,10 @@ import lombok.NoArgsConstructor;
 public class ClassificationDto {
     private String value;
     private String classification;
+
+    public static ClassificationDto toDto() {
+        return  new ClassificationDto();
+    }
 
     public static ClassificationDto toDto(Classification classification) {
 
@@ -33,4 +38,20 @@ public class ClassificationDto {
         );
 
     }
+
+
+    public static ClassificationDto toDocDto(DocClassification classification) {
+
+        return new ClassificationDto(
+                classification.getDocClassification1().getName()
+                        +"/"+classification.getDocClassification2().getName()
+                ,
+                classification.getDocClassification1().getId()
+                        +"/"+classification.getDocClassification2().getId()
+
+
+        );
+
+    }
+
 }
