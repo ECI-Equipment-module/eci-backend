@@ -1,6 +1,7 @@
 package eci.server.NewItemModule.entity;
 
 import eci.server.CRCOModule.entity.CoNewItem;
+import eci.server.DocumentModule.entity.DocumentAttachment;
 import eci.server.ItemModule.entity.entitycommon.EntityDate;
 import eci.server.ItemModule.entity.item.*;
 import eci.server.ItemModule.exception.item.ColorNotFoundException;
@@ -360,7 +361,9 @@ public class NewItem extends EntityDate {
             Boolean tempsave,
             Boolean revise_progress,
 
-            List<NewItemAttachment> attachments
+            List<NewItemAttachment> attachments,
+
+            List<NewItemAttachment> duplicatedAttachments
     ) {
 
         this.classification = classification;
@@ -442,6 +445,12 @@ public class NewItem extends EntityDate {
 
         this.released = 0;
 
+        if(duplicatedAttachments!=null){
+            this.attachments
+                    .addAll(duplicatedAttachments);
+            addAttachments(duplicatedAttachments);
+        }
+
     }
 
 
@@ -513,7 +522,9 @@ public class NewItem extends EntityDate {
             String partnumbers,
             Member member,
             Boolean tempsave,
-            Boolean revise_progress
+            Boolean revise_progress,
+
+            List<NewItemAttachment> duplicatedAttachments
 
     ) {
 
@@ -601,6 +612,15 @@ public class NewItem extends EntityDate {
         this.modifier = member;
 
         this.released = 0;
+
+        this.attachments = new ArrayList<>();
+
+        if(duplicatedAttachments!=null){
+            this.attachments
+                    .addAll(duplicatedAttachments);
+            addAttachments(duplicatedAttachments);
+        }
+
     }
 
     /**

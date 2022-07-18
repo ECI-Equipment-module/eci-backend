@@ -69,7 +69,8 @@ public class DocumentService {
                         docClassification1Repository,
                         docClassification2Repository,
                         memberRepository,
-                        docTagRepository
+                        docTagRepository,
+                        documentAttachmentRepository
                 )
         );
 
@@ -98,7 +99,8 @@ public class DocumentService {
                         docClassification1Repository,
                         docClassification2Repository,
                         memberRepository,
-                        docTagRepository
+                        docTagRepository,
+                        documentAttachmentRepository
                 )
         );
 
@@ -351,7 +353,8 @@ public class DocumentService {
     // 제외하면 된다.
     **/
     private void uploadAttachments
-    (List<DocumentAttachment> attachments, List<MultipartFile> filedAttachments) {
+    (List<DocumentAttachment> attachments,
+     List<MultipartFile> filedAttachments) {
 
         List<DocumentAttachment> neededToBeUploaded =
                 attachments.stream().filter(

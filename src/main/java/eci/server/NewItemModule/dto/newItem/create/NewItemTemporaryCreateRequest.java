@@ -1,6 +1,7 @@
 package eci.server.NewItemModule.dto.newItem.create;
 
 import com.sun.istack.Nullable;
+import eci.server.DocumentModule.exception.DocumentNotFoundException;
 import eci.server.ItemModule.exception.item.AttachmentNotFoundException;
 import eci.server.ItemModule.exception.item.ColorNotFoundException;
 import eci.server.ItemModule.exception.item.ItemNotFoundException;
@@ -16,6 +17,7 @@ import eci.server.NewItemModule.exception.ClassificationNotFoundException;
 import eci.server.NewItemModule.exception.CoatingNotFoundException;
 import eci.server.NewItemModule.exception.MakerNotFoundException;
 import eci.server.NewItemModule.repository.attachment.AttachmentTagRepository;
+import eci.server.NewItemModule.repository.attachment.NewItemAttachmentRepository;
 import eci.server.NewItemModule.repository.classification.Classification1Repository;
 import eci.server.NewItemModule.repository.classification.Classification2Repository;
 import eci.server.NewItemModule.repository.classification.Classification3Repository;
@@ -140,7 +142,43 @@ public class NewItemTemporaryCreateRequest {
             MemberRepository memberRepository,
             ColorRepository colorRepository,
             MakerRepository makerRepository,
-            AttachmentTagRepository attachmentTagRepository) {
+            AttachmentTagRepository attachmentTagRepository,
+            NewItemAttachmentRepository newItemAttachmentRepository) {
+
+
+
+        /**
+         * 만약 사용자가 복제 원하는 문서가 있다면
+         * 그 복제 문서를 새로운 new DoucumentAttachment로
+         * 만들어서 리스트로 만들기
+         * 없다면 null 넘겨주면 됨
+         */
+
+        List<NewItemAttachment> duplicateNewDocumentAttachments = null;
+
+        if(req.getDuplicateTargetIds()!=null){
+            // 1) 복제할 대상 애들 찾아서
+            List<NewItemAttachment> duplicatedTargetAttaches =
+                    req.getDuplicateTargetIds().stream().map(
+                            o-> newItemAttachmentRepository.findById(
+                                    o
+                            ).orElseThrow(DocumentNotFoundException::new)
+                    ).collect(toList());
+
+            // 2) 걔네로 새로운 new Document Attachment 로 제작해주기
+            duplicateNewDocumentAttachments =
+                    duplicatedTargetAttaches.stream().map(
+                            d -> new NewItemAttachment(
+                                    d.getOriginName(),
+                                    d.getUniqueName(),
+                                    d.getAttachmentaddress(),
+                                    "이거는 문서 복제얌",
+                                    true
+                            )
+                    ).collect(toList());
+
+        }
+
 
         if (req.getTag().size() == 0) {
 
@@ -271,8 +309,9 @@ public class NewItemTemporaryCreateRequest {
 
                     true, //임시저장 (라우트 작성 해야 false로 변한다)
 
-                    false //revise progress 중 아니다
+                    false, //revise progress 중 아니다
 
+                    duplicateNewDocumentAttachments
             );
 
 
@@ -426,7 +465,9 @@ public class NewItemTemporaryCreateRequest {
                         )
                 ).collect(
                         toList()
-                )
+                ),
+
+                duplicateNewDocumentAttachments
         );
     }
 
