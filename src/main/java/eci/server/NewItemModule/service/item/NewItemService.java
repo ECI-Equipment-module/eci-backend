@@ -296,7 +296,9 @@ public class NewItemService {
             uploadImages(item.getThumbnail(), req.getThumbnail());
 
         } else { // 0719 들어온 이미지가 thumbnail 이 없으면 기존 thumbnail 로 ~
+            System.out.println(" 들어온 이미지가 thumbnail 이 없으면 기존 thumbnail 로 ~ ");
             item.setThumbnail(
+
                     new NewItemImage(
                             targetItem.getThumbnail().getUniqueName(),
                             targetItem.getThumbnail().getOriginName(),
