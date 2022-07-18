@@ -123,6 +123,9 @@ public class NewItemTemporaryCreateRequest {
     @Null
     private Long memberId;
 
+    @org.springframework.lang.Nullable
+    private List<Long> duplicateTargetIds = new ArrayList<>();
+
     public static NewItem toEntity(
             NewItemTemporaryCreateRequest req,
             Classification1Repository classification1Repository,

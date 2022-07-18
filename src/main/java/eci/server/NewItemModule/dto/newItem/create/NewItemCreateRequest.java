@@ -129,6 +129,9 @@ public class NewItemCreateRequest {
     @Null
     private Long memberId;
 
+    @Nullable
+    private List<Long> duplicateTargetIds = new ArrayList<>();
+
 
 
     public static NewItem toEntity(

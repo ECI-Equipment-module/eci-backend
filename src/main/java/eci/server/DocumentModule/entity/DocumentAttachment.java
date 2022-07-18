@@ -62,6 +62,10 @@ public class DocumentAttachment extends EntityDate {
     @Column(nullable = false)
     private boolean save;
 
+    @Column
+    //디폴트가 false, 따로 지정안하면 false 로 저장
+    private boolean duplicate;
+
 
     @Column
     private String attachmentaddress;
@@ -95,8 +99,27 @@ public class DocumentAttachment extends EntityDate {
                         + "/"
                         + this.uniqueName; //이미지 저장 폴더 + 이미지 저장명
         this.save = save;
+
     }
 
+    /**
+     * duplicated file 생성
+     * (기존 것 다 우려먹지만,
+     * 새롭게 id 생성되고 이름도 다르게 ㅋ)
+     *이때 특이한 것은 duplicate = true 로 갱신 !
+     * @param originName
+     */
+    public DocumentAttachment(
+            String originName,
+            String uniqueName,
+            String attachmentaddress,
+            boolean save) {
+        this.uniqueName = uniqueName;
+        this.originName = originName;
+        this.attachmentaddress = attachmentaddress; // 기존 것 베끼기
+        this.save = save;
+        this.duplicate = true;
+    }
 
     /**
      * 각 이미지의 고유명 생성

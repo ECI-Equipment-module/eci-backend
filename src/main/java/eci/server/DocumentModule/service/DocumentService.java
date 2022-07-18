@@ -33,6 +33,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.print.Doc;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Service
@@ -136,7 +137,8 @@ public class DocumentService {
                         docClassification1Repository,
                         docClassification2Repository,
                         memberRepository,
-                        docTagRepository
+                        docTagRepository,
+                        documentAttachmentRepository
                 )
         );
 
@@ -172,12 +174,17 @@ public class DocumentService {
                         docClassification1Repository,
                         docClassification2Repository,
                         memberRepository,
-                        docTagRepository
+                        docTagRepository,
+                        documentAttachmentRepository
                 )
         );
 
         if(!(req.getAttachments().size()==0)){
-            uploadAttachments(newDocument.getAttachments(), req.getAttachments());
+
+
+            uploadAttachments(
+                    newDocument.getAttachments(),
+                    req.getAttachments());
         }
 
 
@@ -337,15 +344,30 @@ public class DocumentService {
                 );
     }
 
-    private void uploadAttachments(List<DocumentAttachment> attachments, List<MultipartFile> filedAttachments) {
+    /**
+    // 실제 파일 올릴 때
+    // newDocument.getAttachments() 중 duplicate = true
+     인 것들은
+    // 제외하면 된다.
+    **/
+    private void uploadAttachments
+    (List<DocumentAttachment> attachments, List<MultipartFile> filedAttachments) {
+
+        List<DocumentAttachment> neededToBeUploaded =
+                attachments.stream().filter(
+                        documentAttachment -> //duplicate = false 인 것만 모아서 찐 저장!
+                                !documentAttachment.isDuplicate()
+                )
+                .collect(Collectors.toList());
+
         // 실제 이미지 파일을 가지고 있는 Multipart 파일을
         // 파일이 가지는 unique name 을 파일명으로 해서 파일저장소 업로드
-        IntStream.range(0, attachments.size())
+        IntStream.range(0, neededToBeUploaded.size())
                 .forEach(
                         i -> fileService.upload
                                 (
                                         filedAttachments.get(i),
-                                        attachments.get(i).getUniqueName()
+                                        neededToBeUploaded.get(i).getUniqueName()
                                 )
                 );
     }

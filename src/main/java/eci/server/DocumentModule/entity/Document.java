@@ -130,7 +130,9 @@ public class Document extends EntityDate {
             String documentNumber,
 
             boolean tempsave,
-            boolean readonly
+            boolean readonly,
+
+            List<DocumentAttachment> duplicatedAttachments
             
     ){
         this.tempsave = tempsave;
@@ -152,6 +154,12 @@ public class Document extends EntityDate {
         }
 
         this.docTag = docTag;
+
+        if(duplicatedAttachments!=null){
+            this.attachments
+                    .addAll(duplicatedAttachments);
+            addAttachments(duplicatedAttachments);
+        }
         
     }
     

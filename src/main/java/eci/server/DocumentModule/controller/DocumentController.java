@@ -94,8 +94,8 @@ public class DocumentController {
     ) {
 
         ProjectTempCreateUpdateResponse response =
-                documentService.tempCreate(
-                req
+                documentService.tempReviseCreate(
+                req, targetId
         );
 
         return Response.success(
