@@ -1408,20 +1408,21 @@ public class DashboardService {
         Member member1 = memberRepository.findById(authHelper.extractMemberId()).orElseThrow(
                 AuthenticationEntryPointException::new
         );
-        //new bom -> 아이템 목록
+        //new bom -> 아이템 목록1
         //1) 현재 진행 중인 라우트 프로덕트 카드들
+        System.out.println("11111111111111111111111111111111111111111111111111111");
         List<RouteProduct> routeProductList = routeProductRepository.findAll().stream().filter(
                 rp -> rp.getSequence().equals(
                         rp.getRouteOrdering().getPresent()
                 )
         ).collect(Collectors.toList());
-
+        System.out.println("122222111111111111111111111111111111111111");
         //2-1 ) 라우트 프로덕트들 중 나에게 할당된 카드들 & 단계가 개발 BOM 생성[설계자] 인 것
         List<RouteProduct> myRouteReleaseCreateProductList = new ArrayList<>();
 
         // 2-2 ) // & 단계가 개발 bom review 인 것
         List<RouteProduct> myRouteReleaseReviewProductList = new ArrayList<>();
-
+        System.out.println("1113333333111111111111111111111111111");
         for (RouteProduct routeProduct : routeProductList) {
             for (RouteProductMember routeProductMember : routeProduct.getMembers()) {
 
@@ -1454,7 +1455,7 @@ public class DashboardService {
         //1 ::: TEMP SAVE RELEASE: RELEASE 중 TEMP SAVE = TRUE ;
 
         List<TodoResponse> TEMP_SAVE = new ArrayList<>();
-
+        System.out.println("1111144444444444444444444411111111111111111111111111111");
         //1-1 temp save 용 ) 내가 작성자인 모든 디자인 데려오기
         List<Releasing> myReleaseList = releasingRepository.findByMember(member1);
 
@@ -1487,7 +1488,7 @@ public class DashboardService {
                 }
             }
         }
-
+        System.out.println("555555555555555555111111111111111111111111");
         if (tempSavedReleaseList.size() > 0) {
             for (Releasing r: tempSavedReleaseList) {
                 TodoResponse
@@ -1502,7 +1503,7 @@ public class DashboardService {
                 TEMP_SAVE.add(releaseTodoResponse);
             }
         }
-
+        System.out.println("11166666666666666611111111111111111111111111");
         // 2 ::: 거절된 RELEASE 들
         //  라우트 프로덕트들 중에서 현재이고,
         // RELEASE CREATE 이고
@@ -1531,7 +1532,7 @@ public class DashboardService {
             }
         }
         List<TodoResponse> REJECTED = new ArrayList<>(rejectedReleaseTodoResponses);
-
+        System.out.println("11777777777777777777771111111111111111111111111111");
         //3 :: RELEASE REVIEW 인 단계, 현재 진행 중이고, 내꺼고 단계가 RELEASE REVIEW
         HashSet<TodoResponse> needReviewRELEASETodoResponses = new HashSet<>();
 
@@ -1550,7 +1551,7 @@ public class DashboardService {
                     )
             );
         }
-
+        System.out.println("1888888888888888811111111111111111");
         List<TodoResponse> REVIEW = new ArrayList<>(needReviewRELEASETodoResponses);
 
 
@@ -1576,32 +1577,32 @@ public class DashboardService {
 
         }
         List<TodoResponse> NEW_ITEM = new ArrayList<>(unlinkedItemTodoResponses);
+        System.out.println("111999999999999999999111111111111111111111");
+        // 5 ::: NEW CO
+        HashSet<TodoResponse> unlinkedCoTodoResponses = new HashSet<>();
 
-//        // 5 ::: NEW CO
-//        HashSet<TodoResponse> unlinkedCoTodoResponses = new HashSet<>();
-//
-//        Set<ChangeOrder> changeOrders =
-//                new HashSet<>(changeOrderService.readCoAvailableInRelease());
-//
-//        for (ChangeOrder changeOrder : changeOrders) {
-//            System.out.println(changeOrder.getId()+"COOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO");
-//            unlinkedItemTodoResponses.add(
-//                    new TodoResponse(
-//                            changeOrder.getId(),
-//                            changeOrder.getName(),
-//                            "CO",
-//                            changeOrder.getCoNumber(),
-//                            -1L
-//                    )
-//            );
-//
-//        }
-//        List<TodoResponse> NEW_CO = new ArrayList<>(unlinkedCoTodoResponses);
+        Set<ChangeOrder> changeOrders =
+                new HashSet<>(changeOrderService.readCoAvailableInRelease());
+
+        for (ChangeOrder changeOrder : changeOrders) {
+            System.out.println(changeOrder.getId()+"COOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO");
+            unlinkedItemTodoResponses.add(
+                    new TodoResponse(
+                            changeOrder.getId(),
+                            changeOrder.getName(),
+                            "CO",
+                            changeOrder.getCoNumber(),
+                            -1L
+                    )
+            );
+
+        }
+        List<TodoResponse> NEW_CO = new ArrayList<>(unlinkedCoTodoResponses);
 
         // TOTAL
 
         ToDoSingle newItem = new ToDoSingle("New First Release", NEW_ITEM);
-        //ToDoSingle newCo = new ToDoSingle("New CO Release", NEW_CO);
+        ToDoSingle newCo = new ToDoSingle("New CO Release", NEW_CO);
         ToDoSingle tempRelease = new ToDoSingle("Save as Draft", TEMP_SAVE);
         ToDoSingle rejectedRelease = new ToDoSingle("Rejected Release", REJECTED);
         ToDoSingle reviewRelease = new ToDoSingle("Waiting Review", REVIEW);
@@ -1609,7 +1610,7 @@ public class DashboardService {
         List<ToDoSingle> toDoDoubleList = new ArrayList<ToDoSingle>();
 
         toDoDoubleList.add(newItem);
-        //toDoDoubleList.add(newCo);
+        toDoDoubleList.add(newCo);
         toDoDoubleList.add(tempRelease);
         toDoDoubleList.add(rejectedRelease);
         toDoDoubleList.add(reviewRelease);
