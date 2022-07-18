@@ -24,6 +24,7 @@ import eci.server.ItemModule.exception.item.ItemNotFoundException;
 import eci.server.ItemModule.exception.member.sign.MemberNotFoundException;
 import eci.server.ItemModule.repository.member.MemberRepository;
 import eci.server.NewItemModule.entity.NewItem;
+import eci.server.NewItemModule.entity.NewItemMember;
 import eci.server.NewItemModule.exception.AttachmentTagNotFoundException;
 import eci.server.NewItemModule.repository.attachment.AttachmentTagRepository;
 import eci.server.NewItemModule.repository.item.NewItemRepository;
@@ -177,6 +178,13 @@ public class ChangeOrder extends EntityDate {
     )
     private List<CoAttachment> attachments;
 
+    @OneToMany(
+            mappedBy = "changeOrder",
+            cascade = CascadeType.ALL,//이거
+            orphanRemoval = true, //없애면 안돼 동윤아...
+            fetch = FetchType.LAZY
+    )
+    private List<CoMember> editors;
 
     ////////////////////////////////////////////////////
 
@@ -958,4 +966,14 @@ public class ChangeOrder extends EntityDate {
 
         return fileUpdatedResult;
     }
+
+    /**
+     * editors 등록해주는 함수
+     * @param editors
+     */
+    public void RegisterEditors(List<CoMember> editors){
+        this.editors.clear();
+        this.editors.addAll(editors);
+    }
+
 }

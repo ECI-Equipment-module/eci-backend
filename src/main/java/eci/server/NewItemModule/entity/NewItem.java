@@ -4,6 +4,7 @@ import eci.server.CRCOModule.entity.CoNewItem;
 import eci.server.DocumentModule.entity.DocumentAttachment;
 import eci.server.ItemModule.entity.entitycommon.EntityDate;
 import eci.server.ItemModule.entity.item.*;
+import eci.server.ItemModule.entity.newRoute.RouteProductMember;
 import eci.server.ItemModule.exception.item.ColorNotFoundException;
 import eci.server.ItemModule.exception.item.ItemNotFoundException;
 import eci.server.ItemModule.exception.member.sign.MemberNotFoundException;
@@ -289,6 +290,14 @@ public class NewItem extends EntityDate {
     @JoinColumn(name = "project_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Project project;
+
+    @OneToMany(
+            mappedBy = "newItem",
+            cascade = CascadeType.ALL,//이거
+            orphanRemoval = true, //없애면 안돼 동윤아...
+            fetch = FetchType.LAZY
+    )
+    private List<NewItemMember> editors;
 
     /**
      * attachment 있을 때, thumbnail 있을 때 생성자
@@ -1345,6 +1354,16 @@ public class NewItem extends EntityDate {
      */
     public void updateReleaseCnt(){
         this.released = this.released+1;
+    }
+
+
+    /**
+     * editors 등록해주는 함수
+     * @param editors
+     */
+    public void RegisterEditors(List<NewItemMember> editors){
+        this.editors.clear();
+        this.editors.addAll(editors);
     }
 
 }

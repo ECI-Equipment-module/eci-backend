@@ -11,6 +11,7 @@ import eci.server.ItemModule.entity.member.Member;
 import eci.server.ItemModule.entitycommon.EntityDate;
 import eci.server.ItemModule.exception.member.sign.MemberNotFoundException;
 import eci.server.ItemModule.repository.member.MemberRepository;
+import eci.server.NewItemModule.entity.NewItemMember;
 import eci.server.NewItemModule.exception.AttachmentTagNotFoundException;
 import eci.server.NewItemModule.exception.ClassificationNotFoundException;
 
@@ -103,6 +104,14 @@ public class Document extends EntityDate {
     @JoinColumn(name = "doc_tag_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private DocTag docTag;
+
+    @OneToMany(
+            mappedBy = "document",
+            cascade = CascadeType.ALL,//이거
+            orphanRemoval = true, //없애면 안돼 동윤아...
+            fetch = FetchType.LAZY
+    )
+    private List<DocumentMember> editors;
 
     /**
      * tempsave 나 save 나 모두 얘로 오기 때문에
@@ -493,6 +502,15 @@ public class Document extends EntityDate {
      */
     public void reviseProgressFalse(){
         this.revise_progress=false;
+    }
+
+    /**
+     * editors 등록해주는 함수
+     * @param editors
+     */
+    public void RegisterEditors(List<DocumentMember> editors){
+        this.editors.clear();
+        this.editors.addAll(editors);
     }
 
 }
