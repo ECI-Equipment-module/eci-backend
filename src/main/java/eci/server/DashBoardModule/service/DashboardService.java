@@ -16,6 +16,8 @@ import eci.server.DashBoardModule.dto.myProject.TotalProject;
 import eci.server.DashBoardModule.dto.projectTodo.TodoResponse;
 import eci.server.DesignModule.entity.design.Design;
 import eci.server.DesignModule.repository.DesignRepository;
+import eci.server.DocumentModule.entity.Document;
+import eci.server.DocumentModule.repository.DocumentRepository;
 import eci.server.ItemModule.entity.member.Member;
 import eci.server.ItemModule.entity.newRoute.RouteOrdering;
 import eci.server.ItemModule.entity.newRoute.RouteProduct;
@@ -64,6 +66,7 @@ public class DashboardService {
     private final ReleaseRepository releasingRepository;
     private final NewItemService newItemService;
     private final CoService changeOrderService;
+    private final DocumentRepository documentRepository;
 
     public TotalProject readProjectTotal() {
         //0) 현재 로그인 된 유저
@@ -1608,6 +1611,185 @@ public class DashboardService {
         toDoDoubleList.add(tempRelease);
         toDoDoubleList.add(rejectedRelease);
         toDoDoubleList.add(reviewRelease);
+
+        return new ToDoDoubleList(toDoDoubleList);
+
+    }
+
+
+
+    /**
+     * DOCUMENT TODO
+     *
+     * @return
+     */
+    public ToDoDoubleList readDOCUMENTTodo() {
+        //0) 현재 로그인 된 유저
+        Member member1 = memberRepository.findById(authHelper.extractMemberId()).orElseThrow(
+                AuthenticationEntryPointException::new
+        );
+        //new bom -> 아이템 목록
+        //1) 현재 진행 중인 라우트 프로덕트 카드들
+        List<RouteProduct> routeProductList = routeProductRepository.findAll().stream().filter(
+                rp -> rp.getSequence().equals(
+                        rp.getRouteOrdering().getPresent()
+                )
+        ).collect(Collectors.toList());
+
+        //2-1 ) 라우트 프로덕트들 중 나에게 할당된 카드들 & 단계가 개발 Doc 생성[설계자] 인 것
+        List<RouteProduct> myRouteDocCreateProductList = new ArrayList<>();
+
+        // 2-2 ) // & 단계가 개발 Doc review 인 것
+        List<RouteProduct> myRouteDocReviewProductList = new ArrayList<>();
+
+        for (RouteProduct routeProduct : routeProductList) {
+            for (RouteProductMember routeProductMember : routeProduct.getMembers()) {
+
+                if (routeProductMember.getMember().getId().equals(member1.getId())) {
+                    // 내가 라우트 프로덕트에 지정되어 있고
+
+                    if (
+                        // 단계가 bom create 라면
+                            routeProduct.getType().getModule().equals("DOC")
+                                    &&
+                                    routeProduct.getType().getName().equals("CREATE")
+                    ) {
+                        myRouteDocCreateProductList.add(routeProduct);
+                        //break;
+
+                    } else if (
+                        // 단계가 bom review 라면
+                            routeProduct.getType().getModule().equals("DOC")
+                                    &&
+                                    routeProduct.getType().getName().equals("REVIEW")
+                    ) {
+                        myRouteDocReviewProductList.add(routeProduct);
+                        //break;
+                    }
+
+                }
+            }
+        }
+
+        //1 ::: TEMP SAVE RELEASE: Doc 중 TEMP SAVE = TRUE ;
+
+        List<TodoResponse> TEMP_SAVE = new ArrayList<>();
+
+        //1-1 temp save 용 ) 내가 작성자인 모든 디자인 데려오기
+        List<Document> myDocList = documentRepository.findByMember(member1);
+
+        //1-2 temp-save 가 true 인 것만 담는 리스트
+
+        Set<Document> tempSavedDocumentList = new HashSet();
+        for (Document doc : myDocList) {
+
+            if (doc.getTempsave()){
+                if(routeOrderingRepository.findByDocumentOrderByIdAsc(doc).size()>0){
+                    RouteOrdering ordering = routeOrderingRepository.findByDocumentOrderByIdAsc(doc)
+                            .get(
+                                    routeOrderingRepository.findByDocumentOrderByIdAsc(doc).size() - 1
+                            );
+
+                    int presentIdx = ordering.getPresent();
+
+                    if(routeProductRepository.findAllByRouteOrdering(ordering).size()>
+                            presentIdx) {
+                        RouteProduct routeProduct = routeProductRepository.findAllByRouteOrdering(ordering).get(presentIdx);
+                        if (!routeProduct.isPreRejected()) {
+                            tempSavedDocumentList.add(doc);
+                        }
+                    }
+                }
+
+                else {
+                    tempSavedDocumentList.add(doc);
+                }
+            }
+        }
+
+        if (tempSavedDocumentList.size() > 0) {
+            for (Document targetDocument: tempSavedDocumentList) {
+                TodoResponse
+                        releaseTodoResponse =
+                        new TodoResponse(
+                                targetDocument.getId(),
+                                targetDocument.getDocumentTitle(),
+                                targetDocument.getClassification().getDocClassification1().getName()
+                                        +"/"+
+                                        targetDocument.getClassification().getDocClassification2().getName(),
+                                targetDocument.getDocumentNumber(),
+                                -1L
+                        );
+                TEMP_SAVE.add(releaseTodoResponse);
+            }
+        }
+
+        // 2 ::: 거절된 RELEASE 들
+        //  라우트 프로덕트들 중에서 현재이고,
+        // RELEASE CREATE 이고
+        // 라우트프로덕트 멤버가 나이고,
+        // PRE - REJECTED=TRUE 인 것
+        HashSet<TodoResponse> rejectedDocumentTodoResponses = new HashSet<>();
+
+        for (RouteProduct routeProduct : myRouteDocCreateProductList) {
+            if (
+                    routeProduct.isPreRejected()
+            ) {
+
+                Document targetDocument = routeProduct.getRouteOrdering().getDocument();
+
+                if(targetDocument!=null) {
+                    rejectedDocumentTodoResponses.add(
+                            new TodoResponse(
+                                    targetDocument.getId(),
+                                    targetDocument.getDocumentTitle(),
+                                    targetDocument.getClassification().getDocClassification1().getName()
+                                    +"/"+
+                                            targetDocument.getClassification().getDocClassification2().getName(),
+                                    targetDocument.getDocumentNumber(),
+                                    -1L
+                            )
+                    );
+                }
+            }
+        }
+        List<TodoResponse> REJECTED = new ArrayList<>(rejectedDocumentTodoResponses);
+
+        //3 :: RELEASE REVIEW 인 단계, 현재 진행 중이고, 내꺼고 단계가 RELEASE REVIEW
+        HashSet<TodoResponse> needReviewRELEASETodoResponses = new HashSet<>();
+
+        for(RouteProduct routeProduct : myRouteDocReviewProductList){
+
+            //현재 라우트보다 하나 이전 라우트프로덕트의 봄만 존재함, 그 봄을 가져와야한다.
+            Document targetDocument = routeProduct.getRouteOrdering().getDocument();
+
+            needReviewRELEASETodoResponses.add(
+                    new TodoResponse(
+                            targetDocument.getId(),
+                            targetDocument.getDocumentTitle(),
+                            targetDocument.getClassification().getDocClassification1().getName()
+                                    +"/"+
+                                    targetDocument.getClassification().getDocClassification2().getName(),
+                            targetDocument.getDocumentNumber(),
+                            -1L
+                    )
+            );
+        }
+
+        List<TodoResponse> REVIEW = new ArrayList<>(needReviewRELEASETodoResponses);
+
+        // TOTAL
+
+        ToDoSingle tempDocument = new ToDoSingle("Save as Draft", TEMP_SAVE);
+        ToDoSingle rejectedDocument = new ToDoSingle("Rejected Release", REJECTED);
+        ToDoSingle reviewDocument = new ToDoSingle("Waiting Review", REVIEW);
+
+        List<ToDoSingle> toDoDoubleList = new ArrayList<ToDoSingle>();
+
+
+        toDoDoubleList.add(tempDocument);
+        toDoDoubleList.add(rejectedDocument);
+        toDoDoubleList.add(reviewDocument);
 
         return new ToDoDoubleList(toDoDoubleList);
 

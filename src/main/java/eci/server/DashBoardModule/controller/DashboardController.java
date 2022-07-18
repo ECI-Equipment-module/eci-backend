@@ -116,4 +116,19 @@ public class DashboardController {
         );
     }
 
+    /**
+     * RELEASE to-do api
+     *
+     * @return 200 (success)
+     */
+    @CrossOrigin(origins = "https://localhost:3000")
+    @GetMapping("/dashboard/doc/todo")
+    @ResponseStatus(HttpStatus.OK)
+    public Response DOCTodo() {
+        return Response.success(
+                dashboardService.readDOCUMENTTodo()
+        );
+    }
+
+
 }
