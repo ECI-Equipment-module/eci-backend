@@ -375,10 +375,13 @@ public class CoService{
 
         List<ChangeOrder> changeOrders = changeOrderRepository.findAllByOrderByIdAsc();
 
+        System.out.println(changeOrders.size()+"sizeeeeeeeeeeeeeeeeeeeeeeee");
+
         //1-2) 상태가 release 나 complete인 것만 최종 제품에 담을 예정
         List<ChangeOrder> finalChangeOrders = new ArrayList<>();
 
         for(ChangeOrder  co : changeOrders){
+            System.out.println(co.getId()+"iddddddddddddddddddddddddddd");
             if(
                     routeOrderingRepository.findByChangeOrderOrderByIdAsc(co).size()>0
                             && (routeOrderingRepository.findByChangeOrderOrderByIdAsc(co).get(
