@@ -277,11 +277,13 @@ public class NewItemService {
 
         item.setReviseTargetId(targetId);
 
+        NewItem targetItem = newItemRepository.findById(targetId).orElseThrow(ItemNotFoundException::new);
+
         if( item.getItemTypes().getItemType().name().equals("파트제품") ||
                 item.getItemTypes().getItemType().name().equals("프로덕트제품")){
             System.out.println("equals 제품 이면 , 아이템 만들 때 controller에서 바로 item에 targetitme 등록 & 개정 ");
 
-            NewItem targetItem = newItemRepository.findById(targetId).orElseThrow(ItemNotFoundException::new);
+
             NewItemCreateResponse res2 =  item.updateRevisionAndHeritageReleaseCnt
                     (targetItem.getRevision()+1,
                             targetItem.getReleased());
@@ -292,12 +294,21 @@ public class NewItemService {
 
         if(req.getThumbnail()!=null && req.getThumbnail().getSize()>0) {
             uploadImages(item.getThumbnail(), req.getThumbnail());
-            if (!(req.getTag().size() == 0)) {//TODO : 나중에 함수로 빼기 (Attachment 유무 판단)
-                //attachment가 존재할 땜나
-                uploadAttachments(item.getAttachments(), req.getAttachments());
-            }
-        } else {
-            //TODO 0628 기본 이미지 전달 => NONO 걍 NULL로 저장하고 DTO에서 줄 때만 기본 이미지 주소주면 끝
+
+        } else { // 0719 들어온 이미지가 thumbnail 이 없으면 기존 thumbnail 로 ~
+            item.setThumbnail(
+                    new NewItemImage(
+                            targetItem.getThumbnail().getUniqueName(),
+                            targetItem.getThumbnail().getOriginName(),
+                            targetItem.getThumbnail().getImageaddress(),
+                            item
+                    )
+            );
+        }
+
+        if (!(req.getTag().size() == 0)) {//TODO : 나중에 함수로 빼기 (Attachment 유무 판단)
+            //attachment가 존재할 땜나
+            uploadAttachments(item.getAttachments(), req.getAttachments());
         }
 
         item.updateReadOnlyWhenSaved(); //저장하면 readonly = true

@@ -133,7 +133,7 @@ public class NewItemCreateRequest {
     private Long memberId;
 
     @Nullable
-    private List<Long> duplicateTargetIds = new ArrayList<>();
+    private List<Long> duplicateTargetIds;
 
     public static NewItem toEntity(
             NewItemCreateRequest req,
