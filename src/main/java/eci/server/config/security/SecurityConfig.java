@@ -77,6 +77,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET, "/dashboard/project/page").authenticated()
                 .antMatchers(HttpMethod.GET, "/dashboard/project/todo").authenticated()
                 .antMatchers(HttpMethod.GET, "/dashboard/project/total").authenticated()
+                .antMatchers(HttpMethod.GET, "/dashboard/doc/todo").authenticated()
+
 
                 .antMatchers(HttpMethod.POST, "/design-file/**").authenticated()
                 .antMatchers(HttpMethod.POST,"/webjars/**").permitAll()
