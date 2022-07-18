@@ -17,11 +17,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
 @RestController
-@CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app/")
+@CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
 public class ExceptionController {
 
     private final TokenService tokenService;
-    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app/")
+    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
     @GetMapping("/exception/entry-point")
     public void entryPoint(@RequestHeader(value = "Authorization") String accessToken) {
         /**
@@ -35,14 +35,14 @@ public class ExceptionController {
         System.out.println("액세스 만료가 아니라 리프레시 에러야 이거는  ");
         throw new AuthenticationEntryPointException();
     }
-    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app/")
+    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
     @GetMapping("/exception/access-expired")
     public void accessExpired() {
         throw new AccessExpiredException();
     }
 
 
-    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app/")
+    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
     @GetMapping("/exception/access-denied")
     public void accessDenied() {
 

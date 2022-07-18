@@ -36,7 +36,7 @@ public class DocumentPageController {
     @Value("${default.image.address}")
     private String defaultImageAddress;
 
-    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app/")
+    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
     @GetMapping("/doc/page")
     public Page<DocumentReadDto> readDocPages(@PageableDefault(size = 5)
                                         @SortDefault.SortDefaults({

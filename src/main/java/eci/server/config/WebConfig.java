@@ -47,11 +47,11 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins("https://naughty-raman-7e7eb1.netlify.app/")
+                .allowedOrigins("https://naughty-raman-7e7eb1.netlify.app")
                 .allowedMethods("GET", "POST")
                 .allowCredentials(true);
                     registry.addMapping("/**")
-                    .allowedOrigins("https://naughty-raman-7e7eb1.netlify.app/");
+                    .allowedOrigins("https://naughty-raman-7e7eb1.netlify.app");
 
     }
 

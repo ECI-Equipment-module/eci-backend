@@ -11,11 +11,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
 @RestController
-@CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app/")
+@CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
 public class DocClassificationController {
     private final DocClassificationService docClassificationService;
 
-    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app/")
+    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
     @GetMapping("/doc/classification1")
     @ResponseStatus(HttpStatus.OK)
     public Response readDocClassification1All() {

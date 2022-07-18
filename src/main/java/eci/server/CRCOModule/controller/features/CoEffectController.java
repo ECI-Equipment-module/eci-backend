@@ -16,10 +16,10 @@ import javax.validation.Valid;
 
 @RequiredArgsConstructor
 @RestController
-@CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app/")
+@CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
 public class CoEffectController{
     private final CoEffectService coEffectService;
-    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app/")
+    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
     @GetMapping("/coEffectId")
     @ResponseStatus(HttpStatus.OK)
     public Response readAll(@Valid CoEffectReadCondition cond) {

@@ -13,12 +13,12 @@ import javax.validation.Valid;
 @RestController
 @RequiredArgsConstructor
 @Slf4j
-@CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app/")
+@CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
 public class CompareBomController {
 
     private final CompareBomService bomService;
 
-    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app/")
+    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
     @GetMapping("/compare")
     @ResponseStatus(HttpStatus.OK)
     public Response getPreliminary(
