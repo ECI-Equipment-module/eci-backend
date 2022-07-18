@@ -1577,31 +1577,31 @@ public class DashboardService {
         }
         List<TodoResponse> NEW_ITEM = new ArrayList<>(unlinkedItemTodoResponses);
 
-        // 5 ::: NEW CO
-        HashSet<TodoResponse> unlinkedCoTodoResponses = new HashSet<>();
-
-        Set<ChangeOrder> changeOrders =
-                new HashSet<>(changeOrderService.readCoAvailableInRelease());
-
-        for (ChangeOrder changeOrder : changeOrders) {
-            System.out.println(changeOrder.getId()+"COOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO");
-            unlinkedItemTodoResponses.add(
-                    new TodoResponse(
-                            changeOrder.getId(),
-                            changeOrder.getName(),
-                            "CO",
-                            changeOrder.getCoNumber(),
-                            -1L
-                    )
-            );
-
-        }
-        List<TodoResponse> NEW_CO = new ArrayList<>(unlinkedCoTodoResponses);
+//        // 5 ::: NEW CO
+//        HashSet<TodoResponse> unlinkedCoTodoResponses = new HashSet<>();
+//
+//        Set<ChangeOrder> changeOrders =
+//                new HashSet<>(changeOrderService.readCoAvailableInRelease());
+//
+//        for (ChangeOrder changeOrder : changeOrders) {
+//            System.out.println(changeOrder.getId()+"COOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO");
+//            unlinkedItemTodoResponses.add(
+//                    new TodoResponse(
+//                            changeOrder.getId(),
+//                            changeOrder.getName(),
+//                            "CO",
+//                            changeOrder.getCoNumber(),
+//                            -1L
+//                    )
+//            );
+//
+//        }
+//        List<TodoResponse> NEW_CO = new ArrayList<>(unlinkedCoTodoResponses);
 
         // TOTAL
 
         ToDoSingle newItem = new ToDoSingle("New First Release", NEW_ITEM);
-        ToDoSingle newCo = new ToDoSingle("New CO Release", NEW_CO);
+        //ToDoSingle newCo = new ToDoSingle("New CO Release", NEW_CO);
         ToDoSingle tempRelease = new ToDoSingle("Save as Draft", TEMP_SAVE);
         ToDoSingle rejectedRelease = new ToDoSingle("Rejected Release", REJECTED);
         ToDoSingle reviewRelease = new ToDoSingle("Waiting Review", REVIEW);
@@ -1609,7 +1609,7 @@ public class DashboardService {
         List<ToDoSingle> toDoDoubleList = new ArrayList<ToDoSingle>();
 
         toDoDoubleList.add(newItem);
-        toDoDoubleList.add(newCo);
+        //toDoDoubleList.add(newCo);
         toDoDoubleList.add(tempRelease);
         toDoDoubleList.add(rejectedRelease);
         toDoDoubleList.add(reviewRelease);
