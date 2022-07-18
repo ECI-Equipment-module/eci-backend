@@ -30,6 +30,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.print.Doc;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.IntStream;
@@ -268,6 +269,31 @@ public class DocumentService {
                 fileService.delete(attachment.getUniqueName());
             }
         }
+    }
+
+    /**
+     * 새로 만들어진 new doc에
+     * targetDoc으로 old doc 등록
+     * old doc의 revise - progress = true
+     * @param newDocId
+     * @param oldDocId
+     */
+    public void reviseCreate(Long newDocId , Long oldDocId){
+
+        Document oldDocument
+                = documentRepository.findById(oldDocId).orElseThrow(
+                DocumentNotFoundException::new
+        );
+
+        oldDocument.reviseProgressTrue();
+
+        Document newDocument
+                = documentRepository.findById(newDocId).orElseThrow(
+                DocumentNotFoundException::new
+        );
+
+        newDocument.setReviseTargetDoc(oldDocument);
+
     }
 
 

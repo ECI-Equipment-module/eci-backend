@@ -10,14 +10,12 @@ import eci.server.ItemModule.exception.member.MemberNotFoundException;
 import eci.server.ItemModule.repository.member.MemberRepository;
 import eci.server.NewItemModule.exception.AttachmentTagNotFoundException;
 import eci.server.NewItemModule.exception.ClassificationNotFoundException;
-import eci.server.NewItemModule.exception.ClassificationRequiredException;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.Lob;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
 import java.util.ArrayList;
 import java.util.List;
@@ -44,7 +42,6 @@ public class DocumentTempCreateRequest{
     private Long memberId;
 
     private List<MultipartFile> attachments = new ArrayList<>();
-
 
     public static Document toEntity(
 
