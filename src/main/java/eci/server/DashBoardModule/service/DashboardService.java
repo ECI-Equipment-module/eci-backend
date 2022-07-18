@@ -1408,9 +1408,8 @@ public class DashboardService {
         Member member1 = memberRepository.findById(authHelper.extractMemberId()).orElseThrow(
                 AuthenticationEntryPointException::new
         );
-        //new bom -> 아이템 목록1
+        //new bom -> 아이템 목록
         //1) 현재 진행 중인 라우트 프로덕트 카드들
-
         List<RouteProduct> routeProductList = routeProductRepository.findAll().stream().filter(
                 rp -> rp.getSequence().equals(
                         rp.getRouteOrdering().getPresent()
@@ -1455,27 +1454,26 @@ public class DashboardService {
         //1 ::: TEMP SAVE RELEASE: RELEASE 중 TEMP SAVE = TRUE ;
 
         List<TodoResponse> TEMP_SAVE = new ArrayList<>();
-        System.out.println("1111111111111");
+
         //1-1 temp save 용 ) 내가 작성자인 모든 디자인 데려오기
         List<Releasing> myReleaseList = releasingRepository.findByMember(member1);
-        System.out.println("22222211111111111111");
+
         //1-2 temp-save 가 true 인 것만 담는 리스트
 
         Set<Releasing> tempSavedReleaseList = new HashSet();
         for (Releasing releasing : myReleaseList) {
-            System.out.println("111133331111111");
+
             if (releasing.getTempsave()){
                 if(routeOrderingRepository.findByReleaseOrderByIdAsc(releasing).size()>0){
                     RouteOrdering ordering = routeOrderingRepository.findByReleaseOrderByIdAsc(releasing)
                             .get(
                                     routeOrderingRepository.findByReleaseOrderByIdAsc(releasing).size() - 1
                             );
-                    System.out.println("1444444411111111");
+
                     int presentIdx = ordering.getPresent();
-                    System.out.println("1115555551111111");
+
                     if(routeProductRepository.findAllByRouteOrdering(ordering).size()>
                             presentIdx) {
-                        System.out.println("6666666666611111");
                         RouteProduct routeProduct = routeProductRepository
                                 .findAllByRouteOrdering(ordering).get(presentIdx);
                         if (!routeProduct.isPreRejected()) {
@@ -1484,14 +1482,12 @@ public class DashboardService {
                     }
                 }
 
-
                 else {
-                    System.out.println("77776611111");
                     tempSavedReleaseList.add(releasing);
                 }
             }
         }
-        System.out.println("555555555555555555111111111111111111111111");
+
         if (tempSavedReleaseList.size() > 0) {
             for (Releasing r: tempSavedReleaseList) {
                 TodoResponse
@@ -1506,7 +1502,7 @@ public class DashboardService {
                 TEMP_SAVE.add(releaseTodoResponse);
             }
         }
-        System.out.println("11166666666666666611111111111111111111111111");
+
         // 2 ::: 거절된 RELEASE 들
         //  라우트 프로덕트들 중에서 현재이고,
         // RELEASE CREATE 이고
@@ -1535,7 +1531,7 @@ public class DashboardService {
             }
         }
         List<TodoResponse> REJECTED = new ArrayList<>(rejectedReleaseTodoResponses);
-        System.out.println("11777777777777777777771111111111111111111111111111");
+
         //3 :: RELEASE REVIEW 인 단계, 현재 진행 중이고, 내꺼고 단계가 RELEASE REVIEW
         HashSet<TodoResponse> needReviewRELEASETodoResponses = new HashSet<>();
 
@@ -1554,7 +1550,7 @@ public class DashboardService {
                     )
             );
         }
-        System.out.println("1888888888888888811111111111111111");
+
         List<TodoResponse> REVIEW = new ArrayList<>(needReviewRELEASETodoResponses);
 
 
@@ -1580,7 +1576,7 @@ public class DashboardService {
 
         }
         List<TodoResponse> NEW_ITEM = new ArrayList<>(unlinkedItemTodoResponses);
-        System.out.println("111999999999999999999111111111111111111111");
+
         // 5 ::: NEW CO
         HashSet<TodoResponse> unlinkedCoTodoResponses = new HashSet<>();
 
