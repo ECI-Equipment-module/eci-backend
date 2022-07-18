@@ -1410,19 +1410,19 @@ public class DashboardService {
         );
         //new bom -> 아이템 목록1
         //1) 현재 진행 중인 라우트 프로덕트 카드들
-        System.out.println("11111111111111111111111111111111111111111111111111111");
+
         List<RouteProduct> routeProductList = routeProductRepository.findAll().stream().filter(
                 rp -> rp.getSequence().equals(
                         rp.getRouteOrdering().getPresent()
                 )
         ).collect(Collectors.toList());
-        System.out.println("122222111111111111111111111111111111111111");
+
         //2-1 ) 라우트 프로덕트들 중 나에게 할당된 카드들 & 단계가 개발 BOM 생성[설계자] 인 것
         List<RouteProduct> myRouteReleaseCreateProductList = new ArrayList<>();
 
         // 2-2 ) // & 단계가 개발 bom review 인 것
         List<RouteProduct> myRouteReleaseReviewProductList = new ArrayList<>();
-        System.out.println("1113333333111111111111111111111111111");
+
         for (RouteProduct routeProduct : routeProductList) {
             for (RouteProductMember routeProductMember : routeProduct.getMembers()) {
 
@@ -1455,26 +1455,27 @@ public class DashboardService {
         //1 ::: TEMP SAVE RELEASE: RELEASE 중 TEMP SAVE = TRUE ;
 
         List<TodoResponse> TEMP_SAVE = new ArrayList<>();
-        System.out.println("1111144444444444444444444411111111111111111111111111111");
+        System.out.println("1111111111111");
         //1-1 temp save 용 ) 내가 작성자인 모든 디자인 데려오기
         List<Releasing> myReleaseList = releasingRepository.findByMember(member1);
-
+        System.out.println("22222211111111111111");
         //1-2 temp-save 가 true 인 것만 담는 리스트
 
         Set<Releasing> tempSavedReleaseList = new HashSet();
         for (Releasing releasing : myReleaseList) {
-
+            System.out.println("111133331111111");
             if (releasing.getTempsave()){
                 if(routeOrderingRepository.findByReleaseOrderByIdAsc(releasing).size()>0){
                     RouteOrdering ordering = routeOrderingRepository.findByReleaseOrderByIdAsc(releasing)
                             .get(
                                     routeOrderingRepository.findByReleaseOrderByIdAsc(releasing).size() - 1
                             );
-
+                    System.out.println("1444444411111111");
                     int presentIdx = ordering.getPresent();
-
+                    System.out.println("1115555551111111");
                     if(routeProductRepository.findAllByRouteOrdering(ordering).size()>
                             presentIdx) {
+                        System.out.println("6666666666611111");
                         RouteProduct routeProduct = routeProductRepository
                                 .findAllByRouteOrdering(ordering).get(presentIdx);
                         if (!routeProduct.isPreRejected()) {
@@ -1483,7 +1484,9 @@ public class DashboardService {
                     }
                 }
 
+
                 else {
+                    System.out.println("77776611111");
                     tempSavedReleaseList.add(releasing);
                 }
             }
