@@ -1474,7 +1474,8 @@ public class DashboardService {
 
                     if(routeProductRepository.findAllByRouteOrdering(ordering).size()>
                             presentIdx) {
-                        RouteProduct routeProduct = routeProductRepository.findAllByRouteOrdering(ordering).get(presentIdx);
+                        RouteProduct routeProduct = routeProductRepository
+                                .findAllByRouteOrdering(ordering).get(presentIdx);
                         if (!routeProduct.isPreRejected()) {
                             tempSavedReleaseList.add(releasing);
                         }
@@ -1583,6 +1584,7 @@ public class DashboardService {
                 new HashSet<>(changeOrderService.readCoAvailableInRelease());
 
         for (ChangeOrder changeOrder : changeOrders) {
+            System.out.println(changeOrder.getId()+"COOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO");
             unlinkedItemTodoResponses.add(
                     new TodoResponse(
                             changeOrder.getId(),
