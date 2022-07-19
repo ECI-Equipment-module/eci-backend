@@ -77,6 +77,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET, "/dashboard/project/page").authenticated()
                 .antMatchers(HttpMethod.GET, "/dashboard/project/todo").authenticated()
                 .antMatchers(HttpMethod.GET, "/dashboard/project/total").authenticated()
+                .antMatchers(HttpMethod.GET, "/dashboard/doc/todo").authenticated()
+
 
                 .antMatchers(HttpMethod.POST, "/design-file/**").authenticated()
                 .antMatchers(HttpMethod.POST,"/webjars/**").permitAll()
@@ -121,8 +123,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.DELETE, "/compare").authenticated()
 
                 .antMatchers(HttpMethod.POST, "/doc").authenticated()
-
+                .antMatchers(HttpMethod.POST, "/doc/{targetId}").authenticated()
                 .antMatchers(HttpMethod.POST, "/doc/temp").authenticated()
+                .antMatchers(HttpMethod.POST, "/doc/temp//doc/{targetId}").authenticated()
                 .antMatchers(HttpMethod.PUT, "/doc/{id}").authenticated()
                 .antMatchers(HttpMethod.PUT, "/doc/temp/end/{id}").authenticated()
                 .antMatchers(HttpMethod.GET, "/doc/{id}").authenticated()

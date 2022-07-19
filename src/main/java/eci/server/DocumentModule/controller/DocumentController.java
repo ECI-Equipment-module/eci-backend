@@ -6,6 +6,7 @@ import eci.server.DocumentModule.dto.DocumentUpdateRequest;
 import eci.server.DocumentModule.service.DocumentService;
 import eci.server.ItemModule.dto.response.Response;
 import eci.server.NewItemModule.dto.newItem.create.NewItemCreateResponse;
+import eci.server.ProjectModule.dto.project.ProjectTempCreateUpdateResponse;
 import eci.server.aop.AssignMemberId;
 import eci.server.aop.AssignModifierId;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,34 @@ import javax.validation.Valid;
 public class DocumentController {
 
     private final DocumentService documentService;
+
+
+    /**
+     * 아이템 개정용 생성 (찐 저장)
+     *
+     * @param req
+     * @return 200 (success)
+     */
+    @CrossOrigin(origins = "https://localhost:3000")
+    @PostMapping("/doc/{targetId}")
+    @ResponseStatus(HttpStatus.CREATED)
+    @AssignMemberId // Aspect : 인증된 사용자 정보로 아이템 작성자 지정 가능
+    public Response docReviseCreate(
+            @PathVariable Long targetId,
+            @Valid @ModelAttribute
+                    DocumentCreateRequest req
+    ) {
+
+        NewItemCreateResponse response =
+                documentService.reviseCreate
+                (req, targetId);
+
+        return Response.success(
+                response
+        );
+    }
+
+
 
     /**
      * 아이템 생성 (찐 저장)
@@ -40,6 +69,34 @@ public class DocumentController {
 
         NewItemCreateResponse response =
                 documentService.create(req);
+
+
+
+        return Response.success(
+                response
+        );
+    }
+
+    /**
+     * 아이템 임시저장 생성
+     *
+     * @param req
+     * @return 200 (success)
+     */
+    @CrossOrigin(origins = "https://localhost:3000")
+    @PostMapping("/doc/temp/{targetId}")
+    @ResponseStatus(HttpStatus.CREATED)
+    @AssignMemberId // Aspect : 인증된 사용자 정보로 아이템 작성자 지정 가능
+    public Response docReviseTempCreate(
+            @PathVariable Long targetId,
+            @Valid @ModelAttribute
+                    DocumentTempCreateRequest req
+    ) {
+
+        ProjectTempCreateUpdateResponse response =
+                documentService.tempReviseCreate(
+                req, targetId
+        );
 
         return Response.success(
                 response

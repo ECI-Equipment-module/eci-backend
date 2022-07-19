@@ -1,8 +1,10 @@
 package eci.server.NewItemModule.entity;
 
 import eci.server.CRCOModule.entity.CoNewItem;
+import eci.server.DocumentModule.entity.DocumentAttachment;
 import eci.server.ItemModule.entity.entitycommon.EntityDate;
 import eci.server.ItemModule.entity.item.*;
+import eci.server.ItemModule.entity.newRoute.RouteProductMember;
 import eci.server.ItemModule.exception.item.ColorNotFoundException;
 import eci.server.ItemModule.exception.item.ItemNotFoundException;
 import eci.server.ItemModule.exception.member.sign.MemberNotFoundException;
@@ -289,6 +291,14 @@ public class NewItem extends EntityDate {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Project project;
 
+    @OneToMany(
+            mappedBy = "newItem",
+            cascade = CascadeType.ALL,//이거
+            orphanRemoval = true, //없애면 안돼 동윤아...
+            fetch = FetchType.LAZY
+    )
+    private List<NewItemMember> editors;
+
     /**
      * attachment 있을 때, thumbnail 있을 때 생성자
      * @param classification
@@ -360,7 +370,9 @@ public class NewItem extends EntityDate {
             Boolean tempsave,
             Boolean revise_progress,
 
-            List<NewItemAttachment> attachments
+            List<NewItemAttachment> attachments,
+
+            List<NewItemAttachment> duplicatedAttachments
     ) {
 
         this.classification = classification;
@@ -442,6 +454,12 @@ public class NewItem extends EntityDate {
 
         this.released = 0;
 
+        if(duplicatedAttachments!=null){
+            this.attachments
+                    .addAll(duplicatedAttachments);
+            addAttachments(duplicatedAttachments);
+        }
+
     }
 
 
@@ -513,7 +531,9 @@ public class NewItem extends EntityDate {
             String partnumbers,
             Member member,
             Boolean tempsave,
-            Boolean revise_progress
+            Boolean revise_progress,
+
+            List<NewItemAttachment> duplicatedAttachments
 
     ) {
 
@@ -601,6 +621,15 @@ public class NewItem extends EntityDate {
         this.modifier = member;
 
         this.released = 0;
+
+        this.attachments = new ArrayList<>();
+
+        if(duplicatedAttachments!=null){
+            this.attachments
+                    .addAll(duplicatedAttachments);
+            addAttachments(duplicatedAttachments);
+        }
+
     }
 
     /**
@@ -1325,6 +1354,16 @@ public class NewItem extends EntityDate {
      */
     public void updateReleaseCnt(){
         this.released = this.released+1;
+    }
+
+
+    /**
+     * editors 등록해주는 함수
+     * @param editors
+     */
+    public void RegisterEditors(List<NewItemMember> editors){
+        this.editors.clear();
+        this.editors.addAll(editors);
     }
 
 }

@@ -30,8 +30,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.print.Doc;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Service
@@ -67,7 +69,8 @@ public class DocumentService {
                         docClassification1Repository,
                         docClassification2Repository,
                         memberRepository,
-                        docTagRepository
+                        docTagRepository,
+                        documentAttachmentRepository
                 )
         );
 
@@ -79,6 +82,47 @@ public class DocumentService {
 
 
         return new ProjectTempCreateUpdateResponse(document.getId());
+    }
+
+    /**
+     * 임시저장 release
+     * @param req
+     * @return
+     */
+    @Transactional
+    public ProjectTempCreateUpdateResponse tempReviseCreate(DocumentTempCreateRequest req,
+                                                            Long oldDocId) {
+
+        Document newDocument = documentRepository.save(
+                DocumentTempCreateRequest.toEntity(
+                        req,
+                        docClassification1Repository,
+                        docClassification2Repository,
+                        memberRepository,
+                        docTagRepository,
+                        documentAttachmentRepository
+                )
+        );
+
+        if(!(req.getAttachments().size()==0)) {
+            uploadAttachments(newDocument.getAttachments(), req.getAttachments());
+        }
+
+        saveTrueAttachment(newDocument);
+
+        ///////// 기존과 달라지는 부분 시작
+        Document oldDocument
+                = documentRepository.findById(oldDocId).orElseThrow(
+                DocumentNotFoundException::new
+        );
+
+        newDocument.setReviseTargetDoc(oldDocument);
+
+        oldDocument.reviseProgressTrue();
+        ///////// 기존과 달라지는 부분 끝
+
+
+        return new ProjectTempCreateUpdateResponse(newDocument.getId());
     }
 
     /**
@@ -95,7 +139,8 @@ public class DocumentService {
                         docClassification1Repository,
                         docClassification2Repository,
                         memberRepository,
-                        docTagRepository
+                        docTagRepository,
+                        documentAttachmentRepository
                 )
         );
 
@@ -107,6 +152,58 @@ public class DocumentService {
 
 
         return new NewItemCreateResponse(document.getId());
+    }
+
+
+    /**
+     * release revise 되는 거 찐 저장
+     *
+     *
+     *
+     *      * 새로 만들어진 new doc에
+     *      * targetDoc으로 old doc 등록
+     *      * old doc의 revise - progress = true
+     *
+     * @param req
+     * @return
+     */
+    @Transactional
+    public NewItemCreateResponse reviseCreate(DocumentCreateRequest req, Long oldDocId) {
+
+        Document newDocument = documentRepository.save(
+                DocumentCreateRequest.toEntity(
+                        req,
+                        docClassification1Repository,
+                        docClassification2Repository,
+                        memberRepository,
+                        docTagRepository,
+                        documentAttachmentRepository
+                )
+        );
+
+        if(!(req.getAttachments().size()==0)){
+
+
+            uploadAttachments(
+                    newDocument.getAttachments(),
+                    req.getAttachments());
+        }
+
+
+        saveTrueAttachment(newDocument);
+
+        ///////// 기존과 달라지는 부분 시작
+        Document oldDocument
+                = documentRepository.findById(oldDocId).orElseThrow(
+                DocumentNotFoundException::new
+        );
+
+        newDocument.setReviseTargetDoc(oldDocument);
+
+        oldDocument.reviseProgressTrue();
+        ///////// 기존과 달라지는 부분 끝
+
+        return new NewItemCreateResponse(newDocument.getId());
     }
 
 
@@ -249,15 +346,31 @@ public class DocumentService {
                 );
     }
 
-    private void uploadAttachments(List<DocumentAttachment> attachments, List<MultipartFile> filedAttachments) {
+    /**
+    // 실제 파일 올릴 때
+    // newDocument.getAttachments() 중 duplicate = true
+     인 것들은
+    // 제외하면 된다.
+    **/
+    private void uploadAttachments
+    (List<DocumentAttachment> attachments,
+     List<MultipartFile> filedAttachments) {
+
+        List<DocumentAttachment> neededToBeUploaded =
+                attachments.stream().filter(
+                        documentAttachment -> //duplicate = false 인 것만 모아서 찐 저장!
+                                !documentAttachment.isDuplicate()
+                )
+                .collect(Collectors.toList());
+
         // 실제 이미지 파일을 가지고 있는 Multipart 파일을
         // 파일이 가지는 unique name 을 파일명으로 해서 파일저장소 업로드
-        IntStream.range(0, attachments.size())
+        IntStream.range(0, neededToBeUploaded.size())
                 .forEach(
                         i -> fileService.upload
                                 (
                                         filedAttachments.get(i),
-                                        attachments.get(i).getUniqueName()
+                                        neededToBeUploaded.get(i).getUniqueName()
                                 )
                 );
     }
@@ -269,6 +382,8 @@ public class DocumentService {
             }
         }
     }
+
+
 
 
 }

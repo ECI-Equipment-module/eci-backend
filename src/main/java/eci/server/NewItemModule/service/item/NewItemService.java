@@ -4,6 +4,7 @@ import eci.server.BomModule.repository.BomRepository;
 import eci.server.BomModule.repository.PreliminaryBomRepository;
 import eci.server.DesignModule.dto.DesignContentDto;
 import eci.server.DesignModule.repository.DesignRepository;
+import eci.server.DocumentModule.entity.DocumentAttachment;
 import eci.server.ItemModule.dto.item.*;
 import eci.server.ItemModule.dto.newRoute.routeOrdering.RouteOrderingDto;
 
@@ -32,6 +33,7 @@ import eci.server.NewItemModule.dto.newItem.create.NewItemCreateResponse;
 import eci.server.NewItemModule.dto.newItem.create.NewItemTemporaryCreateRequest;
 import eci.server.NewItemModule.dto.newItem.update.NewItemUpdateRequest;
 import eci.server.NewItemModule.entity.*;
+import eci.server.NewItemModule.entity.attachment.Attachment;
 import eci.server.NewItemModule.repository.TempNewItemParentChildrenRepository;
 import eci.server.NewItemModule.repository.attachment.AttachmentTagRepository;
 import eci.server.NewItemModule.repository.attachment.NewItemAttachmentRepository;
@@ -124,7 +126,8 @@ public class NewItemService {
                         memberRepository,
                         colorRepository,
                         makerRepository,
-                        attachmentTagRepository
+                        attachmentTagRepository,
+                        newItemAttachmentRepository
                 )
         );
 
@@ -159,7 +162,8 @@ public class NewItemService {
                         memberRepository,
                         colorRepository,
                         makerRepository,
-                        attachmentTagRepository
+                        attachmentTagRepository,
+                        newItemAttachmentRepository
                 )
         );
 
@@ -216,7 +220,8 @@ public class NewItemService {
                         memberRepository,
                         colorRepository,
                         makerRepository,
-                        attachmentTagRepository
+                        attachmentTagRepository,
+                        newItemAttachmentRepository
                 )
 
         );
@@ -264,18 +269,21 @@ public class NewItemService {
                         memberRepository,
                         colorRepository,
                         makerRepository,
-                        attachmentTagRepository
+                        attachmentTagRepository,
+                        newItemAttachmentRepository
                 )
 
         );
 
         item.setReviseTargetId(targetId);
 
+        NewItem targetItem = newItemRepository.findById(targetId).orElseThrow(ItemNotFoundException::new);
+
         if( item.getItemTypes().getItemType().name().equals("파트제품") ||
                 item.getItemTypes().getItemType().name().equals("프로덕트제품")){
             System.out.println("equals 제품 이면 , 아이템 만들 때 controller에서 바로 item에 targetitme 등록 & 개정 ");
 
-            NewItem targetItem = newItemRepository.findById(targetId).orElseThrow(ItemNotFoundException::new);
+
             NewItemCreateResponse res2 =  item.updateRevisionAndHeritageReleaseCnt
                     (targetItem.getRevision()+1,
                             targetItem.getReleased());
@@ -286,12 +294,23 @@ public class NewItemService {
 
         if(req.getThumbnail()!=null && req.getThumbnail().getSize()>0) {
             uploadImages(item.getThumbnail(), req.getThumbnail());
-            if (!(req.getTag().size() == 0)) {//TODO : 나중에 함수로 빼기 (Attachment 유무 판단)
-                //attachment가 존재할 땜나
-                uploadAttachments(item.getAttachments(), req.getAttachments());
-            }
-        } else {
-            //TODO 0628 기본 이미지 전달 => NONO 걍 NULL로 저장하고 DTO에서 줄 때만 기본 이미지 주소주면 끝
+
+        } else { // 0719 들어온 이미지가 thumbnail 이 없으면 기존 thumbnail 로 ~
+            System.out.println(" 들어온 이미지가 thumbnail 이 없으면 기존 thumbnail 로 ~ ");
+            item.setThumbnail(
+
+                    new NewItemImage(
+                            targetItem.getThumbnail().getUniqueName(),
+                            targetItem.getThumbnail().getOriginName(),
+                            targetItem.getThumbnail().getImageaddress(),
+                            item
+                    )
+            );
+        }
+
+        if (!(req.getTag().size() == 0)) {//TODO : 나중에 함수로 빼기 (Attachment 유무 판단)
+            //attachment가 존재할 땜나
+            uploadAttachments(item.getAttachments(), req.getAttachments());
         }
 
         item.updateReadOnlyWhenSaved(); //저장하면 readonly = true
@@ -335,14 +354,22 @@ public class NewItemService {
             List<NewItemAttachment> attachments,
             List<MultipartFile> filedAttachments
     ) {
+
+        List<NewItemAttachment> neededToBeUploaded =
+                attachments.stream().filter(
+                                documentAttachment -> //duplicate = false 인 것만 모아서 찐 저장!
+                                        !documentAttachment.isDuplicate()
+                        )
+                        .collect(Collectors.toList());
+
         // 실제 이미지 파일을 가지고 있는 Multipart 파일을
-        // 파일이 가지는 uniquename을 파일명으로 해서 파일저장소 업로드
-        IntStream.range(0, attachments.size())
+        // 파일이 가지는 unique name 을 파일명으로 해서 파일저장소 업로드
+        IntStream.range(0, neededToBeUploaded.size())
                 .forEach(
                         i -> fileService.upload
                                 (
                                         filedAttachments.get(i),
-                                        attachments.get(i).getUniqueName()
+                                        neededToBeUploaded.get(i).getUniqueName()
                                 )
                 );
     }

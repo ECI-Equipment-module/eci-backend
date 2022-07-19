@@ -1,21 +1,19 @@
 package eci.server.DesignModule.entity.design;
 
 import eci.server.DesignModule.dto.DesignUpdateRequest;
+import eci.server.DesignModule.entity.DesignMember;
 import eci.server.DesignModule.entity.designfile.DesignAttachment;
 import eci.server.DesignModule.exception.DesignContentNotEmptyException;
 import eci.server.ItemModule.entity.entitycommon.EntityDate;
-//import eci.server.ItemModule.entity.item.Item;
 import eci.server.ItemModule.entity.member.Member;
 import eci.server.ItemModule.exception.item.AttachmentNotFoundException;
 import eci.server.ItemModule.exception.item.ItemNotFoundException;
-import eci.server.ItemModule.exception.item.ItemUpdateImpossibleException;
 import eci.server.ItemModule.exception.member.sign.MemberNotFoundException;
 import eci.server.ItemModule.repository.member.MemberRepository;
 import eci.server.NewItemModule.entity.NewItem;
+import eci.server.NewItemModule.entity.NewItemMember;
 import eci.server.NewItemModule.repository.attachment.AttachmentTagRepository;
 import eci.server.NewItemModule.repository.item.NewItemRepository;
-import eci.server.ProjectModule.entity.projectAttachment.ProjectAttachment;
-import eci.server.config.guard.DesignGuard;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -73,6 +71,14 @@ public class Design extends EntityDate {
             orphanRemoval = true
     )
     private List<DesignAttachment> designAttachments;
+
+    @OneToMany(
+            mappedBy = "design",
+            cascade = CascadeType.ALL,//이거
+            orphanRemoval = true, //없애면 안돼 동윤아...
+            fetch = FetchType.LAZY
+    )
+    private List<DesignMember> editors;
 
     /**
      * 단순 시연용
@@ -422,6 +428,15 @@ public class Design extends EntityDate {
         //라우트까지 만들어져야 temp save 가 비로소 true
         this.tempsave = false;
         this.readonly = true;
+    }
+
+    /**
+     * editors 등록해주는 함수
+     * @param editors
+     */
+    public void RegisterEditors(List<DesignMember> editors){
+        this.editors.clear();
+        this.editors.addAll(editors);
     }
 
 }

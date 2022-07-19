@@ -75,6 +75,26 @@ public class NewItemImage extends EntityDate {
     }
 
     /**
+     * REVISE 시 기존 이미지를 일단 얘 걸로 등록
+     * @param originName
+     */
+    public NewItemImage(
+
+            String uniqueName,
+            String originName,
+            String imageAddress,
+            NewItem master
+                        ) {
+        SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date now = new Date();
+
+        this.uniqueName = uniqueName;
+        this.originName = originName;
+        this.imageaddress = imageAddress;
+        initNewItem(master);
+    }
+
+    /**
      * 아이템과 연관관계가 없다면 등록
      * @param newItem
      */

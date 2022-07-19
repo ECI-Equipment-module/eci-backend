@@ -11,6 +11,7 @@ import eci.server.ItemModule.entity.member.Member;
 import eci.server.ItemModule.entitycommon.EntityDate;
 import eci.server.ItemModule.exception.member.sign.MemberNotFoundException;
 import eci.server.ItemModule.repository.member.MemberRepository;
+import eci.server.NewItemModule.entity.NewItemMember;
 import eci.server.NewItemModule.exception.AttachmentTagNotFoundException;
 import eci.server.NewItemModule.exception.ClassificationNotFoundException;
 
@@ -104,6 +105,14 @@ public class Document extends EntityDate {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private DocTag docTag;
 
+    @OneToMany(
+            mappedBy = "document",
+            cascade = CascadeType.ALL,//이거
+            orphanRemoval = true, //없애면 안돼 동윤아...
+            fetch = FetchType.LAZY
+    )
+    private List<DocumentMember> editors;
+
     /**
      * tempsave 나 save 나 모두 얘로 오기 때문에
      * tempsave 와
@@ -130,7 +139,9 @@ public class Document extends EntityDate {
             String documentNumber,
 
             boolean tempsave,
-            boolean readonly
+            boolean readonly,
+
+            List<DocumentAttachment> duplicatedAttachments
             
     ){
         this.tempsave = tempsave;
@@ -152,6 +163,12 @@ public class Document extends EntityDate {
         }
 
         this.docTag = docTag;
+
+        if(duplicatedAttachments!=null){
+            this.attachments
+                    .addAll(duplicatedAttachments);
+            addAttachments(duplicatedAttachments);
+        }
         
     }
     
@@ -453,6 +470,48 @@ public class Document extends EntityDate {
         this.readonly = true;
     }
 
+    /**
+     * revise 로 생성 /임시저장 되면
+     * 지금 만들어지는 아이템의 target doc 은 old doc
+     * @param oldDocument
+     */
+    public void registerOldDoc(Document oldDocument){
+
+        this.reviseTargetDoc = oldDocument;
+
+    }
+
+    /**
+     * 라우트까지 만들면 old doc 의 revision+1로
+     * @param oldReviseCnt
+     */
+    public void updateRevisionAndHeritageReleased(int oldReviseCnt, int releasedCnt){
+        this.revision = oldReviseCnt+1;
+    }
+
+    /**
+     * old doc 은 (라우트까지 만들어지면 ( revise 진행
+     */
+
+    public void reviseProgressTrue(){
+        this.revise_progress=true;
+    }
+
+    /**
+     * 라우트 complete 되면 old doc 의 revise progress 되돌리기
+     */
+    public void reviseProgressFalse(){
+        this.revise_progress=false;
+    }
+
+    /**
+     * editors 등록해주는 함수
+     * @param editors
+     */
+    public void RegisterEditors(List<DocumentMember> editors){
+        this.editors.clear();
+        this.editors.addAll(editors);
+    }
 
 }
 

@@ -18,6 +18,8 @@ import eci.server.CRCOModule.repository.cr.ChangeRequestRepository;
 import eci.server.DesignModule.entity.design.Design;
 import eci.server.DesignModule.exception.DesignNotLinkedException;
 import eci.server.DesignModule.repository.DesignRepository;
+import eci.server.DocumentModule.entity.Document;
+import eci.server.DocumentModule.exception.DocumentNotFoundException;
 import eci.server.DocumentModule.repository.DocumentRepository;
 import eci.server.ItemModule.dto.member.MemberDto;
 import eci.server.ItemModule.dto.newRoute.routeOrdering.*;
@@ -38,14 +40,13 @@ import eci.server.ItemModule.repository.member.MemberRepository;
 import eci.server.ItemModule.repository.newRoute.RouteOrderingRepository;
 import eci.server.ItemModule.repository.newRoute.RouteProductRepository;
 import eci.server.ItemModule.repository.newRoute.RouteTypeRepository;
-import eci.server.NewItemModule.dto.MembersDto;
+
 import eci.server.NewItemModule.entity.JsonSave;
 import eci.server.NewItemModule.entity.NewItem;
 import eci.server.NewItemModule.exception.ItemTypeRequiredException;
 import eci.server.NewItemModule.repository.item.NewItemRepository;
 import eci.server.NewItemModule.service.item.NewItemService;
 import eci.server.ProjectModule.entity.project.Project;
-import eci.server.ProjectModule.exception.ProjectNotLinkedException;
 import eci.server.ProjectModule.repository.project.ProjectRepository;
 import eci.server.ReleaseModule.entity.Releasing;
 import eci.server.ReleaseModule.exception.ReleaseNotFoundException;
@@ -92,7 +93,8 @@ public class RouteOrderingService {
 
     public RouteOrderingDto read(Long id) {
 
-        RouteRejectPossibleResponse routeRejectPossibleResponse = rejectPossible(id);
+        RouteRejectPossibleResponse routeRejectPossibleResponse =
+                rejectPossible(id);
 
         return RouteOrderingDto.toDto(
                 routeOrderingRepository.findById(id).orElseThrow(RouteNotFoundException::new),
@@ -279,7 +281,7 @@ public class RouteOrderingService {
             //만드는 아이템에 revise target id가 등록돼있으면 걔는 revise new item
 
             RouteOrdering newRoute = routeOrderingRepository.save(RouteOrderingCreateRequest
-                    .toRevisedRouteOrderingEntity( //
+                    .toRevisedItemRouteOrderingEntity( //
                             req,
                             newItemRepository,
                             routePreset,
@@ -508,37 +510,98 @@ public class RouteOrderingService {
     @Transactional
     public RouteOrderingCreateResponse createDocRoute(RouteOrderingCreateRequest req) {
 
-        RouteOrdering newRoute = routeOrderingRepository
-                .save(RouteOrderingCreateRequest.
-                        toDocumentEntity(
-                                req,
-                                routePreset,
-                                documentRepository
-                        )
-                );
+        Document document = documentRepository.findById(req.getItemId())
+                .orElseThrow(DocumentNotFoundException::new);
 
-        List<RouteProduct> routeProductList =
-                RouteProductCreateRequest.toDocumentEntityList(
-                        req,
-                        newRoute,
-                        routePreset,
-                        memberRepository,
-                        routeTypeRepository
+        RouteOrdering newRoute = null;
 
-                );
+        if( // 지금 이 라우트가 revise 중인 라우트라면
+                        document.getReviseTargetDoc()!=null
+            &&
+                        document.getReviseTargetDoc().isRevise_progress()
 
-        for (RouteProduct routeProduct : routeProductList) {
+        ) {
+            newRoute = routeOrderingRepository
+                    .save(RouteOrderingCreateRequest.
+                            /**
+                             * else 랑 달라지는 부분-
+                             * route ordering 만들 때 revisedcnt = 2 로 등록
+                             */
+                            toRevisedDocumentEntity(
+                                    req,
+                                    routePreset,
+                                    documentRepository
+                            )
+                    );
 
-            RouteProduct routeProduct1 =
-                    routeProductRepository.save(routeProduct);
-            System.out.println(routeProduct1.getRoute_name());
-            System.out.println(routeProduct1.getMembers().get(0).getMember());
-            System.out.println(routeProduct1.getMembers().get(0).getRouteProduct());
+            List<RouteProduct> routeProductList =
+                    RouteProductCreateRequest.toDocumentEntityList(
+                            req,
+                            newRoute,
+                            routePreset,
+                            memberRepository,
+                            routeTypeRepository
+
+                    );
+
+            for (RouteProduct routeProduct : routeProductList) {
+
+                RouteProduct routeProduct1 =
+                        routeProductRepository.save(routeProduct);
+                System.out.println(routeProduct1.getRoute_name());
+                System.out.println(routeProduct1.getMembers().get(0).getMember());
+                System.out.println(routeProduct1.getMembers().get(0).getRouteProduct());
+            }
+
+            /**
+             * else 랑 달라지는 부분-
+             * 이 document의 reivision을
+             * old doc의 revision+1 로 갱신
+             *  & released 상속
+             */
+            Document oldDoc = document.getReviseTargetDoc();
+            document.updateRevisionAndHeritageReleased(
+                    oldDoc.getRevision(), //이건 + 1로 갱신 됨
+                    oldDoc.getReleased() //이건 그대로
+            );
+
+            newRoute.getDocument().updateTempsaveWhenMadeRoute();
+            //라우트 만들면 임시저장 해제
+
         }
+        else{ // revise 아니고 일반 doc 라면
+            newRoute = routeOrderingRepository
+                    .save(RouteOrderingCreateRequest.
+                            toDocumentEntity(
+                                    req,
+                                    routePreset,
+                                    documentRepository
+                            )
+                    );
 
-        newRoute.getDocument().updateTempsaveWhenMadeRoute();
-        //라우트 만들면 임시저장 해제
+            List<RouteProduct> routeProductList =
+                    RouteProductCreateRequest.toDocumentEntityList(
+                            req,
+                            newRoute,
+                            routePreset,
+                            memberRepository,
+                            routeTypeRepository
 
+                    );
+
+            for (RouteProduct routeProduct : routeProductList) {
+
+                RouteProduct routeProduct1 =
+                        routeProductRepository.save(routeProduct);
+                System.out.println(routeProduct1.getRoute_name());
+                System.out.println(routeProduct1.getMembers().get(0).getMember());
+                System.out.println(routeProduct1.getMembers().get(0).getRouteProduct());
+            }
+
+            newRoute.getDocument().updateTempsaveWhenMadeRoute();
+            //라우트 만들면 임시저장 해제
+
+        }
 
         return new RouteOrderingCreateResponse(newRoute.getId());
     }

@@ -70,6 +70,9 @@ public class NewItemAttachment extends EntityDate {
     private String attachmentaddress;
 
 
+    @Column
+    //디폴트가 false, 따로 지정안하면 false 로 저장
+    private boolean duplicate;
 
     /**
      * 지원하는 파일 확장자
@@ -104,6 +107,26 @@ public class NewItemAttachment extends EntityDate {
         this.save = save;
     }
 
+    /**
+     * duplicated file 생성
+     * (기존 것 다 우려먹지만,
+     * 새롭게 id 생성되고 이름도 다르게 ㅋ)
+     *이때 특이한 것은 duplicate = true 로 갱신 !
+     * @param originName
+     */
+    public NewItemAttachment(
+            String originName,
+            String uniqueName,
+            String attachmentaddress,
+            String just,
+            boolean save
+    ) {
+        this.uniqueName = uniqueName;
+        this.originName = originName;
+        this.attachmentaddress = attachmentaddress; // 기존 것 베끼기
+        this.save = save;
+        this.duplicate = true;
+    }
 
     /**
      * 각 이미지의 고유명 생성

@@ -3,6 +3,7 @@ package eci.server.CRCOModule.entity.cr;
 import eci.server.CRCOModule.dto.cr.CrUpdateRequest;
 import eci.server.CRCOModule.entity.co.ChangeOrder;
 import eci.server.CRCOModule.entity.CrAttachment;
+import eci.server.CRCOModule.entity.co.CoMember;
 import eci.server.CRCOModule.entity.features.CrImportance;
 import eci.server.CRCOModule.entity.features.CrReason;
 import eci.server.CRCOModule.entity.features.CrSource;
@@ -17,6 +18,7 @@ import eci.server.ItemModule.entity.member.Member;import eci.server.ItemModule.e
 import eci.server.ItemModule.repository.member.MemberRepository;
 import eci.server.NewItemModule.entity.NewItem;
 
+import eci.server.NewItemModule.entity.NewItemMember;
 import eci.server.NewItemModule.exception.*;
 import eci.server.NewItemModule.repository.attachment.AttachmentTagRepository;
 import eci.server.NewItemModule.repository.item.NewItemRepository;
@@ -112,6 +114,15 @@ public class ChangeRequest extends EntityDate {
             name = "change_order_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private ChangeOrder changeOrder;
+
+    @OneToMany(
+            mappedBy = "changeRequest",
+            cascade = CascadeType.ALL,//이거
+            orphanRemoval = true, //없애면 안돼 동윤아...
+            fetch = FetchType.LAZY
+    )
+    private List<CrMember> editors;
+
 
     /**
      * attachment 존재 시 생성자
@@ -532,6 +543,15 @@ public class ChangeRequest extends EntityDate {
      */
     public void crCompletedByCo(){
         this.done = true;
+    }
+
+    /**
+     * editors 등록해주는 함수
+     * @param editors
+     */
+    public void RegisterEditors(List<CrMember> editors){
+        this.editors.clear();
+        this.editors.addAll(editors);
     }
 
 }
