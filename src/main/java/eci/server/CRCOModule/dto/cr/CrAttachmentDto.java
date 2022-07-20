@@ -2,6 +2,7 @@ package eci.server.CRCOModule.dto.cr;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import eci.server.CRCOModule.entity.CrAttachment;
+import eci.server.DocumentModule.dto.DocumentAttachmentDto;
 import eci.server.NewItemModule.dto.attachment.AttachmentTagDto;
 import eci.server.NewItemModule.repository.attachment.AttachmentTagRepository;
 import eci.server.ProjectModule.entity.projectAttachment.ProjectAttachment;
@@ -15,7 +16,7 @@ import static java.util.stream.Collectors.toList;
 
 @Data
 @AllArgsConstructor
-public class CrAttachmentDto  {
+public class CrAttachmentDto  implements Comparable<CrAttachmentDto>{
     private Long id;
     private String originName;
     private String uniqueName;
@@ -103,6 +104,9 @@ public class CrAttachmentDto  {
 
     }
 
-
+    @Override
+    public int compareTo(CrAttachmentDto attachment) {
+        return (int) (this.id - attachment.getId());
+    }
 
 }

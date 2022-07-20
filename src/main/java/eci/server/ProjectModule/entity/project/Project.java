@@ -1,7 +1,10 @@
 package eci.server.ProjectModule.entity.project;
 
 
+import eci.server.CRCOModule.entity.CrAttachment;
 import eci.server.CRCOModule.entity.cr.ChangeRequest;
+import eci.server.DesignModule.entity.design.Design;
+import eci.server.DesignModule.entity.designfile.DesignAttachment;
 import eci.server.ItemModule.entity.entitycommon.EntityDate;
 import eci.server.ItemModule.entity.member.Member;
 import eci.server.ItemModule.exception.item.AttachmentNotFoundException;
@@ -11,6 +14,7 @@ import eci.server.ItemModule.repository.member.MemberRepository;
 import eci.server.NewItemModule.dto.newItem.create.NewItemCreateResponse;
 import eci.server.NewItemModule.entity.NewItem;
 import eci.server.NewItemModule.entity.NewItemAttachment;
+import eci.server.NewItemModule.exception.AttachmentTagNotFoundException;
 import eci.server.NewItemModule.repository.attachment.AttachmentTagRepository;
 import eci.server.NewItemModule.repository.item.NewItemRepository;
 import eci.server.ProjectModule.dto.project.ProjectCreateRequest;
@@ -359,7 +363,15 @@ public class Project extends EntityDate {
             ClientOrganizationRepository clientOrganizationRepository,
             CarTypeRepository carTypeRepository,
             MemberRepository memberRepository,
-            AttachmentTagRepository attachmentTagRepository
+            AttachmentTagRepository attachmentTagRepository,
+
+            List<Long> oldTags,
+            List<Long> newTags,
+
+            List<String> oldComment,
+            List<String> newComment,
+
+            List<ProjectAttachment> targetAttaches
     ) {
 
         this.readonly = false;
@@ -455,6 +467,8 @@ public class Project extends EntityDate {
                                 .orElseThrow(CarTypeNotFoundException::new);
 
 
+        //문서 시작
+
         ProjectAttachmentUpdatedResult resultAttachment =
 
                 findAttachmentUpdatedResult(
@@ -462,22 +476,36 @@ public class Project extends EntityDate {
                         req.getDeletedAttachments(),
                         false
                 );
+
+        if (req.getDeletedAttachments().size() > 0) {
+            deleteProjectAttachments(
+                    resultAttachment.getDeletedAttachments()
+            );
+        }
+
+        if(oldTags.size()>0) {
+            oldUpdatedAttachments(
+                    oldTags,
+                    oldComment,
+                    targetAttaches,
+                    attachmentTagRepository
+            );
+        }
+
         if (req.getAddedAttachments()!=null && req.getAddedAttachments().size()>0) {
             addUpdatedProjectAttachments(
-                    req,
+                    newTags,
+                    newComment,
                     resultAttachment.getAddedAttachments(),
                     attachmentTagRepository
             );
-            //addProjectAttachments(resultAttachment.getAddedAttachments());
         }
 
-        if (req.getDeletedAttachments().size() > 0) {
-            deleteProjectAttachments(resultAttachment.getDeletedAttachments());
-        }
+        FileUpdatedResult fileUpdatedResult =
+                new FileUpdatedResult(
+                        resultAttachment//, updatedAddedProjectAttachmentList
+                );
 
-        FileUpdatedResult fileUpdatedResult = new FileUpdatedResult(
-                resultAttachment//, updatedAddedProjectAttachmentList
-        );
 
         this.clientItemNumber = req.getClientItemNumber() == null ?
                 null : req.getClientItemNumber();
@@ -502,7 +530,8 @@ public class Project extends EntityDate {
     }
 
     private void addUpdatedProjectAttachments(
-            ProjectUpdateRequest req,
+            List<Long> newTag,
+            List<String> newComment,
             List<ProjectAttachment> added,
             AttachmentTagRepository attachmentTagRepository
     ) {
@@ -513,9 +542,16 @@ public class Project extends EntityDate {
             projectAttachments.add(i);
             i.initProject(this);
 
-            i.setAttach_comment(req.getAddedAttachmentComment().get((added.indexOf(i))));
+            i.setAttach_comment(
+                    newComment.get(
+                            (added.indexOf(i))
+                    ).isBlank()?
+                            " ":newComment.get(
+                            (added.indexOf(i))
+                    )
+            );
             i.setTag(attachmentTagRepository
-                    .findById(req.getAddedTag().get(added.indexOf(i))).
+                    .findById(newTag.get(added.indexOf(i))).
                     orElseThrow(AttachmentNotFoundException::new).getName());
             i.setAttachmentaddress(
                     "src/main/prodmedia/image/" +
@@ -577,7 +613,7 @@ public class Project extends EntityDate {
                 = convertProjectAttachmentIdsToProjectAttachments(deletedAttachmentIds);
 
         addedAttachments.stream().forEach( //06-17 added 에 들어온 것은 모두 임시저장용
-                i -> i.setSave(false)
+                i -> i.setSave(save)
         );
 
         return new ProjectAttachmentUpdatedResult(
@@ -605,7 +641,8 @@ public class Project extends EntityDate {
      */
     private List<ProjectAttachment> convertProjectAttachmentFilesToProjectAttachments(
             List<MultipartFile> attachmentFiles,
-            boolean save) {
+            boolean save
+    ) {
         return attachmentFiles.stream().map(attachmentFile ->
                 new ProjectAttachment(
                         attachmentFile.getOriginalFilename(),
@@ -648,7 +685,15 @@ public class Project extends EntityDate {
             ClientOrganizationRepository clientOrganizationRepository,
             CarTypeRepository carTypeRepository,
             MemberRepository memberRepository,
-            AttachmentTagRepository attachmentTagRepository
+            AttachmentTagRepository attachmentTagRepository,
+
+            List<Long> oldTags,
+            List<Long> newTags,
+
+            List<String> oldComment,
+            List<String> newComment,
+
+            List<ProjectAttachment> targetAttaches
     ) {
 
         this.setModifiedAt(LocalDateTime.now());
@@ -751,7 +796,8 @@ public class Project extends EntityDate {
         // 문서 존재한다면 add 작업 처리
         if (req.getAddedAttachments()!=null && req.getAddedAttachments().size()>0) {
             addUpdatedProjectAttachments(
-                    req,
+                    newTags,
+                    newComment,
                     resultAttachments.getAddedAttachments(),
                     attachmentTagRepository
             );
@@ -799,6 +845,47 @@ public class Project extends EntityDate {
                         .orElseThrow(ItemNotFoundException::new);
 
         return new NewItemCreateResponse(newItem.getId());
+
+    }
+
+
+    private void oldUpdatedAttachments
+            (
+                    //NewItemUpdateRequest req,ㄲ
+                    List<Long> oldTag,
+                    List<String> oldComment,
+                    List<ProjectAttachment> olds, // 이 아이템의 기존 old attachments 중 deleted 빼고 아이디 오름차순
+                    AttachmentTagRepository attachmentTagRepository
+            ) {
+
+        SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+        Date now = new Date();
+
+        olds.stream().forEach(i -> {
+
+                    i.setAttach_comment(
+                            oldComment.get(
+                                    (olds.indexOf(i))
+                            ).isBlank()?
+                                    " ":oldComment.get(
+                                    (olds.indexOf(i))
+                            )
+                    );
+
+                    i.setTag(attachmentTagRepository
+                            .findById(oldTag.get(olds.indexOf(i))).
+                            orElseThrow(AttachmentTagNotFoundException::new).getName());
+
+                    i.setAttachmentaddress(
+                            "src/main/prodmedia/image/" +
+                                    sdf1.format(now).substring(0,10)
+                                    + "/"
+                                    + i.getUniqueName()
+                    );
+
+                }
+        );
 
     }
 

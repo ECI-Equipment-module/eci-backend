@@ -10,6 +10,7 @@ import eci.server.CRCOModule.entity.cr.ChangeRequest;
 import eci.server.CRCOModule.entity.CrAttachment;
 import eci.server.CRCOModule.entity.features.CrReason;
 import eci.server.CRCOModule.exception.CrNotFoundException;
+import eci.server.CRCOModule.exception.CrReasonNotFoundException;
 import eci.server.CRCOModule.exception.CrUpdateImpossibleException;
 import eci.server.CRCOModule.repository.cr.CrAttachmentRepository;
 import eci.server.CRCOModule.repository.cr.ChangeRequestRepository;
@@ -25,10 +26,11 @@ import eci.server.ItemModule.repository.newRoute.RouteOrderingRepository;
 import eci.server.ItemModule.repository.newRoute.RouteProductRepository;
 import eci.server.ItemModule.service.file.FileService;
 import eci.server.NewItemModule.dto.newItem.create.NewItemCreateResponse;
-
 import eci.server.NewItemModule.repository.attachment.AttachmentTagRepository;
 import eci.server.NewItemModule.repository.item.NewItemRepository;
 import eci.server.ProjectModule.dto.project.ProjectTempCreateUpdateResponse;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -91,7 +93,9 @@ public class CrService {
     public NewItemCreateResponse create(CrCreateRequest req) {
 
         Long crReasonId = req.getCrReasonId();
-
+        if (crReasonId==null){
+            throw new CrReasonNotFoundException();
+        }
         if(crReasonId==1L&&!(req.getCrReason().isBlank())) {
             if ((!req.getCrReason().isBlank()) || !(req.getCrReason() == null)) {
                 CrReason addCrReason = crReasonRepository.save(
@@ -204,6 +208,14 @@ public class CrService {
             throw new CrUpdateImpossibleException();
         }
 
+        List<Long> oldTags = produceOldNewTagComment(cr, req).getOldTag();
+        List<Long> newTags = produceOldNewTagComment(cr, req).getNewTag();
+        List<String> oldComment = produceOldNewTagComment(cr, req).getOldComment();
+        List<String> newComment =produceOldNewTagComment(cr, req).getNewComment();
+        List<CrAttachment> targetAttachmentsForTagAndComment
+                = produceOldNewTagComment(cr, req).getTargetAttachmentsForTagAndComment();
+
+
         ChangeRequest.FileUpdatedResult result = cr.update(
                 req,
                 newItemRepository,
@@ -211,7 +223,14 @@ public class CrService {
                 crImportanceRepository,
                 crSourceRepository,
                 memberRepository,
-                attachmentTagRepository
+                attachmentTagRepository,
+
+                oldTags,
+                newTags,
+                oldComment,
+                newComment,
+                targetAttachmentsForTagAndComment
+
         );
 
         uploadAttachments(
@@ -233,6 +252,14 @@ public class CrService {
         ChangeRequest cr=
                 changeRequestRepository.findById(id).orElseThrow(CrNotFoundException::new);
 
+        List<Long> oldTags = produceOldNewTagComment(cr, req).getOldTag();
+        List<Long> newTags = produceOldNewTagComment(cr, req).getNewTag();
+        List<String> oldComment = produceOldNewTagComment(cr, req).getOldComment();
+        List<String> newComment =produceOldNewTagComment(cr, req).getNewComment();
+        List<CrAttachment> targetAttachmentsForTagAndComment
+                = produceOldNewTagComment(cr, req).getTargetAttachmentsForTagAndComment();
+
+
         if (!cr.isTempsave() || cr.isReadonly()) {
             //tempsave가 false면 찐 저장 상태
             //찐 저장 상태라면 UPDATE 불가, 임시저장 일때만 가능
@@ -241,7 +268,9 @@ public class CrService {
         }
 
         Long crReasonId = req.getCrReasonId();
-
+        if (crReasonId==null){
+            throw new CrReasonNotFoundException();
+        }
         if(crReasonId==1L&&!(req.getCrReason().isBlank())) {
             if ((!req.getCrReason().isBlank()) || !(req.getCrReason() == null)) {
                 CrReason addCrReason = crReasonRepository.save(
@@ -261,7 +290,15 @@ public class CrService {
                 crImportanceRepository,
                 crSourceRepository,
                 memberRepository,
-                attachmentTagRepository
+                attachmentTagRepository,
+
+                oldTags,
+                newTags,
+                oldComment,
+                newComment,
+
+                targetAttachmentsForTagAndComment
+
         );
 
 
@@ -330,5 +367,75 @@ public class CrService {
         return crCandidates;
 
     }
+    ///////////////////////////////////
+    @Getter
+    @AllArgsConstructor
+    public static class OldNewTagCommentUpdatedResult {
+        private List<Long> oldTag;
+        private List<Long> newTag;
+        private List<String> oldComment;
+        private List<String> newComment;
 
+        private List<CrAttachment> targetAttachmentsForTagAndComment;
+    }
+
+    public OldNewTagCommentUpdatedResult produceOldNewTagComment(
+            ChangeRequest entity, //update 당하는 아이템
+            CrUpdateRequest req
+    ) {
+        List<Long> oldDocTag = new ArrayList<>();
+        List<Long> newDocTag = new ArrayList<>();
+        List<String> oldDocComment = new ArrayList<>();
+        List<String> newDocComment = new ArrayList<>();
+
+        List<CrAttachment> attachments
+                = entity.getAttachments();
+
+        List<CrAttachment> targetAttachmentsForTagAndComment = new ArrayList<>();
+
+        // OLD TAG, NEW TAG, COMMENT OLD NEW GENERATE
+        if (attachments.size() > 0) {
+            // 올드 문서 기존 갯수(올드 태그, 코멘트 적용할 것) == 빼기 deleted 아이디 - deleted=true 인 애들
+
+            // 일단은 다 가져와
+            List<CrAttachment> oldAttachments = entity.getAttachments();
+            for (CrAttachment attachment : oldAttachments) {
+
+                if (
+                        (!attachment.isDeleted())
+                    // (1) 첫번째 조건 : DELETED = FALSE (태그, 코멘트 적용 대상들은 현재 살아있어야 하고)
+                ) {
+                    if(req.getDeletedAttachments() != null){ // (1-1) 만약 사용자가 delete 를 입력한게 존재한다면
+                        if(!(req.getDeletedAttachments().contains(attachment.getId()))){
+                            // 그 delete 안에 이 attachment 아이디 존재하지 않을 때만 추가
+                            targetAttachmentsForTagAndComment.add(attachment);
+                        }
+                    }
+                    else{ //걍 애초에 delete 하는거 없으면 걍 더해주면 되지
+                        targetAttachmentsForTagAndComment.add(attachment);
+                    }
+
+                }
+
+            }
+
+            int standardIdx = targetAttachmentsForTagAndComment.size();
+
+            oldDocTag.addAll(req.getAddedTag().subList(0, standardIdx));
+            newDocTag.addAll(req.getAddedTag().subList(standardIdx, req.getAddedTag().size()));
+
+            oldDocComment.addAll(req.getAddedAttachmentComment().subList(0, standardIdx));
+            newDocComment.addAll(req.getAddedAttachmentComment().subList(standardIdx, req.getAddedTag().size()));
+
+        }
+        return new OldNewTagCommentUpdatedResult(
+
+                oldDocTag,
+                newDocTag,
+                oldDocComment,
+                newDocComment,
+
+                targetAttachmentsForTagAndComment
+        );
+    }
 }

@@ -2,6 +2,7 @@ package eci.server.ReleaseModule.service;
 
 import eci.server.BomModule.repository.BomRepository;
 import eci.server.BomModule.repository.PreliminaryBomRepository;
+import eci.server.CRCOModule.entity.CrAttachment;
 import eci.server.CRCOModule.repository.co.ChangeOrderRepository;
 import eci.server.ItemModule.dto.item.ItemCreateResponse;
 import eci.server.ItemModule.dto.newRoute.routeOrdering.RouteOrderingDto;
@@ -23,12 +24,15 @@ import eci.server.ReleaseModule.entity.Releasing;
 import eci.server.ReleaseModule.entity.ReleaseAttachment;
 import eci.server.ReleaseModule.exception.ReleaseNotFoundException;
 import eci.server.ReleaseModule.repository.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.IntStream;
@@ -123,7 +127,14 @@ public class ReleaseService {
     public ProjectTempCreateUpdateResponse update(Long id, ReleaseUpdateRequest req) {
 
         Releasing release = releaseRepository.findById(id)
-                .orElseThrow(ProjectNotFoundException::new);
+                .orElseThrow(ReleaseNotFoundException::new);
+
+        List<Long> oldTags = produceOldNewTagComment(release, req).getOldTag();
+        List<Long> newTags = produceOldNewTagComment(release, req).getNewTag();
+        List<String> oldComment = produceOldNewTagComment(release, req).getOldComment();
+        List<String> newComment =produceOldNewTagComment(release, req).getNewComment();
+        List<ReleaseAttachment> targetAttachmentsForTagAndComment
+                = produceOldNewTagComment(release, req).getTargetAttachmentsForTagAndComment();
 
 
         Releasing.FileUpdatedResult result = release.update(
@@ -134,7 +145,14 @@ public class ReleaseService {
                 changeOrderRepository,
                 releaseOrganizationRepository,
                 releaseTypeRepository,
-                releaseOrganizationReleaseRepository
+                releaseOrganizationReleaseRepository,
+
+                oldTags,
+                newTags,
+                oldComment,
+                newComment,
+
+                targetAttachmentsForTagAndComment
         );
 
 
@@ -162,6 +180,15 @@ public class ReleaseService {
         Releasing release = releaseRepository.findById(id)
                 .orElseThrow(ReleaseNotFoundException::new);
 
+        List<Long> oldTags = produceOldNewTagComment(release, req).getOldTag();
+        List<Long> newTags = produceOldNewTagComment(release, req).getNewTag();
+        List<String> oldComment = produceOldNewTagComment(release, req).getOldComment();
+        List<String> newComment =produceOldNewTagComment(release, req).getNewComment();
+        List<ReleaseAttachment> targetAttachmentsForTagAndComment
+                = produceOldNewTagComment(release, req).getTargetAttachmentsForTagAndComment();
+
+
+
         Releasing.FileUpdatedResult result = release.tempEnd(
                 req,
                 ReleaseCreateRequest.ProjectNumber(release.getId()),
@@ -170,7 +197,14 @@ public class ReleaseService {
                 newItemRepository,
                 changeOrderRepository,
                 releaseOrganizationRepository,
-                releaseTypeRepository
+                releaseTypeRepository,
+
+                oldTags,
+                newTags,
+                oldComment,
+                newComment,
+
+                targetAttachmentsForTagAndComment
         );
 
         uploadAttachments(
@@ -279,6 +313,79 @@ public class ReleaseService {
             }
         }
     }
+
+
+    @Getter
+    @AllArgsConstructor
+    public static class OldNewTagCommentUpdatedResult {
+        private List<Long> oldTag;
+        private List<Long> newTag;
+        private List<String> oldComment;
+        private List<String> newComment;
+
+        private List<ReleaseAttachment> targetAttachmentsForTagAndComment;
+    }
+
+    public OldNewTagCommentUpdatedResult produceOldNewTagComment(
+            Releasing entity, //update 당하는 아이템
+            ReleaseUpdateRequest req
+    ) {
+        List<Long> oldDocTag = new ArrayList<>();
+        List<Long> newDocTag = new ArrayList<>();
+        List<String> oldDocComment = new ArrayList<>();
+        List<String> newDocComment = new ArrayList<>();
+
+        List<ReleaseAttachment> attachments
+                = entity.getAttachments();
+
+        List<ReleaseAttachment> targetAttachmentsForTagAndComment = new ArrayList<>();
+
+        // OLD TAG, NEW TAG, COMMENT OLD NEW GENERATE
+        if (attachments.size() > 0) {
+            // 올드 문서 기존 갯수(올드 태그, 코멘트 적용할 것) == 빼기 deleted 아이디 - deleted=true 인 애들
+
+            // 일단은 다 가져와
+            List<ReleaseAttachment> oldAttachments = entity.getAttachments();
+            for (ReleaseAttachment attachment : oldAttachments) {
+
+                if (
+                        (!attachment.isDeleted())
+                    // (1) 첫번째 조건 : DELETED = FALSE (태그, 코멘트 적용 대상들은 현재 살아있어야 하고)
+                ) {
+                    if(req.getDeletedAttachments() != null){ // (1-1) 만약 사용자가 delete 를 입력한게 존재한다면
+                        if(!(req.getDeletedAttachments().contains(attachment.getId()))){
+                            // 그 delete 안에 이 attachment 아이디 존재하지 않을 때만 추가
+                            targetAttachmentsForTagAndComment.add(attachment);
+                        }
+                    }
+                    else{ //걍 애초에 delete 하는거 없으면 걍 더해주면 되지
+                        targetAttachmentsForTagAndComment.add(attachment);
+                    }
+
+                }
+
+            }
+
+            int standardIdx = targetAttachmentsForTagAndComment.size();
+
+            oldDocTag.addAll(req.getAddedTag().subList(0, standardIdx));
+            newDocTag.addAll(req.getAddedTag().subList(standardIdx, req.getAddedTag().size()));
+
+            oldDocComment.addAll(req.getAddedAttachmentComment().subList(0, standardIdx));
+            newDocComment.addAll(req.getAddedAttachmentComment().subList(standardIdx, req.getAddedTag().size()));
+
+        }
+        return new OldNewTagCommentUpdatedResult(
+
+                oldDocTag,
+                newDocTag,
+                oldDocComment,
+                newDocComment,
+
+                targetAttachmentsForTagAndComment
+        );
+    }
+
 
 
 }

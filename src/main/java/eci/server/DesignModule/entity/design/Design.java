@@ -1,5 +1,7 @@
 package eci.server.DesignModule.entity.design;
 
+import eci.server.CRCOModule.entity.CrAttachment;
+import eci.server.CRCOModule.entity.co.ChangeOrder;
 import eci.server.DesignModule.dto.DesignUpdateRequest;
 import eci.server.DesignModule.entity.DesignMember;
 import eci.server.DesignModule.entity.designfile.DesignAttachment;
@@ -12,6 +14,7 @@ import eci.server.ItemModule.exception.member.sign.MemberNotFoundException;
 import eci.server.ItemModule.repository.member.MemberRepository;
 import eci.server.NewItemModule.entity.NewItem;
 import eci.server.NewItemModule.entity.NewItemMember;
+import eci.server.NewItemModule.exception.AttachmentTagNotFoundException;
 import eci.server.NewItemModule.repository.attachment.AttachmentTagRepository;
 import eci.server.NewItemModule.repository.item.NewItemRepository;
 import lombok.AccessLevel;
@@ -204,7 +207,15 @@ public class Design extends EntityDate {
             DesignUpdateRequest req,
             NewItemRepository itemRepository,
             MemberRepository memberRepository,
-            AttachmentTagRepository attachmentTagRepository
+            AttachmentTagRepository attachmentTagRepository,
+
+            List<Long> oldTags,
+            List<Long> newTags,
+
+            List<String> oldComment,
+            List<String> newComment,
+
+            List<DesignAttachment> targetAttaches
     )
 
 
@@ -217,23 +228,27 @@ public class Design extends EntityDate {
                 itemRepository.findById(req.getItemId())
                         .orElseThrow(ItemNotFoundException::new);
 
-
-        DesignAttachmentUpdatedResult resultAttachment =
-
-                findAttachmentUpdatedResult(
-                        req.getAddedAttachments(),
-                        req.getDeletedAttachments()
-                );
-
-        if(req.getAddedAttachments()!=null && req.getAddedAttachments().size()>0) {
-            addUpdatedDesignAttachments(req, resultAttachment.getAddedAttachments(), attachmentTagRepository);
-        }
-        if(req.getAddedAttachments()!=null && req.getAddedAttachments().size()>0) {
-            deleteDesignAttachments(resultAttachment.getDeletedAttachments());
-        }
-        FileUpdatedResult fileUpdatedResult = new FileUpdatedResult(
-                resultAttachment//, updatedAddedProjectAttachmentList
-        );
+//
+//        DesignAttachmentUpdatedResult resultAttachment =
+//
+//                findAttachmentUpdatedResult(
+//                        req.getAddedAttachments(),
+//                        req.getDeletedAttachments()
+//                );
+//
+//        if(req.getAddedAttachments()!=null && req.getAddedAttachments().size()>0) {
+//            addUpdatedDesignAttachments(
+//                    newTags,
+//                    newComment,
+//                    resultAttachment.getAddedAttachments(),
+//                    attachmentTagRepository);
+//        }
+//        if(req.getAddedAttachments()!=null && req.getAddedAttachments().size()>0) {
+//            deleteDesignAttachments(resultAttachment.getDeletedAttachments());
+//        }
+//        FileUpdatedResult fileUpdatedResult = new FileUpdatedResult(
+//                resultAttachment//, updatedAddedProjectAttachmentList
+//        );
 
         this.modifier =
                 memberRepository.findById(
@@ -244,6 +259,46 @@ public class Design extends EntityDate {
 
         this.designContent = req.getDesignContent(); //단순 시연용
 
+
+        //문서 시작
+
+        DesignAttachmentUpdatedResult resultAttachment =
+
+                findAttachmentUpdatedResult(
+                        req.getAddedAttachments(),
+                        req.getDeletedAttachments(),
+                        false
+                );
+
+        if (req.getDeletedAttachments().size() > 0) {
+            deleteDesignAttachments(
+                    resultAttachment.getDeletedAttachments()
+            );
+        }
+
+        if(oldTags.size()>0) {
+            oldUpdatedAttachments(
+                    oldTags,
+                    oldComment,
+                    targetAttaches,
+                    attachmentTagRepository
+            );
+        }
+
+        if (req.getAddedAttachments()!=null && req.getAddedAttachments().size()>0) {
+            addUpdatedDesignAttachments(
+                    newTags,
+                    newComment,
+                    resultAttachment.getAddedAttachments(),
+                    attachmentTagRepository
+            );
+        }
+
+        FileUpdatedResult fileUpdatedResult =
+                new FileUpdatedResult(
+                        resultAttachment//, updatedAddedProjectAttachmentList
+                );
+
         return fileUpdatedResult;
     }
 
@@ -252,7 +307,15 @@ public class Design extends EntityDate {
             DesignUpdateRequest req,
             NewItemRepository itemRepository,
             MemberRepository memberRepository,
-            AttachmentTagRepository attachmentTagRepository
+            AttachmentTagRepository attachmentTagRepository,
+
+            List<Long> oldTags,
+            List<Long> newTags,
+
+            List<String> oldComment,
+            List<String> newComment,
+
+            List<DesignAttachment> targetAttaches
     )
 
 
@@ -269,22 +332,22 @@ public class Design extends EntityDate {
                         .orElseThrow(ItemNotFoundException::new);
 
 
-        DesignAttachmentUpdatedResult resultAttachment =
-
-                findAttachmentUpdatedResult(
-                        req.getAddedAttachments(),
-                        req.getDeletedAttachments()
-                );
-
-        if(req.getAddedAttachments()!=null && req.getAddedAttachments().size()>0) {
-            addUpdatedDesignAttachments(req, resultAttachment.getAddedAttachments(), attachmentTagRepository);
-        }
-        if(req.getAddedAttachments()!=null && req.getAddedAttachments().size()>0) {
-            deleteDesignAttachments(resultAttachment.getDeletedAttachments());
-        }
-        FileUpdatedResult fileUpdatedResult = new FileUpdatedResult(
-                resultAttachment//, updatedAddedProjectAttachmentList
-        );
+//        DesignAttachmentUpdatedResult resultAttachment =
+//
+//                findAttachmentUpdatedResult(
+//                        req.getAddedAttachments(),
+//                        req.getDeletedAttachments()
+//                );
+//
+//        if(req.getAddedAttachments()!=null && req.getAddedAttachments().size()>0) {
+//            addUpdatedDesignAttachments(req, resultAttachment.getAddedAttachments(), attachmentTagRepository);
+//        }
+//        if(req.getAddedAttachments()!=null && req.getAddedAttachments().size()>0) {
+//            deleteDesignAttachments(resultAttachment.getDeletedAttachments());
+//        }
+//        FileUpdatedResult fileUpdatedResult = new FileUpdatedResult(
+//                resultAttachment//, updatedAddedProjectAttachmentList
+//        );
 
         this.modifier =
                 memberRepository.findById(
@@ -295,11 +358,58 @@ public class Design extends EntityDate {
 
         this.designContent = req.getDesignContent(); //단순 시연용
 
+
+        //문서 시작
+
+        DesignAttachmentUpdatedResult resultAttachment =
+
+                findAttachmentUpdatedResult(
+                        req.getAddedAttachments(),
+                        req.getDeletedAttachments(),
+                        true
+                );
+
+        if (req.getDeletedAttachments().size() > 0) {
+            deleteDesignAttachments(
+                    resultAttachment.getDeletedAttachments()
+            );
+        }
+
+        if(oldTags.size()>0) {
+            oldUpdatedAttachments(
+                    oldTags,
+                    oldComment,
+                    targetAttaches,
+                    attachmentTagRepository
+            );
+        }
+
+        if (req.getAddedAttachments()!=null && req.getAddedAttachments().size()>0) {
+            addUpdatedDesignAttachments(
+                    newTags,
+                    newComment,
+                    resultAttachment.getAddedAttachments(),
+                    attachmentTagRepository
+            );
+        }
+
+        FileUpdatedResult fileUpdatedResult =
+                new FileUpdatedResult(
+                resultAttachment//, updatedAddedProjectAttachmentList
+        );
+
         return fileUpdatedResult;
+
     }
 
-    private void addUpdatedDesignAttachments(DesignUpdateRequest req, List<DesignAttachment> added,
-                                             AttachmentTagRepository attachmentTagRepository) {
+    private void addUpdatedDesignAttachments(
+
+            List<Long> newTag,
+            List<String> newComment,
+            List<DesignAttachment> added,
+
+            AttachmentTagRepository attachmentTagRepository
+    ) {
         SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date now = new Date();
 
@@ -307,15 +417,17 @@ public class Design extends EntityDate {
             designAttachments.add(i);
             i.initDesign(this);
 
-            i.setAttach_comment(req.getAddedAttachmentComment().
-                    get(
+            i.setAttach_comment(
+                    newComment.get(
+                            (added.indexOf(i))
+                    ).isBlank()?
+                            " ":newComment.get(
                             (added.indexOf(i))
                     )
             );
 
-
             i.setTag(attachmentTagRepository
-                    .findById(req.getAddedTag().get(added.indexOf(i))).
+                    .findById(newTag.get(added.indexOf(i))).
                     orElseThrow(AttachmentNotFoundException::new).getName());
 
 
@@ -367,14 +479,15 @@ public class Design extends EntityDate {
      */
     private DesignAttachmentUpdatedResult findAttachmentUpdatedResult(
             List<MultipartFile> addedAttachmentFiles,
-            List<Long> deletedAttachmentIds
+            List<Long> deletedAttachmentIds,
+            boolean save
     ) {
         List<DesignAttachment> addedAttachments
                 = convertDesignAttachmentFilesToDesignAttachments(addedAttachmentFiles);
         List<DesignAttachment> deletedAttachments
                 = convertDesignAttachmentIdsToDesignAttachments(deletedAttachmentIds);
         addedAttachments.stream().forEach( //06-17 added 에 들어온 것은 모두 임시저장용
-                i->i.setSave(false)
+                i->i.setSave(save)
         );
         return new DesignAttachmentUpdatedResult(addedAttachmentFiles, addedAttachments, deletedAttachments);
     }
@@ -439,4 +552,43 @@ public class Design extends EntityDate {
         this.editors.addAll(editors);
     }
 
+    private void oldUpdatedAttachments
+            (
+                    //NewItemUpdateRequest req,ㄲ
+                    List<Long> oldTag,
+                    List<String> oldComment,
+                    List<DesignAttachment> olds, // 이 아이템의 기존 old attachments 중 deleted 빼고 아이디 오름차순
+                    AttachmentTagRepository attachmentTagRepository
+            ) {
+
+        SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+        Date now = new Date();
+
+        olds.stream().forEach(i -> {
+
+            i.setAttach_comment(
+                    oldComment.get(
+                            (olds.indexOf(i))
+                    ).isBlank()?
+                            " ":oldComment.get(
+                            (olds.indexOf(i))
+                    )
+            );
+
+                    i.setTag(attachmentTagRepository
+                            .findById(oldTag.get(olds.indexOf(i))).
+                            orElseThrow(AttachmentTagNotFoundException::new).getName());
+
+                    i.setAttachmentaddress(
+                            "src/main/prodmedia/image/" +
+                                    sdf1.format(now).substring(0,10)
+                                    + "/"
+                                    + i.getUniqueName()
+                    );
+
+                }
+        );
+
+    }
 }

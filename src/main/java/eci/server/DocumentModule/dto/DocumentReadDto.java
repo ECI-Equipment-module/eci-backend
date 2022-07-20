@@ -1,6 +1,7 @@
 package eci.server.DocumentModule.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import eci.server.DesignModule.dto.DesignAttachmentDto;
 import eci.server.DocumentModule.entity.Document;
 import eci.server.ItemModule.dto.member.MemberDto;
 import eci.server.ItemModule.dto.newRoute.routeOrdering.RouteOrderingDto;
@@ -15,6 +16,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -63,6 +66,19 @@ public class DocumentReadDto {
             String defaultImageAddress
 
     ){
+
+        List<DocumentAttachmentDto> attachmentDtoList = new ArrayList<>();
+        if(document.getAttachments()!=null) {
+            attachmentDtoList
+                    .addAll(document.getAttachments().
+                            stream().
+                            map(DocumentAttachmentDto::toDto
+                            )
+                            .collect(toList()));
+
+            Collections.sort(attachmentDtoList);
+        }
+
         return new DocumentReadDto(
                 document.getId(),
 
@@ -98,10 +114,7 @@ public class DocumentReadDto {
                 document.getAttachments()==null?
                         DocumentAttachmentDto.toDtoList()
                         :
-                document.getAttachments().
-                        stream().
-                        map(DocumentAttachmentDto::toDto)
-                        .collect(toList()),
+                attachmentDtoList,
 
                 routeOrdering.getId(),
 
@@ -128,6 +141,18 @@ public class DocumentReadDto {
             Document document,
             String defaultImageAddress
     ){
+        List<DocumentAttachmentDto> attachmentDtoList = new ArrayList<>();
+        if(document.getAttachments()!=null) {
+            attachmentDtoList
+                    .addAll(document.getAttachments().
+                            stream().
+                            map(DocumentAttachmentDto::toDto
+                            )
+                            .collect(toList()));
+
+            Collections.sort(attachmentDtoList);
+        }
+
         return new DocumentReadDto(
                 document.getId(),
 
@@ -160,13 +185,7 @@ public class DocumentReadDto {
 
                 document.getDocumentContent(),
 
-                document.getAttachments()==null?
-                        DocumentAttachmentDto.toDtoList()
-                        :
-                        document.getAttachments().
-                                stream().
-                                map(DocumentAttachmentDto::toDto)
-                                .collect(toList()),
+                attachmentDtoList,
 
                 -1L,
 

@@ -662,7 +662,9 @@ public class NewItemService {
                 oldTags ,
                 newTags,
                 oldComment,
-                newComment
+                newComment,
+
+                targetAttachmentsForTagAndComment
         );
 
         if(
@@ -1134,11 +1136,17 @@ public class NewItemService {
                 if (
                         (!attachment.isDeleted())
                                 // (1) 첫번째 조건 : DELETED = FALSE (태그, 코멘트 적용 대상들은 현재 살아있어야 하고)
-                                ||
-                                (req.getDeletedAttachments() != null && req.getDeletedAttachments().contains(attachment.getId()))
-                    // (2) 첫번째 조건 : deleted id 에 포함 안되어있으면
-                ) {
-                    targetAttachmentsForTagAndComment.add(attachment);
+                                 ) {
+                    if(req.getDeletedAttachments() != null){ // (1-1) 만약 사용자가 delete 를 입력한게 존재한다면
+                        if(!(req.getDeletedAttachments().contains(attachment.getId()))){
+                            // 그 delete 안에 이 attachment 아이디 존재하지 않을 때만 추가
+                            targetAttachmentsForTagAndComment.add(attachment);
+                        }
+                    }
+                    else{ //걍 애초에 delete 하는거 없으면 걍 더해주면 되지
+                        targetAttachmentsForTagAndComment.add(attachment);
+                    }
+
                 }
 
             }
@@ -1150,8 +1158,6 @@ public class NewItemService {
 
             oldDocComment.addAll(req.getAddedAttachmentComment().subList(0, standardIdx));
             newDocComment.addAll(req.getAddedAttachmentComment().subList(standardIdx, req.getAddedTag().size()));
-
-
 
         }
         return new OldNewTagCommentUpdatedResult(

@@ -1,5 +1,9 @@
 package eci.server.DocumentModule.service;
 
+import eci.server.CRCOModule.dto.co.CoUpdateRequest;
+import eci.server.CRCOModule.entity.co.ChangeOrder;
+import eci.server.CRCOModule.entity.cofeatures.CoAttachment;
+import eci.server.CRCOModule.service.co.CoService;
 import eci.server.DocumentModule.dto.DocumentCreateRequest;
 import eci.server.DocumentModule.dto.DocumentReadDto;
 import eci.server.DocumentModule.dto.DocumentTempCreateRequest;
@@ -17,6 +21,8 @@ import eci.server.ItemModule.repository.newRoute.RouteProductRepository;
 import eci.server.ItemModule.service.file.FileService;
 import eci.server.NewItemModule.dto.newItem.create.NewItemCreateResponse;
 import eci.server.ProjectModule.dto.project.ProjectTempCreateUpdateResponse;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -24,6 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.print.Doc;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -375,8 +382,6 @@ public class DocumentService {
             }
         }
     }
-
-
 
 
 }
