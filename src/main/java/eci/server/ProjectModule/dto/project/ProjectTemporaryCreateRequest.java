@@ -102,7 +102,7 @@ public class ProjectTemporaryCreateRequest  {
 
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
-            if(req.getTag().size()>0) {
+            if(req.getAttachments()==null || req.getAttachments().size()>0) {
                 return new Project(
                         req.name.isBlank() ? " default " : req.name,
                         //프로젝트 number은 양산이면 M-현재년도-REQ.NUM / 선형이면 N-~

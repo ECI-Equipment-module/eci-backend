@@ -113,8 +113,8 @@ public class CoCreateRequest {
 
     ) {
 
-
-        if (req.getTag().size() == 0) {
+        //if (req.getTag().size() == 0) {
+        if (req.getAttachments()==null || req.getAttachments().size()==0) {
 
             return new ChangeOrder(
                     req.getClientOrganizationId() == null ? null :

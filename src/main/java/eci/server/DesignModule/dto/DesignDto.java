@@ -3,6 +3,7 @@ package eci.server.DesignModule.dto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import eci.server.BomModule.repository.BomRepository;
 import eci.server.BomModule.repository.PreliminaryBomRepository;
+import eci.server.CRCOModule.dto.cr.CrAttachmentDto;
 import eci.server.DesignModule.entity.design.Design;
 import eci.server.ItemModule.dto.item.ItemDesignDto;
 import eci.server.ItemModule.dto.member.MemberDto;
@@ -17,9 +18,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 import static java.util.stream.Collectors.toList;
 
@@ -62,6 +61,21 @@ public class DesignDto {
             AttachmentTagRepository attachmentTagRepository,
             String defaultImageAddress
     ) {
+
+        List<DesignAttachmentDto> attachmentDtoList = new ArrayList<>();
+        if(design.getDesignAttachments()!=null) {
+            attachmentDtoList
+                    .addAll(design.getDesignAttachments().
+                            stream().
+                            map(i ->
+                                    DesignAttachmentDto.toDto
+                                            (i, attachmentTagRepository)
+                            )
+                            .collect(toList()));
+
+            Collections.sort(attachmentDtoList);
+        }
+
         List<RouteOrderingDto> routeDtoList = Optional.ofNullable(
                 RouteOrderingDto.toDtoList(
                         routeOrderingRepository.findByNewItemOrderByIdAsc(design.getNewItem()),
@@ -77,13 +91,7 @@ public class DesignDto {
                 ItemDesignDto.toDto(design.getNewItem(), defaultImageAddress),
                 MemberDto.toDto(design.getMember(), defaultImageAddress),
 
-                design.getDesignAttachments().
-                        stream().
-                        map(i -> DesignAttachmentDto.toDto(
-                                i,
-                                attachmentTagRepository
-                        ))
-                        .collect(toList()),
+                attachmentDtoList,
 
                 //routeDtoList
 

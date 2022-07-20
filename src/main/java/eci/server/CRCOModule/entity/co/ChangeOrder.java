@@ -24,7 +24,6 @@ import eci.server.ItemModule.exception.item.ItemNotFoundException;
 import eci.server.ItemModule.exception.member.sign.MemberNotFoundException;
 import eci.server.ItemModule.repository.member.MemberRepository;
 import eci.server.NewItemModule.entity.NewItem;
-import eci.server.NewItemModule.entity.NewItemMember;
 import eci.server.NewItemModule.exception.AttachmentTagNotFoundException;
 import eci.server.NewItemModule.repository.attachment.AttachmentTagRepository;
 import eci.server.NewItemModule.repository.item.NewItemRepository;
@@ -34,8 +33,6 @@ import eci.server.ProjectModule.exception.CarTypeNotEmptyException;
 import eci.server.ProjectModule.exception.ClientOrganizationNotFoundException;
 import eci.server.ProjectModule.repository.carType.CarTypeRepository;
 import eci.server.ProjectModule.repository.clientOrg.ClientOrganizationRepository;
-import eci.server.ReleaseModule.entity.ReleaseOrgRelease;
-import eci.server.ReleaseModule.exception.ReleaseOrganizationNotFoundException;
 import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -388,7 +385,8 @@ public class ChangeOrder extends EntityDate {
 
     private void addUpdatedAttachments
             (
-                    CoUpdateRequest req,
+                    List<Long> newTag,
+                    List<String> newComment,
                     List<CoAttachment> added,
                     AttachmentTagRepository attachmentTagRepository
             ) {
@@ -403,15 +401,17 @@ public class ChangeOrder extends EntityDate {
                     i.initChangeOrder(this);
 
                     //
-                    i.setAttach_comment(
-                            req.getAddedAttachmentComment().size()==0?
-                                    " ":req.getAddedAttachmentComment().get(
-                                    (added.indexOf(i))
-                            )
-                    );
+            i.setAttach_comment(
+                    newComment.get(
+                            (added.indexOf(i))
+                    ).isBlank()?
+                            " ":newComment.get(
+                            (added.indexOf(i))
+                    )
+            );
 
                     i.setTag(attachmentTagRepository
-                            .findById(req.getAddedTag().get(added.indexOf(i))).
+                            .findById(newTag.get(added.indexOf(i))).
                             orElseThrow(AttachmentTagNotFoundException::new).getName());
 
                     i.setAttachmentaddress(
@@ -445,7 +445,7 @@ public class ChangeOrder extends EntityDate {
                 = convertAttachmentIdsToAttachments(deletedAttachmentIds);
 
         addedAttachments.stream().forEach( //06-17 added 에 들어온 것은 모두 임시저장용
-                i->i.setSave(false)
+                i->i.setSave(save)
         );
 
         return new CoAttachmentUpdatedResult(
@@ -539,7 +539,15 @@ public class ChangeOrder extends EntityDate {
             ChangeRequestRepository changeRequestRepository,
 
             ChangedFeatureRepository changedFeatureRepository,
-            CoCoEffectRepository coCoEffectRepository
+            CoCoEffectRepository coCoEffectRepository,
+
+            List<Long> oldTags,
+            List<Long> newTags,
+
+            List<String> oldComment,
+            List<String> newComment,
+
+            List<CoAttachment> targetAttaches
     )
 
     {
@@ -647,31 +655,6 @@ public class ChangeOrder extends EntityDate {
                 " ":req.getContent();
 
 
-        CoAttachmentUpdatedResult resultAttachment =
-
-                findAttachmentUpdatedResult(
-                        req.getAddedAttachments(),
-                        req.getDeletedAttachments(),
-                        false
-                );
-
-        if(req.getAddedTag().size()>0) {
-            addUpdatedAttachments(
-                    req,
-                    resultAttachment.getAddedAttachments(),
-                    attachmentTagRepository
-            );
-            //addProjectAttachments(resultAttachment.getAddedAttachments());
-        }
-
-        if(req.getDeletedAttachments().size()>0) {
-            deleteAttachments(resultAttachment.getDeletedAttachments());
-        }
-
-        FileUpdatedResult fileUpdatedResult = new FileUpdatedResult(
-                resultAttachment//, updatedAddedProjectAttachmentList
-        );
-
         if(this.changeRequests!=null) {
             this.changeRequests.clear();
         }
@@ -733,6 +716,74 @@ public class ChangeOrder extends EntityDate {
 
         //newItems
 
+
+        // 문서 시작
+
+
+//        CoAttachmentUpdatedResult resultAttachment =
+//
+//                findAttachmentUpdatedResult(
+//                        req.getAddedAttachments(),
+//                        req.getDeletedAttachments(),
+//                        false
+//                );
+//
+//        if(req.getAddedAttachments()!=null && req.getAddedAttachments().size()>0) {
+//            addUpdatedAttachments(
+//                    newTags,
+//                    newComment,
+//                    resultAttachment.getAddedAttachments(),
+//                    attachmentTagRepository
+//            );
+//            //addProjectAttachments(resultAttachment.getAddedAttachments());
+//        }
+//
+//        if(req.getDeletedAttachments().size()>0) {
+//            deleteAttachments(resultAttachment.getDeletedAttachments());
+//        }
+//
+//        FileUpdatedResult fileUpdatedResult = new FileUpdatedResult(
+//                resultAttachment//, updatedAddedProjectAttachmentList
+//        );
+//
+//        return fileUpdatedResult;
+
+        CoAttachmentUpdatedResult resultAttachment =
+
+                findAttachmentUpdatedResult(
+                        req.getAddedAttachments(),
+                        req.getDeletedAttachments(),
+                        false
+                );
+
+        if (req.getDeletedAttachments().size() > 0) {
+            deleteAttachments(
+                    resultAttachment.getDeletedAttachments()
+            );
+        }
+
+        if(oldTags.size()>0) {
+            oldUpdatedAttachments(
+                    oldTags,
+                    oldComment,
+                    targetAttaches,
+                    attachmentTagRepository
+            );
+        }
+
+        if (req.getAddedAttachments()!=null && req.getAddedAttachments().size()>0) {
+            addUpdatedAttachments(
+                    newTags,
+                    newComment,
+                    resultAttachment.getAddedAttachments(),
+                    attachmentTagRepository
+            );
+        }
+
+        FileUpdatedResult fileUpdatedResult = new FileUpdatedResult(
+                resultAttachment//, updatedAddedProjectAttachmentList
+        );
+
         return fileUpdatedResult;
     }
 
@@ -758,7 +809,15 @@ public class ChangeOrder extends EntityDate {
 
             ChangedFeatureRepository changedFeatureRepository,
 
-            CoCoEffectRepository coCoEffectRepository
+            CoCoEffectRepository coCoEffectRepository,
+
+            List<Long> oldTags,
+            List<Long> newTags,
+
+            List<String> oldComment,
+            List<String> newComment,
+
+            List<CoAttachment> targetAttaches
     )
 
     {
@@ -880,33 +939,6 @@ public class ChangeOrder extends EntityDate {
                     ).collect(Collectors.toSet()))
             );
         }
-
-        CoAttachmentUpdatedResult resultAttachment =
-
-                findAttachmentUpdatedResult(
-                        req.getAddedAttachments(),
-                        req.getDeletedAttachments(),
-                        true
-                );
-
-        if(req.getAddedTag().size()>0) {
-            addUpdatedAttachments(
-                    req,
-                    resultAttachment.getAddedAttachments(),
-                    attachmentTagRepository
-            );
-            //addProjectAttachments(resultAttachment.getAddedAttachments());
-        }
-
-        if(req.getDeletedAttachments().size()>0) {
-            deleteAttachments(resultAttachment.getDeletedAttachments());
-        }
-
-        FileUpdatedResult fileUpdatedResult = new FileUpdatedResult(
-                resultAttachment//, updatedAddedProjectAttachmentList
-        );
-
-
         this.changeRequests.clear();
         this.changeRequests.addAll(
 
@@ -964,6 +996,44 @@ public class ChangeOrder extends EntityDate {
                         .collect(toList())
         );
 
+        //문서 시작
+
+        CoAttachmentUpdatedResult resultAttachment =
+
+                findAttachmentUpdatedResult(
+                        req.getAddedAttachments(),
+                        req.getDeletedAttachments(),
+                        true
+                );
+
+        if (req.getDeletedAttachments().size() > 0) {
+            deleteAttachments(
+                    resultAttachment.getDeletedAttachments()
+            );
+        }
+
+        if(oldTags.size()>0) {
+            oldUpdatedAttachments(
+                    oldTags,
+                    oldComment,
+                    targetAttaches,
+                    attachmentTagRepository
+            );
+        }
+
+        if (req.getAddedAttachments()!=null && req.getAddedAttachments().size()>0) {
+            addUpdatedAttachments(
+                    newTags,
+                    newComment,
+                    resultAttachment.getAddedAttachments(),
+                    attachmentTagRepository
+            );
+        }
+
+        FileUpdatedResult fileUpdatedResult = new FileUpdatedResult(
+                resultAttachment//, updatedAddedProjectAttachmentList
+        );
+
         return fileUpdatedResult;
     }
 
@@ -976,4 +1046,44 @@ public class ChangeOrder extends EntityDate {
         this.editors.addAll(editors);
     }
 
+
+    private void oldUpdatedAttachments
+            (
+                    List<Long> oldTag,
+                    List<String> oldComment,
+                    List<CoAttachment> olds, // 이 아이템의 기존 old attachments 중 deleted 빼고 아이디 오름차순
+                    AttachmentTagRepository attachmentTagRepository
+            ) {
+
+        // 기존에 있던 애라 init 안해줘도 됨
+        SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+        Date now = new Date();
+
+        olds.stream().forEach(i -> {
+
+            i.setAttach_comment(
+                    oldComment.get(
+                            (olds.indexOf(i))
+                    ).isBlank()?
+                            " ":oldComment.get(
+                            (olds.indexOf(i))
+                    )
+            );
+
+                    i.setTag(attachmentTagRepository
+                            .findById(oldTag.get(olds.indexOf(i))).
+                            orElseThrow(AttachmentTagNotFoundException::new).getName());
+
+                    i.setAttachmentaddress(
+                            "src/main/prodmedia/image/" +
+                                    sdf1.format(now).substring(0,10)
+                                    + "/"
+                                    + i.getUniqueName()
+                    );
+
+                }
+        );
+
+    }
 }

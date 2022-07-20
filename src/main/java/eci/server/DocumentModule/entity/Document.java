@@ -229,7 +229,7 @@ public class Document extends EntityDate {
                 = convertAttachmentIdsToAttachments(deletedAttachmentIds);
 
         addedAttachments.stream().forEach( //06-17 added 에 들어온 것은 모두 임시저장용
-                i -> i.setSave(false)
+                i -> i.setSave(save)
         );
 
         return new DocumentAttachmentUpdatedResult(

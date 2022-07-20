@@ -54,7 +54,7 @@ public class DesignCreateRequest {
             throw new DesignContentNotEmptyException();
         }
 
-        if (req.getTag().size() == 0) { //Project에 Attachment 존재하지 않을 시에 생성자
+        if (req.getAttachments()==null || req.getAttachments().size()==0) { //Project에 Attachment 존재하지 않을 시에 생성자
             return new Design(
 
                     itemRepository.findById(req.getItemId())

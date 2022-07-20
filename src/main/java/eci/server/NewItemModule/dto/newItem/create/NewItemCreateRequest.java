@@ -178,13 +178,38 @@ public class NewItemCreateRequest {
 
 
         /**
+         * 기존 거 랑 새 거랑 태그,코멘트 분리 작업
+         */
+        // 0) 복제 문서의 태그 / 복제 문서의 코멘트 리스트 ㅡ 새 문서 태그/ 새 문서 코멘트 리스트 만들기
+        List<Long> oldDocTag = new ArrayList<>();
+        List<Long> newDocTag = new ArrayList<>();
+        List<String> oldDocComment = new ArrayList<>();
+        List<String> newDocComment =  new ArrayList<>();
+
+        if(req.getDuplicateTargetIds()!=null && req.getDuplicateTargetIds().size()>0){
+
+            int standardIdx = req.getDuplicateTargetIds().size();
+
+            // tag 작업
+            oldDocTag = new ArrayList<>(req.getTag().subList(0,standardIdx));
+            newDocTag = new ArrayList<>(req.getTag().subList(standardIdx, req.getTag().size()));
+            // comment 작업
+            oldDocComment = new ArrayList<>(req.getAttachmentComment().subList(0,standardIdx));
+            newDocComment = new ArrayList<>(req.getAttachmentComment().subList(standardIdx, req.getTag().size()));
+
+        }else{//(req.getAttachments()!=null && req.getAttachments().size()>0){
+            newDocTag.addAll(req.getTag());
+            newDocComment.addAll(req.getAttachmentComment());
+        }
+
+        /**
          * 만약 사용자가 복제 원하는 문서가 있다면
          * 그 복제 문서를 새로운 new DoucumentAttachment로
          * 만들어서 리스트로 만들기
          * 없다면 null 넘겨주면 됨
          */
 
-        List<NewItemAttachment> duplicateNewDocumentAttachments = null;
+        List<NewItemAttachment> duplicateNewDocumentAttachments = new ArrayList<>();
 
         if(req.getDuplicateTargetIds()!=null){
             // 1) 복제할 대상 애들 찾아서
@@ -195,24 +220,37 @@ public class NewItemCreateRequest {
                             ).orElseThrow(DocumentNotFoundException::new)
                     ).collect(toList());
 
-            // 2) 걔네로 새로운 new Document Attachment 로 제작해주기
-            duplicateNewDocumentAttachments =
-                    duplicatedTargetAttaches.stream().map(
-                            d -> new NewItemAttachment(
+
+            int idx = 0;
+            // 2) 걔네로 새로운 복제 Document Attachment 로 제작해주기
+            for(NewItemAttachment d : duplicatedTargetAttaches){
+
+                duplicateNewDocumentAttachments.add(new NewItemAttachment(
                                     d.getOriginName(),
                                     d.getUniqueName(),
                                     d.getAttachmentaddress(),
                                     "이거는 문서 복제얌",
-                                    true
-                            )
-                    ).collect(toList());
+                                    true,
+
+                        attachmentTagRepository
+                                .findById(oldDocTag.get(idx)).
+                                orElseThrow(AttachmentTagNotFoundException::new).getName(),
+
+                        oldDocComment.get(idx).isBlank()?" " :
+                                oldDocComment.get(idx)
+                        )
+
+
+                );
+
+                idx+=1;
+            }
 
         }
 
 
 
-        if (req.getTag().size() == 0) {
-
+        if(req.getAttachments()==null || req.getAttachments().size()==0) {
 
             // attachment 가 없을 경우 & 썸네일은 있음
 
@@ -349,6 +387,28 @@ public class NewItemCreateRequest {
 
         // attachment 가 존재할 경우
 
+        // attachment dto 미리 만들어줄거야
+        List<NewItemAttachment> newItemAttachments = new ArrayList<>();
+        for(MultipartFile i : req.attachments){
+            int d =0;
+            newItemAttachments.add(
+                    new NewItemAttachment(
+                            i.getOriginalFilename(),
+                            attachmentTagRepository
+                                    .findById(newDocTag.get(d)).
+                                    orElseThrow(AttachmentTagNotFoundException::new)
+                                    .getName(),
+
+                            newDocComment.get(d)
+                            ,
+                            //찐 생성이므로 이때 추가되는 문서들 모두 save = true
+                            true //save 속성임
+                    )
+            );
+                    d+=1;
+        }
+
+
         return new NewItem(
 
 
@@ -473,48 +533,7 @@ public class NewItemCreateRequest {
 
                 false ,//revise progress 중 아니다
 
-                req.getAttachmentComment().size()>0?(
-
-                // 06-18 ) 1) comment 가 있다면 순차대로 채워지게 하기
-                req.attachments.stream().map(
-                        i -> new NewItemAttachment(
-                                i.getOriginalFilename(),
-                                attachmentTagRepository
-                                        .findById(req.getTag().get(req.attachments.indexOf(i))).
-                                        orElseThrow(AttachmentNotFoundException::new).getName(),
-
-                                req.getAttachmentComment().isEmpty()?
-                                        "":req.getAttachmentComment().get(
-                                        req.attachments.indexOf(i)
-                                )
-                                ,
-                                //찐 생성이므로 이때 추가되는 문서들 모두 save = true
-                                true //save 속성임
-                        )
-                ).collect(
-                        toList()
-                )
-                ) :
-
-                // 06-18 ) 2) comment 가 없다면 빈칸으로 코멘트 채워지게 하기
-                        req.attachments.stream().map(
-                                i -> new NewItemAttachment(
-                                        i.getOriginalFilename(),
-                                        attachmentTagRepository
-                                                .findById(req.getTag().get(req.attachments.indexOf(i))).
-                                                orElseThrow(AttachmentNotFoundException::new).getName(),
-
-                                        " "
-                                        ,
-                                        //찐 생성이므로 이때 추가되는 문서들 모두 save = true
-                                        true //save 속성임
-                                )
-
-                        ).collect(
-
-                                toList()
-
-                        ),
+                newItemAttachments,
 
                 duplicateNewDocumentAttachments
 

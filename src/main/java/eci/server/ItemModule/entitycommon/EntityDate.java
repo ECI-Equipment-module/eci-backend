@@ -1,5 +1,6 @@
 package eci.server.ItemModule.entitycommon;
 
+import eci.server.NewItemModule.entity.NewItemAttachment;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.UpdateTimestamp;

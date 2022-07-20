@@ -78,7 +78,7 @@ public class CrCreateRequest {
             NewItemRepository newItemRepository
     ){
 
-        if (req.getTag().size() == 0) {
+        if (req.getAttachments()==null || req.getAttachments().size()==0) {
 
             return new ChangeRequest(
                     req.getName(),

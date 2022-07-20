@@ -3,6 +3,7 @@ package eci.server.ReleaseModule.dto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import eci.server.NewItemModule.dto.attachment.AttachmentTagDto;
 import eci.server.NewItemModule.repository.attachment.AttachmentTagRepository;
+import eci.server.ProjectModule.dto.projectAttachmentDto.ProjectAttachmentDto;
 import eci.server.ReleaseModule.entity.ReleaseAttachment;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -11,7 +12,7 @@ import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
-public class ReleaseAttachmentDto{
+public class ReleaseAttachmentDto implements Comparable<ReleaseAttachmentDto>{
     private Long id;
     private String originName;
     private String uniqueName;
@@ -58,6 +59,9 @@ public class ReleaseAttachmentDto{
 
         );
     }
-
+    @Override
+    public int compareTo(ReleaseAttachmentDto attachment) {
+        return (int) (this.id - attachment.getId());
+    }
 }
 
