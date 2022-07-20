@@ -121,7 +121,7 @@ public class DashboardController {
      *
      * @return 200 (success)
      */
-    @CrossOrigin(origins = "https://localhost:3000")
+    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
     @GetMapping("/dashboard/doc/todo")
     @ResponseStatus(HttpStatus.OK)
     public Response DOCTodo() {

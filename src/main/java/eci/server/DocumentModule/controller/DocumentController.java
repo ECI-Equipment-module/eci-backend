@@ -31,7 +31,7 @@ public class DocumentController {
      * @param req
      * @return 200 (success)
      */
-    @CrossOrigin(origins = "https://localhost:3000")
+    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
     @PostMapping("/doc/{targetId}")
     @ResponseStatus(HttpStatus.CREATED)
     @AssignMemberId // Aspect : 인증된 사용자 정보로 아이템 작성자 지정 가능
@@ -83,7 +83,7 @@ public class DocumentController {
      * @param req
      * @return 200 (success)
      */
-    @CrossOrigin(origins = "https://localhost:3000")
+    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
     @PostMapping("/doc/temp/{targetId}")
     @ResponseStatus(HttpStatus.CREATED)
     @AssignMemberId // Aspect : 인증된 사용자 정보로 아이템 작성자 지정 가능
