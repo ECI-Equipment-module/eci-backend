@@ -78,7 +78,7 @@ public class DesignService {
                         attachmentTagRepository
                 )
         );
-        if (!(req.getTag().size() == 0)) {
+        if (!(req.getAttachments()==null || req.getAttachments().size()==0)) {
             uploadAttachments(design.getDesignAttachments(), req.getAttachments());
         }
 
@@ -97,7 +97,7 @@ public class DesignService {
                         attachmentTagRepository
                 )
         );
-        if (!(req.getTag().size() == 0)) {
+        if (!(req.getAttachments()==null || req.getAttachments().size()==0)) {
             uploadAttachments(design.getDesignAttachments(), req.getAttachments());
         }
         List<RouteOrdering> routeOrdering = routeOrderingRepository.findByNewItemOrderByIdAsc(design.getNewItem());

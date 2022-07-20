@@ -35,6 +35,7 @@ import org.springframework.util.RouteMatcher;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -128,6 +129,16 @@ public class NewItemDetailDto {
         CarTypeDto nullCarTypeDto = new CarTypeDto();
 
 
+        List<NewItemAttachmentDto> newItemAttachmentDtos
+                = (Item.getAttachments().
+                stream().
+                map( i->
+                        NewItemAttachmentDto.toDto
+                                (i,attachmentTagRepository)
+                )
+                .collect(toList()));
+
+        Collections.sort(newItemAttachmentDtos);
 
         if(Item.getMakers()!=null) {
             return new NewItemDetailDto(
@@ -200,13 +211,8 @@ public class NewItemDetailDto {
                     //reviseProgress(newItemRepository, Item),
                     Item.isRevise_progress(),
 
-                    Item.getAttachments().
-                            stream().
-                            map( i->
-                                    NewItemAttachmentDto.toDto
-                                            (i,attachmentTagRepository)
-                            )
-                            .collect(toList()),
+                    newItemAttachmentDtos
+                    ,
                     (char) Item.getRevision(),
                     routeOrderingDto.getLifecycleStatus(),
 

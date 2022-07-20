@@ -462,7 +462,7 @@ public class Project extends EntityDate {
                         req.getDeletedAttachments(),
                         false
                 );
-        if (req.getAddedTag().size() > 0) {
+        if (req.getAddedAttachments()!=null && req.getAddedAttachments().size()>0) {
             addUpdatedProjectAttachments(
                     req,
                     resultAttachment.getAddedAttachments(),
@@ -749,7 +749,7 @@ public class Project extends EntityDate {
                         true //temp End 에서 저장되는 파일들은 찐 저장
                 );
         // 문서 존재한다면 add 작업 처리
-        if (req.getAddedTag().size() > 0) {
+        if (req.getAddedAttachments()!=null && req.getAddedAttachments().size()>0) {
             addUpdatedProjectAttachments(
                     req,
                     resultAttachments.getAddedAttachments(),

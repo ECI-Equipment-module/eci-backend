@@ -80,7 +80,7 @@ public class CrService {
                 )
         );
 
-        if(req.getTag().size()>0) {
+        if(req.getAttachments()!=null && req.getAttachments().size()>0) {
             uploadAttachments(changeRequest.getAttachments(), req.getAttachments());
         }
 

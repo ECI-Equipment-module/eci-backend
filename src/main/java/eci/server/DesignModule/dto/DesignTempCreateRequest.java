@@ -49,7 +49,7 @@ public class DesignTempCreateRequest {
 
         Long itemId = req.itemId==null?99999L:req.itemId;
 
-        if(req.getTag().size()>0) {
+        if(req.getAttachments()==null || req.getAttachments().size()==0) {
             return new Design(
                     itemRepository.findById(itemId)
                             .orElseThrow(ItemNotFoundException::new),

@@ -225,10 +225,10 @@ public class Design extends EntityDate {
                         req.getDeletedAttachments()
                 );
 
-        if(req.getAddedTag().size()>0) {
+        if(req.getAddedAttachments()!=null && req.getAddedAttachments().size()>0) {
             addUpdatedDesignAttachments(req, resultAttachment.getAddedAttachments(), attachmentTagRepository);
         }
-        if(req.getAddedTag().size()>0) {
+        if(req.getAddedAttachments()!=null && req.getAddedAttachments().size()>0) {
             deleteDesignAttachments(resultAttachment.getDeletedAttachments());
         }
         FileUpdatedResult fileUpdatedResult = new FileUpdatedResult(
@@ -276,10 +276,10 @@ public class Design extends EntityDate {
                         req.getDeletedAttachments()
                 );
 
-        if(req.getAddedTag().size()>0) {
+        if(req.getAddedAttachments()!=null && req.getAddedAttachments().size()>0) {
             addUpdatedDesignAttachments(req, resultAttachment.getAddedAttachments(), attachmentTagRepository);
         }
-        if(req.getAddedTag().size()>0) {
+        if(req.getAddedAttachments()!=null && req.getAddedAttachments().size()>0) {
             deleteDesignAttachments(resultAttachment.getDeletedAttachments());
         }
         FileUpdatedResult fileUpdatedResult = new FileUpdatedResult(

@@ -655,7 +655,7 @@ public class ChangeOrder extends EntityDate {
                         false
                 );
 
-        if(req.getAddedTag().size()>0) {
+        if(req.getAddedAttachments()!=null && req.getAddedAttachments().size()>0) {
             addUpdatedAttachments(
                     req,
                     resultAttachment.getAddedAttachments(),
@@ -889,7 +889,7 @@ public class ChangeOrder extends EntityDate {
                         true
                 );
 
-        if(req.getAddedTag().size()>0) {
+        if(req.getAddedAttachments()!=null && req.getAddedAttachments().size()>0) {
             addUpdatedAttachments(
                     req,
                     resultAttachment.getAddedAttachments(),

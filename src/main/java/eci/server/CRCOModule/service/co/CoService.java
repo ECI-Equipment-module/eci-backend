@@ -108,7 +108,7 @@ public class CoService{
                 )
         );
 
-        if(req.getTag().size()>0) {
+        if(req.getAttachments()!=null && req.getAttachments().size()>0){
             uploadAttachments(changeOrder.getAttachments(), req.getAttachments());
         }
 
@@ -154,7 +154,7 @@ public class CoService{
                     )
             );
 
-            if(req.getTag().size()>0) {
+            if(req.getAttachments()!=null && req.getAttachments().size()>0) {
                 uploadAttachments(changeOrder.getAttachments(), req.getAttachments());
             }
 

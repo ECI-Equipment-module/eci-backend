@@ -94,7 +94,7 @@ public class ProjectService {
                         attachmentTagRepository
                 )
         );
-        if(!(req.getTag().size()==0)) {
+        if(!(req.getAttachments()==null || req.getAttachments().size()==0)) {
             uploadAttachments(project.getProjectAttachments(), req.getAttachments());
         }
 
@@ -118,7 +118,7 @@ public class ProjectService {
                         attachmentTagRepository
                 )
         );
-        if(!(req.getTag().size()==0)) {
+        if(!(req.getAttachments()==null || req.getAttachments().size()==0)) {
             uploadAttachments(project.getProjectAttachments(), req.getAttachments());
         }
         List<RouteOrdering> routeOrdering = routeOrderingRepository.findByNewItemOrderByIdAsc(project.getNewItem());

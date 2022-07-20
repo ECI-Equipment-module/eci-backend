@@ -82,7 +82,7 @@ public class CrTempCreateRequest {
         System.out.println("contttttttttttttttttttent");
         System.out.println(req.getContent()+"&"+req.getName());
 
-        if (req.getTag().size() == 0) {
+        if (req.getAttachments()==null || req.getAttachments().size()==0) {
 
 
 

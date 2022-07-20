@@ -76,7 +76,7 @@ public class ReleaseService {
                         attachmentTagRepository
                 )
         );
-        if(!(req.getTag().size()==0)) {
+        if(!(req.getAttachments()==null || req.getAttachments().size()==0)) {
             uploadAttachments(release.getAttachments(), req.getAttachments());
         }
 
@@ -104,7 +104,7 @@ public class ReleaseService {
                 )
         );
 
-        if(!(req.getTag().size()==0)) {
+        if(!(req.getAttachments()==null || req.getAttachments().size()==0)) {
             uploadAttachments(release.getAttachments(), req.getAttachments());
         }
 

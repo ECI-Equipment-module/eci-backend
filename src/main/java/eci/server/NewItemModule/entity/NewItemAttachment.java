@@ -2,6 +2,7 @@ package eci.server.NewItemModule.entity;
 
 import eci.server.ItemModule.entitycommon.EntityDate;
 import eci.server.ItemModule.exception.image.UnsupportedImageFormatException;
+import eci.server.NewItemModule.dto.attachment.NewItemAttachmentDto;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,7 +20,7 @@ import java.util.UUID;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class NewItemAttachment extends EntityDate {
+public class NewItemAttachment extends EntityDate{
 
     @Id
     //@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -119,13 +120,19 @@ public class NewItemAttachment extends EntityDate {
             String uniqueName,
             String attachmentaddress,
             String just,
-            boolean save
+            boolean save,
+
+            String tag,
+            String attach_comment
     ) {
         this.uniqueName = uniqueName;
         this.originName = originName;
         this.attachmentaddress = attachmentaddress; // 기존 것 베끼기
         this.save = save;
         this.duplicate = true;
+
+        this.tag = tag;
+        this.attach_comment = attach_comment;
     }
 
     /**
@@ -206,4 +213,5 @@ public class NewItemAttachment extends EntityDate {
     public void setSave(boolean save) {
         this.save = save;
     }
+
 }

@@ -431,7 +431,7 @@ public class ChangeRequest extends EntityDate {
                         false
                 );
 
-        if(req.getAddedTag().size()>0) {
+        if(req.getAddedAttachments()!=null && req.getAddedAttachments().size()>0) {
             addUpdatedAttachments(
                     req,
                     resultAttachment.getAddedAttachments(),
@@ -514,7 +514,7 @@ public class ChangeRequest extends EntityDate {
                         req.getDeletedAttachments(),
                         false
                 );
-        if(req.getAddedTag().size()>0) {
+        if(req.getAddedAttachments()!=null && req.getAddedAttachments().size()>0) {
             addUpdatedAttachments(
                     req,
                     resultAttachment.getAddedAttachments(),
