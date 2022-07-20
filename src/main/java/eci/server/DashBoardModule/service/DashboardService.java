@@ -1559,11 +1559,27 @@ public class DashboardService {
 
         Set<NewItem> newItemForRelease =
                 newItemService.readAffectedItems().stream().filter(
-                        newItem -> newItem.getReleased()!=null&&newItem.getReleased()==0
+                        newItem -> (newItem.getReleased()!=null&&newItem.getReleased()==0)
                 ).collect(Collectors.toSet());
 
+        Set<NewItem> finalNewItemForRelease = new HashSet<>();
 
-        for (NewItem newItem : newItemForRelease) {
+        for (NewItem chkItem : newItemForRelease) {
+            // 이 아이템이 release 가 존재하지 않는다면  (releasing of new item 의 길이가 0)
+            List<Releasing> releasingOfNewItem = releasingRepository.findByNewItemOrderByIdAsc(
+                    chkItem
+            );
+
+//            // 이 아이템이 담긴 CO 중 RELEASE
+//            List<ChangeOrder> changeOrders
+//
+            if(releasingOfNewItem.size()==0) {
+                finalNewItemForRelease.add(chkItem);
+            }
+
+        }
+
+        for (NewItem newItem : finalNewItemForRelease) {
             unlinkedItemTodoResponses.add(
                     new TodoResponse(
                             newItem.getId(),
@@ -1783,7 +1799,7 @@ public class DashboardService {
         // TOTAL
 
         ToDoSingle tempDocument = new ToDoSingle("Save as Draft", TEMP_SAVE);
-        ToDoSingle rejectedDocument = new ToDoSingle("Rejected Release", REJECTED);
+        ToDoSingle rejectedDocument = new ToDoSingle("Rejected Document", REJECTED);
         ToDoSingle reviewDocument = new ToDoSingle("Waiting Review", REVIEW);
 
         List<ToDoSingle> toDoDoubleList = new ArrayList<ToDoSingle>();
