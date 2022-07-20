@@ -352,10 +352,57 @@ public class RouteOrdering extends EntityDate {
 
             RouteOrdering routeOrdering = routeProductList.get(this.present).getRouteOrdering();
 
-            // 만약 지금 PROCESS 끝난 것이 RELEASE 라면 => ROUTE ORDERING 의 상태는 RELEASE
+            // 만약 지금 PROCESS 끝난 것이 RELEASE 라면 => 그 release 에 딸린
+            // 아이템 혹은 CO 의 최신 ROUTE ORDERING 의 상태는 RELEASE
+
             if(routeProductList.get(this.present).getType().getModule().equals("RELEASE")){
-                routeOrdering.updateLifeCycleToRelease();
+
+                // (1) RELEASE 에 딸린 게 new item  라면
+                if(routeOrdering.getRelease().getNewItem()!=null){
+
+                    if(routeOrderingRepository.findByNewItemOrderByIdAsc
+                            (routeOrdering.getRelease().getNewItem()).size()>0) {
+
+                            RouteOrdering routeOrderingToRelease =
+                                    routeOrderingRepository.findByNewItemOrderByIdAsc(routeOrdering.getRelease().getNewItem())
+                                            .get(
+                                                    routeOrderingRepository
+                                                            .findByNewItemOrderByIdAsc
+                                                                    (routeOrdering.getRelease().getNewItem()).size()-1
+                                            );
+
+                            routeOrderingToRelease.updateLifeCycleToRelease();
+
+
+                    }
+
+                    updateLifeCycleToRelease();
+                }
+
+
+                // (2) RELEASE 에 딸린 게 CO 라면
+                else if(routeOrdering.getRelease().getChangeOrder()!=null){
+
+                    for(CoNewItem coNewItem : routeOrdering.getRelease().getChangeOrder().getCoNewItems()){
+                        if(routeOrderingRepository.findByNewItemOrderByIdAsc(coNewItem.getNewItem()).size()>0) {
+                            RouteOrdering routeOrderingToRelease =
+                                    routeOrderingRepository.findByNewItemOrderByIdAsc(coNewItem.getNewItem())
+                                            .get(
+                                                    routeOrderingRepository
+                                                            .findByNewItemOrderByIdAsc
+                                                                    (coNewItem.getNewItem()).size()-1
+                                            );
+
+                            routeOrderingToRelease.updateLifeCycleToRelease();
+
+                        }
+                    }
+
+                    updateLifeCycleToRelease();
+                }
+
             }
+            ///////////////////////////////////////////////
 
             /** #####경우 1 ) item revise route ordering 이었을 때
              * 1인 경우는 item revise route ordering 이라는 뜻
