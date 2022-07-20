@@ -81,9 +81,16 @@ public class DocumentCreateRequest {
 
         List<DocumentAttachment> duplicateNewDocumentAttachments = null;
 
-        if(req.getDuplicateTargetIds()!=null){
+        if(req.getDuplicateTargetIds()!=null) {
+
+            for(Long id : req.getDuplicateTargetIds()){
+                System.out.println("id " + id +"입니다");
+
+            }
+
             // 1) 복제할 대상 애들 찾아서
             List<DocumentAttachment> duplicatedTargetAttaches =
+
             req.getDuplicateTargetIds().stream().map(
                     o-> documentAttachmentRepository.findById(
                             o

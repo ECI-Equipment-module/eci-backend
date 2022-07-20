@@ -1,5 +1,9 @@
 package eci.server.DocumentModule.service;
 
+import eci.server.CRCOModule.dto.co.CoUpdateRequest;
+import eci.server.CRCOModule.entity.co.ChangeOrder;
+import eci.server.CRCOModule.entity.cofeatures.CoAttachment;
+import eci.server.CRCOModule.service.co.CoService;
 import eci.server.DocumentModule.dto.DocumentCreateRequest;
 import eci.server.DocumentModule.dto.DocumentReadDto;
 import eci.server.DocumentModule.dto.DocumentTempCreateRequest;
@@ -8,7 +12,6 @@ import eci.server.DocumentModule.entity.Document;
 import eci.server.DocumentModule.entity.DocumentAttachment;
 import eci.server.DocumentModule.exception.DocumentNotFoundException;
 import eci.server.DocumentModule.repository.*;
-import eci.server.ItemModule.dto.item.ItemCreateResponse;
 import eci.server.ItemModule.dto.newRoute.routeOrdering.RouteOrderingDto;
 import eci.server.ItemModule.entity.newRoute.RouteOrdering;
 import eci.server.ItemModule.exception.route.RouteNotFoundException;
@@ -18,12 +21,8 @@ import eci.server.ItemModule.repository.newRoute.RouteProductRepository;
 import eci.server.ItemModule.service.file.FileService;
 import eci.server.NewItemModule.dto.newItem.create.NewItemCreateResponse;
 import eci.server.ProjectModule.dto.project.ProjectTempCreateUpdateResponse;
-import eci.server.ProjectModule.exception.ProjectNotFoundException;
-import eci.server.ReleaseModule.dto.ReleaseCreateRequest;
-import eci.server.ReleaseModule.dto.ReleaseDto;
-import eci.server.ReleaseModule.dto.ReleaseUpdateRequest;
-import eci.server.ReleaseModule.entity.Releasing;
-import eci.server.ReleaseModule.exception.ReleaseNotFoundException;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -31,6 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.print.Doc;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -382,8 +382,6 @@ public class DocumentService {
             }
         }
     }
-
-
 
 
 }

@@ -1,7 +1,9 @@
 package eci.server.DesignModule.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import eci.server.CRCOModule.dto.cr.CrAttachmentDto;
 import eci.server.DesignModule.entity.designfile.DesignAttachment;
+import eci.server.DocumentModule.dto.DocumentAttachmentDto;
 import eci.server.NewItemModule.dto.attachment.AttachmentTagDto;
 import eci.server.NewItemModule.repository.attachment.AttachmentTagRepository;
 import eci.server.ProjectModule.entity.projectAttachment.ProjectAttachment;
@@ -9,13 +11,15 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
 
 @Data
 @AllArgsConstructor
-public class DesignAttachmentDto  {
+public class DesignAttachmentDto implements Comparable<DesignAttachmentDto> {
     private Long id;
     private String originName;
     private String uniqueName;
@@ -32,6 +36,8 @@ public class DesignAttachmentDto  {
             DesignAttachment attachment,
             AttachmentTagRepository attachmentTagRepository
     ) {
+
+
         return new DesignAttachmentDto(
                 attachment.getId(),
                 attachment.getOriginName(),
@@ -101,6 +107,9 @@ public class DesignAttachmentDto  {
 
     }
 
-
+    @Override
+    public int compareTo(DesignAttachmentDto attachment) {
+        return (int) (this.id - attachment.getId());
+    }
 
 }

@@ -14,7 +14,7 @@ import static java.util.stream.Collectors.toList;
 
 @Data
 @AllArgsConstructor
-public class NewItemAttachmentDto {
+public class NewItemAttachmentDto  implements Comparable<NewItemAttachmentDto> {
     private Long id;
     private String originName;
     private String uniqueName;
@@ -103,6 +103,11 @@ public class NewItemAttachmentDto {
 
     }
 
+
+    @Override
+    public int compareTo(NewItemAttachmentDto newItemAttachment) {
+        return (int) (this.id - newItemAttachment.getId());
+    }
 
 
 }

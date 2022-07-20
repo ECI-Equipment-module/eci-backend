@@ -241,7 +241,8 @@ public class Releasing extends EntityDate {
 
     private void addUpdatedAttachments
             (
-                    ReleaseUpdateRequest req,
+                    List<Long> newTag,
+                    List<String> newComment,
                     List<ReleaseAttachment> added,
                     AttachmentTagRepository attachmentTagRepository
             ) {
@@ -256,15 +257,17 @@ public class Releasing extends EntityDate {
                     i.initRelease(this);
 
                     //
-                    i.setAttach_comment(
-                            req.getAddedAttachmentComment().size() == 0 ?
-                                    " " : req.getAddedAttachmentComment().get(
-                                    (added.indexOf(i))
-                            )
-                    );
+            i.setAttach_comment(
+                    newComment.get(
+                            (added.indexOf(i))
+                    ).isBlank()?
+                            " ":newComment.get(
+                            (added.indexOf(i))
+                    )
+            );
 
                     i.setTag(attachmentTagRepository
-                            .findById(req.getAddedTag().get(added.indexOf(i))).
+                            .findById(newTag.get(added.indexOf(i))).
                             orElseThrow(AttachmentTagNotFoundException::new).getName());
 
                     i.setAttachmentaddress(
@@ -298,7 +301,7 @@ public class Releasing extends EntityDate {
                 = convertAttachmentIdsToAttachments(deletedAttachmentIds);
 
         addedAttachments.stream().forEach( //06-17 added 에 들어온 것은 모두 임시저장용
-                i -> i.setSave(false)
+                i -> i.setSave(save)
         );
 
         return new ReleaseAttachmentUpdatedResult(
@@ -391,7 +394,15 @@ public class Releasing extends EntityDate {
             ChangeOrderRepository changeOrderRepository,
             ReleaseOrganizationRepository releaseOrganizationRepository,
             ReleaseTypeRepository releaseTypeRepository,
-            ReleaseOrganizationReleaseRepository releaseOrganizationReleaseRepository
+            ReleaseOrganizationReleaseRepository releaseOrganizationReleaseRepository,
+
+            List<Long> oldTags,
+            List<Long> newTags,
+
+            List<String> oldComment,
+            List<String> newComment,
+
+            List<ReleaseAttachment> targetAttaches
 
     ) {
 
@@ -438,7 +449,8 @@ public class Releasing extends EntityDate {
                 req.getReleaseOrganizationId().size() == 0 ?
                         null :
                         (req.getReleaseOrganizationId().stream().map(
-                                i -> releaseOrganizationRepository.findById(i).orElseThrow(ReleaseOrganizationNotFoundException::new)
+                                i -> releaseOrganizationRepository.findById(i)
+                                        .orElseThrow(ReleaseOrganizationNotFoundException::new)
                         ).collect(toList())) //입력으로 받아온 co effect 값
                                 .stream().map(
                                         //다대다 관계를 만드는 구간
@@ -451,6 +463,35 @@ public class Releasing extends EntityDate {
                                 ).collect(Collectors.toSet());
 
         this.releaseOrganization.addAll(releaseOrganizations);
+//
+//        ReleaseAttachmentUpdatedResult resultAttachment =
+//
+//                findAttachmentUpdatedResult(
+//                        req.getAddedAttachments(),
+//                        req.getDeletedAttachments(),
+//                        false
+//                );
+//
+//        if (req.getAddedAttachments()!=null && req.getAddedAttachments().size()>0) {
+//            addUpdatedAttachments(
+//                    newTags,
+//                    newComment,
+//                    resultAttachment.getAddedAttachments(),
+//                    attachmentTagRepository
+//            );
+//            //addProjectAttachments(resultAttachment.getAddedAttachments());
+//        }
+//
+//        if (req.getDeletedAttachments().size() > 0) {
+//            deleteAttachments(resultAttachment.getDeletedAttachments());
+//        }
+//
+//        FileUpdatedResult fileUpdatedResult = new FileUpdatedResult(
+//                resultAttachment
+//        );
+
+
+        //문서 시작
 
         ReleaseAttachmentUpdatedResult resultAttachment =
 
@@ -460,22 +501,34 @@ public class Releasing extends EntityDate {
                         false
                 );
 
-        if (req.getAddedTag().size() > 0) {
+        if (req.getDeletedAttachments().size() > 0) {
+            deleteAttachments(
+                    resultAttachment.getDeletedAttachments()
+            );
+        }
+
+        if(oldTags.size()>0) {
+            oldUpdatedAttachments(
+                    oldTags,
+                    oldComment,
+                    targetAttaches,
+                    attachmentTagRepository
+            );
+        }
+
+        if (req.getAddedAttachments()!=null && req.getAddedAttachments().size()>0) {
             addUpdatedAttachments(
-                    req,
+                    newTags,
+                    newComment,
                     resultAttachment.getAddedAttachments(),
                     attachmentTagRepository
             );
-            //addProjectAttachments(resultAttachment.getAddedAttachments());
         }
 
-        if (req.getDeletedAttachments().size() > 0) {
-            deleteAttachments(resultAttachment.getDeletedAttachments());
-        }
-
-        FileUpdatedResult fileUpdatedResult = new FileUpdatedResult(
-                resultAttachment
-        );
+        FileUpdatedResult fileUpdatedResult =
+                new FileUpdatedResult(
+                        resultAttachment//, updatedAddedProjectAttachmentList
+                );
 
         return fileUpdatedResult;
 
@@ -489,9 +542,19 @@ public class Releasing extends EntityDate {
             NewItemRepository newItemRepository,
             ChangeOrderRepository changeOrderRepository,
             ReleaseOrganizationRepository releaseOrganizationRepository,
-            ReleaseTypeRepository releaseTypeRepository
+            ReleaseTypeRepository releaseTypeRepository,
+
+            List<Long> oldTags,
+            List<Long> newTags,
+
+            List<String> oldComment,
+            List<String> newComment,
+
+            List<ReleaseAttachment> targetAttaches
 
     ) {
+
+
 
         this.tempsave = true;
         this.readonly = true;
@@ -503,31 +566,32 @@ public class Releasing extends EntityDate {
                         req.getModifierId()
                 ).orElseThrow(MemberNotFoundException::new);
 
-
-        ReleaseAttachmentUpdatedResult resultAttachment =
-
-                findAttachmentUpdatedResult(
-                        req.getAddedAttachments(),
-                        req.getDeletedAttachments(),
-                        true
-                );
-
-        if(req.getAddedTag().size()>0) {
-            addUpdatedAttachments(
-                    req,
-                    resultAttachment.getAddedAttachments(),
-                    attachmentTagRepository
-            );
-            //addProjectAttachments(resultAttachment.getAddedAttachments());
-        }
-
-        if(req.getDeletedAttachments().size()>0) {
-            deleteAttachments(resultAttachment.getDeletedAttachments());
-        }
-
-        FileUpdatedResult fileUpdatedResult = new FileUpdatedResult(
-                resultAttachment//, updatedAddedProjectAttachmentList
-        );
+//
+//        ReleaseAttachmentUpdatedResult resultAttachment =
+//
+//                findAttachmentUpdatedResult(
+//                        req.getAddedAttachments(),
+//                        req.getDeletedAttachments(),
+//                        true
+//                );
+//
+//        if(req.getAddedAttachments()!=null && req.getAddedAttachments().size()>0) {
+//            addUpdatedAttachments(
+//                    newTags,
+//                    newComment,
+//                    resultAttachment.getAddedAttachments(),
+//                    attachmentTagRepository
+//            );
+//            //addProjectAttachments(resultAttachment.getAddedAttachments());
+//        }
+//
+//        if(req.getDeletedAttachments().size()>0) {
+//            deleteAttachments(resultAttachment.getDeletedAttachments());
+//        }
+//
+//        FileUpdatedResult fileUpdatedResult = new FileUpdatedResult(
+//                resultAttachment//, updatedAddedProjectAttachmentList
+//        );
 
         this.releaseNumber = releaseNumber;
 
@@ -582,11 +646,93 @@ public class Releasing extends EntityDate {
 
                                 ).collect(Collectors.toSet());
 
+        assert releaseOrganizations != null;
         this.releaseOrganization.addAll(releaseOrganizations);
 
+
+
+        //문서 시작
+
+        ReleaseAttachmentUpdatedResult resultAttachment =
+
+                findAttachmentUpdatedResult(
+                        req.getAddedAttachments(),
+                        req.getDeletedAttachments(),
+                        true
+                );
+
+        if (req.getDeletedAttachments().size() > 0) {
+            deleteAttachments(
+                    resultAttachment.getDeletedAttachments()
+            );
+        }
+
+        if(oldTags.size()>0) {
+            oldUpdatedAttachments(
+                    oldTags,
+                    oldComment,
+                    targetAttaches,
+                    attachmentTagRepository
+            );
+        }
+
+        if (req.getAddedAttachments()!=null && req.getAddedAttachments().size()>0) {
+            addUpdatedAttachments(
+                    newTags,
+                    newComment,
+                    resultAttachment.getAddedAttachments(),
+                    attachmentTagRepository
+            );
+        }
+
+        FileUpdatedResult fileUpdatedResult =
+                new FileUpdatedResult(
+                        resultAttachment//, updatedAddedProjectAttachmentList
+                );
+
         return fileUpdatedResult;
+
     }
 
 
+    private void oldUpdatedAttachments
+            (
+                    //NewItemUpdateRequest req,ㄲ
+                    List<Long> oldTag,
+                    List<String> oldComment,
+                    List<ReleaseAttachment> olds, // 이 아이템의 기존 old attachments 중 deleted 빼고 아이디 오름차순
+                    AttachmentTagRepository attachmentTagRepository
+            ) {
+
+        SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+        Date now = new Date();
+
+        olds.stream().forEach(i -> {
+
+                    i.setAttach_comment(
+                            oldComment.get(
+                                    (olds.indexOf(i))
+                            ).isBlank()?
+                                    " ":oldComment.get(
+                                    (olds.indexOf(i))
+                            )
+                    );
+
+                    i.setTag(attachmentTagRepository
+                            .findById(oldTag.get(olds.indexOf(i))).
+                            orElseThrow(AttachmentTagNotFoundException::new).getName());
+
+                    i.setAttachmentaddress(
+                            "src/main/prodmedia/image/" +
+                                    sdf1.format(now).substring(0,10)
+                                    + "/"
+                                    + i.getUniqueName()
+                    );
+
+                }
+        );
+
+    }
 
 }

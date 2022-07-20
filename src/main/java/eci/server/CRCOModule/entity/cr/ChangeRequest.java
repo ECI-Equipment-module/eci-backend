@@ -3,6 +3,7 @@ package eci.server.CRCOModule.entity.cr;
 import eci.server.CRCOModule.dto.cr.CrUpdateRequest;
 import eci.server.CRCOModule.entity.co.ChangeOrder;
 import eci.server.CRCOModule.entity.CrAttachment;
+import eci.server.CRCOModule.entity.co.CoMember;
 import eci.server.CRCOModule.entity.features.CrImportance;
 import eci.server.CRCOModule.entity.features.CrReason;
 import eci.server.CRCOModule.entity.features.CrSource;
@@ -17,6 +18,9 @@ import eci.server.ItemModule.entity.member.Member;import eci.server.ItemModule.e
 import eci.server.ItemModule.repository.member.MemberRepository;
 import eci.server.NewItemModule.entity.NewItem;
 
+import eci.server.NewItemModule.entity.NewItemAttachment;
+import eci.server.NewItemModule.entity.NewItemImage;
+import eci.server.NewItemModule.entity.NewItemMember;
 import eci.server.NewItemModule.exception.*;
 import eci.server.NewItemModule.repository.attachment.AttachmentTagRepository;
 import eci.server.NewItemModule.repository.item.NewItemRepository;
@@ -112,6 +116,15 @@ public class ChangeRequest extends EntityDate {
             name = "change_order_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private ChangeOrder changeOrder;
+
+    @OneToMany(
+            mappedBy = "changeRequest",
+            cascade = CascadeType.ALL,//이거
+            orphanRemoval = true, //없애면 안돼 동윤아...
+            fetch = FetchType.LAZY
+    )
+    private List<CrMember> editors;
+
 
     /**
      * attachment 존재 시 생성자
@@ -224,7 +237,8 @@ public class ChangeRequest extends EntityDate {
 
     private void addUpdatedAttachments
             (
-                    CrUpdateRequest req,
+                    List<Long> newTag,
+                    List<String> newComment,
                     List<CrAttachment> added,
                     AttachmentTagRepository attachmentTagRepository
             ) {
@@ -239,15 +253,19 @@ public class ChangeRequest extends EntityDate {
                     i.initChangeRequest(this);
 
                     //
-                    i.setAttach_comment(
-                            req.getAddedAttachmentComment().size()==0?
-                                    " ":req.getAddedAttachmentComment().get(
-                                    (added.indexOf(i))
-                            )
-                    );
+
+
+            i.setAttach_comment(
+                    newComment.get(
+                            (added.indexOf(i))
+                    ).isBlank()?
+                            " ":newComment.get(
+                            (added.indexOf(i))
+                    )
+            );
 
                     i.setTag(attachmentTagRepository
-                            .findById(req.getAddedTag().get(added.indexOf(i))).
+                            .findById(newTag.get(added.indexOf(i))).
                             orElseThrow(AttachmentTagNotFoundException::new).getName());
 
                     i.setAttachmentaddress(
@@ -281,7 +299,7 @@ public class ChangeRequest extends EntityDate {
                 = convertAttachmentIdsToAttachments(deletedAttachmentIds);
 
         addedAttachments.stream().forEach( //06-17 added 에 들어온 것은 모두 임시저장용
-                i->i.setSave(false)
+                i->i.setSave(save)
         );
 
         return new CrAttachmentUpdatedResult(
@@ -364,10 +382,20 @@ public class ChangeRequest extends EntityDate {
             CrImportanceRepository crImportanceRepository,
             CrSourceRepository crSourceRepository,
             MemberRepository memberRepository,
-            AttachmentTagRepository attachmentTagRepository
+            AttachmentTagRepository attachmentTagRepository,
+
+            List<Long> oldTags,
+            List<Long> newTags,
+
+            List<String> oldComment,
+            List<String> newComment,
+
+            List<CrAttachment> targetAttaches
     )
 
     {
+        this.tempsave = true;
+        this.readonly = false;
 
         this.setModifiedAt(LocalDateTime.now());
 
@@ -412,6 +440,10 @@ public class ChangeRequest extends EntityDate {
                         " ":
                         req.getSolution();
 
+
+
+        //첨부파일 시작
+
         CrAttachmentUpdatedResult resultAttachment =
 
                 findAttachmentUpdatedResult(
@@ -420,17 +452,28 @@ public class ChangeRequest extends EntityDate {
                         false
                 );
 
-        if(req.getAddedTag().size()>0) {
+        if (req.getDeletedAttachments().size() > 0) {
+            deleteAttachments(
+                    resultAttachment.getDeletedAttachments()
+            );
+        }
+
+        if(oldTags.size()>0) {
+            oldUpdatedAttachments(
+                    oldTags,
+                    oldComment,
+                    targetAttaches,
+                    attachmentTagRepository
+            );
+        }
+
+        if (req.getAddedAttachments()!=null && req.getAddedAttachments().size()>0) {
             addUpdatedAttachments(
-                    req,
+                    newTags,
+                    newComment,
                     resultAttachment.getAddedAttachments(),
                     attachmentTagRepository
             );
-            //addProjectAttachments(resultAttachment.getAddedAttachments());
-        }
-
-        if(req.getDeletedAttachments().size()>0) {
-            deleteAttachments(resultAttachment.getDeletedAttachments());
         }
 
         FileUpdatedResult fileUpdatedResult = new FileUpdatedResult(
@@ -438,6 +481,7 @@ public class ChangeRequest extends EntityDate {
         );
 
         return fileUpdatedResult;
+
     }
 
     // 임시저장 종료
@@ -451,10 +495,23 @@ public class ChangeRequest extends EntityDate {
             CrImportanceRepository crImportanceRepository,
             CrSourceRepository crSourceRepository,
             MemberRepository memberRepository,
-            AttachmentTagRepository attachmentTagRepository
+            AttachmentTagRepository attachmentTagRepository,
+
+
+            List<Long> oldTags,
+            List<Long> newTags,
+
+            List<String> oldComment,
+            List<String> newComment,
+
+            List<CrAttachment> targetAttaches
     )
 
     {
+
+        this.tempsave = true;
+        this.readonly = true;
+
 
         this.setModifiedAt(LocalDateTime.now());
 
@@ -496,34 +553,48 @@ public class ChangeRequest extends EntityDate {
                         " ":
                         req.getSolution();
 
+
+
+        //첨부파일 시작
+
         CrAttachmentUpdatedResult resultAttachment =
 
                 findAttachmentUpdatedResult(
                         req.getAddedAttachments(),
                         req.getDeletedAttachments(),
-                        false
+                        true
                 );
-        if(req.getAddedTag().size()>0) {
+
+        if (req.getDeletedAttachments().size() > 0) {
+            deleteAttachments(
+                    resultAttachment.getDeletedAttachments()
+            );
+        }
+
+        if(oldTags.size()>0) {
+            oldUpdatedAttachments(
+                    oldTags,
+                    oldComment,
+                    targetAttaches,
+                    attachmentTagRepository
+            );
+        }
+
+        if (req.getAddedAttachments()!=null && req.getAddedAttachments().size()>0) {
             addUpdatedAttachments(
-                    req,
+                    newTags,
+                    newComment,
                     resultAttachment.getAddedAttachments(),
                     attachmentTagRepository
             );
-            //addProjectAttachments(resultAttachment.getAddedAttachments());
-        }
-
-        if(req.getDeletedAttachments().size()>0) {
-            deleteAttachments(resultAttachment.getDeletedAttachments());
         }
 
         FileUpdatedResult fileUpdatedResult = new FileUpdatedResult(
                 resultAttachment//, updatedAddedProjectAttachmentList
         );
 
-        this.tempsave = true;
-        this.readonly = true;
-
         return fileUpdatedResult;
+
     }
 
     /**
@@ -532,6 +603,54 @@ public class ChangeRequest extends EntityDate {
      */
     public void crCompletedByCo(){
         this.done = true;
+    }
+
+    /**
+     * editors 등록해주는 함수
+     * @param editors
+     */
+    public void RegisterEditors(List<CrMember> editors){
+        this.editors.clear();
+        this.editors.addAll(editors);
+    }
+
+
+    private void oldUpdatedAttachments
+            (
+                    //NewItemUpdateRequest req,ㄲ
+                    List<Long> oldTag,
+                    List<String> oldComment,
+                    List<CrAttachment> olds, // 이 아이템의 기존 old attachments 중 deleted 빼고 아이디 오름차순
+                    AttachmentTagRepository attachmentTagRepository
+            ) {
+
+        SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+        Date now = new Date();
+
+        olds.stream().forEach(i -> {
+
+                    i.setAttach_comment(
+                            oldComment.size()==0?
+                                    "":oldComment.get(
+                                    (olds.indexOf(i))
+                            )
+                    );
+
+                    i.setTag(attachmentTagRepository
+                            .findById(oldTag.get(olds.indexOf(i))).
+                            orElseThrow(AttachmentTagNotFoundException::new).getName());
+
+                    i.setAttachmentaddress(
+                            "src/main/prodmedia/image/" +
+                                    sdf1.format(now).substring(0,10)
+                                    + "/"
+                                    + i.getUniqueName()
+                    );
+
+                }
+        );
+
     }
 
 }

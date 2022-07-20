@@ -22,7 +22,7 @@ import static java.util.stream.Collectors.toList;
 
 @Data
 @AllArgsConstructor
-public class DocumentAttachmentDto{
+public class DocumentAttachmentDto implements Comparable<DocumentAttachmentDto>{
     private Long id;
     private String originName;
     private String uniqueName;
@@ -111,7 +111,10 @@ public class DocumentAttachmentDto{
 
     }
 
-
+    @Override
+    public int compareTo(DocumentAttachmentDto attachment) {
+        return (int) (this.id - attachment.getId());
+    }
 
 }
 

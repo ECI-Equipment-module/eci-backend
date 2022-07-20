@@ -352,6 +352,11 @@ public class RouteOrdering extends EntityDate {
 
             RouteOrdering routeOrdering = routeProductList.get(this.present).getRouteOrdering();
 
+            // 만약 지금 PROCESS 끝난 것이 RELEASE 라면 => ROUTE ORDERING 의 상태는 RELEASE
+            if(routeProductList.get(this.present).getType().getModule().equals("RELEASE")){
+                routeOrdering.updateLifeCycleToRelease();
+            }
+
             /** #####경우 1 ) item revise route ordering 이었을 때
              * 1인 경우는 item revise route ordering 이라는 뜻
              */
@@ -526,6 +531,11 @@ public class RouteOrdering extends EntityDate {
     public void updateToComplete() {
         this.lifecycleStatus="COMPLETE";
     }
+
+    public void updateLifeCycleToRelease() {
+        this.lifecycleStatus="RELEASE";
+    }
+
 
     public List<RouteProduct> rejectUpdate(
 

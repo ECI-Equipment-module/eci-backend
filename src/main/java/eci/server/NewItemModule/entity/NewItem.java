@@ -4,6 +4,7 @@ import eci.server.CRCOModule.entity.CoNewItem;
 import eci.server.DocumentModule.entity.DocumentAttachment;
 import eci.server.ItemModule.entity.entitycommon.EntityDate;
 import eci.server.ItemModule.entity.item.*;
+import eci.server.ItemModule.entity.newRoute.RouteProductMember;
 import eci.server.ItemModule.exception.item.ColorNotFoundException;
 import eci.server.ItemModule.exception.item.ItemNotFoundException;
 import eci.server.ItemModule.exception.member.sign.MemberNotFoundException;
@@ -12,6 +13,7 @@ import eci.server.ItemModule.repository.item.ItemTypesRepository;
 import eci.server.ItemModule.repository.member.MemberRepository;
 import eci.server.NewItemModule.dto.newItem.create.NewItemCreateResponse;
 import eci.server.NewItemModule.dto.newItem.update.NewItemUpdateRequest;
+import eci.server.NewItemModule.entity.attachment.AttachmentTag;
 import eci.server.NewItemModule.entity.classification.Classification2;
 import eci.server.NewItemModule.entity.supplier.Maker;
 import eci.server.ItemModule.entity.member.Member;
@@ -289,6 +291,14 @@ public class NewItem extends EntityDate {
     @JoinColumn(name = "project_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Project project;
+
+    @OneToMany(
+            mappedBy = "newItem",
+            cascade = CascadeType.ALL,//이거
+            orphanRemoval = true, //없애면 안돼 동윤아...
+            fetch = FetchType.LAZY
+    )
+    private List<NewItemMember> editors;
 
     /**
      * attachment 있을 때, thumbnail 있을 때 생성자
@@ -648,7 +658,9 @@ public class NewItem extends EntityDate {
 
     private void addUpdatedAttachments
             (
-                    NewItemUpdateRequest req,
+                    //NewItemUpdateRequest req,
+                    List<Long> newTag,
+                    List<String> newComment,
                     List<NewItemAttachment> added,
                     AttachmentTagRepository attachmentTagRepository
             ) {
@@ -663,15 +675,58 @@ public class NewItem extends EntityDate {
                     i.initNewItem(this);
 
                     //
-                    i.setAttach_comment(
-                            req.getAddedAttachmentComment().size()==0?
-                                    "":req.getAddedAttachmentComment().get(
-                                    (added.indexOf(i))
-                            )
-                    );
+            i.setAttach_comment(
+                    newComment.get(
+                            (added.indexOf(i))
+                    ).isBlank()?
+                            " ":newComment.get(
+                            (added.indexOf(i))
+                    )
+            );
 
                     i.setTag(attachmentTagRepository
-                            .findById(req.getAddedTag().get(added.indexOf(i))).
+                            .findById(newTag.get(added.indexOf(i))).
+                            orElseThrow(AttachmentTagNotFoundException::new).getName());
+
+                    i.setAttachmentaddress(
+                            "src/main/prodmedia/image/" +
+                                    sdf1.format(now).substring(0,10)
+                                    + "/"
+                                    + i.getUniqueName()
+                    );
+
+                }
+        );
+
+    }
+
+
+
+    private void oldUpdatedAttachments
+            (
+                    //NewItemUpdateRequest req,ㄲ
+                    List<Long> oldTag,
+                    List<String> oldComment,
+                    List<NewItemAttachment> olds, // 이 아이템의 기존 old attachments 중 deleted 빼고 아이디 오름차순
+                    AttachmentTagRepository attachmentTagRepository
+            ) {
+
+        SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+        Date now = new Date();
+
+        olds.stream().forEach(i -> {
+
+            i.setAttach_comment(
+                    oldComment.get(
+                            (olds.indexOf(i))
+                    ).isBlank()?
+                            " ":oldComment.get(
+                            (olds.indexOf(i))
+                    )
+            );
+                    i.setTag(attachmentTagRepository
+                            .findById(oldTag.get(olds.indexOf(i))).
                             orElseThrow(AttachmentTagNotFoundException::new).getName());
 
                     i.setAttachmentaddress(
@@ -757,14 +812,15 @@ public class NewItem extends EntityDate {
      */
     private NewItemAttachmentUpdatedResult findAttachmentUpdatedResult(
             List<MultipartFile> addedAttachmentFiles,
-            List<Long> deletedAttachmentIds
+            List<Long> deletedAttachmentIds,
+            boolean save
     ) {
         List<NewItemAttachment> addedAttachments
                 = convertAttachmentFilesToAttachments(addedAttachmentFiles);
         List<NewItemAttachment> deletedAttachments
                 = convertAttachmentIdsToAttachments(deletedAttachmentIds);
         addedAttachments.stream().forEach( //06-17 added 에 들어온 것은 모두 임시저장용
-                i->i.setSave(false)
+                i->i.setSave(save)
         );
         return new NewItemAttachmentUpdatedResult(addedAttachmentFiles, addedAttachments, deletedAttachments);
     }
@@ -862,7 +918,7 @@ public class NewItem extends EntityDate {
             MemberRepository memberRepository,
             ClientOrganizationRepository clientOrganizationRepository,
             SupplierRepository supplierRepository,
-            //NewItemMakerRepository itemMakerRepository,
+
             MakerRepository makerRepository,
             ItemTypesRepository itemTypesRepository,
             CoatingWayRepository coatingWayRepository,
@@ -872,8 +928,23 @@ public class NewItem extends EntityDate {
 
             Classification1Repository classification1Repository,
             Classification2Repository classification2Repository,
-            Classification3Repository classification3Repository
+            Classification3Repository classification3Repository,
+
+            List<Long> oldTags,
+            List<Long> newTags,
+
+            List<String> oldComment,
+            List<String> newComment,
+
+            List<NewItemAttachment> targetAttaches
     ) {
+
+        this.modifier =
+                memberRepository.findById(
+                        req.getModifierId()
+                ).orElseThrow(MemberNotFoundException::new);//05 -22 생성자 추가
+
+        this.setModifiedAt(LocalDateTime.now());
 
         this.classification = new Classification(
                 classification1Repository.findById(req.getClassification1Id())
@@ -891,7 +962,7 @@ public class NewItem extends EntityDate {
 
         this.itemTypes = req.getTypeId() == null ?
                 null:
-                itemTypesRepository.findById(req.getTypeId()).orElseThrow(ItemNotFoundException::new);
+                itemTypesRepository.findById(req.getTypeId()).orElseThrow(ItemTypeNotFoundException::new);
 
 
         this.sharing = req.getSharing() == null || req.getSharing();
@@ -995,10 +1066,6 @@ public class NewItem extends EntityDate {
         this.tempsave = true;
         this.readonly = false;
 
-        this.modifier =
-                memberRepository.findById(
-                        req.getModifierId()
-                ).orElseThrow(MemberNotFoundException::new);//05 -22 생성자 추가
 
         //첨부파일 시작
 
@@ -1006,23 +1073,35 @@ public class NewItem extends EntityDate {
 
                 findAttachmentUpdatedResult(
                         req.getAddedAttachments(),
-                        req.getDeletedAttachments()
+                        req.getDeletedAttachments(),
+                        false
                 );
-
-        if (req.getAddedTag().size() > 0) {
-            addUpdatedAttachments(
-                    req,
-                    resultAttachment.getAddedAttachments(),
-                    attachmentTagRepository
-            );
-        }
 
         if (req.getDeletedAttachments().size() > 0) {
             deleteAttachments(
                     resultAttachment.getDeletedAttachments()
             );
         }
-        ;
+
+        if(oldTags.size()>0) {
+            oldUpdatedAttachments(
+                    oldTags,
+                    oldComment,
+                    targetAttaches,
+                    attachmentTagRepository
+            );
+        }
+
+        if (req.getAddedAttachments()!=null && req.getAddedAttachments().size()>0) {
+            addUpdatedAttachments(
+                    newTags,
+                    newComment,
+                    //req,
+                    resultAttachment.getAddedAttachments(),
+                    attachmentTagRepository
+            );
+        }
+
 
         NewItemFileUpdatedResult fileUpdatedResult = null;
 
@@ -1030,7 +1109,7 @@ public class NewItem extends EntityDate {
             System.out.println("업데이트된 썸네일이 있네," +
                     "기존걸 삭제하고ㅡ 이걸 넣자! ");
 
-            if (!Objects.equals(this.getThumbnail().getOriginName(), this.thumbnail.getOriginName())) {
+            if (this.thumbnail!=null && (!Objects.equals(this.getThumbnail().getOriginName(), this.thumbnail.getOriginName()))) {
                 //기존 이미지 삭제
                 System.out.println("기존 이미지 삭제할게잉 ");
 
@@ -1077,8 +1156,23 @@ public class NewItem extends EntityDate {
 
             Classification1Repository classification1Repository,
             Classification2Repository classification2Repository,
-            Classification3Repository classification3Repository
+            Classification3Repository classification3Repository,
+
+            List<Long> oldTags,
+            List<Long> newTags,
+
+            List<String> oldComment,
+            List<String> newComment,
+
+            List<NewItemAttachment> targetAttaches
     ) {
+
+        this.modifier =
+                memberRepository.findById(
+                        req.getModifierId()
+                ).orElseThrow(MemberNotFoundException::new);//05 -22 생성자 추가
+
+        this.setModifiedAt(LocalDateTime.now());
 
         if(req.getClassification1Id()==null || req.getClassification2Id() ==null || req.getClassification3Id()==null){
             throw new ClassificationRequiredException();
@@ -1211,37 +1305,51 @@ public class NewItem extends EntityDate {
         this.tempsave = true;
         this.readonly = true; //0605- 이 부분하나가 변경, 이 것은 얘를 false 에서 true로 변경 !
 
-        this.modifier =
-                memberRepository.findById(
-                        req.getModifierId()
-                ).orElseThrow(MemberNotFoundException::new);//05 -22 생성자 추가
 
+
+        //첨부파일 시작
 
         NewItemAttachmentUpdatedResult resultAttachment =
 
                 findAttachmentUpdatedResult(
                         req.getAddedAttachments(),
-                        req.getDeletedAttachments()
+                        req.getDeletedAttachments(),
+                        true
                 );
 
-        if (req.getAddedTag().size() > 0) {
-            addUpdatedAttachments(
-                    req,
-                    resultAttachment.getAddedAttachments(),
-                    attachmentTagRepository);
+        if (req.getDeletedAttachments().size() > 0) {
+            deleteAttachments(
+                    resultAttachment.getDeletedAttachments()
+            );
         }
 
-        if (req.getDeletedAttachments().size() > 0) {
-            deleteAttachments(resultAttachment.getDeletedAttachments());
+        if(oldTags.size()>0) {
+            oldUpdatedAttachments(
+                    oldTags,
+                    oldComment,
+                    targetAttaches,
+                    attachmentTagRepository
+            );
         }
+
+        if (req.getAddedAttachments()!=null && req.getAddedAttachments().size()>0) {
+            addUpdatedAttachments(
+                    newTags,
+                    newComment,
+                    //req,
+                    resultAttachment.getAddedAttachments(),
+                    attachmentTagRepository
+            );
+        }
+
 
         NewItemFileUpdatedResult fileUpdatedResult = null;
-        // TODO : 0614 빈 "" 예외처리
+
         if (req.getThumbnail()!=null && req.getThumbnail().getSize() > 0) {
             System.out.println("업데이트된 썸네일이 있네," +
                     "기존걸 삭제하고ㅡ 이걸 넣자! ");
 
-            if (this.getThumbnail() != null) {
+            if (this.thumbnail!=null && (!Objects.equals(this.getThumbnail().getOriginName(), this.thumbnail.getOriginName()))) {
                 //기존 이미지 삭제
                 System.out.println("기존 이미지 삭제할게잉 ");
 
@@ -1265,20 +1373,11 @@ public class NewItem extends EntityDate {
                     new NewItemFileUpdatedResult(resultAttachment, null);
 
         }
+
         this.setModifiedAt(LocalDateTime.now());
 
-        if(this.revise_progress) { //만약 지금 revise 진행 중이라면
-            if (this.getItemTypes().getItemType().name().equals("파트제품") ||
-                    this.getItemTypes().getItemType().name().equals("프로덕트제품")) {
-                //0710 - 얘네 둘은 item review 가 없어서 revise 된 거 찐 저장하면 바로 개정 +=1 되도록 하기!
-                // 다른 애들은 approve route 할 때
-                // (1) 아이템이 revise progress 이며
-                // (2) 지금 승인하는게 ITEM REVIEW 면 revision+=1
-                this.revision = this.revision + 1;
-            }
-        }
-
         return fileUpdatedResult;
+
 
     }
 
@@ -1345,6 +1444,16 @@ public class NewItem extends EntityDate {
      */
     public void updateReleaseCnt(){
         this.released = this.released+1;
+    }
+
+
+    /**
+     * editors 등록해주는 함수
+     * @param editors
+     */
+    public void RegisterEditors(List<NewItemMember> editors){
+        this.editors.clear();
+        this.editors.addAll(editors);
     }
 
 }
