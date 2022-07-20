@@ -53,9 +53,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 
                 .antMatchers(HttpMethod.POST, "/route").authenticated()
-
                 .antMatchers(HttpMethod.POST, "/route/project").authenticated()
-
                 .antMatchers(HttpMethod.PUT, "/route/{id}").access("@routeGuard.check(#id)")
                 .antMatchers(HttpMethod.DELETE, "/route/{id}").access("@routeGuard.check(#id)")
 
@@ -79,6 +77,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET, "/dashboard/project/page").authenticated()
                 .antMatchers(HttpMethod.GET, "/dashboard/project/todo").authenticated()
                 .antMatchers(HttpMethod.GET, "/dashboard/project/total").authenticated()
+                .antMatchers(HttpMethod.GET, "/dashboard/doc/todo").authenticated()
+
 
                 .antMatchers(HttpMethod.POST, "/design-file/**").authenticated()
                 .antMatchers(HttpMethod.POST,"/webjars/**").permitAll()
@@ -122,7 +122,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET, "compare/bom/items/page").authenticated()
                 .antMatchers(HttpMethod.DELETE, "/compare").authenticated()
 
-
+                .antMatchers(HttpMethod.POST, "/doc").authenticated()
+                .antMatchers(HttpMethod.POST, "/doc/{targetId}").authenticated()
+                .antMatchers(HttpMethod.POST, "/doc/temp").authenticated()
+                .antMatchers(HttpMethod.POST, "/doc/temp//doc/{targetId}").authenticated()
+                .antMatchers(HttpMethod.PUT, "/doc/{id}").authenticated()
+                .antMatchers(HttpMethod.PUT, "/doc/temp/end/{id}").authenticated()
+                .antMatchers(HttpMethod.GET, "/doc/{id}").authenticated()
+                .antMatchers(HttpMethod.DELETE, "/doc/{id}").authenticated()
+                .antMatchers(HttpMethod.POST, "/route/doc").authenticated()
 
                 .antMatchers(HttpMethod.PUT, "/project/temp/end/{id}").access("@projectGuard.check(#id)")
                 .antMatchers(HttpMethod.PUT, "/project/{revisedId}/{newMadeItemId}").access("@projectGuard.check(#revisedId)")

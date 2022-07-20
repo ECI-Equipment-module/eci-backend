@@ -12,6 +12,7 @@ import eci.server.ItemModule.repository.newRoute.RouteOrderingRepository;
 import eci.server.ItemModule.repository.newRoute.RouteProductRepository;
 import eci.server.NewItemModule.repository.attachment.AttachmentTagRepository;
 import eci.server.ProjectModule.dto.produceOrg.ProduceOrganizationDto;
+import eci.server.ProjectModule.dto.projectAttachmentDto.ProjectAttachmentDto;
 import eci.server.ReleaseModule.dto.type.ReleaseTypeDto;
 import eci.server.ReleaseModule.entity.Releasing;
 import lombok.AllArgsConstructor;
@@ -20,6 +21,8 @@ import lombok.NoArgsConstructor;
 import org.springframework.lang.Nullable;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -54,11 +57,11 @@ public class ReleaseDto{
 
     private Long routeId;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd hh:mm:ss.SSS", timezone = "Asia/Seoul")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd hh:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime createdAt;
     private MemberDto creator;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd hh:mm:ss.SSS", timezone = "Asia/Seoul")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd hh:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime modifiedAt;
     private MemberDto modifier;
 
@@ -87,6 +90,21 @@ public class ReleaseDto{
             String defaultImageAddress
     ) {
 
+        List<ReleaseAttachmentDto> attachmentDtoList = new ArrayList<>();
+        if(release.getAttachments()!=null) {
+            attachmentDtoList
+                    .addAll(release.getAttachments().
+                            stream().
+                            map(i ->
+                                    ReleaseAttachmentDto.toDto
+                                            (i, attachmentTagRepository)
+                            )
+                            .collect(toList()));
+
+            Collections.sort(attachmentDtoList);
+        }
+
+
 
         return new ReleaseDto(
 
@@ -109,12 +127,7 @@ public class ReleaseDto{
 
                 MemberDto.toDto(release.getMember(),defaultImageAddress),
 
-                release.getAttachments().
-                        stream().
-                        map(i -> ReleaseAttachmentDto.toDto(
-                                i,
-                                attachmentTagRepository))
-                        .collect(toList()),
+                attachmentDtoList,
 
                 //가장 최신의 라우트 오더링 중 최신의 라우트 오더링 아이디
                 routeOrderingRepository.findByReleaseOrderByIdAsc(release).size()>0?
@@ -166,6 +179,19 @@ public class ReleaseDto{
             String defaultImageAddress
     ) {
 
+        List<ReleaseAttachmentDto> attachmentDtoList = new ArrayList<>();
+        if(release.getAttachments()!=null) {
+            attachmentDtoList
+                    .addAll(release.getAttachments().
+                            stream().
+                            map(i ->
+                                    ReleaseAttachmentDto.toDto
+                                            (i, attachmentTagRepository)
+                            )
+                            .collect(toList()));
+
+            Collections.sort(attachmentDtoList);
+        }
         return new ReleaseDto(
 
                 release.getId(),
@@ -187,12 +213,7 @@ public class ReleaseDto{
 
                 MemberDto.toDto(release.getMember(),defaultImageAddress),
 
-                release.getAttachments().
-                        stream().
-                        map(i -> ReleaseAttachmentDto.toDto(
-                                i,
-                                attachmentTagRepository))
-                        .collect(toList()),
+               attachmentDtoList,
 
                 -1L ,
 

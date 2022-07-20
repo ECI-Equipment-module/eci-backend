@@ -126,7 +126,7 @@
 //        );
 //
 //        uploadImages(item.getThumbnail(), req.getThumbnail());
-//        if (!(req.getTag().size() == 0)) {//TODO : 나중에 함수로 빼기 (Attachment 유무 판단)
+//        if (!req.getAttachments()==null || req.getAttachments().size()==0 == 0)) {//TODO : 나중에 함수로 빼기 (Attachment 유무 판단)
 //            //attachment가 존재할 땜나
 //            uploadAttachments(item.getAttachments(), req.getAttachments());
 //        }

@@ -2,6 +2,10 @@ package eci.server.ProjectModule.service;
 
 import eci.server.BomModule.repository.BomRepository;
 import eci.server.BomModule.repository.PreliminaryBomRepository;
+import eci.server.CRCOModule.dto.co.CoUpdateRequest;
+import eci.server.CRCOModule.entity.co.ChangeOrder;
+import eci.server.CRCOModule.entity.cofeatures.CoAttachment;
+import eci.server.CRCOModule.service.co.CoService;
 import eci.server.DashBoardModule.dto.myProject.ProjectDashboardDto;
 import eci.server.DesignModule.dto.DesignCreateUpdateResponse;
 import eci.server.ItemModule.dto.item.ItemProjectDashboardDto;
@@ -35,15 +39,20 @@ import eci.server.ProjectModule.repository.project.ProjectRepository;
 import eci.server.ProjectModule.repository.projectAttachmentRepository.ProjectAttachmentRepository;
 import eci.server.ProjectModule.repository.projectLevel.ProjectLevelRepository;
 import eci.server.ProjectModule.repository.projectType.ProjectTypeRepository;
+import eci.server.ReleaseModule.entity.ReleaseAttachment;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -94,7 +103,7 @@ public class ProjectService {
                         attachmentTagRepository
                 )
         );
-        if(!(req.getTag().size()==0)) {
+        if(!(req.getAttachments()==null || req.getAttachments().size()==0)) {
             uploadAttachments(project.getProjectAttachments(), req.getAttachments());
         }
 
@@ -118,7 +127,7 @@ public class ProjectService {
                         attachmentTagRepository
                 )
         );
-        if(!(req.getTag().size()==0)) {
+        if(!(req.getAttachments()==null || req.getAttachments().size()==0)) {
             uploadAttachments(project.getProjectAttachments(), req.getAttachments());
         }
         List<RouteOrdering> routeOrdering = routeOrderingRepository.findByNewItemOrderByIdAsc(project.getNewItem());
@@ -149,6 +158,13 @@ public class ProjectService {
 //
 //            throw new ProjectUpdateImpossibleException();
 //        }
+        List<Long> oldTags = produceOldNewTagComment(project, req).getOldTag();
+        List<Long> newTags = produceOldNewTagComment(project, req).getNewTag();
+        List<String> oldComment = produceOldNewTagComment(project, req).getOldComment();
+        List<String> newComment =produceOldNewTagComment(project, req).getNewComment();
+        List<ProjectAttachment> targetAttachmentsForTagAndComment
+                = produceOldNewTagComment(project, req).getTargetAttachmentsForTagAndComment();
+
 
         Project.FileUpdatedResult result = project.update(
                 req,
@@ -159,7 +175,15 @@ public class ProjectService {
                 clientOrganizationRepository,
                 carTypeRepository,
                 memberRepository,
-                attachmentTagRepository
+                attachmentTagRepository,
+
+                oldTags,
+                newTags,
+                oldComment,
+                newComment,
+
+                targetAttachmentsForTagAndComment
+
         );
 
 
@@ -177,7 +201,6 @@ public class ProjectService {
     public ProjectTempCreateUpdateResponse update2(Long id, Long NewitemId) {
         Project project =  projectRepository.findById(id).orElseThrow(ProjectNotFoundException::new);
         project.updateNewItem(NewitemId, newItemRepository);
-        System.out.println("이 서비스 츠로젝트 up2date22222222222222222222222222222 ");
         return new ProjectTempCreateUpdateResponse(project.getId());
     }
 
@@ -194,6 +217,12 @@ public class ProjectService {
 //            //readonly가 true라면 수정 불가상태
 //            throw new ProjectUpdateImpossibleException();
 //        }
+        List<Long> oldTags = produceOldNewTagComment(project, req).getOldTag();
+        List<Long> newTags = produceOldNewTagComment(project, req).getNewTag();
+        List<String> oldComment = produceOldNewTagComment(project, req).getOldComment();
+        List<String> newComment =produceOldNewTagComment(project, req).getNewComment();
+        List<ProjectAttachment> targetAttachmentsForTagAndComment
+                = produceOldNewTagComment(project, req).getTargetAttachmentsForTagAndComment();
 
         Project.FileUpdatedResult result = project.tempEnd(
                 req,
@@ -204,7 +233,14 @@ public class ProjectService {
                 clientOrganizationRepository,
                 carTypeRepository,
                 memberRepository,
-                attachmentTagRepository
+                attachmentTagRepository,
+
+                oldTags,
+                newTags,
+                oldComment,
+                newComment,
+
+                targetAttachmentsForTagAndComment
         );
 
 
@@ -685,7 +721,76 @@ public class ProjectService {
         }
     }
 
+    @Getter
+    @AllArgsConstructor
+    public static class OldNewTagCommentUpdatedResult {
+        private List<Long> oldTag;
+        private List<Long> newTag;
+        private List<String> oldComment;
+        private List<String> newComment;
 
+        private List<ProjectAttachment> targetAttachmentsForTagAndComment;
+    }
+
+    public ProjectService.OldNewTagCommentUpdatedResult produceOldNewTagComment(
+            Project entity, //update 당하는 아이템
+            ProjectUpdateRequest req
+    ) {
+        List<Long> oldDocTag = new ArrayList<>();
+        List<Long> newDocTag = new ArrayList<>();
+        List<String> oldDocComment = new ArrayList<>();
+        List<String> newDocComment = new ArrayList<>();
+
+        List<ProjectAttachment> attachments
+                = entity.getProjectAttachments();
+
+        List<ProjectAttachment> targetAttachmentsForTagAndComment = new ArrayList<>();
+
+        // OLD TAG, NEW TAG, COMMENT OLD NEW GENERATE
+        if (attachments.size() > 0) {
+            // 올드 문서 기존 갯수(올드 태그, 코멘트 적용할 것) == 빼기 deleted 아이디 - deleted=true 인 애들
+
+            // 일단은 다 가져와
+            List<ProjectAttachment> oldAttachments = entity.getProjectAttachments();
+            for (ProjectAttachment attachment : oldAttachments) {
+
+                if (
+                        (!attachment.isDeleted())
+                    // (1) 첫번째 조건 : DELETED = FALSE (태그, 코멘트 적용 대상들은 현재 살아있어야 하고)
+                ) {
+                    if(req.getDeletedAttachments() != null){ // (1-1) 만약 사용자가 delete 를 입력한게 존재한다면
+                        if(!(req.getDeletedAttachments().contains(attachment.getId()))){
+                            // 그 delete 안에 이 attachment 아이디 존재하지 않을 때만 추가
+                            targetAttachmentsForTagAndComment.add(attachment);
+                        }
+                    }
+                    else{ //걍 애초에 delete 하는거 없으면 걍 더해주면 되지
+                        targetAttachmentsForTagAndComment.add(attachment);
+                    }
+
+                }
+
+            }
+
+            int standardIdx = targetAttachmentsForTagAndComment.size();
+
+            oldDocTag.addAll(req.getAddedTag().subList(0, standardIdx));
+            newDocTag.addAll(req.getAddedTag().subList(standardIdx, req.getAddedTag().size()));
+
+            oldDocComment.addAll(req.getAddedAttachmentComment().subList(0, standardIdx));
+            newDocComment.addAll(req.getAddedAttachmentComment().subList(standardIdx, req.getAddedTag().size()));
+
+        }
+        return new OldNewTagCommentUpdatedResult(
+
+                oldDocTag,
+                newDocTag,
+                oldDocComment,
+                newDocComment,
+
+                targetAttachmentsForTagAndComment
+        );
+    }
 
 
 }

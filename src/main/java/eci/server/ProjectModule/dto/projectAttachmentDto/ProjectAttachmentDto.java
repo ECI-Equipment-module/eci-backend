@@ -2,6 +2,7 @@ package eci.server.ProjectModule.dto.projectAttachmentDto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import eci.server.NewItemModule.dto.attachment.AttachmentTagDto;
+import eci.server.NewItemModule.dto.attachment.NewItemAttachmentDto;
 import eci.server.NewItemModule.repository.attachment.AttachmentTagRepository;
 import eci.server.ProjectModule.entity.projectAttachment.ProjectAttachment;
 import lombok.AllArgsConstructor;
@@ -14,7 +15,7 @@ import static java.util.stream.Collectors.toList;
 
 @Data
 @AllArgsConstructor
-public class ProjectAttachmentDto  {
+public class ProjectAttachmentDto implements Comparable<ProjectAttachmentDto>  {
     private Long id;
     private String originName;
     private String uniqueName;
@@ -24,7 +25,7 @@ public class ProjectAttachmentDto  {
     private String attachmentaddress;
     private String date;
     private String upload;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd hh:mm:ss.SSS", timezone = "Asia/Seoul")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd hh:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime modifiedAt;
 
     public static ProjectAttachmentDto toDto(
@@ -103,5 +104,9 @@ public class ProjectAttachmentDto  {
     }
 
 
+    @Override
+    public int compareTo(ProjectAttachmentDto attachment) {
+        return (int) (this.id - attachment.getId());
+    }
 
 }

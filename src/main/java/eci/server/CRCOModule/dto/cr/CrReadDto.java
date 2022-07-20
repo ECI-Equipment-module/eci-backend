@@ -3,6 +3,7 @@ package eci.server.CRCOModule.dto.cr;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import eci.server.BomModule.repository.BomRepository;
 import eci.server.BomModule.repository.PreliminaryBomRepository;
+import eci.server.CRCOModule.dto.co.CoAttachmentDto;
 import eci.server.CRCOModule.dto.featuresdtos.CrImportanceDto;
 import eci.server.CRCOModule.dto.featuresdtos.CrReasonDto;
 import eci.server.CRCOModule.dto.featuresdtos.CrSourceDto;
@@ -21,10 +22,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 import static java.util.stream.Collectors.toList;
 
@@ -50,11 +48,11 @@ public class CrReadDto {
     
     private ItemProjectDto item;
     
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd hh:mm:ss.SSS", timezone = "Asia/Seoul")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd hh:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime createdAt;
     private MemberDto creator;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd hh:mm:ss.SSS", timezone = "Asia/Seoul")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd hh:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime modifiedAt;
     private MemberDto modifier;
 
@@ -84,11 +82,23 @@ public class CrReadDto {
                         routeOrderingRepository.findByChangeRequest(changeRequest),
                         routeProductRepository,
                         routeOrderingRepository,
-                        bomRepository,
-                        preliminaryBomRepository,
                         defaultImageAddress
                 )
         ).orElseThrow(RouteNotFoundException::new);
+
+        List<CrAttachmentDto> attachmentDtoList = new ArrayList<>();
+        if(changeRequest.getAttachments()!=null) {
+            attachmentDtoList
+                    .addAll(changeRequest.getAttachments().
+                            stream().
+                            map(i ->
+                                    CrAttachmentDto.toDto
+                                            (i, attachmentTagRepository)
+                            )
+                            .collect(toList()));
+
+            Collections.sort(attachmentDtoList);
+        }
 
         return new  CrReadDto(
                 changeRequest.getId(),
@@ -100,12 +110,7 @@ public class CrReadDto {
                 changeRequest.getCrImportance()==null? CrImportanceDto.toDto():CrImportanceDto.toDto(
                         changeRequest.getCrImportance()),
 
-                changeRequest.getAttachments().
-                        stream().
-                        map(i -> CrAttachmentDto.toDto(
-                                i,
-                                attachmentTagRepository))
-                        .collect(toList()),
+                attachmentDtoList,
 
                 changeRequest.getName(),
                 changeRequest.getContent(),
@@ -170,6 +175,21 @@ public class CrReadDto {
             String defaultImageAddress,
             RouteOrderingRepository routeOrderingRepository){
 
+
+        List<CrAttachmentDto> attachmentDtoList = new ArrayList<>();
+        if(changeRequest.getAttachments()!=null) {
+            attachmentDtoList
+                    .addAll(changeRequest.getAttachments().
+                            stream().
+                            map(i ->
+                                    CrAttachmentDto.toDto
+                                            (i, attachmentTagRepository)
+                            )
+                            .collect(toList()));
+
+            Collections.sort(attachmentDtoList);
+        }
+
         return new CrReadDto(
                 changeRequest.getId(),
                 changeRequest.getCrNumber()==null?"":changeRequest.getCrNumber(),
@@ -180,12 +200,7 @@ public class CrReadDto {
                 changeRequest.getCrImportance()==null? CrImportanceDto.toDto():CrImportanceDto.toDto(
                         changeRequest.getCrImportance()),
 
-                changeRequest.getAttachments().
-                        stream().
-                        map(i -> CrAttachmentDto.toDto(
-                                i,
-                                attachmentTagRepository))
-                        .collect(toList()),
+                attachmentDtoList,
 
                 changeRequest.getName(),
                 changeRequest.getContent(),

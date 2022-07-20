@@ -8,6 +8,8 @@ import eci.server.CRCOModule.entity.co.ChangeOrder;
 import eci.server.CRCOModule.entity.cr.ChangeRequest;
 import eci.server.CRCOModule.repository.co.CoNewItemRepository;
 import eci.server.DesignModule.entity.design.Design;
+import eci.server.DocumentModule.entity.Document;
+import eci.server.DocumentModule.exception.DocumentNotFoundException;
 import eci.server.ItemModule.dto.newRoute.routeOrdering.RouteOrderingUpdateRequest;
 import eci.server.ItemModule.entitycommon.EntityDate;
 import eci.server.ItemModule.exception.item.ItemNotFoundException;
@@ -123,6 +125,11 @@ public class RouteOrdering extends EntityDate {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Releasing release;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "document_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private Document document;
+
     //아이템 라우트용 생성자
     public RouteOrdering(
             String type,
@@ -189,6 +196,19 @@ public class RouteOrdering extends EntityDate {
         this.present = 1;
     }
 
+    // DOCUMENT 라우트용 생성자
+    public RouteOrdering(
+            String type,
+            Document document
+
+    ){
+        this.type = type;
+        this.lifecycleStatus = "WORKING";
+        this.revisedCnt = 0;
+        this.present = 1;
+        this.document = document;
+    }
+
     //revise 된 아이템 라우트용 생성자
     public RouteOrdering(
             Integer revised_cnt,
@@ -201,6 +221,22 @@ public class RouteOrdering extends EntityDate {
         this.revisedCnt = 1; //revise 표시는 revisedCnt > 0
         this.present = 1;
         this.newItem = newItem;
+    }
+
+
+
+    //revise 된 document 라우트용 생성자
+    public RouteOrdering(
+            Integer revised_cnt,
+            String type,
+            Document document
+
+    ){
+        this.type = type;
+        this.lifecycleStatus = "WORKING";
+        this.revisedCnt = 2; //revise 표시는 revisedCnt > 0
+        this.present = 1;
+        this.document = document;
     }
 
 
@@ -302,6 +338,10 @@ public class RouteOrdering extends EntityDate {
                         && routeProductList.get(this.present).getType().getName().equals("REQUEST")){
                     this.getRelease().setTempsave(false); //라우트 만든 순간 임시저장 다시 거짓으로
                 }
+                else if(routeProductList.get(this.present).getType().getModule().equals("DOC")
+                        && routeProductList.get(this.present).getType().getName().equals("REQUEST")){
+                    this.getDocument().setTempsave(false); //라우트 만든 순간 임시저장 다시 거짓으로
+                }
             }
 
         }else{
@@ -312,7 +352,62 @@ public class RouteOrdering extends EntityDate {
 
             RouteOrdering routeOrdering = routeProductList.get(this.present).getRouteOrdering();
 
-            if(routeProductList.get(this.present).getRouteOrdering().getRevisedCnt()>0){
+            // 만약 지금 PROCESS 끝난 것이 RELEASE 라면 => 그 release 에 딸린
+            // 아이템 혹은 CO 의 최신 ROUTE ORDERING 의 상태는 RELEASE
+
+            if(routeProductList.get(this.present).getType().getModule().equals("RELEASE")){
+
+                // (1) RELEASE 에 딸린 게 new item  라면
+                if(routeOrdering.getRelease().getNewItem()!=null){
+
+                    if(routeOrderingRepository.findByNewItemOrderByIdAsc
+                            (routeOrdering.getRelease().getNewItem()).size()>0) {
+
+                            RouteOrdering routeOrderingToRelease =
+                                    routeOrderingRepository.findByNewItemOrderByIdAsc(routeOrdering.getRelease().getNewItem())
+                                            .get(
+                                                    routeOrderingRepository
+                                                            .findByNewItemOrderByIdAsc
+                                                                    (routeOrdering.getRelease().getNewItem()).size()-1
+                                            );
+
+                            routeOrderingToRelease.updateLifeCycleToRelease();
+
+
+                    }
+
+                    updateLifeCycleToRelease();
+                }
+
+
+                // (2) RELEASE 에 딸린 게 CO 라면
+                else if(routeOrdering.getRelease().getChangeOrder()!=null){
+
+                    for(CoNewItem coNewItem : routeOrdering.getRelease().getChangeOrder().getCoNewItems()){
+                        if(routeOrderingRepository.findByNewItemOrderByIdAsc(coNewItem.getNewItem()).size()>0) {
+                            RouteOrdering routeOrderingToRelease =
+                                    routeOrderingRepository.findByNewItemOrderByIdAsc(coNewItem.getNewItem())
+                                            .get(
+                                                    routeOrderingRepository
+                                                            .findByNewItemOrderByIdAsc
+                                                                    (coNewItem.getNewItem()).size()-1
+                                            );
+
+                            routeOrderingToRelease.updateLifeCycleToRelease();
+
+                        }
+                    }
+
+                    updateLifeCycleToRelease();
+                }
+
+            }
+            ///////////////////////////////////////////////
+
+            /** #####경우 1 ) item revise route ordering 이었을 때
+             * 1인 경우는 item revise route ordering 이라는 뜻
+             */
+            if(routeProductList.get(this.present).getRouteOrdering().getRevisedCnt()==1){
                 //지금 승인된 라우트가 revise 로 인해 새로 생긴 아이템이라면
                 System.out.println("여기 들어와찌ㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣㅣ");
                 routeOrdering.setRevisedCnt(0);
@@ -377,6 +472,22 @@ public class RouteOrdering extends EntityDate {
                 // 대상 아이템들은 이미 각각 아이템 리뷰 / 프로젝트 링크할 때 REVISION+1 당함
                 newItemService.revisionUpdateAllChildrenAndParentItem(routeOrdering.getNewItem());
 
+            }
+
+
+            /** #####경우 1 ) item revise route ordering 이었을 때
+             * 1인 경우는 item revise route ordering 이라는 뜻
+             */
+            else if(routeProductList.get(this.present).getRouteOrdering().getRevisedCnt()==2){
+
+                Document oldDocument
+                        = routeProductList.get(0)
+                        .getRouteOrdering()
+                        .getDocument()
+                        .getReviseTargetDoc()
+                        ;
+
+                oldDocument.reviseProgressFalse();
 
 
             }
@@ -467,6 +578,11 @@ public class RouteOrdering extends EntityDate {
     public void updateToComplete() {
         this.lifecycleStatus="COMPLETE";
     }
+
+    public void updateLifeCycleToRelease() {
+        this.lifecycleStatus="RELEASE";
+    }
+
 
     public List<RouteProduct> rejectUpdate(
 
@@ -568,6 +684,12 @@ public class RouteOrdering extends EntityDate {
             case "22":
                 this.getRelease().setTempsave(true);
                 this.getRelease().setReadonly(false);
+                break;
+
+            //document REQUEST
+            case "24":
+                this.getDocument().setTempsave(true);
+                this.getDocument().setReadonly(false);
                 break;
 
         }

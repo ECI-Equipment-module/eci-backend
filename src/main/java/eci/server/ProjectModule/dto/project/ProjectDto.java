@@ -3,6 +3,7 @@ package eci.server.ProjectModule.dto.project;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import eci.server.BomModule.repository.BomRepository;
 import eci.server.BomModule.repository.PreliminaryBomRepository;
+import eci.server.CRCOModule.dto.co.CoAttachmentDto;
 import eci.server.ItemModule.dto.item.ItemProjectDto;
 import eci.server.ItemModule.dto.member.MemberDto;
 import eci.server.ItemModule.dto.newRoute.routeOrdering.RouteOrderingDto;
@@ -24,9 +25,7 @@ import lombok.Data;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 import static java.util.stream.Collectors.toList;
 
@@ -78,11 +77,11 @@ public class ProjectDto {
     private Long routeId;
 
     //05-22 추가
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd hh:mm:ss.SSS", timezone = "Asia/Seoul")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd hh:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime createdAt;
     private MemberDto creator;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd hh:mm:ss.SSS", timezone = "Asia/Seoul")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd hh:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime modifiedAt;
     private MemberDto modifier;
 
@@ -108,11 +107,23 @@ public class ProjectDto {
                         routeOrderingRepository.findByNewItemOrderByIdAsc(project.getNewItem()),
                         routeProductRepository,
                         routeOrderingRepository,
-                        bomRepository,
-                        preliminaryBomRepository,
                         defaultImageAddress
                 )
         ).orElseThrow(RouteNotFoundException::new);
+
+        List<ProjectAttachmentDto> attachmentDtoList = new ArrayList<>();
+        if(project.getProjectAttachments()!=null) {
+            attachmentDtoList
+                    .addAll(project.getProjectAttachments().
+                            stream().
+                            map(i ->
+                                    ProjectAttachmentDto.toDto
+                                            (i, attachmentTagRepository)
+                            )
+                            .collect(toList()));
+
+            Collections.sort(attachmentDtoList);
+        }
 
         return new ProjectDto(
                 project.getId(),
@@ -145,12 +156,7 @@ public class ProjectDto {
 
                 project.getCarType()==null?CarTypeDto.toDto():CarTypeDto.toDto(project.getCarType()),
 
-                project.getProjectAttachments().
-                        stream().
-                        map(i -> ProjectAttachmentDto.toDto(
-                                i,
-                                attachmentTagRepository))
-                        .collect(toList()),
+                attachmentDtoList,
 
                 //routeDtoList
 

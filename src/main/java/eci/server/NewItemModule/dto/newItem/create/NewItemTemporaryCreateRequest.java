@@ -1,6 +1,8 @@
 package eci.server.NewItemModule.dto.newItem.create;
 
 import com.sun.istack.Nullable;
+import eci.server.DocumentModule.entity.DocumentAttachment;
+import eci.server.DocumentModule.exception.DocumentNotFoundException;
 import eci.server.ItemModule.exception.item.AttachmentNotFoundException;
 import eci.server.ItemModule.exception.item.ColorNotFoundException;
 import eci.server.ItemModule.exception.item.ItemNotFoundException;
@@ -16,6 +18,7 @@ import eci.server.NewItemModule.exception.ClassificationNotFoundException;
 import eci.server.NewItemModule.exception.CoatingNotFoundException;
 import eci.server.NewItemModule.exception.MakerNotFoundException;
 import eci.server.NewItemModule.repository.attachment.AttachmentTagRepository;
+import eci.server.NewItemModule.repository.attachment.NewItemAttachmentRepository;
 import eci.server.NewItemModule.repository.classification.Classification1Repository;
 import eci.server.NewItemModule.repository.classification.Classification2Repository;
 import eci.server.NewItemModule.repository.classification.Classification3Repository;
@@ -31,9 +34,11 @@ import eci.server.ProjectModule.repository.clientOrg.ClientOrganizationRepositor
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import org.springframework.web.multipart.MultipartFile;
+import org.thymeleaf.expression.Lists;
 
 import javax.validation.constraints.Null;
 import java.util.ArrayList;
@@ -123,6 +128,9 @@ public class NewItemTemporaryCreateRequest {
     @Null
     private Long memberId;
 
+    @org.springframework.lang.Nullable
+    private List<Long> duplicateTargetIds = new ArrayList<>();
+
     public static NewItem toEntity(
             NewItemTemporaryCreateRequest req,
             Classification1Repository classification1Repository,
@@ -137,41 +145,109 @@ public class NewItemTemporaryCreateRequest {
             MemberRepository memberRepository,
             ColorRepository colorRepository,
             MakerRepository makerRepository,
-            AttachmentTagRepository attachmentTagRepository) {
+            AttachmentTagRepository attachmentTagRepository,
+            NewItemAttachmentRepository newItemAttachmentRepository) {
 
-        if (req.getTag().size() == 0) {
+
+        /**
+         * 만약 사용자가 복제 원하는 문서가 있다면
+         * 그 복제 문서를 새로운 new DoucumentAttachment로
+         * 만들어서 리스트로 만들기
+         * 없다면 null 넘겨주면 됨
+         */
+
+        List<NewItemAttachment> duplicateNewDocumentAttachments = null;
+
+        List<Long> oldDocTag = new ArrayList<>();
+        List<Long> newDocTag = new ArrayList<>();
+        List<String> oldDocComment = new ArrayList<>();
+        List<String> newDocComment = new ArrayList<>();
+
+        if (req.getDuplicateTargetIds() != null) {
+            // 1) 복제할 대상 애들 찾아서
+            List<NewItemAttachment> duplicatedTargetAttaches =
+                    req.getDuplicateTargetIds().stream().map(
+                            o -> newItemAttachmentRepository.findById(
+                                    o
+                            ).orElseThrow(DocumentNotFoundException::new)
+                    ).collect(toList());
+
+            if (req.getDuplicateTargetIds() != null && req.getDuplicateTargetIds().size() > 0) {
+
+                int standardIdx = req.getDuplicateTargetIds().size();
+
+                // tag 작업
+                oldDocTag.addAll(req.getTag().subList(0, standardIdx));
+                newDocTag.addAll(req.getTag().subList(standardIdx, req.getTag().size()));
+                // comment 작업
+                oldDocComment.addAll(req.getAttachmentComment().subList(0, standardIdx));
+                newDocComment.addAll(req.getAttachmentComment().subList(standardIdx, req.getTag().size()));
+
+            } else {//(req.getAttachments()!=null && req.getAttachments().size()>0){
+                newDocTag.addAll(req.getTag());
+                newDocComment.addAll(req.getAttachmentComment());
+            }
+
+            // 2) 걔네로 새로운 new Document Attachment 로 제작해주기
+            duplicateNewDocumentAttachments =
+                    duplicatedTargetAttaches.stream().map(
+                            d -> new NewItemAttachment(
+                                    d.getOriginName(),
+                                    d.getUniqueName(),
+                                    d.getAttachmentaddress(),
+                                    "이거는 문서 복제얌",
+
+                                    false, //지금은 임시저장으로 추가되는 문서들 => save = false 다
+
+                                    attachmentTagRepository.findById(
+                                            oldDocTag.get(duplicatedTargetAttaches.indexOf(d))
+                                    ).orElseThrow(AttachmentNotFoundException::new).getName(),
+
+
+                                    oldDocComment.get(duplicatedTargetAttaches.indexOf(d)) == null
+                                            ||
+                                            oldDocComment.get(duplicatedTargetAttaches.indexOf(d)).isBlank()
+                                            ?
+                                            " " :
+                                            oldDocComment.get(duplicatedTargetAttaches.indexOf(d))
+
+                            )
+                    ).collect(toList());
+        }
+
+        if (req.getAttachments() == null || req.getAttachments().size() == 0) {
 
 
             // attachment 가 없을 경우
             return new NewItem(
 
-                        new Classification(
+                    new Classification(
 
-                                (req.getClassification1Id()==null  || req.getClassification1Id()==99999L?
-                                        classification1Repository.findById(99999L).orElseThrow(ClassificationNotFoundException::new):
-                                classification1Repository.findById(req.classification1Id).orElseThrow(ClassificationNotFoundException::new)
-                                ),
+                            (req.getClassification1Id() == null || req.getClassification1Id() == 99999L ?
+                                    classification1Repository.findById(99999L).orElseThrow(ClassificationNotFoundException::new) :
+                                    classification1Repository.findById(req.classification1Id).orElseThrow(ClassificationNotFoundException::new)
+                            ),
 
-                                (req.getClassification2Id()==null  || req.getClassification2Id()==99999L?
-                                        classification2Repository.findById(99999L).orElseThrow(ClassificationNotFoundException::new):
-                                        classification2Repository.findById(req.classification2Id).orElseThrow(ClassificationNotFoundException::new)
-                                ),
-                    (req.getClassification3Id()==null  || req.getClassification3Id()==99999L?
-                            classification3Repository.findById(99999L).orElseThrow(ClassificationNotFoundException::new):
-                                        classification3Repository.findById(req.classification3Id).orElseThrow(ClassificationNotFoundException::new)
-                        )
-            )
-            ,
+                            (req.getClassification2Id() == null || req.getClassification2Id() == 99999L ?
+                                    classification2Repository.findById(99999L).orElseThrow(ClassificationNotFoundException::new) :
+                                    classification2Repository.findById(req.classification2Id).orElseThrow(ClassificationNotFoundException::new)
+                            ),
+                            (req.getClassification3Id() == null || req.getClassification3Id() == 99999L ?
+                                    classification3Repository.findById(99999L).orElseThrow(ClassificationNotFoundException::new) :
+                                    classification3Repository.findById(req.classification3Id).orElseThrow(ClassificationNotFoundException::new)
+                            )
+                    )
+                    ,
 
                     req.name.isBlank() ? "이름을 입력해주세요" : req.name,
 
-                    req.getTypeId()==null?
-                            null:
+                    req.getTypeId() == null ?
+                            null :
                             itemTypesRepository.findById(req.getTypeId()).orElseThrow(ItemNotFoundException::new),
 
                     "made when saved",
 
-                    req.getThumbnail()==null?
+                    req.getThumbnail() == null ?
                             null
                             :
                             new NewItemImage(
@@ -181,55 +257,55 @@ public class NewItemTemporaryCreateRequest {
                     req.getSharing() == null || req.getSharing().toString().isBlank() || req.sharing,
 
                     //전용일 때야 차종 생성
-                    req.getCarTypeId()!=null?
+                    req.getCarTypeId() != null ?
                             carTypeRepository.findById(req.carTypeId).orElseThrow(CarTypeNotFoundException::new)
-                            :null,
+                            : null,
 
 
-                    req.integrate.isBlank()?"":req.integrate,
+                    req.integrate.isBlank() ? "" : req.integrate,
 
-                    req.curve.isBlank()?"":req.curve,
+                    req.curve.isBlank() ? "" : req.curve,
 
-                    req.width.isBlank()?"":req.width,
+                    req.width.isBlank() ? "" : req.width,
 
-                    req.height.isBlank()?"":req.height,
+                    req.height.isBlank() ? "" : req.height,
 
-                    req.thickness.isBlank()?"":req.thickness,
+                    req.thickness.isBlank() ? "" : req.thickness,
 
-                    req.weight.isBlank()?"":req.weight,
+                    req.weight.isBlank() ? "" : req.weight,
 
-                    req.importance.isBlank()?"":req.importance,
+                    req.importance.isBlank() ? "" : req.importance,
 
-                    req.getColorId()==null?
-                            null:
+                    req.getColorId() == null ?
+                            null :
                             //colorRepository.findById(99999L).orElseThrow(ColorNotFoundException::new):
                             colorRepository.findById(req.colorId).orElseThrow(ColorNotFoundException::new),
 
-                    req.loadQuantity.isBlank()?"":req.loadQuantity,
+                    req.loadQuantity.isBlank() ? "" : req.loadQuantity,
 
-                    req.getForming()==null||req.forming.isBlank()?"":req.forming,
+                    req.getForming() == null || req.forming.isBlank() ? "" : req.forming,
 
-                    req.getCoatingWayId()==null?
-                            null:
+                    req.getCoatingWayId() == null ?
+                            null :
                             //coatingWayRepository.findById(99999L).orElseThrow(CoatingNotFoundException::new):
                             coatingWayRepository.findById(req.coatingWayId).orElseThrow(CoatingNotFoundException::new),
 
-                    req.getCoatingTypeId()==null?
-                            null:
+                    req.getCoatingTypeId() == null ?
+                            null :
                             //coatingTypeRepository.findById(99999L).orElseThrow(CoatingNotFoundException::new):
                             coatingTypeRepository.findById(req.coatingTypeId).orElseThrow(CoatingNotFoundException::new),
 
-                    req.modulus.isBlank()?"":req.modulus,
+                    req.modulus.isBlank() ? "" : req.modulus,
 
-                    req.screw.isBlank()?"":req.screw,
+                    req.screw.isBlank() ? "" : req.screw,
 
-                    req.cuttingType.isBlank()?"":req.cuttingType,
+                    req.cuttingType.isBlank() ? "" : req.cuttingType,
 
-                    req.lcd.isBlank()?"":req.cuttingType,
+                    req.lcd.isBlank() ? "" : req.cuttingType,
 
-                    req.displaySize.isBlank()?null:req.displaySize,
+                    req.displaySize.isBlank() ? null : req.displaySize,
 
-                    req.screwHeight.isBlank()?null:req.screwHeight,
+                    req.screwHeight.isBlank() ? null : req.screwHeight,
 
                     req.getClientOrganizationId() == null ?
                             null
@@ -247,10 +323,10 @@ public class NewItemTemporaryCreateRequest {
                             supplierRepository.findById(req.getSupplierOrganizationId())
                                     .orElseThrow(ProduceOrganizationNotFoundException::new),
 
-                    req.getMakersId()==null?
+                    req.getMakersId() == null ?
                             null
                             //makerRepository.findById(99999L).orElseThrow(MemberNotFoundException::new)
-                            :makerRepository.findById(req.getMakersId()).orElseThrow(MemberNotFoundException::new),
+                            : makerRepository.findById(req.getMakersId()).orElseThrow(MemberNotFoundException::new),
 //                    req.makersId.stream().map(
 //                            i ->
 //                                    makerRepository.
@@ -268,10 +344,10 @@ public class NewItemTemporaryCreateRequest {
 
                     true, //임시저장 (라우트 작성 해야 false로 변한다)
 
-                    false //revise progress 중 아니다
+                    false, //revise progress 중 아니다
 
+                    duplicateNewDocumentAttachments
             );
-
 
 
         }
@@ -283,17 +359,17 @@ public class NewItemTemporaryCreateRequest {
 
                 new Classification(
 
-                        (req.getClassification1Id()==null  || req.getClassification1Id()==99999L?
+                        (req.getClassification1Id() == null || req.getClassification1Id() == 99999L ?
                                 classification1Repository.findById(99999L).orElseThrow(ClassificationNotFoundException::new) :
                                 classification1Repository.findById(req.classification1Id).orElseThrow(ClassificationNotFoundException::new)
                         ),
 
-                        (req.getClassification2Id()==null  || req.getClassification2Id()==99999L?
-                                classification2Repository.findById(99999L).orElseThrow(ClassificationNotFoundException::new):
+                        (req.getClassification2Id() == null || req.getClassification2Id() == 99999L ?
+                                classification2Repository.findById(99999L).orElseThrow(ClassificationNotFoundException::new) :
                                 classification2Repository.findById(req.classification2Id).orElseThrow(ClassificationNotFoundException::new)
                         ),
-                        (req.getClassification3Id()==null  || req.getClassification3Id()==99999L?
-                                classification3Repository.findById(99999L).orElseThrow(ClassificationNotFoundException::new):
+                        (req.getClassification3Id() == null || req.getClassification3Id() == 99999L ?
+                                classification3Repository.findById(99999L).orElseThrow(ClassificationNotFoundException::new) :
                                 classification3Repository.findById(req.classification3Id).orElseThrow(ClassificationNotFoundException::new)
                         )
                 )
@@ -301,14 +377,14 @@ public class NewItemTemporaryCreateRequest {
 
                 req.name.isBlank() ? "이름을 입력해주세요" : req.name,
 
-                req.getTypeId()==null?
-                        null:
+                req.getTypeId() == null ?
+                        null :
                         //itemTypesRepository.findById(99999L).orElseThrow(ItemNotFoundException::new):
                         itemTypesRepository.findById(req.getTypeId()).orElseThrow(ItemNotFoundException::new),
 
                 "made when saved",
 
-                req.getThumbnail()==null?
+                req.getThumbnail() == null ?
                         null
                         :
                         new NewItemImage(
@@ -318,55 +394,55 @@ public class NewItemTemporaryCreateRequest {
                 req.getSharing() == null || req.getSharing().toString().isBlank() || req.sharing,
 
                 //전용일 때야 차종 생성
-                req.getCarTypeId()!=null?
+                req.getCarTypeId() != null ?
                         carTypeRepository.findById(req.carTypeId).orElseThrow(CarTypeNotFoundException::new)
-                        :null,//carTypeRepository.findById(99999L).orElseThrow(CarTypeNotFoundException::new),
+                        : null,//carTypeRepository.findById(99999L).orElseThrow(CarTypeNotFoundException::new),
 
 
-                req.integrate.isBlank()?"":req.integrate,
+                req.integrate.isBlank() ? "" : req.integrate,
 
-                req.curve.isBlank()?"":req.curve,
+                req.curve.isBlank() ? "" : req.curve,
 
-                req.width.isBlank()?"":req.width,
+                req.width.isBlank() ? "" : req.width,
 
-                req.height.isBlank()?"":req.height,
+                req.height.isBlank() ? "" : req.height,
 
-                req.thickness.isBlank()?"":req.thickness,
+                req.thickness.isBlank() ? "" : req.thickness,
 
-                req.weight.isBlank()?"":req.weight,
+                req.weight.isBlank() ? "" : req.weight,
 
-                req.importance.isBlank()?"":req.importance,
+                req.importance.isBlank() ? "" : req.importance,
 
-                req.getColorId()==null?
-                        null:
+                req.getColorId() == null ?
+                        null :
                         //colorRepository.findById(99999L).orElseThrow(ColorNotFoundException::new):
                         colorRepository.findById(req.colorId).orElseThrow(ColorNotFoundException::new),
 
-                req.loadQuantity.isBlank()?"":req.loadQuantity,
+                req.loadQuantity.isBlank() ? "" : req.loadQuantity,
 
-                req.getForming()==null||req.forming.isBlank()?"":req.forming,
+                req.getForming() == null || req.forming.isBlank() ? "" : req.forming,
 
-                req.getCoatingWayId()==null?
-                        null:
+                req.getCoatingWayId() == null ?
+                        null :
                         //coatingWayRepository.findById(99999L).orElseThrow(CoatingNotFoundException::new):
                         coatingWayRepository.findById(req.coatingWayId).orElseThrow(CoatingNotFoundException::new),
 
-                req.getCoatingTypeId()==null?
-                        null:
+                req.getCoatingTypeId() == null ?
+                        null :
                         //coatingTypeRepository.findById(99999L).orElseThrow(CoatingNotFoundException::new):
                         coatingTypeRepository.findById(req.coatingTypeId).orElseThrow(CoatingNotFoundException::new),
 
-                req.modulus.isBlank()?"":req.modulus,
+                req.modulus.isBlank() ? "" : req.modulus,
 
-                req.screw.isBlank()?"":req.screw,
+                req.screw.isBlank() ? "" : req.screw,
 
-                req.cuttingType.isBlank()?"":req.cuttingType,
+                req.cuttingType.isBlank() ? "" : req.cuttingType,
 
-                req.lcd.isBlank()?"":req.cuttingType,
+                req.lcd.isBlank() ? "" : req.cuttingType,
 
-                req.displaySize.isBlank()?null:req.displaySize,
+                req.displaySize.isBlank() ? null : req.displaySize,
 
-                req.screwHeight.isBlank()?null:req.screwHeight,
+                req.screwHeight.isBlank() ? null : req.screwHeight,
 
                 req.getClientOrganizationId() == null ?
                         null
@@ -384,10 +460,10 @@ public class NewItemTemporaryCreateRequest {
                         supplierRepository.findById(req.getSupplierOrganizationId())
                                 .orElseThrow(ProduceOrganizationNotFoundException::new),
 
-                req.getMakersId()==null?
+                req.getMakersId() == null ?
                         null
                         //makerRepository.findById(99999L).orElseThrow(MemberNotFoundException::new)
-                        :makerRepository.findById(req.getMakersId()).orElseThrow(MemberNotFoundException::new),
+                        : makerRepository.findById(req.getMakersId()).orElseThrow(MemberNotFoundException::new),
 //                    req.makersId.stream().map(
 //                            i ->
 //                                    makerRepository.
@@ -408,23 +484,104 @@ public class NewItemTemporaryCreateRequest {
                 false, //revise progress 중 아니다
 
 
+//                req.attachments.stream().map(
+//                        i -> new NewItemAttachment(
+//                                i.getOriginalFilename(),
+//                                attachmentTagRepository
+//                                        .findById(req.getTag().get(req.attachments.indexOf(i))).
+//                                        orElseThrow(AttachmentNotFoundException::new).getName(),
+//
+//                                req.getAttachmentComment().isEmpty()?
+//                                        "":req.getAttachmentComment().get(
+//                                        req.attachments.indexOf(i)
+//                                ),
+//                                false //지금은 임시저장으로 추가되는 문서들 => save = false 다
+//                        )
+//                ).collect(
+//                        toList()
+//                ),
                 req.attachments.stream().map(
                         i -> new NewItemAttachment(
                                 i.getOriginalFilename(),
-                                attachmentTagRepository
-                                        .findById(req.getTag().get(req.attachments.indexOf(i))).
+                                attachmentTagRepository//////////////////////////////
+                                        .findById(newDocTag.get(req.attachments.indexOf(i))).
                                         orElseThrow(AttachmentNotFoundException::new).getName(),
 
-                                req.getAttachmentComment().isEmpty()?
-                                        "":req.getAttachmentComment().get(
+                                newDocComment.get(
+                                        req.attachments.indexOf(i)
+                                        )
+                                        .isBlank() ?
+                                        " " : newDocComment.get(
                                         req.attachments.indexOf(i)
                                 ),
                                 false //지금은 임시저장으로 추가되는 문서들 => save = false 다
                         )
                 ).collect(
                         toList()
-                )
+                ),
+                duplicateNewDocumentAttachments
         );
-    }
 
+
+    }
 }
+
+
+//
+//    @Getter
+//    @AllArgsConstructor
+//    class ProduceNewOlgTagComment {
+//        private List<Long> oldDocTag;
+//        private List<Long> newDocTag;
+//        private List<String> oldDocComment;
+//        private List<String> newDocComment;
+//    }
+//
+//
+//    public static ProduceNewOlgTagComment toNewOldList(
+//            NewItemTemporaryCreateRequest req,
+//            NewItemAttachmentRepository newItemAttachmentRepository
+//
+//    ) {
+//        List<Long> oldDocTag = new ArrayList<>();
+//        List<Long> newDocTag = new ArrayList<>();
+//        List<String> oldDocComment = new ArrayList<>();
+//        List<String> newDocComment = new ArrayList<>();
+//
+//        if (req.getDuplicateTargetIds() != null) {
+//            // 1) 복제할 대상 애들 찾아서
+//            List<NewItemAttachment> duplicatedTargetAttaches =
+//                    req.getDuplicateTargetIds().stream().map(
+//                            o -> newItemAttachmentRepository.findById(
+//                                    o
+//                            ).orElseThrow(DocumentNotFoundException::new)
+//                    ).collect(toList());
+//
+//            if (req.getDuplicateTargetIds() != null && req.getDuplicateTargetIds().size() > 0) {
+//
+//                int standardIdx = req.getDuplicateTargetIds().size();
+//
+//                // tag 작업
+//                oldDocTag.addAll(req.getTag().subList(0, standardIdx));
+//                newDocTag.addAll(req.getTag().subList(standardIdx, req.getTag().size()));
+//                // comment 작업
+//                oldDocComment.addAll(req.getAttachmentComment().subList(0, standardIdx));
+//                newDocComment.addAll(req.getAttachmentComment().subList(standardIdx, req.getTag().size()));
+//
+//            } else {//(req.getAttachments()!=null && req.getAttachments().size()>0){
+//                newDocTag.addAll(req.getTag());
+//                newDocComment.addAll(req.getAttachmentComment());
+//            }
+//
+//
+//
+//
+//        }
+//        return new ProduceNewOlgTagComment(
+//                oldDocTag,
+//                newDocTag,
+//                oldDocComment,
+//                newDocComment
+//        );
+//
+//    }

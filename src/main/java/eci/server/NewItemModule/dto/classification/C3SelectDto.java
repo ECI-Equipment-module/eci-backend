@@ -1,5 +1,6 @@
 package eci.server.NewItemModule.dto.classification;
 
+import eci.server.DocumentModule.entity.classification.DocTag;
 import eci.server.NewItemModule.entity.classification.Classification3;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -48,5 +49,28 @@ public class C3SelectDto {
         );
         return c3SelectDtoList;
     }
+
+
+    public static List<C3SelectDto> toDocDtoList(
+            String beforeName,
+            String beforeId,
+            List <DocTag> docTags
+    ) {
+        List<C3SelectDto> c3SelectDtoList
+                = docTags.stream().map(
+                c -> new C3SelectDto(
+                        c.getId(),
+                        c.getName(),
+                        1,
+
+                         c.getName(),
+                        c.getId().toString()
+                )
+        ).collect(
+                toList()
+        );
+        return c3SelectDtoList;
+    }
+
 }
 

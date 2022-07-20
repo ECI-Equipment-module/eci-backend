@@ -42,8 +42,6 @@ public class RouteOrderingDto {
             List <RouteOrdering> NewRoutes,
             RouteProductRepository routeProductRepository,
             RouteOrderingRepository routeOrderingRepository,
-            BomRepository bomRepository,
-            PreliminaryBomRepository preliminaryBomRepository,
             String defaultImageAddress
     ) {
 

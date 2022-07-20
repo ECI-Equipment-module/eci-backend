@@ -2,6 +2,10 @@ package eci.server.DesignModule.service;
 
 import eci.server.BomModule.repository.BomRepository;
 import eci.server.BomModule.repository.PreliminaryBomRepository;
+import eci.server.CRCOModule.dto.co.CoUpdateRequest;
+import eci.server.CRCOModule.entity.co.ChangeOrder;
+import eci.server.CRCOModule.entity.cofeatures.CoAttachment;
+import eci.server.CRCOModule.service.co.CoService;
 import eci.server.DesignModule.dto.*;
 import eci.server.DesignModule.entity.design.Design;
 import eci.server.DesignModule.entity.designfile.DesignAttachment;
@@ -18,7 +22,10 @@ import eci.server.ItemModule.service.file.FileService;
 import eci.server.NewItemModule.repository.attachment.AttachmentTagRepository;
 import eci.server.NewItemModule.repository.item.NewItemRepository;
 import eci.server.ProjectModule.dto.project.*;
+import eci.server.ProjectModule.entity.projectAttachment.ProjectAttachment;
 import eci.server.ProjectModule.repository.project.ProjectRepository;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -28,6 +35,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -78,7 +86,7 @@ public class DesignService {
                         attachmentTagRepository
                 )
         );
-        if (!(req.getTag().size() == 0)) {
+        if (!(req.getAttachments()==null || req.getAttachments().size()==0)) {
             uploadAttachments(design.getDesignAttachments(), req.getAttachments());
         }
 
@@ -97,7 +105,7 @@ public class DesignService {
                         attachmentTagRepository
                 )
         );
-        if (!(req.getTag().size() == 0)) {
+        if (!(req.getAttachments()==null || req.getAttachments().size()==0)) {
             uploadAttachments(design.getDesignAttachments(), req.getAttachments());
         }
         List<RouteOrdering> routeOrdering = routeOrderingRepository.findByNewItemOrderByIdAsc(design.getNewItem());
@@ -156,11 +164,26 @@ public class DesignService {
             throw new DesignUpdateImpossibleException();
         }
 
+        List<Long> oldTags = produceOldNewTagComment(design, req).getOldTag();
+        List<Long> newTags = produceOldNewTagComment(design, req).getNewTag();
+        List<String> oldComment = produceOldNewTagComment(design, req).getOldComment();
+        List<String> newComment =produceOldNewTagComment(design, req).getNewComment();
+        List<DesignAttachment> targetAttachmentsForTagAndComment
+                = produceOldNewTagComment(design, req).getTargetAttachmentsForTagAndComment();
+
+
         Design.FileUpdatedResult result = design.update(
                 req,
                 itemRepository,
                 memberRepository,
-                attachmentTagRepository
+                attachmentTagRepository,
+
+                oldTags,
+                newTags,
+                oldComment,
+                newComment,
+
+                targetAttachmentsForTagAndComment
         );
 
 
@@ -187,12 +210,25 @@ public class DesignService {
             //readonly가 true라면 수정 불가상태
             throw new DesignUpdateImpossibleException();
         }
+        List<Long> oldTags = produceOldNewTagComment(design, req).getOldTag();
+        List<Long> newTags = produceOldNewTagComment(design, req).getNewTag();
+        List<String> oldComment = produceOldNewTagComment(design, req).getOldComment();
+        List<String> newComment =produceOldNewTagComment(design, req).getNewComment();
+        List<DesignAttachment> targetAttachmentsForTagAndComment
+                = produceOldNewTagComment(design, req).getTargetAttachmentsForTagAndComment();
 
         Design.FileUpdatedResult result = design.tempEnd(
                 req,
                 itemRepository,
                 memberRepository,
-                attachmentTagRepository
+                attachmentTagRepository,
+
+                oldTags,
+                newTags,
+                oldComment,
+                newComment,
+
+                targetAttachmentsForTagAndComment
         );
 
 
@@ -322,5 +358,75 @@ public class DesignService {
 
 
 
+    @Getter
+    @AllArgsConstructor
+    public static class OldNewTagCommentUpdatedResult {
+        private List<Long> oldTag;
+        private List<Long> newTag;
+        private List<String> oldComment;
+        private List<String> newComment;
 
+        private List<DesignAttachment> targetAttachmentsForTagAndComment;
+    }
+
+    public OldNewTagCommentUpdatedResult produceOldNewTagComment(
+            Design entity, //update 당하는 아이템
+            DesignUpdateRequest req
+    ) {
+        List<Long> oldDocTag = new ArrayList<>();
+        List<Long> newDocTag = new ArrayList<>();
+        List<String> oldDocComment = new ArrayList<>();
+        List<String> newDocComment = new ArrayList<>();
+
+        List<DesignAttachment> attachments
+                = entity.getDesignAttachments();
+
+        List<DesignAttachment> targetAttachmentsForTagAndComment = new ArrayList<>();
+
+        // OLD TAG, NEW TAG, COMMENT OLD NEW GENERATE
+        if (attachments.size() > 0) {
+            // 올드 문서 기존 갯수(올드 태그, 코멘트 적용할 것) == 빼기 deleted 아이디 - deleted=true 인 애들
+
+            // 일단은 다 가져와
+            List<DesignAttachment> oldAttachments =
+                    entity.getDesignAttachments();
+            for (DesignAttachment attachment : oldAttachments) {
+
+                if (
+                        (!attachment.isDeleted())
+                    // (1) 첫번째 조건 : DELETED = FALSE (태그, 코멘트 적용 대상들은 현재 살아있어야 하고)
+                ) {
+                    if(req.getDeletedAttachments() != null){ // (1-1) 만약 사용자가 delete 를 입력한게 존재한다면
+                        if(!(req.getDeletedAttachments().contains(attachment.getId()))){
+                            // 그 delete 안에 이 attachment 아이디 존재하지 않을 때만 추가
+                            targetAttachmentsForTagAndComment.add(attachment);
+                        }
+                    }
+                    else{ //걍 애초에 delete 하는거 없으면 걍 더해주면 되지
+                        targetAttachmentsForTagAndComment.add(attachment);
+                    }
+
+                }
+
+            }
+
+            int standardIdx = targetAttachmentsForTagAndComment.size();
+
+            oldDocTag.addAll(req.getAddedTag().subList(0, standardIdx));
+            newDocTag.addAll(req.getAddedTag().subList(standardIdx, req.getAddedTag().size()));
+
+            oldDocComment.addAll(req.getAddedAttachmentComment().subList(0, standardIdx));
+            newDocComment.addAll(req.getAddedAttachmentComment().subList(standardIdx, req.getAddedTag().size()));
+
+        }
+        return new OldNewTagCommentUpdatedResult(
+
+                oldDocTag,
+                newDocTag,
+                oldDocComment,
+                newDocComment,
+
+                targetAttachmentsForTagAndComment
+        );
+    }
 }

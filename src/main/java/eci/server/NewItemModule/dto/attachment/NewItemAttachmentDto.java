@@ -14,7 +14,7 @@ import static java.util.stream.Collectors.toList;
 
 @Data
 @AllArgsConstructor
-public class NewItemAttachmentDto {
+public class NewItemAttachmentDto  implements Comparable<NewItemAttachmentDto> {
     private Long id;
     private String originName;
     private String uniqueName;
@@ -24,7 +24,7 @@ public class NewItemAttachmentDto {
     private String attachmentaddress;
     private String date;
     private String upload;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd hh:mm:ss.SSS", timezone = "Asia/Seoul")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd hh:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime modifiedAt;
 
     public static NewItemAttachmentDto toDto(
@@ -103,6 +103,11 @@ public class NewItemAttachmentDto {
 
     }
 
+
+    @Override
+    public int compareTo(NewItemAttachmentDto newItemAttachment) {
+        return (int) (this.id - newItemAttachment.getId());
+    }
 
 
 }

@@ -11,6 +11,7 @@ import eci.server.NewItemModule.repository.item.NewItemRepository;
 import eci.server.NewItemModule.service.item.NewItemService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -32,6 +33,10 @@ public class NewItemPageController {
 
     @Autowired
     NewItemRepository newItemRepository;
+
+    @Value("${default.image.address}")
+    private String defaultImageAddress;
+
     @CrossOrigin(origins = "https://localhost:3000")
     @GetMapping("/items/page")
     public Page<NewItemPagingDto> paging(@PageableDefault(size=5)
@@ -197,7 +202,8 @@ public class NewItemPageController {
                 newItemService.releaseItem(), pageRequest
         );
 
-        return  NewItemChildDto.toDtoList(releaseAvailableItems);
+        return  NewItemChildDto.toDtoList(releaseAvailableItems,
+                 defaultImageAddress);
     }
 
 }

@@ -4,6 +4,7 @@ import eci.server.BomModule.repository.BomRepository;
 import eci.server.BomModule.repository.PreliminaryBomRepository;
 import eci.server.DesignModule.dto.DesignContentDto;
 import eci.server.DesignModule.repository.DesignRepository;
+import eci.server.DocumentModule.entity.DocumentAttachment;
 import eci.server.ItemModule.dto.item.*;
 import eci.server.ItemModule.dto.newRoute.routeOrdering.RouteOrderingDto;
 
@@ -32,6 +33,7 @@ import eci.server.NewItemModule.dto.newItem.create.NewItemCreateResponse;
 import eci.server.NewItemModule.dto.newItem.create.NewItemTemporaryCreateRequest;
 import eci.server.NewItemModule.dto.newItem.update.NewItemUpdateRequest;
 import eci.server.NewItemModule.entity.*;
+import eci.server.NewItemModule.entity.attachment.Attachment;
 import eci.server.NewItemModule.repository.TempNewItemParentChildrenRepository;
 import eci.server.NewItemModule.repository.attachment.AttachmentTagRepository;
 import eci.server.NewItemModule.repository.attachment.NewItemAttachmentRepository;
@@ -47,8 +49,11 @@ import eci.server.NewItemModule.repository.supplier.SupplierRepository;
 import eci.server.ProjectModule.repository.carType.CarTypeRepository;
 import eci.server.ProjectModule.repository.clientOrg.ClientOrganizationRepository;
 import eci.server.ProjectModule.repository.project.ProjectRepository;
+import eci.server.ReleaseModule.entity.ReleaseAttachment;
 import eci.server.config.guard.AuthHelper;
 import eci.server.config.guard.DesignGuard;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -124,7 +129,8 @@ public class NewItemService {
                         memberRepository,
                         colorRepository,
                         makerRepository,
-                        attachmentTagRepository
+                        attachmentTagRepository,
+                        newItemAttachmentRepository
                 )
         );
 
@@ -132,7 +138,7 @@ public class NewItemService {
             uploadImages(item.getThumbnail(), req.getThumbnail());
         }
 
-        if(req.getTag().size()>0) {
+        if(!(req.getAttachments()==null || req.getAttachments().size()==0)) {
             uploadAttachments(item.getAttachments(), req.getAttachments());
         }
 
@@ -159,7 +165,8 @@ public class NewItemService {
                         memberRepository,
                         colorRepository,
                         makerRepository,
-                        attachmentTagRepository
+                        attachmentTagRepository,
+                        newItemAttachmentRepository
                 )
         );
 
@@ -182,7 +189,7 @@ public class NewItemService {
             uploadImages(item.getThumbnail(), req.getThumbnail());
         }
 
-        if(req.getTag().size()>0) {
+        if(!(req.getAttachments()==null || req.getAttachments().size()==0)) {
             uploadAttachments(item.getAttachments(), req.getAttachments());
         }
 
@@ -216,14 +223,15 @@ public class NewItemService {
                         memberRepository,
                         colorRepository,
                         makerRepository,
-                        attachmentTagRepository
+                        attachmentTagRepository,
+                        newItemAttachmentRepository
                 )
 
         );
 
         if(req.getThumbnail()!=null && req.getThumbnail().getSize()>0) {
             uploadImages(item.getThumbnail(), req.getThumbnail());
-            if (!(req.getTag().size() == 0)) {//TODO : 나중에 함수로 빼기 (Attachment 유무 판단)
+            if(!(req.getAttachments()==null || req.getAttachments().size()==0)) {
                 //attachment가 존재할 땜나
                 uploadAttachments(item.getAttachments(), req.getAttachments());
             }
@@ -264,18 +272,21 @@ public class NewItemService {
                         memberRepository,
                         colorRepository,
                         makerRepository,
-                        attachmentTagRepository
+                        attachmentTagRepository,
+                        newItemAttachmentRepository
                 )
 
         );
 
         item.setReviseTargetId(targetId);
 
+        NewItem targetItem = newItemRepository.findById(targetId).orElseThrow(ItemNotFoundException::new);
+
         if( item.getItemTypes().getItemType().name().equals("파트제품") ||
                 item.getItemTypes().getItemType().name().equals("프로덕트제품")){
             System.out.println("equals 제품 이면 , 아이템 만들 때 controller에서 바로 item에 targetitme 등록 & 개정 ");
 
-            NewItem targetItem = newItemRepository.findById(targetId).orElseThrow(ItemNotFoundException::new);
+
             NewItemCreateResponse res2 =  item.updateRevisionAndHeritageReleaseCnt
                     (targetItem.getRevision()+1,
                             targetItem.getReleased());
@@ -286,12 +297,23 @@ public class NewItemService {
 
         if(req.getThumbnail()!=null && req.getThumbnail().getSize()>0) {
             uploadImages(item.getThumbnail(), req.getThumbnail());
-            if (!(req.getTag().size() == 0)) {//TODO : 나중에 함수로 빼기 (Attachment 유무 판단)
-                //attachment가 존재할 땜나
-                uploadAttachments(item.getAttachments(), req.getAttachments());
-            }
-        } else {
-            //TODO 0628 기본 이미지 전달 => NONO 걍 NULL로 저장하고 DTO에서 줄 때만 기본 이미지 주소주면 끝
+
+        } else { // 0719 들어온 이미지가 thumbnail 이 없으면 기존 thumbnail 로 ~
+            System.out.println(" 들어온 이미지가 thumbnail 이 없으면 기존 thumbnail 로 ~ ");
+            item.setThumbnail(
+
+                    new NewItemImage(
+                            targetItem.getThumbnail().getUniqueName(),
+                            targetItem.getThumbnail().getOriginName(),
+                            targetItem.getThumbnail().getImageaddress(),
+                            item
+                    )
+            );
+        }
+
+        if(!(req.getAttachments()==null || req.getAttachments().size()==0)) {
+            //attachment가 존재할 땜나
+            uploadAttachments(item.getAttachments(), req.getAttachments());
         }
 
         item.updateReadOnlyWhenSaved(); //저장하면 readonly = true
@@ -335,14 +357,22 @@ public class NewItemService {
             List<NewItemAttachment> attachments,
             List<MultipartFile> filedAttachments
     ) {
+
+        List<NewItemAttachment> neededToBeUploaded =
+                attachments.stream().filter(
+                                documentAttachment -> //duplicate = false 인 것만 모아서 찐 저장!
+                                        !documentAttachment.isDuplicate()
+                        )
+                        .collect(Collectors.toList());
+
         // 실제 이미지 파일을 가지고 있는 Multipart 파일을
-        // 파일이 가지는 uniquename을 파일명으로 해서 파일저장소 업로드
-        IntStream.range(0, attachments.size())
+        // 파일이 가지는 unique name 을 파일명으로 해서 파일저장소 업로드
+        IntStream.range(0, neededToBeUploaded.size())
                 .forEach(
                         i -> fileService.upload
                                 (
                                         filedAttachments.get(i),
-                                        attachments.get(i).getUniqueName()
+                                        neededToBeUploaded.get(i).getUniqueName()
                                 )
                 );
     }
@@ -371,8 +401,6 @@ public class NewItemService {
                         routeOrderingRepository.findByNewItemOrderByIdAsc(targetItem),
                         routeProductRepository,
                         routeOrderingRepository,
-                        bomRepository,
-                        preliminaryBomRepository,
                         defaultImageAddress
 
                 )
@@ -522,6 +550,14 @@ public class NewItemService {
             throw new ItemUpdateImpossibleException();
         }
 
+        List<Long> oldTags = produceOldNewTagComment(item, req).getOldTag();
+        List<Long> newTags = produceOldNewTagComment(item, req).getNewTag();
+        List<String> oldComment = produceOldNewTagComment(item, req).getOldComment();
+        List<String> newComment =produceOldNewTagComment(item, req).getNewComment();
+        List<NewItemAttachment> targetAttachmentsForTagAndComment
+                = produceOldNewTagComment(item, req).getTargetAttachmentsForTagAndComment();
+
+            ///////////////////////////
         NewItem.NewItemFileUpdatedResult result = item.update(
                 req,
                 colorRepository,
@@ -533,7 +569,18 @@ public class NewItemService {
                 coatingWayRepository,
                 coatingTypeRepository,
                 carTypeRepository,
-                attachmentTagRepository
+                attachmentTagRepository,
+
+                classification1Repository,
+                classification2Repository,
+                classification3Repository,
+
+                oldTags ,//oldTag
+                newTags, // new tag
+                oldComment, //올드 co
+                newComment,// new co
+
+                targetAttachmentsForTagAndComment // old tag, comment 적용시킬 아이들
         );
 
 
@@ -587,6 +634,12 @@ public class NewItemService {
 //
 //                    newItemService.ReviseItem(affectedItems, changeOrder.getModifier());
 
+        List<Long> oldTags = produceOldNewTagComment(item, req).getOldTag();
+        List<Long> newTags = produceOldNewTagComment(item, req).getNewTag();
+        List<String> oldComment = produceOldNewTagComment(item, req).getOldComment();
+        List<String> newComment =produceOldNewTagComment(item, req).getNewComment();
+        List<NewItemAttachment> targetAttachmentsForTagAndComment
+                = produceOldNewTagComment(item, req).getTargetAttachmentsForTagAndComment();
 
 
         NewItem.NewItemFileUpdatedResult result = item.tempEnd(
@@ -600,7 +653,18 @@ public class NewItemService {
                 coatingWayRepository,
                 coatingTypeRepository,
                 carTypeRepository,
-                attachmentTagRepository
+                attachmentTagRepository,
+
+                classification1Repository,
+                classification2Repository,
+                classification3Repository,
+
+                oldTags ,
+                newTags,
+                oldComment,
+                newComment,
+
+                targetAttachmentsForTagAndComment
         );
 
         if(
@@ -636,7 +700,8 @@ public class NewItemService {
         return NewItemChildDto.toDtoList(
                 newItemParentChildrenRepository.
                         findAllWithParentByParentId(id),//ByParentIdOrderByParentIdAscNullsFirst(
-                newItemParentChildrenRepository
+                newItemParentChildrenRepository,
+                defaultImageAddress
 
         );
 
@@ -1035,4 +1100,75 @@ public class NewItemService {
         return new NewItemCreateResponse(targetId);
     }
 
+    ///////////////////////////////////
+    @Getter
+    @AllArgsConstructor
+    public static class OldNewTagCommentUpdatedResult {
+        private List<Long> oldTag;
+        private List<Long> newTag;
+        private List<String> oldComment;
+        private List<String> newComment;
+
+        private List<NewItemAttachment> targetAttachmentsForTagAndComment;
+    }
+
+    public OldNewTagCommentUpdatedResult produceOldNewTagComment(
+            NewItem item, //update 당하는 아이템
+            NewItemUpdateRequest req
+    ) {
+        List<Long> oldDocTag = new ArrayList<>();
+        List<Long> newDocTag = new ArrayList<>();
+        List<String> oldDocComment = new ArrayList<>();
+        List<String> newDocComment = new ArrayList<>();
+
+        List<NewItemAttachment> newItemAttachments
+                = item.getAttachments();
+
+        List<NewItemAttachment> targetAttachmentsForTagAndComment = new ArrayList<>();
+
+        // OLD TAG, NEW TAG, COMMENT OLD NEW GENERATE
+        if (newItemAttachments.size() > 0) {
+            // 올드 문서 기존 갯수(올드 태그, 코멘트 적용할 것) == 빼기 deleted 아이디 - deleted=true 인 애들
+
+            // 일단은 다 가져와
+            List<NewItemAttachment> oldAttachments = item.getAttachments();
+            for (NewItemAttachment attachment : oldAttachments) {
+
+                if (
+                        (!attachment.isDeleted())
+                                // (1) 첫번째 조건 : DELETED = FALSE (태그, 코멘트 적용 대상들은 현재 살아있어야 하고)
+                                 ) {
+                    if(req.getDeletedAttachments() != null){ // (1-1) 만약 사용자가 delete 를 입력한게 존재한다면
+                        if(!(req.getDeletedAttachments().contains(attachment.getId()))){
+                            // 그 delete 안에 이 attachment 아이디 존재하지 않을 때만 추가
+                            targetAttachmentsForTagAndComment.add(attachment);
+                        }
+                    }
+                    else{ //걍 애초에 delete 하는거 없으면 걍 더해주면 되지
+                        targetAttachmentsForTagAndComment.add(attachment);
+                    }
+
+                }
+
+            }
+
+            int standardIdx = targetAttachmentsForTagAndComment.size();
+
+            oldDocTag.addAll(req.getAddedTag().subList(0, standardIdx));
+            newDocTag.addAll(req.getAddedTag().subList(standardIdx, req.getAddedTag().size()));
+
+            oldDocComment.addAll(req.getAddedAttachmentComment().subList(0, standardIdx));
+            newDocComment.addAll(req.getAddedAttachmentComment().subList(standardIdx, req.getAddedTag().size()));
+
+        }
+        return new OldNewTagCommentUpdatedResult(
+
+                oldDocTag,
+                newDocTag,
+                oldDocComment,
+                newDocComment,
+
+                targetAttachmentsForTagAndComment
+        );
+    }
 }

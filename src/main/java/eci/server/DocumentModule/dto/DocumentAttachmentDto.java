@@ -1,52 +1,49 @@
-package eci.server.CRCOModule.dto.co;
+package eci.server.DocumentModule.dto;
+
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import eci.server.CRCOModule.entity.CrAttachment;
-import eci.server.CRCOModule.entity.cofeatures.CoAttachment;
-import eci.server.DocumentModule.dto.DocumentAttachmentDto;
+import eci.server.DocumentModule.entity.DocumentAttachment;
+import eci.server.ItemModule.dto.member.MemberDto;
+import eci.server.ItemModule.entity.member.Member;
 import eci.server.NewItemModule.dto.attachment.AttachmentTagDto;
+import eci.server.NewItemModule.dto.classification.ClassificationDto;
 import eci.server.NewItemModule.repository.attachment.AttachmentTagRepository;
+import eci.server.ProjectModule.dto.projectAttachmentDto.ProjectAttachmentDto;
 import eci.server.ProjectModule.entity.projectAttachment.ProjectAttachment;
+import eci.server.ReleaseModule.entity.ReleaseAttachment;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
 
 @Data
 @AllArgsConstructor
-public class CoAttachmentDto implements Comparable<CoAttachmentDto>{
+public class DocumentAttachmentDto implements Comparable<DocumentAttachmentDto>{
     private Long id;
     private String originName;
     private String uniqueName;
-    private String attach_comment;
     private boolean deleted;
-    private AttachmentTagDto tag;
+//    private AttachmentTagDto tag;
     private String attachmentaddress;
     private String date;
     private String upload;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd hh:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime modifiedAt;
 
-    public static CoAttachmentDto toDto(
-            CoAttachment attachment,
-            AttachmentTagRepository attachmentTagRepository
+
+    public static DocumentAttachmentDto toDto(
+            DocumentAttachment attachment
     ) {
-        return new CoAttachmentDto(
+        return new DocumentAttachmentDto(
                 attachment.getId(),
                 attachment.getOriginName(),
                 attachment.getUniqueName(),
-                attachment.getAttach_comment(),
                 attachment.isDeleted(),
-                //attachment.getTag(),
-                AttachmentTagDto.toDto(
-                        attachmentTagRepository.findByName(
-                                attachment.getTag()
-                        )
-                ),
-                "src/main/prodmedia/image/"
+                 "src/main/prodmedia/image/"
                         +
                         attachment.
                                 getCreatedAt().
@@ -58,7 +55,7 @@ public class CoAttachmentDto implements Comparable<CoAttachmentDto>{
 
                 attachment.getModifiedAt().toString().split("_")[0].substring(0, 10),
 
-                attachment.getChangeOrder().getMember().getUsername(),
+                attachment.getDocument().getMember().getUsername(),
 
                 attachment.getModifiedAt()
 
@@ -66,14 +63,14 @@ public class CoAttachmentDto implements Comparable<CoAttachmentDto>{
     }
 
 
-    public static List<CoAttachmentDto> toDtoList(
-            List<CoAttachment> Attachments,
+    public static List<ProjectAttachmentDto> toDtoList(
+            List<ProjectAttachment> Attachments,
             AttachmentTagRepository attachmentTagRepository
     ) {
 
-        List<CoAttachmentDto> attachmentDtoList =
+        List<eci.server.ProjectModule.dto.projectAttachmentDto.ProjectAttachmentDto> attachmentDtoList =
                 Attachments.stream().map(
-                        i -> new CoAttachmentDto(
+                        i -> new eci.server.ProjectModule.dto.projectAttachmentDto.ProjectAttachmentDto(
                                 i.getId(),
                                 i.getOriginName(),
                                 i.getUniqueName(),
@@ -94,7 +91,7 @@ public class CoAttachmentDto implements Comparable<CoAttachmentDto>{
                                         i.getUniqueName(),
 
                                 i.getModifiedAt().toString().split("_")[0].substring(0, 10),
-                                i.getChangeOrder().getMember().getUsername(),
+                                i.getProject().getMember().getUsername(),
                                 i.getModifiedAt()
                         )
                 ).collect(
@@ -105,9 +102,20 @@ public class CoAttachmentDto implements Comparable<CoAttachmentDto>{
 
     }
 
+
+    public static List<DocumentAttachmentDto> toDtoList() {
+
+        List<DocumentAttachmentDto> documentAttachmentDtos = new ArrayList<>();
+
+        return documentAttachmentDtos;
+
+    }
+
     @Override
-    public int compareTo(CoAttachmentDto attachment) {
+    public int compareTo(DocumentAttachmentDto attachment) {
         return (int) (this.id - attachment.getId());
     }
 
 }
+
+

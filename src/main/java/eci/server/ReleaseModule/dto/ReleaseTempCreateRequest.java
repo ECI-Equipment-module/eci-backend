@@ -30,9 +30,6 @@ import static java.util.stream.Collectors.toList;
 @NoArgsConstructor
 public class ReleaseTempCreateRequest{
 
-    private Long id;
-    private String releaseNumber;
-
     private Long releaseType; //{id,name}으로 해야할 듯 합니다. id는 OK
 
     private Long releaseItemId;

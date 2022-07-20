@@ -19,6 +19,7 @@ import eci.server.ItemModule.entity.newRoute.RouteProduct;
 import eci.server.ItemModule.exception.route.RouteNotFoundException;
 import eci.server.ItemModule.repository.newRoute.RouteOrderingRepository;
 import eci.server.ItemModule.repository.newRoute.RouteProductRepository;
+import eci.server.NewItemModule.dto.attachment.NewItemAttachmentDto;
 import eci.server.NewItemModule.repository.attachment.AttachmentTagRepository;
 import eci.server.ProjectModule.dto.carType.CarTypeDto;
 import eci.server.ProjectModule.dto.clientOrg.ClientOrganizationDto;
@@ -29,9 +30,7 @@ import org.springframework.lang.Nullable;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 import static java.util.stream.Collectors.toList;
 
@@ -79,11 +78,11 @@ public class CoReadDto {
 
     private List<CoNewItemDto> affectedItemList;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd hh:mm:ss.SSS", timezone = "Asia/Seoul")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd hh:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime createdAt;
     private MemberDto creator;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd hh:mm:ss.SSS", timezone = "Asia/Seoul")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd hh:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime modifiedAt;
     private MemberDto modifier;
 
@@ -93,6 +92,8 @@ public class CoReadDto {
     private Long routeId;
 
     private boolean preRejected;
+
+    private List<CoAttachmentDto>  attachments;
 
     public static CoReadDto toDto(){
         return new CoReadDto();
@@ -108,13 +109,26 @@ public class CoReadDto {
             AttachmentTagRepository attachmentTagRepository,
             String defaultImageAddress
     ) {
+
+        List<CoAttachmentDto> attachmentDtoList = new ArrayList<>();
+        if(co.getAttachments()!=null) {
+            attachmentDtoList
+                    .addAll(co.getAttachments().
+                            stream().
+                            map(i ->
+                                    CoAttachmentDto.toDto
+                                            (i, attachmentTagRepository)
+                            )
+                            .collect(toList()));
+
+            Collections.sort(attachmentDtoList);
+        }
+
         List<RouteOrderingDto> routeDtoList = Optional.ofNullable(
                 RouteOrderingDto.toDtoList(
                         routeOrderingRepository.findByChangeOrderOrderByIdAsc(co),
                         routeProductRepository,
                         routeOrderingRepository,
-                        bomRepository,
-                        preliminaryBomRepository,
                         defaultImageAddress
                 )
         ).orElseThrow(RouteNotFoundException::new);
@@ -201,8 +215,9 @@ public class CoReadDto {
                                 co).size() - 1)
                         .getId(),
 
-                CoPreRejected(routeOrdering ,routeProductRepository)
+                CoPreRejected(routeOrdering ,routeProductRepository),
 
+                attachmentDtoList
         );
     }
 
@@ -215,6 +230,20 @@ public class CoReadDto {
             AttachmentTagRepository attachmentTagRepository,
             String defaultImageAddress
     ) {
+
+        List<CoAttachmentDto> attachmentDtoList = new ArrayList<>();
+        if(co.getAttachments()!=null) {
+            attachmentDtoList
+                    .addAll(co.getAttachments().
+                            stream().
+                            map(i ->
+                                    CoAttachmentDto.toDto
+                                            (i, attachmentTagRepository)
+                            )
+                            .collect(toList()));
+
+            Collections.sort(attachmentDtoList);
+        }
 
 
         return new  CoReadDto(
@@ -296,7 +325,9 @@ public class CoReadDto {
 
                 -1L,
 
-                false
+                false,
+
+                attachmentDtoList
 
         );
     }

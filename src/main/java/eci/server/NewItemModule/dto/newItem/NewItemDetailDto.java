@@ -35,6 +35,7 @@ import org.springframework.util.RouteMatcher;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -89,11 +90,11 @@ public class NewItemDetailDto {
 
 
     //05-22 추가
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd hh:mm:ss.SSS", timezone = "Asia/Seoul")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd hh:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime createdAt;
     private MemberDto creator;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd hh:mm:ss.SSS", timezone = "Asia/Seoul")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd hh:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime modifiedAt;
     private MemberDto modifier;
 
@@ -128,6 +129,16 @@ public class NewItemDetailDto {
         CarTypeDto nullCarTypeDto = new CarTypeDto();
 
 
+        List<NewItemAttachmentDto> newItemAttachmentDtos
+                = (Item.getAttachments().
+                stream().
+                map( i->
+                        NewItemAttachmentDto.toDto
+                                (i,attachmentTagRepository)
+                )
+                .collect(toList()));
+
+        Collections.sort(newItemAttachmentDtos);
 
         if(Item.getMakers()!=null) {
             return new NewItemDetailDto(
@@ -200,13 +211,8 @@ public class NewItemDetailDto {
                     //reviseProgress(newItemRepository, Item),
                     Item.isRevise_progress(),
 
-                    Item.getAttachments().
-                            stream().
-                            map( i->
-                                    NewItemAttachmentDto.toDto
-                                            (i,attachmentTagRepository)
-                            )
-                            .collect(toList()),
+                    newItemAttachmentDtos
+                    ,
                     (char) Item.getRevision(),
                     routeOrderingDto.getLifecycleStatus(),
 

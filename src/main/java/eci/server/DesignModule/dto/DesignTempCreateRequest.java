@@ -49,7 +49,11 @@ public class DesignTempCreateRequest {
 
         Long itemId = req.itemId==null?99999L:req.itemId;
 
-        if(req.getTag().size()>0) {
+
+        /**
+         * attachment 있을 시
+         */
+        if(!(req.getAttachments()==null || req.getAttachments().size()==0)) {
             return new Design(
                     itemRepository.findById(itemId)
                             .orElseThrow(ItemNotFoundException::new),
@@ -89,14 +93,14 @@ public class DesignTempCreateRequest {
             );
         }
 
+
         /**
          * attachment 없을 시
          */
-
         return new Design(
 
                 itemRepository.findById(itemId)
-                        .orElseThrow(ProjectNotFoundException::new),
+                        .orElseThrow(ItemNotFoundException::new),
 
                 //로그인 된 유저 바로 주입
                 memberRepository.findById(
