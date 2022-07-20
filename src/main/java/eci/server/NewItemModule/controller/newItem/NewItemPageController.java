@@ -33,6 +33,10 @@ public class NewItemPageController {
 
     @Autowired
     NewItemRepository newItemRepository;
+
+    @Value("${default.image.address}")
+    private String defaultImageAddress;
+
     @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
     @GetMapping("/items/page")
     public Page<NewItemPagingDto> paging(@PageableDefault(size=5)
@@ -198,7 +202,8 @@ public class NewItemPageController {
                 newItemService.releaseItem(), pageRequest
         );
 
-        return  NewItemChildDto.toDtoList(releaseAvailableItems);
+        return  NewItemChildDto.toDtoList(releaseAvailableItems,
+                 defaultImageAddress);
     }
 
 }
