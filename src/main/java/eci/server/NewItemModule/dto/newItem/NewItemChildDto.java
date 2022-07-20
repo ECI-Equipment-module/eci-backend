@@ -44,7 +44,8 @@ public class NewItemChildDto {
      * @return
      */
     public static Page<NewItemChildDto> toDtoList(
-            Page<NewItem> NewItems
+            Page<NewItem> NewItems,
+            String defaultImageAddress
     ) {
         List<NewItemChildDto> newItemChildDtos = NewItems.stream().map(
                 c-> new NewItemChildDto(
@@ -62,7 +63,7 @@ public class NewItemChildDto {
                         c.isSharing()?"공용":"전용",
                         c.isSubAssy(),
                         new ArrayList<>(),
-                        c.getThumbnail().getImageaddress(),
+                        c.getThumbnail()==null?defaultImageAddress:c.getThumbnail().getImageaddress(),
                         c.getCreatedAt()
                 )
         ).collect(Collectors.toList());
@@ -73,7 +74,8 @@ public class NewItemChildDto {
     }
     public static List<NewItemChildDto> toDtoList(
             List<NewItemParentChildren> NewItems,
-            NewItemParentChildrenRepository newItemParentChildrenRepository
+            NewItemParentChildrenRepository newItemParentChildrenRepository,
+            String defaultImageAddress
     ) {
         List<NewItemChildDto> newItemChildDtos = NewItems.stream().map(
                 c -> new NewItemChildDto(
@@ -92,10 +94,14 @@ public class NewItemChildDto {
                         //c.getThumbnailAddress(),
                         c.getChildren().isSubAssy(),
                         c.getChildren().getChildren().size()>0?
-                                toDtoList(newItemParentChildrenRepository.findAllWithParentByParentId(c.getChildren().getId()),
-                                        newItemParentChildrenRepository):new ArrayList<>(),
+                                toDtoList(newItemParentChildrenRepository
+                                                .findAllWithParentByParentId(c.getChildren().getId()),
 
-                        c.getChildren().getThumbnail().getImageaddress(),
+                                        newItemParentChildrenRepository
+
+                                , defaultImageAddress):new ArrayList<>(),
+
+                        c.getChildren().getThumbnail()==null?defaultImageAddress:c.getChildren().getThumbnail().getImageaddress(),
                         c.getChildren().getCreatedAt()
 
                 )

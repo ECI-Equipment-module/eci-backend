@@ -700,7 +700,8 @@ public class NewItemService {
         return NewItemChildDto.toDtoList(
                 newItemParentChildrenRepository.
                         findAllWithParentByParentId(id),//ByParentIdOrderByParentIdAscNullsFirst(
-                newItemParentChildrenRepository
+                newItemParentChildrenRepository,
+                defaultImageAddress
 
         );
 
