@@ -1,6 +1,5 @@
 package eci.server.DocumentModule.entity;
 
-import eci.server.CRCOModule.repository.co.ChangeOrderRepository;
 import eci.server.DocumentModule.dto.DocumentUpdateRequest;
 import eci.server.DocumentModule.entity.classification.DocClassification;
 import eci.server.DocumentModule.entity.classification.DocTag;
