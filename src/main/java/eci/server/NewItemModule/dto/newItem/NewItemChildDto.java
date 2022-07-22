@@ -117,7 +117,8 @@ public class NewItemChildDto {
      * @return
      */
     public static Page<NewItemChildDto> toGeneralDtoList(
-            List<NewItem> NewItems
+            List<NewItem> NewItems,
+            String defaultImageAddress
     ) {
         List<NewItemChildDto> newItemChildDtos = NewItems.stream().map(
                 c -> new NewItemChildDto(
@@ -136,7 +137,7 @@ public class NewItemChildDto {
                         //c.getThumbnailAddress(),
                         c.isSubAssy(),
                         new ArrayList<>(),
-                        c.getThumbnail().getImageaddress(),
+                        c.getThumbnail()==null?defaultImageAddress:c.getThumbnail().getImageaddress(),
                         c.getCreatedAt()
 
                 )
