@@ -22,7 +22,7 @@ public class  ChangedFeatureDto{
     public static  ChangedFeatureDto toDto(ChangedFeature ChangedFeature){
 
         return new  ChangedFeatureDto(
-                ChangedFeature.getId(),
+                ChangedFeature.getId()==null?-1L:ChangedFeature.getId(),
                 ChangedFeature.getName()
         );
     }
