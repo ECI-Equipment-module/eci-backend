@@ -24,7 +24,7 @@ public class NewItemParentDto {
     private List<NewItemParentDto> children;
     private boolean top;
 
-    public static NewItemParentDto toTopDto(NewItem newItem){
+    public static NewItemParentDto toTopDto(NewItem newItem, String defaultImageAddress){
         return new NewItemParentDto(
                 newItem.getId(),//엔티티를 DTO로 변환하는 함수
                 newItem.getClassification().getClassification1().getName()
@@ -35,7 +35,7 @@ public class NewItemParentDto {
                         )
                 ,
                 newItem.getName(),
-                newItem.getThumbnail().getImageaddress(),
+                newItem.getThumbnail()==null?defaultImageAddress:newItem.getThumbnail().getImageaddress(),
                 newItem.getItemTypes().getItemType().name(),
                 new ArrayList<>(),
                 true // 지금 찾고자 하는 아이는 top = true !
@@ -45,7 +45,8 @@ public class NewItemParentDto {
 
     public static List<NewItemParentDto> toDtoList(
             List<NewItemParentChildren> NewItems,
-            NewItemParentChildrenRepository newItemParentChildrenRepository
+            NewItemParentChildrenRepository newItemParentChildrenRepository,
+            String defaultImageAddress
     ) {
         List<NewItemParentDto> newItemParentDtos = NewItems.stream().map(
                 c -> new NewItemParentDto(
@@ -58,12 +59,14 @@ public class NewItemParentDto {
                                 )
                         ,
                         c.getParent().getName(),
+                        c.getParent().getThumbnail()==null?defaultImageAddress:
                         c.getParent().getThumbnail().getImageaddress(),
                         c.getParent().getItemTypes().getItemType().name(),
                         c.getParent().getParent().size()>0?
                                 toDtoList(newItemParentChildrenRepository
                                                 .findAllWithChildByChildId(c.getParent().getId()),
-                                        newItemParentChildrenRepository)
+                                        newItemParentChildrenRepository,
+                                        defaultImageAddress)
                                 :new ArrayList<>(),
 
                         false

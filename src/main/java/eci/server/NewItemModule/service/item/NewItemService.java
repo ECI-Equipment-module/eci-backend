@@ -712,7 +712,8 @@ public class NewItemService {
         return NewItemParentDto.toDtoList(
                 newItemParentChildrenRepository.
                         findAllWithChildByChildId(id),//ByParentIdOrderByParentIdAscNullsFirst(
-                newItemParentChildrenRepository
+                newItemParentChildrenRepository,
+                defaultImageAddress
 
         );
 
@@ -720,7 +721,7 @@ public class NewItemService {
 
     public NewItemParentDto topTreeAndItsParents(Long id){
         NewItem newItem = newItemRepository.findById(id).orElseThrow(ItemNotFoundException::new);
-        NewItemParentDto result = NewItemParentDto.toTopDto(newItem);
+        NewItemParentDto result = NewItemParentDto.toTopDto(newItem, defaultImageAddress);
         result.setChildren(readParentAll(id));
         return result;
     }
