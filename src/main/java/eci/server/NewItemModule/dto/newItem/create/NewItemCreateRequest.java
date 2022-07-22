@@ -192,10 +192,10 @@ public class NewItemCreateRequest {
 
             // tag 작업
             oldDocTag = new ArrayList<>(req.getTag().subList(0,standardIdx));
-            newDocTag = new ArrayList<>(req.getTag().subList(standardIdx, req.getTag().size()+1));
+            newDocTag = new ArrayList<>(req.getTag().subList(standardIdx, req.getTag().size()));
             // comment 작업
             oldDocComment = new ArrayList<>(req.getAttachmentComment().subList(0,standardIdx));
-            newDocComment = new ArrayList<>(req.getAttachmentComment().subList(standardIdx, req.getTag().size()+1));
+            newDocComment = new ArrayList<>(req.getAttachmentComment().subList(standardIdx, req.getTag().size()));
 
         }else{//(req.getAttachments()!=null && req.getAttachments().size()>0){
             newDocTag.addAll(req.getTag());
