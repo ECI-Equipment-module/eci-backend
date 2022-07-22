@@ -35,7 +35,7 @@ public class NewItemPagingDto {
                 newItem.getId(),
 
                 newItem.getThumbnail()==null?
-                        NewItemImageDto.toDto(defaultImageAddress):
+                        new NewItemImageDto(defaultImageAddress) :
                 NewItemImageDto.toDto(
                                 newItem.getThumbnail()
                 ),
