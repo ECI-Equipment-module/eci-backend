@@ -265,10 +265,12 @@ public class ChangeOrder extends EntityDate {
                                         this,
                                         item,
 
+                                        changedFeatures.size()==0||
                                         changedFeatures.get(newItems.indexOf(item))==null?
                                                 null //temp 에서는 걍 저장
                                                 :changedFeatures.get(newItems.indexOf(item)),
 
+                                        changedContents.size()==0||
                                         changedContents.get(newItems.indexOf(item)).isBlank()?
                                                 ""
                                                 :changedContents.get(newItems.indexOf(item))
@@ -358,10 +360,12 @@ public class ChangeOrder extends EntityDate {
                                 this,
                                 item,
 
+                                changedFeatures.size()==0||
                                 changedFeatures.get(newItems.indexOf(item))==null?
                                         null //temp 에서는 걍 저장
                                         :changedFeatures.get(newItems.indexOf(item)),
 
+                                changedContents.size()==0||
                                 changedContents.get(newItems.indexOf(item)).isBlank()?
                                         "":changedContents.get(newItems.indexOf(item))
                         )
@@ -696,6 +700,7 @@ public class ChangeOrder extends EntityDate {
                                         this,
                                         item,
 
+                                        changedFeatures.size()==0 ||
                                         changedFeatures
                                                 .get(
                                                         req.getNewItemsIds().stream().map(
@@ -977,7 +982,7 @@ public class ChangeOrder extends EntityDate {
                                 item -> new CoNewItem(
                                         this,
                                         item,
-
+                                        changedFeatures.size()==0||
                                         changedFeatures
                                                 .get(
                                                         req.getNewItemsIds().stream().map(
