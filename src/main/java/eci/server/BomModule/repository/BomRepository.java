@@ -16,5 +16,4 @@ public interface BomRepository extends JpaRepository<Bom, Long>, CustomDesignRep
 
     List<Bom> findByMember(Member member);
 
-
 }

@@ -676,7 +676,9 @@ public class NewItem extends EntityDate {
 
                     //
             i.setAttach_comment(
-                    newComment.get(
+                    newComment.size()==0?
+                            " ":
+                    newComment.get(//0
                             (added.indexOf(i))
                     ).isBlank()?
                             " ":newComment.get(
@@ -718,6 +720,8 @@ public class NewItem extends EntityDate {
         olds.stream().forEach(i -> {
 
             i.setAttach_comment(
+                    oldComment.size()==0?
+                            " ":
                     oldComment.get(
                             (olds.indexOf(i))
                     ).isBlank()?

@@ -402,6 +402,7 @@ public class ChangeOrder extends EntityDate {
 
                     //
             i.setAttach_comment(
+                    newComment.size()==0?" ":
                     newComment.get(
                             (added.indexOf(i))
                     ).isBlank()?
@@ -1063,6 +1064,7 @@ public class ChangeOrder extends EntityDate {
         olds.stream().forEach(i -> {
 
             i.setAttach_comment(
+                    oldComment.size()==0?" ":
                     oldComment.get(
                             (olds.indexOf(i))
                     ).isBlank()?
