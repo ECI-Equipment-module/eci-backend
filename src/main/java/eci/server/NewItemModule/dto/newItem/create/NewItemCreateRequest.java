@@ -236,7 +236,9 @@ public class NewItemCreateRequest {
                                 .findById(oldDocTag.get(idx)).
                                 orElseThrow(AttachmentTagNotFoundException::new).getName(),
 
-                        oldDocComment.get(idx).isBlank()?" " :
+                        oldDocComment.size()==0?
+                                " "
+                                :oldDocComment.get(idx).isBlank()?" " :
                                 oldDocComment.get(idx)
                         )
 
@@ -399,7 +401,8 @@ public class NewItemCreateRequest {
                                     orElseThrow(AttachmentTagNotFoundException::new)
                                     .getName(),
 
-                            newDocComment.get(d)
+                            newDocComment.size()==0? " ":
+                            newDocComment.get(d).isBlank()?" ":newDocComment.get(d)
                             ,
                             //찐 생성이므로 이때 추가되는 문서들 모두 save = true
                             true //save 속성임
@@ -540,5 +543,7 @@ public class NewItemCreateRequest {
         );
 
     }
+
+
 
 }

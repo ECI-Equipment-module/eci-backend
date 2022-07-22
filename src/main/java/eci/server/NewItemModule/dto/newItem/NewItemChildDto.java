@@ -151,7 +151,9 @@ public class NewItemChildDto {
 
     public static Page<NewItemChildDto> toAddChildDtoList(
             Page<NewItem> NewItem,
-            NewItemService newItemService    ) {
+            NewItemService newItemService,
+            String defaultImageAddress
+            ) {
 
 
         List<NewItemChildDto> newItemChildDtos = NewItem.stream().map(
@@ -171,7 +173,7 @@ public class NewItemChildDto {
                         //c.getThumbnailAddress(),
                         c.isSubAssy(),
                         newItemService.readChildAll(c.getId()),
-                        c.getThumbnail().getImageaddress(),
+                        c.getThumbnail()==null?defaultImageAddress:c.getThumbnail().getImageaddress(),
                         c.getCreatedAt()
 
 

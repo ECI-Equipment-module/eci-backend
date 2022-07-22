@@ -142,7 +142,7 @@ public class NewItemPageController {
                 newItemService.readDevBomItems(), pageRequest
         );
 
-        return NewItemChildDto.toAddChildDtoList(concatItemList, newItemService);
+        return NewItemChildDto.toAddChildDtoList(concatItemList, newItemService, defaultImageAddress);
     }
 
     /**
@@ -166,7 +166,7 @@ public class NewItemPageController {
                 newItemService.readCompareBomItems(), pageRequest
         );
 
-        return NewItemChildDto.toAddChildDtoList(concatItemList, newItemService);
+        return NewItemChildDto.toAddChildDtoList(concatItemList, newItemService, defaultImageAddress);
     }
 
     // affectedItem
@@ -185,7 +185,7 @@ public class NewItemPageController {
                 newItemService.readAffectedItems(), pageRequest
         );
 
-        return NewItemChildDto.toAddChildDtoList(concatItemList, newItemService);
+        return NewItemChildDto.toAddChildDtoList(concatItemList, newItemService, defaultImageAddress);
     }
 
     @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
