@@ -320,7 +320,8 @@ public class DocumentService {
                     document,
                     routeOrdering,
                     routeProductRepository,
-                    defaultImageAddress
+                    defaultImageAddress,
+                    documentRepository
             );
         }
         else{

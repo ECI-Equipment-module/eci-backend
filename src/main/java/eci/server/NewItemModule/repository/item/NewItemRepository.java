@@ -33,4 +33,6 @@ public interface NewItemRepository extends JpaRepository<NewItem, Long>, CustomN
 
     NewItem findByReviseTargetId(Long reviseTargetId);
 
+    NewItem findByReviseTargetNewItem(NewItem newItem);//이게 null 이거나 size()==0 이면 revise 가능
+
 }

@@ -59,7 +59,8 @@ public class DocumentPageController {
                 docs,
                 routeOrderingRepository,
                 routeProductRepository,
-                defaultImageAddress
+                defaultImageAddress,
+                documentRepository
 
         );
 

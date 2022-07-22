@@ -10,5 +10,7 @@ public interface DocumentRepository extends JpaRepository<Document, Long> {
 
     List<Document> findByMember(Member member);
 
+    Document findByReviseTargetDoc(Document document);
+
 
 }
