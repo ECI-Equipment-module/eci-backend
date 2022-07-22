@@ -700,7 +700,8 @@ public class NewItemService {
         return NewItemChildDto.toDtoList(
                 newItemParentChildrenRepository.
                         findAllWithParentByParentId(id),//ByParentIdOrderByParentIdAscNullsFirst(
-                newItemParentChildrenRepository
+                newItemParentChildrenRepository,
+                defaultImageAddress
 
         );
 
@@ -711,7 +712,8 @@ public class NewItemService {
         return NewItemParentDto.toDtoList(
                 newItemParentChildrenRepository.
                         findAllWithChildByChildId(id),//ByParentIdOrderByParentIdAscNullsFirst(
-                newItemParentChildrenRepository
+                newItemParentChildrenRepository,
+                defaultImageAddress
 
         );
 
@@ -719,7 +721,7 @@ public class NewItemService {
 
     public NewItemParentDto topTreeAndItsParents(Long id){
         NewItem newItem = newItemRepository.findById(id).orElseThrow(ItemNotFoundException::new);
-        NewItemParentDto result = NewItemParentDto.toTopDto(newItem);
+        NewItemParentDto result = NewItemParentDto.toTopDto(newItem, defaultImageAddress);
         result.setChildren(readParentAll(id));
         return result;
     }
@@ -910,9 +912,19 @@ public class NewItemService {
                 }
             }
         }
-    List affectedItemList = new ArrayList(affectedItems);
 
-        return affectedItemList;
+        // 추가적으로 최신 revise 만 가능 , 나를 revise 한 애가 하나도 없는 애만 뜨게 할거야
+    //List affectedItemList = new ArrayList(affectedItems);
+
+        List finalAffectedItemList = new ArrayList();
+
+        for(NewItem newItem : affectedItems){
+            if(newItemRepository.findByReviseTargetNewItem(newItem)==null){
+                finalAffectedItemList.add(newItem);
+            }
+        }
+
+        return finalAffectedItemList;
     }
 
     /**

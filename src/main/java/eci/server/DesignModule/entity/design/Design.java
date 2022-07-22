@@ -418,12 +418,13 @@ public class Design extends EntityDate {
             i.initDesign(this);
 
             i.setAttach_comment(
-                    newComment.get(
-                            (added.indexOf(i))
-                    ).isBlank()?
-                            " ":newComment.get(
-                            (added.indexOf(i))
-                    )
+                    newComment.size()==0?" ":
+                            newComment.get(
+                                    (added.indexOf(i))
+                            ).isBlank()?
+                                    " ":newComment.get(
+                                    (added.indexOf(i))
+                            )
             );
 
             i.setTag(attachmentTagRepository
@@ -568,12 +569,13 @@ public class Design extends EntityDate {
         olds.stream().forEach(i -> {
 
             i.setAttach_comment(
-                    oldComment.get(
-                            (olds.indexOf(i))
-                    ).isBlank()?
-                            " ":oldComment.get(
-                            (olds.indexOf(i))
-                    )
+                    oldComment.size()==0?" ":
+                            oldComment.get(
+                                    (olds.indexOf(i))
+                            ).isBlank()?
+                                    " ":oldComment.get(
+                                    (olds.indexOf(i))
+                            )
             );
 
                     i.setTag(attachmentTagRepository

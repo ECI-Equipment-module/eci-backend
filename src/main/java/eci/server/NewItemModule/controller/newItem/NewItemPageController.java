@@ -33,6 +33,10 @@ public class NewItemPageController {
 
     @Autowired
     NewItemRepository newItemRepository;
+
+    @Value("${default.image.address}")
+    private String defaultImageAddress;
+
     @CrossOrigin(origins = "https://localhost:3000")
     @GetMapping("/items/page")
     public Page<NewItemPagingDto> paging(@PageableDefault(size=5)
@@ -53,7 +57,7 @@ public class NewItemPageController {
         Page<NewItem> itemList = newItemRepository.findByNewItems(itemList1, pageRequest);
 
         return itemList.map(
-                item -> NewItemPagingDto.toDto(item)
+                item -> NewItemPagingDto.toDto(item, defaultImageAddress)
         );
     }
 
@@ -110,7 +114,7 @@ public class NewItemPageController {
 
 
         return itemList.map(
-                item -> NewItemPagingDto.toDto(item)
+                item -> NewItemPagingDto.toDto(item, defaultImageAddress)
         );
     }
 
@@ -138,7 +142,7 @@ public class NewItemPageController {
                 newItemService.readDevBomItems(), pageRequest
         );
 
-        return NewItemChildDto.toAddChildDtoList(concatItemList, newItemService);
+        return NewItemChildDto.toAddChildDtoList(concatItemList, newItemService, defaultImageAddress);
     }
 
     /**
@@ -162,7 +166,7 @@ public class NewItemPageController {
                 newItemService.readCompareBomItems(), pageRequest
         );
 
-        return NewItemChildDto.toAddChildDtoList(concatItemList, newItemService);
+        return NewItemChildDto.toAddChildDtoList(concatItemList, newItemService, defaultImageAddress);
     }
 
     // affectedItem
@@ -181,7 +185,7 @@ public class NewItemPageController {
                 newItemService.readAffectedItems(), pageRequest
         );
 
-        return NewItemChildDto.toAddChildDtoList(concatItemList, newItemService);
+        return NewItemChildDto.toAddChildDtoList(concatItemList, newItemService, defaultImageAddress);
     }
 
     @CrossOrigin(origins = "https://localhost:3000")
@@ -198,7 +202,8 @@ public class NewItemPageController {
                 newItemService.releaseItem(), pageRequest
         );
 
-        return  NewItemChildDto.toDtoList(releaseAvailableItems);
+        return  NewItemChildDto.toDtoList(releaseAvailableItems,
+                 defaultImageAddress);
     }
 
 }

@@ -65,7 +65,9 @@ public class CoNewItemDto {
 
                 coItem.getChangedContent(),
 
-                ChangedFeatureDto.toDto(coItem.getChangedFeature()),
+                coItem.getChangedFeature()==null?
+                        ChangedFeatureDto.toDto():
+                        ChangedFeatureDto.toDto(coItem.getChangedFeature()),
 
                 crNumberCheckAndMake(CrinCo, coItem.getNewItem())
 
@@ -99,7 +101,9 @@ public class CoNewItemDto {
 
                                         coItem.getChangedContent(),
 
-                                        ChangedFeatureDto.toDto(coItem.getChangedFeature()),
+                                        coItem.getChangedFeature()==null?
+                                                ChangedFeatureDto.toDto():
+                                                ChangedFeatureDto.toDto(coItem.getChangedFeature()),
 
                                         crNumberCheckAndMake(CrinCo, coItem.getNewItem())
 

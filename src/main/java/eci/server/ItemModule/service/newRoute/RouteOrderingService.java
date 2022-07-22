@@ -119,7 +119,7 @@ public class RouteOrderingService {
         int idx = 0;
         while(idx< nameList.size()-1) {
             for (RouteProductDto rp : read(routeId).getRouteProductList()) {
-                if (nameList.get(idx).equals(rp.getName())) {
+                if (nameList.get(idx).equals(rp.getName())) {  // index 4 는 길이 4 에 없다
                     mem.add(
                             rp.getMember()
                     );

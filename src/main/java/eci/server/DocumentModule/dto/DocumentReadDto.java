@@ -3,6 +3,7 @@ package eci.server.DocumentModule.dto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import eci.server.DesignModule.dto.DesignAttachmentDto;
 import eci.server.DocumentModule.entity.Document;
+import eci.server.DocumentModule.repository.DocumentRepository;
 import eci.server.ItemModule.dto.member.MemberDto;
 import eci.server.ItemModule.dto.newRoute.routeOrdering.RouteOrderingDto;
 import eci.server.ItemModule.entity.newRoute.RouteOrdering;
@@ -58,12 +59,15 @@ public class DocumentReadDto {
 
     private boolean preRejected;
 
+    private boolean revisePossible;
+
     public static DocumentReadDto toDto(
 
             Document document,
             RouteOrdering routeOrdering,
             RouteProductRepository routeProductRepository,
-            String defaultImageAddress
+            String defaultImageAddress,
+            DocumentRepository documentRepository
 
     ){
 
@@ -129,9 +133,10 @@ public class DocumentReadDto {
 
                 document.getReadonly(),
 
-                DocumentPreRejected(routeOrdering, routeProductRepository)
+                DocumentPreRejected(routeOrdering, routeProductRepository),
 
-
+                documentRepository.findByReviseTargetDoc(document)==null
+                //나를 revise 한 아이가 없으면 , revisePossible = true
 
 
         );
@@ -200,7 +205,9 @@ public class DocumentReadDto {
 
                 document.getReadonly(),
 
-                false
+                false,
+
+                false // 찐저장 안했으면 revise 불가능 대상
 
         );
     }
@@ -211,7 +218,8 @@ public class DocumentReadDto {
             List<Document> documents,
             RouteOrderingRepository routeOrderingRepository,
             RouteProductRepository routeProductRepository,
-            String defaultImageAddress
+            String defaultImageAddress,
+            DocumentRepository documentRepository
 
     ){
         return
@@ -277,7 +285,9 @@ public class DocumentReadDto {
 
                                 DocumentPreRejected(routeOrderingRepository.findByDocumentOrderByIdAsc(document).get(
                                         routeOrderingRepository.findByDocumentOrderByIdAsc(document).size()-1
-                                ), routeProductRepository)
+                                ), routeProductRepository),
+
+                                documentRepository.findByReviseTargetDoc(document)==null
 
 
 
