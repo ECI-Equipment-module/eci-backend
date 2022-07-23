@@ -1421,6 +1421,10 @@ public class NewItem extends EntityDate {
         );
     }
 
+    public void setReviseTargetNewItem(NewItem reviseTargetNewItem) {
+        this.reviseTargetNewItem = reviseTargetNewItem;
+    }
+
     /**
      * 내가 지금 revise 복사하는 대상의 revision+1 로 나의 revision 갱신
      * 그 대상의 released_cnt 와 똑같이 내 released 를 저장시켜주기
