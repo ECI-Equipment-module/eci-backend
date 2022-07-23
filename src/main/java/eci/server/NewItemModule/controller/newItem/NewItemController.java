@@ -1,10 +1,13 @@
 package eci.server.NewItemModule.controller.newItem;
 
+import eci.server.ItemModule.exception.item.ItemNotFoundException;
 import eci.server.NewItemModule.dto.newItem.NewItemReadCondition;
 import eci.server.NewItemModule.dto.newItem.create.NewItemCreateRequest;
 import eci.server.NewItemModule.dto.newItem.create.NewItemCreateResponse;
 import eci.server.NewItemModule.dto.newItem.create.NewItemTemporaryCreateRequest;
 import eci.server.NewItemModule.dto.newItem.update.NewItemUpdateRequest;
+import eci.server.NewItemModule.repository.attachment.NewItemAttachmentRepository;
+import eci.server.NewItemModule.repository.item.NewItemRepository;
 import eci.server.NewItemModule.service.item.NewItemService;
 import eci.server.aop.AssignMemberId;
 import eci.server.ItemModule.dto.response.Response;
@@ -24,6 +27,7 @@ import javax.validation.Valid;
 public class NewItemController {
 
     private final NewItemService newItemService;
+    private final NewItemRepository newItemRepository;
 
     /**
      * 아이템 생성 (찐 저장)
@@ -43,8 +47,12 @@ public class NewItemController {
     ) {
 
         NewItemCreateResponse response = newItemService.reviseCreate(req, targetId);
-        newItemService.registerTargetReviseItem(targetId, response.getId());
-        System.out.println(targetId + response.getId() + "heeeeeee eeeeeeeeererererer");
+//        newItemService.registerTargetReviseItem(targetId, response.getId());
+////        newItemService.registerReviseIdPlease(
+////                newItemRepository.findById(response.getId()).orElseThrow(ItemNotFoundException::new),
+////                newItemRepository.findById(targetId).orElseThrow(ItemNotFoundException::new)
+////        );
+//        System.out.println(targetId + response.getId() + "heeeeeee eeeeeeeeererererer");
 
         return Response.success(
                 response

@@ -166,6 +166,7 @@ public class NewItemService {
         );
 
         item.setReviseTargetId(targetId);
+        item.setReviseTargetNewItem(newItemRepository.findById(targetId).orElseThrow(ItemNotFoundException::new));
 
         if( item.getItemTypes().getItemType().name().equals("파트제품") ||
                 item.getItemTypes().getItemType().name().equals("프로덕트제품")){
@@ -274,6 +275,7 @@ public class NewItemService {
         );
 
         item.setReviseTargetId(targetId);
+        item.setReviseTargetNewItem(newItemRepository.findById(targetId).orElseThrow(ItemNotFoundException::new));
 
         NewItem targetItem = newItemRepository.findById(targetId).orElseThrow(ItemNotFoundException::new);
 
@@ -1179,7 +1181,9 @@ public class NewItemService {
 
         // 1. 공통 작업 (제품이든 아니든) - target_id 및 revise_id 로 내가 지금 복제할 대상 등록
         //(1)
+
         System.out.println("register target revise item rrrrrrrrrrrrrrr rrrrrr");
+
         NewItem newItemForRevise = newItemRepository.findById(newItemId).orElseThrow(ItemNotFoundException::new);
         NewItemCreateResponse res1 = newItemForRevise.register_target_revise_item(targetId);
 
@@ -1188,6 +1192,7 @@ public class NewItemService {
 
         // (3) 이 아이템[(2)]을 revise target item 으로 등록해주기 (나중에 revise group 찾기 용임)
         NewItemCreateResponse res2 = newItemForRevise.saving_target_revise_item(targetNewItem);
+
         newItemForRevise.setReviseTargetNewItem(targetNewItem);
         registerReviseIdPlease(newItemForRevise, targetNewItem);
         System.out.println(newItemForRevise.getReviseTargetId());
@@ -1216,7 +1221,6 @@ public class NewItemService {
         System.out.println("수행 좀 되렴 ,,,, ");
         newItem.saving_target_revise_item(willBeRegistered);
         newItem.setReviseTargetNewItem(willBeRegistered);
-
     }
     ///////////////////////////////////
     @Getter
