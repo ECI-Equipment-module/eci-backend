@@ -298,9 +298,13 @@ public class NewItemService {
             item.setThumbnail(
 
                     new NewItemImage(
-                            targetItem.getThumbnail().getUniqueName(),
-                            targetItem.getThumbnail().getOriginName(),
-                            targetItem.getThumbnail().getImageaddress(),
+                            targetItem.getThumbnail()==null?
+                                    " ":targetItem.getThumbnail().getUniqueName(),
+                            targetItem.getThumbnail()==null?
+                                    " ":targetItem.getThumbnail().getOriginName(),
+                            targetItem.getThumbnail()==null?
+                                    defaultImageAddress
+                            :targetItem.getThumbnail().getImageaddress(),
                             item
                     )
             );
