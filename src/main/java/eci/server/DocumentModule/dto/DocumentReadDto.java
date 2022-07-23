@@ -88,15 +88,15 @@ public class DocumentReadDto {
 
                 document.getDocumentNumber(),
                 document.getDocumentTitle()==null || document.getDocumentTitle().isBlank()?
-                " " : document.getDocumentTitle(),
+                        " " : document.getDocumentTitle(),
 
                 (char) document.getRevision(),
 
                 document.getDocTag()==null?
                         AttachmentTagDto.toDto
                                 ():
-                AttachmentTagDto.toDocDto
-                        (document.getDocTag()),
+                        AttachmentTagDto.toDocDto
+                                (document.getDocTag()),
 
                 routeOrdering.getLifecycleStatus(),
                 document.getCreatedAt(),
@@ -111,14 +111,14 @@ public class DocumentReadDto {
                 document.getClassification()==null?
                         ClassificationDto.toDto()
                         :
-                ClassificationDto.toDocDto(document.getClassification()),
+                        ClassificationDto.toDocDto(document.getClassification()),
 
                 document.getDocumentContent(),
 
                 document.getAttachments()==null?
                         DocumentAttachmentDto.toDtoList()
                         :
-                attachmentDtoList,
+                        attachmentDtoList,
 
                 routeOrdering.getId(),
 
@@ -126,7 +126,7 @@ public class DocumentReadDto {
 
                 MemberDto.toDto(
                         document.getModifier()
-                ,
+                        ,
                         defaultImageAddress),
 
                 document.getTempsave(),
@@ -135,7 +135,10 @@ public class DocumentReadDto {
 
                 DocumentPreRejected(routeOrdering, routeProductRepository),
 
-                documentRepository.findByReviseTargetDoc(document)==null
+                (documentRepository.findByReviseTargetDoc(document)==null
+                        && (routeOrdering.getLifecycleStatus()=="COMPLETE"
+                        ||
+                        routeOrdering.getLifecycleStatus()=="RELEASE"))
                 //나를 revise 한 아이가 없으면 , revisePossible = true
 
 
@@ -224,82 +227,82 @@ public class DocumentReadDto {
     ){
         return
                 documents.stream().map(
-                document ->
-                        new DocumentReadDto(
-                                document.getId(),
+                        document ->
+                                new DocumentReadDto(
+                                        document.getId(),
 
-                                document.getDocumentNumber(),
-                                document.getDocumentTitle()==null || document.getDocumentTitle().isBlank()?
-                                        " " : document.getDocumentTitle(),
+                                        document.getDocumentNumber(),
+                                        document.getDocumentTitle()==null || document.getDocumentTitle().isBlank()?
+                                                " " : document.getDocumentTitle(),
 
-                                (char) document.getRevision(),
+                                        (char) document.getRevision(),
 
-                                document.getDocTag()==null?
-                                        AttachmentTagDto.toDto
-                                                ():
-                                        AttachmentTagDto.toDocDto
-                                                (document.getDocTag()),
+                                        document.getDocTag()==null?
+                                                AttachmentTagDto.toDto
+                                                        ():
+                                                AttachmentTagDto.toDocDto
+                                                        (document.getDocTag()),
 
-                                routeOrderingRepository.findByDocumentOrderByIdAsc(document).get(
+                                        routeOrderingRepository.findByDocumentOrderByIdAsc(document).get(
+                                                        routeOrderingRepository.findByDocumentOrderByIdAsc(document).size()-1
+                                                )
+                                                .getLifecycleStatus(),
+                                        document.getCreatedAt(),
+
+                                        MemberDto.toDto(
+                                                document.getMember(),
+                                                defaultImageAddress
+                                        ),
+
+                                        /////////////////////////////
+
+                                        document.getClassification()==null?
+                                                ClassificationDto.toDto()
+                                                :
+                                                ClassificationDto.toDocDto(document.getClassification()),
+
+                                        document.getDocumentContent(),
+
+                                        document.getAttachments()==null?
+                                                DocumentAttachmentDto.toDtoList()
+                                                :
+                                                document.getAttachments().
+                                                        stream().
+                                                        map(DocumentAttachmentDto::toDto)
+                                                        .collect(toList()),
+
+                                        routeOrderingRepository.findByDocumentOrderByIdAsc(document).get(
                                                 routeOrderingRepository.findByDocumentOrderByIdAsc(document).size()-1
-                                        )
-                                        .getLifecycleStatus(),
-                                document.getCreatedAt(),
+                                        ).getId(),
 
-                                MemberDto.toDto(
-                                        document.getMember(),
-                                        defaultImageAddress
-                                ),
+                                        document.getModifiedAt(),
 
-                                /////////////////////////////
+                                        MemberDto.toDto(
+                                                document.getModifier()
+                                                ,
+                                                defaultImageAddress),
 
-                                document.getClassification()==null?
-                                        ClassificationDto.toDto()
-                                        :
-                                        ClassificationDto.toDocDto(document.getClassification()),
+                                        document.getTempsave(),
 
-                                document.getDocumentContent(),
+                                        document.getReadonly(),
 
-                                document.getAttachments()==null?
-                                        DocumentAttachmentDto.toDtoList()
-                                        :
-                                        document.getAttachments().
-                                                stream().
-                                                map(DocumentAttachmentDto::toDto)
-                                                .collect(toList()),
+                                        DocumentPreRejected(routeOrderingRepository.findByDocumentOrderByIdAsc(document).get(
+                                                routeOrderingRepository.findByDocumentOrderByIdAsc(document).size()-1
+                                        ), routeProductRepository),
 
-                                routeOrderingRepository.findByDocumentOrderByIdAsc(document).get(
-                                        routeOrderingRepository.findByDocumentOrderByIdAsc(document).size()-1
-                                ).getId(),
-
-                                document.getModifiedAt(),
-
-                                MemberDto.toDto(
-                                        document.getModifier()
-                                        ,
-                                        defaultImageAddress),
-
-                                document.getTempsave(),
-
-                                document.getReadonly(),
-
-                                DocumentPreRejected(routeOrderingRepository.findByDocumentOrderByIdAsc(document).get(
-                                        routeOrderingRepository.findByDocumentOrderByIdAsc(document).size()-1
-                                ), routeProductRepository),
-
-                                documentRepository.findByReviseTargetDoc(document)==null
+                                        documentRepository.findByReviseTargetDoc(document)==null
 
 
 
 
-                        )
-        ).collect(toList());
+                                )
+                ).collect(toList());
 
     }
 
     private static boolean DocumentPreRejected
             (RouteOrdering routeOrdering,
-                                           RouteProductRepository routeProductRepository){
+             RouteProductRepository routeProductRepository){
 
         boolean preRejected = false;
 

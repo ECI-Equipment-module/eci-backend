@@ -9,6 +9,8 @@ import eci.server.CRCOModule.service.co.CoService;
 import eci.server.DashBoardModule.dto.myProject.ProjectDashboardDto;
 import eci.server.DesignModule.dto.DesignCreateUpdateResponse;
 import eci.server.ItemModule.dto.item.ItemProjectDashboardDto;
+import eci.server.ItemModule.dto.item.ItemUpdateRequest;
+import eci.server.ItemModule.dto.item.ItemUpdateResponse;
 import eci.server.ItemModule.entity.newRoute.RouteOrdering;
 import eci.server.ItemModule.exception.item.ItemNotFoundException;
 import eci.server.ItemModule.exception.member.MemberNotFoundException;
@@ -147,7 +149,7 @@ public class ProjectService {
 
     @Transactional
 
-    public ProjectTempCreateUpdateResponse update(Long id, ProjectUpdateRequest req) {
+    public ItemUpdateResponse update(Long id, ProjectUpdateRequest req) {
 
         Project project =  projectRepository.findById(id).orElseThrow(ProjectNotFoundException::new);
 
@@ -194,18 +196,41 @@ public class ProjectService {
         deleteAttachments(
                 result.getAttachmentUpdatedResult().getDeletedAttachments()
         );
-        return new ProjectTempCreateUpdateResponse(id);
+
+        Long routeId = -1L;
+        if(routeOrderingRepository.findByNewItemOrderByIdAsc(project.getNewItem()).size()>0) {
+            RouteOrdering routeOrdering = routeOrderingRepository
+                    .findByNewItemOrderByIdAsc(project.getNewItem()).get
+                    (
+                            routeOrderingRepository.findByNewItemOrderByIdAsc(project.getNewItem()).size()-1
+                    );
+            routeId = routeOrdering.getId();
+        }
+
+        return new ItemUpdateResponse(id, routeId);
 
     }
 
-    public ProjectTempCreateUpdateResponse update2(Long id, Long NewitemId) {
+    public ItemUpdateResponse update2(Long id, Long NewitemId) {
         Project project =  projectRepository.findById(id).orElseThrow(ProjectNotFoundException::new);
         project.updateNewItem(NewitemId, newItemRepository);
-        return new ProjectTempCreateUpdateResponse(project.getId());
+
+
+        Long routeId = -1L;
+        if(routeOrderingRepository.findByNewItemOrderByIdAsc(project.getNewItem()).size()>0) {
+            RouteOrdering routeOrdering = routeOrderingRepository
+                    .findByNewItemOrderByIdAsc(project.getNewItem()).get
+                            (
+                                    routeOrderingRepository.findByNewItemOrderByIdAsc(project.getNewItem()).size()-1
+                            );
+            routeId = routeOrdering.getId();
+        }
+
+        return new ItemUpdateResponse(project.getId(), routeId);
     }
 
     @Transactional
-    public DesignCreateUpdateResponse tempEnd(
+    public ItemUpdateResponse tempEnd(
             Long id, ProjectUpdateRequest req) {
 
         Project project = projectRepository.findById(id).
@@ -265,7 +290,7 @@ public class ProjectService {
         saveTrueAttachment(project);
         /////////////////////////////////////////////////////////////////////////
 
-        return new DesignCreateUpdateResponse(id, routeId);
+        return new ItemUpdateResponse(id, routeId);
 
     }
 

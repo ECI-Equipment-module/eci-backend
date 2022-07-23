@@ -57,7 +57,7 @@ public class NewItemPageController {
         Page<NewItem> itemList = newItemRepository.findByNewItems(itemList1, pageRequest);
 
         return itemList.map(
-                item -> NewItemPagingDto.toDto(item)
+                item -> NewItemPagingDto.toDto(item, defaultImageAddress)
         );
     }
 
@@ -114,7 +114,7 @@ public class NewItemPageController {
 
 
         return itemList.map(
-                item -> NewItemPagingDto.toDto(item)
+                item -> NewItemPagingDto.toDto(item, defaultImageAddress)
         );
     }
 
