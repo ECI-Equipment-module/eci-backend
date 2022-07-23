@@ -1185,19 +1185,8 @@ public class NewItemService {
         System.out.println("register target revise item rrrrrrrrrrrrrrr rrrrrr");
 
         NewItem newItemForRevise = newItemRepository.findById(newItemId).orElseThrow(ItemNotFoundException::new);
-        NewItemCreateResponse res1 = newItemForRevise.register_target_revise_item(targetId);
-
         // (2) 내가 복제할 대상인 아이템
         NewItem targetNewItem  = newItemRepository.findById(targetId).orElseThrow(ItemNotFoundException::new);
-
-        // (3) 이 아이템[(2)]을 revise target item 으로 등록해주기 (나중에 revise group 찾기 용임)
-        NewItemCreateResponse res2 = newItemForRevise.saving_target_revise_item(targetNewItem);
-
-        newItemForRevise.setReviseTargetNewItem(targetNewItem);
-        registerReviseIdPlease(newItemForRevise, targetNewItem);
-        System.out.println(newItemForRevise.getReviseTargetId());
-        System.out.println(newItemForRevise.getId());
-
         // 2. 제품인 아이들에 한해서만 초기 작업 -> 제품 아니라면 라우트오더링서비스에서 ITEM_REVIEW 승인할 때 아래 작업 진행
         // 그리고 아기(new item) 제품 타입이라면 아이템 등록할 때부터 revision update 진행
         // 아닌 애들은 어디서 updateRevision 하냐면 아이템 리뷰할 때 ! (아이템 리뷰 승인나야 revise o o )

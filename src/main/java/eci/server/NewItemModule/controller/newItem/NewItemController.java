@@ -48,10 +48,6 @@ public class NewItemController {
 
         NewItemCreateResponse response = newItemService.reviseCreate(req, targetId);
 //        newItemService.registerTargetReviseItem(targetId, response.getId());
-////        newItemService.registerReviseIdPlease(
-////                newItemRepository.findById(response.getId()).orElseThrow(ItemNotFoundException::new),
-////                newItemRepository.findById(targetId).orElseThrow(ItemNotFoundException::new)
-////        );
 //        System.out.println(targetId + response.getId() + "heeeeeee eeeeeeeeererererer");
 
         return Response.success(
