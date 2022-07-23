@@ -601,11 +601,21 @@ public class NewItemService {
                 result.getAttachmentUpdatedResult().getDeletedAttachments()
         );
 
-        return new ItemUpdateResponse(id);
+        //update 할 때도 routeId를 줘야지 동윤아
+        Long routeId = -1L;
+        if(routeOrderingRepository.findByNewItemOrderByIdAsc(item).size()>0) {
+            RouteOrdering routeOrdering = routeOrderingRepository.findByNewItemOrderByIdAsc(item).get
+                    (
+                            routeOrderingRepository.findByNewItemOrderByIdAsc(item).size()-1
+                    );
+            routeId = routeOrdering.getId();
+        }
+
+        return new ItemUpdateResponse(id, routeId);
     }
 
     @Transactional
-    public NewItemCreateResponse tempEnd(Long id, NewItemUpdateRequest req) {
+    public ItemUpdateResponse tempEnd(Long id, NewItemUpdateRequest req) {
 
         NewItem item = newItemRepository.findById(id).orElseThrow(ItemNotFoundException::new);
 
@@ -686,7 +696,16 @@ public class NewItemService {
 
         saveTrueAttachment(item);
 
-        return new NewItemCreateResponse(id);
+        Long routeId = -1L;
+        if(routeOrderingRepository.findByNewItemOrderByIdAsc(item).size()>0) {
+            RouteOrdering routeOrdering = routeOrderingRepository.findByNewItemOrderByIdAsc(item).get
+                    (
+                            routeOrderingRepository.findByNewItemOrderByIdAsc(item).size()-1
+                    );
+            routeId = routeOrdering.getId();
+        }
+
+        return new ItemUpdateResponse(id, routeId);
 
     }
 
