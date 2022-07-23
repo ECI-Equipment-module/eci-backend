@@ -1,20 +1,15 @@
 package eci.server.NewItemModule.entity;
 
 import eci.server.CRCOModule.entity.CoNewItem;
-import eci.server.DocumentModule.entity.DocumentAttachment;
 import eci.server.ItemModule.entity.entitycommon.EntityDate;
 import eci.server.ItemModule.entity.item.*;
-import eci.server.ItemModule.entity.newRoute.RouteProductMember;
 import eci.server.ItemModule.exception.item.ColorNotFoundException;
-import eci.server.ItemModule.exception.item.ItemNotFoundException;
 import eci.server.ItemModule.exception.member.sign.MemberNotFoundException;
 import eci.server.ItemModule.repository.color.ColorRepository;
 import eci.server.ItemModule.repository.item.ItemTypesRepository;
 import eci.server.ItemModule.repository.member.MemberRepository;
 import eci.server.NewItemModule.dto.newItem.create.NewItemCreateResponse;
 import eci.server.NewItemModule.dto.newItem.update.NewItemUpdateRequest;
-import eci.server.NewItemModule.entity.attachment.AttachmentTag;
-import eci.server.NewItemModule.entity.classification.Classification2;
 import eci.server.NewItemModule.entity.supplier.Maker;
 import eci.server.ItemModule.entity.member.Member;
 import eci.server.NewItemModule.entity.classification.Classification;
@@ -1422,6 +1417,7 @@ public class NewItem extends EntityDate {
     }
 
     public void setReviseTargetNewItem(NewItem reviseTargetNewItem) {
+        System.out.println(reviseTargetNewItem.id+"hiiiiiiiiiiiiiiiiii");
         this.reviseTargetNewItem = reviseTargetNewItem;
     }
 
