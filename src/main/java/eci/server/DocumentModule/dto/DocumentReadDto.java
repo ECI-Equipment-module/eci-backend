@@ -135,7 +135,10 @@ public class DocumentReadDto {
 
                 DocumentPreRejected(routeOrdering, routeProductRepository),
 
-                documentRepository.findByReviseTargetDoc(document)==null
+                (documentRepository.findByReviseTargetDoc(document)==null
+                && (routeOrdering.getLifecycleStatus()=="COMPLETE"
+                ||
+                        routeOrdering.getLifecycleStatus()=="RELEASE"))
                 //나를 revise 한 아이가 없으면 , revisePossible = true
 
 
