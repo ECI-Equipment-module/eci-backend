@@ -1599,7 +1599,7 @@ public class DashboardService {
                 new HashSet<>(changeOrderService.readCoAvailableInRelease());
 
         for (ChangeOrder changeOrder : changeOrders) {
-            unlinkedItemTodoResponses.add(
+            unlinkedCoTodoResponses.add(
                     new TodoResponse(
                             changeOrder.getId(),
                             changeOrder.getName(),
