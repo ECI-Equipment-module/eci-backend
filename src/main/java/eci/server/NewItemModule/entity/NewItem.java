@@ -1417,8 +1417,12 @@ public class NewItem extends EntityDate {
         this.reviseTargetNewItem = newItem;
 
         return new NewItemCreateResponse(
-                this.id
+                newItem.id
         );
+    }
+
+    public void setReviseTargetNewItem(NewItem reviseTargetNewItem) {
+        this.reviseTargetNewItem = reviseTargetNewItem;
     }
 
     /**
