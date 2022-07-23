@@ -318,6 +318,7 @@ public class NewItemService {
         item.updateReadOnlyWhenSaved(); //저장하면 readonly = true
         saveTrueAttachment(item); //06-17 찐 저장될 때
 
+
         return new NewItemCreateResponse(item.getId());
     }
 
