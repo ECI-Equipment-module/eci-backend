@@ -189,7 +189,7 @@ public class NewItemCreateRequest {
         if(req.getDuplicateTargetIds()!=null && req.getDuplicateTargetIds().size()>0){
 
             int standardIdx = req.getDuplicateTargetIds().size();
-
+            System.out.println(req.getTag().size()+"tag의 사이즈? "+req.getTag().get(0));
             // tag 작업
             oldDocTag = new ArrayList<>(req.getTag().subList(0,standardIdx));
             newDocTag = new ArrayList<>(req.getTag().subList(standardIdx, req.getTag().size()));
