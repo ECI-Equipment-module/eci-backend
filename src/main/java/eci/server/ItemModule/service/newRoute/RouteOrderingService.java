@@ -901,7 +901,7 @@ public class RouteOrderingService {
                                             bomRepository.findByNewItemOrderByIdAsc(routeOrdering.getNewItem()).size() - 1
                                     );
 
-                    // 디자인 리뷰 승인 나면 아이템 정보 관계 맺어주기
+                    // 봄  리뷰 승인 나면 아이템 정보 관계 맺어주기
                     bomService.makeFinalBom(bom);
 
                 }

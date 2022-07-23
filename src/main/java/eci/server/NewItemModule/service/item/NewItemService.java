@@ -818,6 +818,7 @@ public class NewItemService {
 
     /**
      * 제품 중 상태가 complete 나 release 인 애들만 데려오기 - compare bom 용
+     * - 수정사항 : compare bom 은 그냥 제품이면 다 가능 ㅇ
      * @return
      */
     public List<NewItem> readCompareBomItems() {
@@ -835,38 +836,63 @@ public class NewItemService {
 
         List<NewItem> itemListProduct = newItemRepository.findByItemTypes(itemTypes);
 
-        //1-2) 상태가 release 나 complete인 것만 최종 제품에 담을 예정
+//        //1-2) 상태가 release 나 complete인 것만 최종 제품에 담을 예정
+//        List<NewItem> finalProducts = new ArrayList<>();
+//
+//        for(NewItem newItem : itemListProduct){
+//            if(
+//                    routeOrderingRepository.findByNewItemOrderByIdAsc(newItem).size()>0
+//                            && (routeOrderingRepository.findByNewItemOrderByIdAsc(newItem).get(
+//                            routeOrderingRepository.findByNewItemOrderByIdAsc(newItem).size()-1
+//                    ).getLifecycleStatus().equals("COMPLETE") ||
+//                            (routeOrderingRepository.findByNewItemOrderByIdAsc(newItem).get(
+//                                    routeOrderingRepository.findByNewItemOrderByIdAsc(newItem).size()-1
+//                            ).getLifecycleStatus().equals("RELEASE")
+//                            )
+//                    )
+//            ){
+//                finalProducts.add(newItem);
+//            }
+//        }
+
+        //1-2) revise 중 아니고, 최신 revise 인 제품들만 !
         List<NewItem> finalProducts = new ArrayList<>();
 
         for(NewItem newItem : itemListProduct){
-            if(
-                    routeOrderingRepository.findByNewItemOrderByIdAsc(newItem).size()>0
-                            && (routeOrderingRepository.findByNewItemOrderByIdAsc(newItem).get(
-                            routeOrderingRepository.findByNewItemOrderByIdAsc(newItem).size()-1
-                    ).getLifecycleStatus().equals("COMPLETE") ||
-                            (routeOrderingRepository.findByNewItemOrderByIdAsc(newItem).get(
-                                    routeOrderingRepository.findByNewItemOrderByIdAsc(newItem).size()-1
-                            ).getLifecycleStatus().equals("RELEASE")
-                            )
-                    )
-            ){
-                finalProducts.add(newItem);
+            if(!newItem.isRevise_progress() ) {
+                if(newItem.getReviseTargetId()!=null){
+                    NewItem targetNewItem = newItemRepository.findById(newItem.getReviseTargetId())
+                            .orElseThrow(ItemNotFoundException::new);
+
+                    if(!targetNewItem.isRevise_progress()){
+                        finalProducts.add(newItem);
+                    }
+                }
+                else {
+                    finalProducts.add(newItem);
+                }
             }
         }
 
-        return finalProducts;
+        // 추가적으로 최신 revise 만 가능 , 나를 revise 한 애가 하나도 없는 애만 뜨게 할거야
+        //List affectedItemList = new ArrayList(affectedItems);
+
+        List finalReturnItemList = new ArrayList();
+
+        for(NewItem newItem : finalProducts){
+            if(newItemRepository.findByReviseTargetNewItem(newItem)==null){
+                finalReturnItemList.add(newItem);
+            }
+        }
+
+        return finalReturnItemList;
     }
-
-    /**
-     * affected item
-     * 상태 complete, release, 아이템 - revise_progress=false 인 아이들만
-     *
-     */
-
 
     /**
      * affected items
      * 제품 중 상태가 complete 나 release 인 애들만 데려오기 - compare bom 용
+     *  상태 complete, release, 아이템 - revise_progress=false 인 아이들만
+     * & 현재 revise 진행 중 아니고, 최신 revise 아이만 유효한 것이지
      * @return
      */
     public List<NewItem> readAffectedItems() {
