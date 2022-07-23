@@ -14,11 +14,11 @@ import javax.validation.Valid;
 
 @RequiredArgsConstructor
 @RestController
-@CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
+@CrossOrigin(origins = "https://localhost:3000")
 public class CarTypeController {
     private final CarTypeService carTypeService;
 
-    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
+    @CrossOrigin(origins = "https://localhost:3000")
     @GetMapping("/carTypeId")
     @ResponseStatus(HttpStatus.OK)
     public Response readAll(@Valid CarTypeReadCondition cond) {

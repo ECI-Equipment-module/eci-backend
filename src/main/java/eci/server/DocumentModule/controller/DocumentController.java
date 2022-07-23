@@ -19,7 +19,7 @@ import javax.validation.Valid;
 @RestController
 @RequiredArgsConstructor
 @Slf4j
-@CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
+@CrossOrigin(origins = "https://localhost:3000")
 public class DocumentController {
 
     private final DocumentService documentService;
@@ -31,7 +31,7 @@ public class DocumentController {
      * @param req
      * @return 200 (success)
      */
-    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
+    @CrossOrigin(origins = "https://localhost:3000")
     @PostMapping("/doc/{targetId}")
     @ResponseStatus(HttpStatus.CREATED)
     @AssignMemberId // Aspect : 인증된 사용자 정보로 아이템 작성자 지정 가능
@@ -58,7 +58,7 @@ public class DocumentController {
      * @param req
      * @return 200 (success)
      */
-    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
+    @CrossOrigin(origins = "https://localhost:3000")
     @PostMapping("/doc")
     @ResponseStatus(HttpStatus.CREATED)
     @AssignMemberId // Aspect : 인증된 사용자 정보로 아이템 작성자 지정 가능
@@ -83,7 +83,7 @@ public class DocumentController {
      * @param req
      * @return 200 (success)
      */
-    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
+    @CrossOrigin(origins = "https://localhost:3000")
     @PostMapping("/doc/temp/{targetId}")
     @ResponseStatus(HttpStatus.CREATED)
     @AssignMemberId // Aspect : 인증된 사용자 정보로 아이템 작성자 지정 가능
@@ -109,7 +109,7 @@ public class DocumentController {
      * @param req
      * @return 200 (success)
      */
-    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
+    @CrossOrigin(origins = "https://localhost:3000")
     @PostMapping("/doc/temp")
     @ResponseStatus(HttpStatus.CREATED)
     @AssignMemberId // Aspect : 인증된 사용자 정보로 아이템 작성자 지정 가능
@@ -126,7 +126,7 @@ public class DocumentController {
     }
 
 
-    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
+    @CrossOrigin(origins = "https://localhost:3000")
     @DeleteMapping("/doc/{id}")
     @ResponseStatus(HttpStatus.OK)
     @AssignMemberId // Aspect : 인증된 사용자 정보로 아이템 작성자 지정 가능
@@ -139,7 +139,7 @@ public class DocumentController {
     }
 
     @AssignMemberId
-    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
+    @CrossOrigin(origins = "https://localhost:3000")
     @GetMapping(value = "/doc/{id}")
     @ResponseStatus(HttpStatus.OK)
     public Response read(
@@ -150,7 +150,7 @@ public class DocumentController {
         );
     }
 
-    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
+    @CrossOrigin(origins = "https://localhost:3000")
     @PutMapping("/doc/{id}")
     @ResponseStatus(HttpStatus.CREATED)
     @AssignModifierId //0605 : 수정 시에는 글쓴이 아디 주입 아니고, 수정자 아이디 주입
@@ -164,7 +164,7 @@ public class DocumentController {
                 documentService.update(id, req));
     }
 
-    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
+    @CrossOrigin(origins = "https://localhost:3000")
     @PutMapping("/doc/temp/end/{id}")
     @ResponseStatus(HttpStatus.CREATED)
     @AssignModifierId

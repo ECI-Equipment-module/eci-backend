@@ -14,10 +14,10 @@ import javax.validation.Valid;
 
 @RequiredArgsConstructor
 @RestController
-@CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
+@CrossOrigin(origins = "https://localhost:3000")
 public class CoStageController{
     private final CoStageService CoStageService;
-    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
+    @CrossOrigin(origins = "https://localhost:3000")
     @GetMapping("/coStageId")
     @ResponseStatus(HttpStatus.OK)
     public Response readAll(@Valid CoStageReadCondition cond) {

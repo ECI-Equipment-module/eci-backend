@@ -39,7 +39,7 @@ public class CoPageController{
     @Value("${default.image.address}")
     private String defaultImageAddress;
 
-    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
+    @CrossOrigin(origins = "https://localhost:3000")
     @GetMapping("/co/page")
     public Page<CrPagingDto> readCrPages(@PageableDefault(size=5)
                                          @SortDefault.SortDefaults({
@@ -72,7 +72,7 @@ public class CoPageController{
 
     }
 
-    @CrossOrigin(origins = "https://naughty-raman-7e7eb1.netlify.app")
+    @CrossOrigin(origins = "https://localhost:3000")
     @GetMapping("/releaseCoId")
     public CoListDto readCoFromRelease(@PageableDefault(size=5)
                                          @SortDefault.SortDefaults({
