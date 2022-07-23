@@ -5,6 +5,7 @@ import eci.server.BomModule.repository.PreliminaryBomRepository;
 import eci.server.CRCOModule.entity.CrAttachment;
 import eci.server.CRCOModule.repository.co.ChangeOrderRepository;
 import eci.server.ItemModule.dto.item.ItemCreateResponse;
+import eci.server.ItemModule.dto.item.ItemUpdateResponse;
 import eci.server.ItemModule.dto.newRoute.routeOrdering.RouteOrderingDto;
 import eci.server.ItemModule.entity.newRoute.RouteOrdering;
 import eci.server.ItemModule.exception.route.RouteNotFoundException;
@@ -124,7 +125,7 @@ public class ReleaseService {
      */
     @Transactional
 
-    public ProjectTempCreateUpdateResponse update(Long id, ReleaseUpdateRequest req) {
+    public ItemUpdateResponse update(Long id, ReleaseUpdateRequest req) {
 
         Releasing release = releaseRepository.findById(id)
                 .orElseThrow(ReleaseNotFoundException::new);
@@ -163,7 +164,18 @@ public class ReleaseService {
         deleteAttachments(
                 result.getAttachmentUpdatedResult().getDeletedAttachments()
         );
-        return new ProjectTempCreateUpdateResponse(id);
+
+        Long routeId = -1L;
+        if(routeOrderingRepository.findByNewItemOrderByIdAsc(release.getNewItem()).size()>0) {
+            RouteOrdering routeOrdering = routeOrderingRepository
+                    .findByNewItemOrderByIdAsc(release.getNewItem()).get
+                            (
+                                    routeOrderingRepository.findByNewItemOrderByIdAsc(release.getNewItem()).size()-1
+                            );
+            routeId = routeOrdering.getId();
+        }
+
+        return new ItemUpdateResponse(id, routeId);
 
     }
 

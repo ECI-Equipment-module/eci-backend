@@ -7,4 +7,5 @@ import lombok.Data;
 @AllArgsConstructor
 public class ItemUpdateResponse {
     private Long id;
+    private Long routeId;
 }
