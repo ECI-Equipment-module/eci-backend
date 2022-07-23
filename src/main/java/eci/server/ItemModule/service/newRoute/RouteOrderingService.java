@@ -47,6 +47,7 @@ import eci.server.NewItemModule.exception.ItemTypeRequiredException;
 import eci.server.NewItemModule.repository.item.NewItemRepository;
 import eci.server.NewItemModule.service.item.NewItemService;
 import eci.server.ProjectModule.entity.project.Project;
+import eci.server.ProjectModule.exception.ProjectNotLinkedException;
 import eci.server.ProjectModule.repository.project.ProjectRepository;
 import eci.server.ReleaseModule.entity.Releasing;
 import eci.server.ReleaseModule.exception.ReleaseNotFoundException;
@@ -769,6 +770,7 @@ public class RouteOrderingService {
 //                if (projectRepository.findByNewItemOrderByIdAsc(routeOrdering.getNewItem()).size() == 0) {
 //                    throw new ProjectNotLinkedException();
 //                } else {
+                if(projectRepository.findByNewItemOrderByIdAsc(routeOrdering.getNewItem()).size()>0) {
                     Project linkedProject =
                             projectRepository.findByNewItemOrderByIdAsc(routeOrdering.getNewItem())
                                     .get(
@@ -779,6 +781,9 @@ public class RouteOrderingService {
                     targetRoutProduct.getRouteOrdering().setProject(linkedProject);
                     //05-12 추가사항 : 이 라우트를 제작해줄 때야 비로소 프로젝트는 temp save = false 가 되는 것
                     linkedProject.finalSaveProject();
+                }else{
+                    throw new ProjectNotLinkedException();
+                }
                 //}
             }
 
@@ -901,7 +906,7 @@ public class RouteOrderingService {
                                             bomRepository.findByNewItemOrderByIdAsc(routeOrdering.getNewItem()).size() - 1
                                     );
 
-                    // 디자인 리뷰 승인 나면 아이템 정보 관계 맺어주기
+                    // 봄  리뷰 승인 나면 아이템 정보 관계 맺어주기
                     bomService.makeFinalBom(bom);
 
                 }

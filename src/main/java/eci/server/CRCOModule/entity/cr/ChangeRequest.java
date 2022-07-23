@@ -256,6 +256,7 @@ public class ChangeRequest extends EntityDate {
 
 
             i.setAttach_comment(
+                    newComment.size()==0?" ":
                     newComment.get(
                             (added.indexOf(i))
                     ).isBlank()?
@@ -631,10 +632,13 @@ public class ChangeRequest extends EntityDate {
         olds.stream().forEach(i -> {
 
                     i.setAttach_comment(
-                            oldComment.size()==0?
-                                    "":oldComment.get(
-                                    (olds.indexOf(i))
-                            )
+                            oldComment.size()==0?" ":
+                                    oldComment.get(
+                                            (olds.indexOf(i))
+                                    ).isBlank()?
+                                            " ":oldComment.get(
+                                            (olds.indexOf(i))
+                                    )
                     );
 
                     i.setTag(attachmentTagRepository

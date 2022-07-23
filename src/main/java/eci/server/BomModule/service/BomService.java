@@ -179,7 +179,6 @@ public class BomService {
 
             developmentBom.setTempRelation(req.toString());
 
-
             if ((req.getChildId()).size() != req.getParentId().size()) {
                 throw new AddedDevBomNotPossible();
             }

@@ -219,7 +219,8 @@ public class RouteProductCreateRequest {
         // 2) 나머지 routeProduct는 돌려서 생성
 
         List<RouteProduct> restRouteProducts = new ArrayList<>();
-
+        List<Member> emptyRouteMember = new ArrayList<>();
+        emptyRouteMember.add(memberRepository.findById(1L).orElseThrow(MemberNotFoundException::new));
         Integer index = 0;
 
         for(List list : req.getMemberIds()){
@@ -246,7 +247,9 @@ public class RouteProductCreateRequest {
                     true,
                     false,
                     -1,
-                    req.getMemberIds().get(index) //memberIds에서는 0부터 시작(request member 포함x)
+                    req.getMemberIds().get(index)==null?
+                            emptyRouteMember
+                            :req.getMemberIds().get(index) //memberIds에서는 0부터 시작(request member 포함x)
                             .stream().map(
                                     m->
                                             memberRepository.findById(m).

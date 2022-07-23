@@ -1,6 +1,7 @@
 package eci.server.ProjectModule.controller.project;
 
 import eci.server.DesignModule.dto.DesignCreateUpdateResponse;
+import eci.server.ItemModule.dto.item.ItemUpdateResponse;
 import eci.server.ItemModule.dto.response.Response;
 import eci.server.NewItemModule.dto.newItem.create.NewItemCreateResponse;
 import eci.server.ProjectModule.dto.project.*;
@@ -123,9 +124,9 @@ public class ProjectController {
             @Valid @ModelAttribute ProjectUpdateRequest req) {
         NewItemCreateResponse response1 =
                 projectService.changeProjectItemToNewMadeItem(revisedId, newMadeItemId);
-        ProjectTempCreateUpdateResponse res2 = projectService.update2(revisedId, newMadeItemId);
+        ItemUpdateResponse res2 = projectService.update2(revisedId, newMadeItemId);
         System.out.println(response1 + "이 수행1111 ");
-        ProjectTempCreateUpdateResponse response = projectService.update(revisedId, req);
+        ItemUpdateResponse response = projectService.update(revisedId, req);
         //기존 프로젝트 업데이트
         NewItemCreateResponse response2 =
                 projectService.changeProjectItemToNewMadeItem(revisedId, newMadeItemId);
@@ -150,14 +151,14 @@ public class ProjectController {
     ) {
         NewItemCreateResponse response1 =
                 projectService.changeProjectItemToNewMadeItem(revisedId, newMadeItemId);
-        ProjectTempCreateUpdateResponse res2 = projectService.update2(revisedId, newMadeItemId);
-        DesignCreateUpdateResponse response = projectService.tempEnd(revisedId, req);
+        ItemUpdateResponse res2 = projectService.update2(revisedId, newMadeItemId);
+        ItemUpdateResponse response = projectService.tempEnd(revisedId, req);
         // 기존 프로젝트 업데이트
         projectService.changeProjectItemToNewMadeItem(revisedId, newMadeItemId);
         // 기존 프로젝트 아이템 값만 new item 라는 새 아이템으로 바꿔치기 해주기
         NewItemCreateResponse response3 =
                 projectService.changeProjectItemToNewMadeItem(revisedId, newMadeItemId);
-        ProjectTempCreateUpdateResponse res4 = projectService.update2(revisedId, newMadeItemId);
+        ItemUpdateResponse res4 = projectService.update2(revisedId, newMadeItemId);
         response.setRouteId(projectService.routeIdReturn(newMadeItemId));
         System.out.println(response1 + "이 수행222 ");
         return Response.success(

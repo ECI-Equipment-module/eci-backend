@@ -203,7 +203,7 @@ public class NewItemTemporaryCreateRequest {
                                             oldDocTag.get(duplicatedTargetAttaches.indexOf(d))
                                     ).orElseThrow(AttachmentNotFoundException::new).getName(),
 
-
+                                    oldDocComment.size()==0||
                                     oldDocComment.get(duplicatedTargetAttaches.indexOf(d)) == null
                                             ||
                                             oldDocComment.get(duplicatedTargetAttaches.indexOf(d)).isBlank()
@@ -507,7 +507,8 @@ public class NewItemTemporaryCreateRequest {
                                         .findById(newDocTag.get(req.attachments.indexOf(i))).
                                         orElseThrow(AttachmentNotFoundException::new).getName(),
 
-                                newDocComment.get(
+                                newDocComment.size()==0?" "
+                                :newDocComment.get(
                                         req.attachments.indexOf(i)
                                         )
                                         .isBlank() ?

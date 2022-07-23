@@ -1,9 +1,7 @@
 package eci.server.CRCOModule.controller.features;
 
 import eci.server.CRCOModule.dto.featurescond.ChangedFeatureReadCondition;
-import eci.server.CRCOModule.dto.featurescond.CoEffectReadCondition;
 import eci.server.CRCOModule.service.features.ChangedFeatureService;
-import eci.server.CRCOModule.service.features.CoEffectService;
 import eci.server.ItemModule.dto.response.Response;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

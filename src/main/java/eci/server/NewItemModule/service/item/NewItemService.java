@@ -1,10 +1,8 @@
 package eci.server.NewItemModule.service.item;
 
 import eci.server.BomModule.repository.BomRepository;
-import eci.server.BomModule.repository.PreliminaryBomRepository;
 import eci.server.DesignModule.dto.DesignContentDto;
 import eci.server.DesignModule.repository.DesignRepository;
-import eci.server.DocumentModule.entity.DocumentAttachment;
 import eci.server.ItemModule.dto.item.*;
 import eci.server.ItemModule.dto.newRoute.routeOrdering.RouteOrderingDto;
 
@@ -33,7 +31,6 @@ import eci.server.NewItemModule.dto.newItem.create.NewItemCreateResponse;
 import eci.server.NewItemModule.dto.newItem.create.NewItemTemporaryCreateRequest;
 import eci.server.NewItemModule.dto.newItem.update.NewItemUpdateRequest;
 import eci.server.NewItemModule.entity.*;
-import eci.server.NewItemModule.entity.attachment.Attachment;
 import eci.server.NewItemModule.repository.TempNewItemParentChildrenRepository;
 import eci.server.NewItemModule.repository.attachment.AttachmentTagRepository;
 import eci.server.NewItemModule.repository.attachment.NewItemAttachmentRepository;
@@ -49,7 +46,6 @@ import eci.server.NewItemModule.repository.supplier.SupplierRepository;
 import eci.server.ProjectModule.repository.carType.CarTypeRepository;
 import eci.server.ProjectModule.repository.clientOrg.ClientOrganizationRepository;
 import eci.server.ProjectModule.repository.project.ProjectRepository;
-import eci.server.ReleaseModule.entity.ReleaseAttachment;
 import eci.server.config.guard.AuthHelper;
 import eci.server.config.guard.DesignGuard;
 import lombok.AllArgsConstructor;
@@ -92,7 +88,6 @@ public class NewItemService {
     private final DesignRepository designRepository;
     private final BomRepository bomRepository;
     private final DesignGuard designGuard;
-    private final PreliminaryBomRepository preliminaryBomRepository;
     private final NewItemParentChildrenRepository newItemParentChildrenRepository;
 
     private final NewItemAttachmentRepository newItemAttachmentRepository;
@@ -171,6 +166,7 @@ public class NewItemService {
         );
 
         item.setReviseTargetId(targetId);
+        item.setReviseTargetNewItem(newItemRepository.findById(targetId).orElseThrow(ItemNotFoundException::new));
 
         if( item.getItemTypes().getItemType().name().equals("파트제품") ||
                 item.getItemTypes().getItemType().name().equals("프로덕트제품")){
@@ -279,6 +275,7 @@ public class NewItemService {
         );
 
         item.setReviseTargetId(targetId);
+        item.setReviseTargetNewItem(newItemRepository.findById(targetId).orElseThrow(ItemNotFoundException::new));
 
         NewItem targetItem = newItemRepository.findById(targetId).orElseThrow(ItemNotFoundException::new);
 
@@ -303,9 +300,13 @@ public class NewItemService {
             item.setThumbnail(
 
                     new NewItemImage(
-                            targetItem.getThumbnail().getUniqueName(),
-                            targetItem.getThumbnail().getOriginName(),
-                            targetItem.getThumbnail().getImageaddress(),
+                            targetItem.getThumbnail()==null?
+                                    " ":targetItem.getThumbnail().getUniqueName(),
+                            targetItem.getThumbnail()==null?
+                                    " ":targetItem.getThumbnail().getOriginName(),
+                            targetItem.getThumbnail()==null?
+                                    defaultImageAddress
+                            :targetItem.getThumbnail().getImageaddress(),
                             item
                     )
             );
@@ -606,11 +607,21 @@ public class NewItemService {
                 result.getAttachmentUpdatedResult().getDeletedAttachments()
         );
 
-        return new ItemUpdateResponse(id);
+        //update 할 때도 routeId를 줘야지 동윤아
+        Long routeId = -1L;
+        if(routeOrderingRepository.findByNewItemOrderByIdAsc(item).size()>0) {
+            RouteOrdering routeOrdering = routeOrderingRepository.findByNewItemOrderByIdAsc(item).get
+                    (
+                            routeOrderingRepository.findByNewItemOrderByIdAsc(item).size()-1
+                    );
+            routeId = routeOrdering.getId();
+        }
+
+        return new ItemUpdateResponse(id, routeId);
     }
 
     @Transactional
-    public NewItemCreateResponse tempEnd(Long id, NewItemUpdateRequest req) {
+    public ItemUpdateResponse tempEnd(Long id, NewItemUpdateRequest req) {
 
         NewItem item = newItemRepository.findById(id).orElseThrow(ItemNotFoundException::new);
 
@@ -691,7 +702,16 @@ public class NewItemService {
 
         saveTrueAttachment(item);
 
-        return new NewItemCreateResponse(id);
+        Long routeId = -1L;
+        if(routeOrderingRepository.findByNewItemOrderByIdAsc(item).size()>0) {
+            RouteOrdering routeOrdering = routeOrderingRepository.findByNewItemOrderByIdAsc(item).get
+                    (
+                            routeOrderingRepository.findByNewItemOrderByIdAsc(item).size()-1
+                    );
+            routeId = routeOrdering.getId();
+        }
+
+        return new ItemUpdateResponse(id, routeId);
 
     }
 
@@ -712,7 +732,8 @@ public class NewItemService {
         return NewItemParentDto.toDtoList(
                 newItemParentChildrenRepository.
                         findAllWithChildByChildId(id),//ByParentIdOrderByParentIdAscNullsFirst(
-                newItemParentChildrenRepository
+                newItemParentChildrenRepository,
+                defaultImageAddress
 
         );
 
@@ -720,7 +741,7 @@ public class NewItemService {
 
     public NewItemParentDto topTreeAndItsParents(Long id){
         NewItem newItem = newItemRepository.findById(id).orElseThrow(ItemNotFoundException::new);
-        NewItemParentDto result = NewItemParentDto.toTopDto(newItem);
+        NewItemParentDto result = NewItemParentDto.toTopDto(newItem, defaultImageAddress);
         result.setChildren(readParentAll(id));
         return result;
     }
@@ -761,6 +782,7 @@ public class NewItemService {
         List<NewItem> itemListProduct = newItemRepository.findByItemTypes(itemTypes);
 
         //1-2) 상태가 release 나 complete인 것만 최종 제품에 담을 예정
+        //0723 plus -> revise 중이면 안됨, 또한 최신 revise item 하나만 이어야 한다.
         List<NewItem> finalProducts = new ArrayList<>();
 
         for(NewItem newItem : itemListProduct){
@@ -775,7 +797,30 @@ public class NewItemService {
                             )
                     )
             ){
-                finalProducts.add(newItem);
+                //추가로 지금 현재 revise 진행 중이면 안된다.
+                if(!newItem.isRevise_progress() ) {
+                    if(newItem.getReviseTargetId()!=null){
+                        NewItem targetNewItem = newItemRepository.findById(newItem.getReviseTargetId())
+                                .orElseThrow(ItemNotFoundException::new);
+
+                        if(!targetNewItem.isRevise_progress()){
+                            finalProducts.add(newItem);
+                        }
+                    }
+                    else {
+                        finalProducts.add(newItem);
+                    }
+                }
+
+            }
+        }
+
+        // 1-3 ) 다른 누군가 나를 한번도 revise 하지 않았다~(최신 revise) 인 아이들만
+        List finalRecentReviseItemList = new ArrayList();
+
+        for(NewItem newItem : finalProducts){
+            if(newItemRepository.findByReviseTargetNewItem(newItem)==null){
+                finalRecentReviseItemList.add(newItem);
             }
         }
 
@@ -798,11 +843,43 @@ public class NewItemService {
         elseItemTypes.add(itemTypesRepository.findByItemType(itemTypeList.get(5)));
 
         List<NewItem> itemListElse = newItemRepository.findByItemTypes(elseItemTypes);
+
+        //얘네도 revise 중이 아니고
+        Set<NewItem> semiFinalItemElseItems = new HashSet<>();
+
+        for(NewItem newItem : itemListElse){
+
+            if(!newItem.isRevise_progress() ) {
+                if(newItem.getReviseTargetId()!=null){
+                    NewItem targetNewItem = newItemRepository.findById(newItem.getReviseTargetId())
+                            .orElseThrow(ItemNotFoundException::new);
+
+                    if(!targetNewItem.isRevise_progress()){
+                        semiFinalItemElseItems.add(newItem);
+                    }
+                }
+                else {
+                    semiFinalItemElseItems.add(newItem);
+                }
+            }
+        }
+
+        // revise 최신인 아이템만 데려올 수 있지.
+
+        List finalElseItemList = new ArrayList();
+
+        for(NewItem newItem : semiFinalItemElseItems){
+            if(newItemRepository.findByReviseTargetNewItem(newItem)==null){
+                finalElseItemList.add(newItem);
+            }
+        }
+
+
         //제품 이외 아이템 더하고
-        itemListElse.addAll(finalProducts);
+        finalElseItemList.addAll(finalRecentReviseItemList);
         //여기에 상태 완료된 제품 아이템 더하기
 
-        return itemListElse;
+        return finalElseItemList;
     }
 
     private void saveTrueAttachment(NewItem target) {
@@ -817,6 +894,7 @@ public class NewItemService {
 
     /**
      * 제품 중 상태가 complete 나 release 인 애들만 데려오기 - compare bom 용
+     * - 수정사항 : compare bom 은 그냥 제품이면 다 가능 ㅇ
      * @return
      */
     public List<NewItem> readCompareBomItems() {
@@ -834,38 +912,63 @@ public class NewItemService {
 
         List<NewItem> itemListProduct = newItemRepository.findByItemTypes(itemTypes);
 
-        //1-2) 상태가 release 나 complete인 것만 최종 제품에 담을 예정
+//        //1-2) 상태가 release 나 complete인 것만 최종 제품에 담을 예정
+//        List<NewItem> finalProducts = new ArrayList<>();
+//
+//        for(NewItem newItem : itemListProduct){
+//            if(
+//                    routeOrderingRepository.findByNewItemOrderByIdAsc(newItem).size()>0
+//                            && (routeOrderingRepository.findByNewItemOrderByIdAsc(newItem).get(
+//                            routeOrderingRepository.findByNewItemOrderByIdAsc(newItem).size()-1
+//                    ).getLifecycleStatus().equals("COMPLETE") ||
+//                            (routeOrderingRepository.findByNewItemOrderByIdAsc(newItem).get(
+//                                    routeOrderingRepository.findByNewItemOrderByIdAsc(newItem).size()-1
+//                            ).getLifecycleStatus().equals("RELEASE")
+//                            )
+//                    )
+//            ){
+//                finalProducts.add(newItem);
+//            }
+//        }
+
+        //1-2) revise 중 아니고, 최신 revise 인 제품들만 !
         List<NewItem> finalProducts = new ArrayList<>();
 
         for(NewItem newItem : itemListProduct){
-            if(
-                    routeOrderingRepository.findByNewItemOrderByIdAsc(newItem).size()>0
-                            && (routeOrderingRepository.findByNewItemOrderByIdAsc(newItem).get(
-                            routeOrderingRepository.findByNewItemOrderByIdAsc(newItem).size()-1
-                    ).getLifecycleStatus().equals("COMPLETE") ||
-                            (routeOrderingRepository.findByNewItemOrderByIdAsc(newItem).get(
-                                    routeOrderingRepository.findByNewItemOrderByIdAsc(newItem).size()-1
-                            ).getLifecycleStatus().equals("RELEASE")
-                            )
-                    )
-            ){
-                finalProducts.add(newItem);
+            if(!newItem.isRevise_progress() ) {
+                if(newItem.getReviseTargetId()!=null){
+                    NewItem targetNewItem = newItemRepository.findById(newItem.getReviseTargetId())
+                            .orElseThrow(ItemNotFoundException::new);
+
+                    if(!targetNewItem.isRevise_progress()){
+                        finalProducts.add(newItem);
+                    }
+                }
+                else {
+                    finalProducts.add(newItem);
+                }
             }
         }
 
-        return finalProducts;
+        // 1-3) 추가적으로 최신 revise 만 가능 , 나를 revise 한 애가 하나도 없는 애만 뜨게 할거야
+        //List affectedItemList = new ArrayList(affectedItems);
+
+        List finalReturnItemList = new ArrayList();
+
+        for(NewItem newItem : finalProducts){
+            if(newItemRepository.findByReviseTargetNewItem(newItem)==null){
+                finalReturnItemList.add(newItem);
+            }
+        }
+
+        return finalReturnItemList;
     }
-
-    /**
-     * affected item
-     * 상태 complete, release, 아이템 - revise_progress=false 인 아이들만
-     *
-     */
-
 
     /**
      * affected items
      * 제품 중 상태가 complete 나 release 인 애들만 데려오기 - compare bom 용
+     *  상태 complete, release, 아이템 - revise_progress=false 인 아이들만
+     * & 현재 revise 진행 중 아니고, 최신 revise 아이만 유효한 것이지
      * @return
      */
     public List<NewItem> readAffectedItems() {
@@ -911,9 +1014,19 @@ public class NewItemService {
                 }
             }
         }
-    List affectedItemList = new ArrayList(affectedItems);
 
-        return affectedItemList;
+        // 추가적으로 최신 revise 만 가능 , 나를 revise 한 애가 하나도 없는 애만 뜨게 할거야
+    //List affectedItemList = new ArrayList(affectedItems);
+
+        List finalAffectedItemList = new ArrayList();
+
+        for(NewItem newItem : affectedItems){
+            if(newItemRepository.findByReviseTargetNewItem(newItem)==null){
+                finalAffectedItemList.add(newItem);
+            }
+        }
+
+        return finalAffectedItemList;
     }
 
     /**
@@ -1068,20 +1181,12 @@ public class NewItemService {
 
         // 1. 공통 작업 (제품이든 아니든) - target_id 및 revise_id 로 내가 지금 복제할 대상 등록
         //(1)
-        System.out.println("register target revise item rrrrrrrrrrrrrrr rrrrrr");
-        NewItem newItemForRevise = newItemRepository.findById(newItemId).orElseThrow(ItemNotFoundException::new);
-        NewItemCreateResponse res1 = newItemForRevise.register_target_revise_item(targetId);
 
+        System.out.println("register target revise item rrrrrrrrrrrrrrr rrrrrr");
+
+        NewItem newItemForRevise = newItemRepository.findById(newItemId).orElseThrow(ItemNotFoundException::new);
         // (2) 내가 복제할 대상인 아이템
         NewItem targetNewItem  = newItemRepository.findById(targetId).orElseThrow(ItemNotFoundException::new);
-
-        // (3) 이 아이템[(2)]을 revise target item 으로 등록해주기 (나중에 revise group 찾기 용임)
-        NewItemCreateResponse res2 = newItemForRevise.saving_target_revise_item(targetNewItem);
-
-
-        System.out.println(newItemForRevise.getReviseTargetId());
-        System.out.println(newItemForRevise.getId());
-
         // 2. 제품인 아이들에 한해서만 초기 작업 -> 제품 아니라면 라우트오더링서비스에서 ITEM_REVIEW 승인할 때 아래 작업 진행
         // 그리고 아기(new item) 제품 타입이라면 아이템 등록할 때부터 revision update 진행
         // 아닌 애들은 어디서 updateRevision 하냐면 아이템 리뷰할 때 ! (아이템 리뷰 승인나야 revise o o )
@@ -1100,6 +1205,12 @@ public class NewItemService {
         return new NewItemCreateResponse(targetId);
     }
 
+    public void registerReviseIdPlease(NewItem newItem, NewItem willBeRegistered){
+        //수행 좀 돼라;;
+        System.out.println("수행 좀 되렴 ,,,, ");
+        newItem.saving_target_revise_item(willBeRegistered);
+        newItem.setReviseTargetNewItem(willBeRegistered);
+    }
     ///////////////////////////////////
     @Getter
     @AllArgsConstructor

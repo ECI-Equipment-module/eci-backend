@@ -53,6 +53,7 @@ public class DevelopmentBomService {
         NewItem newItem = developmentBom.getBom().getNewItem();
         List<RouteOrdering> routeOrdering = routeOrderingRepository.findByNewItemOrderByIdAsc(newItem);
 
+                                                        // 이게 temp child parent 에서 데려오는 것
         List<TempNewItemChildDto> children = newItemService.readDevChildAll(newItem.getId());
 
         RouteOrdering targetRouteOrdering = routeOrderingRepository.findByNewItemOrderByIdAsc(newItem).get(routeOrdering.size() - 1);
@@ -203,8 +204,6 @@ public class DevelopmentBomService {
 
                         throw new InadequateRelationException();
                     }
-
-
 
                     tempNewItemParentChildrenRepository.save(
                             new TempNewItemParentChildren(

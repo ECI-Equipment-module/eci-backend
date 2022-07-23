@@ -27,14 +27,17 @@ public class NewItemPagingDto {
     private char itemRevision;
 
     public static NewItemPagingDto toDto(
-            NewItem newItem) {
+            NewItem newItem,
+            String defaultImageAddress) {
 
         return new NewItemPagingDto(
 
                 newItem.getId(),
 
+                newItem.getThumbnail()==null?
+                        new NewItemImageDto(defaultImageAddress) :
                 NewItemImageDto.toDto(
-                        newItem.getThumbnail()
+                                newItem.getThumbnail()
                 ),
 
                 newItem.getItemNumber(),
