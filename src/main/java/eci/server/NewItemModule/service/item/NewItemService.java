@@ -1188,7 +1188,8 @@ public class NewItemService {
 
         // (3) 이 아이템[(2)]을 revise target item 으로 등록해주기 (나중에 revise group 찾기 용임)
         NewItemCreateResponse res2 = newItemForRevise.saving_target_revise_item(targetNewItem);
-
+        newItemForRevise.saving_target_revise_item(targetNewItem);
+        System.out.println(res2 + "가 수행이 잘 돼야하는데 ;;");
 
         System.out.println(newItemForRevise.getReviseTargetId());
         System.out.println(newItemForRevise.getId());
